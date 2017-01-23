@@ -31,6 +31,7 @@ app.use(bodyParser.json());
 	})
 });*/
 
+// returns user with given email / password
 app.post('/users/:email/:password', function(req, res) {
 	var email = req.params.email;
 	var password = req.params.password;
@@ -39,6 +40,7 @@ app.post('/users/:email/:password', function(req, res) {
 		res.json(doc);
 	})
 })
+
 
 app.listen(3000);
 console.log("Server running on port 3000");
