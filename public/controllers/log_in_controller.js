@@ -10,9 +10,9 @@ angular.module('logInApp', []).controller('LogInCtrl', ['$scope', '$http', funct
 
   // - verifyLogin looks for a user with specified info and
   // - calls onResponseReceived when it gets a response
-  var verifyLogin = function(email, password, onResponseReceived) {
+  var verifyLogin = function(user, onResponseReceived) {
     console.log(LOG + "verifyLogin");
-    $http.post('/users/' + email + '/' + password).then(function onSuccess(response) {
+    $http.post('/users', user).then(function onSuccess(response) {
       onResponseReceived(response.data);
     })
   }
@@ -25,7 +25,7 @@ angular.module('logInApp', []).controller('LogInCtrl', ['$scope', '$http', funct
     if (validLoginInfo($scope.user)) {
 
       // verify email / password
-      verifyLogin($scope.user.email, $scope.user.password, function(user) {
+      verifyLogin($scope.user, function(user) {
 
         // login succeeded
         if (user != null) {

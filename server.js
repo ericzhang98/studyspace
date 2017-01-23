@@ -31,14 +31,16 @@ app.use(bodyParser.json());
   })
 });*/
 
-app.post('/users/:email/:password', function(req, res) {
-  var email = req.params.email;
-  var password = req.params.password;
+// returns user with given email / password
+app.post('/users', function(req, res) {
+  var email = req.body.email;
+  var password = req.body.password;
   console.log(LOG + "get user with email " + email + " and pass " + password);
   db.users.findOne({email: email, password: password}, function (err, doc) {
     res.json(doc);
   })
 })
+
 
 app.listen(3000);
 console.log("Server running on port 3000");
