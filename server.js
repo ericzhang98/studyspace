@@ -40,5 +40,33 @@ app.post('/users/:email/:password', function(req, res) {
 	})
 })
 
+
+/* POST data: New account info with {email, password}
+ * Returns: {success} - whether or not it succeeded */
+app.post("/accountsignup", function(req, res) {
+  var email = req.body.email;
+  var password = req.body.password;
+  console.log("Account signup attempt with: " + email);
+  db.users.findOne({email:email}, function (err, doc) {
+    //if user doesn't exist yet (doc is null), insert it in
+    if (!doc) {
+      db.users.insert(req.body, function(err, doc) {
+        if (!err) {
+          console.log("ACCOUNT CREATED");
+          res.json({success: true});
+        }
+        else {
+          console.log("SOMETHING WEIRD HAPPENED");
+        }
+      });
+    }
+    else {
+      console.log("ACCOUNT ALREADY EXISTS");
+      res.json({success: false});
+    }
+  });
+});
+
+
 app.listen(3000);
 console.log("Server running on port 3000");
