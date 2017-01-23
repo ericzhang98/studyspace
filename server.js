@@ -24,21 +24,21 @@ app.use(bodyParser.json());
 
 // returns all users, not useful atm
 /*app.get('/users', function(req, res) {
-	console.log(LOG + "get users");
-	db.users.find(function (err, docs) {
-		console.log(LOG + docs);
-		res.json(docs);
-	})
+  console.log(LOG + "get users");
+  db.users.find(function (err, docs) {
+    console.log(LOG + docs);
+    res.json(docs);
+  })
 });*/
 
 // returns user with given email / password
-app.post('/users/:email/:password', function(req, res) {
-	var email = req.params.email;
-	var password = req.params.password;
-	console.log(LOG + "get user with email " + email + " and pass " + password);
-	db.users.findOne({email: email, password: password}, function (err, doc) {
-		res.json(doc);
-	})
+app.post('/users', function(req, res) {
+  var email = req.body.email;
+  var password = req.body.password;
+  console.log(LOG + "get user with email " + email + " and pass " + password);
+  db.users.findOne({email: email, password: password}, function (err, doc) {
+    res.json(doc);
+  })
 })
 
 
