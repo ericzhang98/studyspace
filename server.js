@@ -16,11 +16,11 @@ var db = mongojs('users', ['users']); // we want the 'users' database
 // or something to that effect (don't worry about it)
 var bodyParser = require('body-parser');
 
-// used for log messages
-var LOG = "server: "
-
+// - app configuration
 app.use(express.static(__dirname + "/public"));
 app.use(bodyParser.json());
+
+
 
 // returns all users, not useful atm
 /*app.get('/users', function(req, res) {
@@ -35,7 +35,7 @@ app.use(bodyParser.json());
 app.post('/users', function(req, res) {
   var email = req.body.email;
   var password = req.body.password;
-  console.log(LOG + "get user with email " + email + " and pass " + password);
+  console.log("get user with email " + email + " and pass " + password);
   db.users.findOne({email: email, password: password}, function (err, doc) {
     res.json(doc);
   })
