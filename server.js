@@ -20,8 +20,6 @@ var bodyParser = require('body-parser');
 app.use(express.static(__dirname + "/public"));
 app.use(bodyParser.json());
 
-
-
 // returns all users, not useful atm
 /*app.get('/users', function(req, res) {
   console.log(LOG + "get users");
