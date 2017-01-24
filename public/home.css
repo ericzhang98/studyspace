@@ -1,14 +1,14 @@
 /* home.css */
 
 main {
-  margin-top: 8rem;
+  margin-top: 6rem;
 }
 
 #navbar-site {
   background-color: #aaaaaa;
-  font-size: 2rem;
+  font-size: 1.5rem;
   font-weight: 500;
-  height: 8rem;
+  height: 6rem;
   border: none;
 }
 
@@ -16,7 +16,7 @@ main {
   color: white;
 }
 
-#navbar-site .navbar-link:hover,
+#navbar-site .nav-link:hover,
 #navbar-site .navbar-brand:hover {
   background-color: transparent;
   color: #eeeeee;
@@ -39,7 +39,7 @@ main {
 #navbar-site .navbar-brand {
   padding-top: 0;
   padding-bottom: 0; 
-  line-height: 8rem;
+  line-height: 6rem;
 }
 
 #splash {
@@ -47,15 +47,21 @@ main {
   padding-bottom: 5rem;
 }
 
+#splash .container {
+  text-align: center;
+  padding-left: 2rem;
+  padding-right: 2rem;
+}
+
 #splash .title {
   font-weight: 900;
-  font-size: 6rem;
+  font-size: 5rem;
 }
 
 #splash .subtitle {
   margin-top: 2rem;
   font-size: 2rem;
-  font-weight: 200;
+  font-weight: 300;
 }
 
 #splash .btn-container {
@@ -64,16 +70,37 @@ main {
 
 #btn-signup {
   border-radius: 0;
+  padding: 0.5em 1em;
+  font-size: 2.5rem;
+  font-weight: 500;
 }
 
 @media screen and (min-width: 768px) {
+  main {
+    margin-top: 8rem;
+  }
+
+  #navbar-site {
+    font-size: 2rem;
+    height: 8rem;
+  }
+
   #navbar-site .brand-name {
     display: inline;
+  }
+
+  #navbar-site .nav-link,
+  #navbar-site .navbar-brand {
+    line-height: 8rem;
   }
 
   #splash {
     padding-top: 10rem;
     padding-bottom: 10rem;
+  }
+
+  #splash .container {
+    text-align: left;
   }
 
   #splash .title {
@@ -87,5 +114,9 @@ main {
 
   #splash .btn-container {
     margin-top: 4rem;
+  }
+
+  #btn-signup {
+    font-size: 3rem;
   }
 }
