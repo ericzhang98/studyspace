@@ -1,0 +1,122 @@
+/* home.css */
+
+main {
+  margin-top: 6rem;
+}
+
+#navbar-site {
+  background-color: #aaaaaa;
+  font-size: 1.5rem;
+  font-weight: 500;
+  height: 6rem;
+  border: none;
+}
+
+#navbar-site a {
+  color: white;
+}
+
+#navbar-site .nav-link:hover,
+#navbar-site .navbar-brand:hover {
+  background-color: transparent;
+  color: #eeeeee;
+}
+
+#navbar-site .container-fluid {
+  padding-left: 4rem;
+  padding-right: 4rem;
+}
+
+#navbar-site .navbar-brand {
+  font-size: 3rem;
+}
+
+#navbar-site .brand-name {
+  display: none;
+}
+
+#navbar-site .nav-link,
+#navbar-site .navbar-brand {
+  padding-top: 0;
+  padding-bottom: 0; 
+  line-height: 6rem;
+}
+
+#splash {
+  padding-top: 5rem;
+  padding-bottom: 5rem;
+}
+
+#splash .container {
+  text-align: center;
+  padding-left: 2rem;
+  padding-right: 2rem;
+}
+
+#splash .title {
+  font-weight: 900;
+  font-size: 5rem;
+}
+
+#splash .subtitle {
+  margin-top: 2rem;
+  font-size: 2rem;
+  font-weight: 300;
+}
+
+#splash .btn-container {
+  margin-top: 3rem;
+}
+
+#btn-signup {
+  border-radius: 0;
+  padding: 0.5em 1em;
+  font-size: 2.5rem;
+  font-weight: 500;
+}
+
+@media screen and (min-width: 768px) {
+  main {
+    margin-top: 8rem;
+  }
+
+  #navbar-site {
+    font-size: 2rem;
+    height: 8rem;
+  }
+
+  #navbar-site .brand-name {
+    display: inline;
+  }
+
+  #navbar-site .nav-link,
+  #navbar-site .navbar-brand {
+    line-height: 8rem;
+  }
+
+  #splash {
+    padding-top: 10rem;
+    padding-bottom: 10rem;
+  }
+
+  #splash .container {
+    text-align: left;
+  }
+
+  #splash .title {
+    font-size: 9rem;
+  }
+
+  #splash .subtitle {
+    margin-top: 2.5rem;
+    font-size: 2.5rem;
+  }
+
+  #splash .btn-container {
+    margin-top: 4rem;
+  }
+
+  #btn-signup {
+    font-size: 3rem;
+  }
+}

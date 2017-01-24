@@ -180,7 +180,7 @@ function joinRoom(room_id) {
 function leaveRoom() {
 
 	// are we even in a room?
-	if (currRoomID != null) {}
+	if (currRoomID != null) {
 		console.log("leaving room with id " + currRoomID);
 
 		// leave our calls
