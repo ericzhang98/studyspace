@@ -2,7 +2,7 @@ var me = {user_id: "id2"}
 
 var peer = new Peer(me.user_id, {key: 'tirppc8o5c9xusor'});
 var myCalls = [];
-var myTracks = {}; // Dictionary from call.id to audio track
+var myRemoteStreams = {}; // Dictionary from call.id to audio track
 var myStream = null;
 var currRoomID = null;
 
@@ -29,6 +29,13 @@ function leave_room_button_on_click() {
 	leaveRoom();
 }
 
+function mute_button_on_click() {
+	toggleMyStreamAudioEnabled();
+}
+
+function mute_other_button_on_click() {
+	toggleRemoteStreamAudioEnabled(document.getElementById("target_id_input").value);
+}
 
 // Respond to open
 peer.on('open', function(id) {
@@ -39,8 +46,9 @@ peer.on('open', function(id) {
 peer.on('call', function(call) {
 	answerCall(call);
 });
+/*********************************************************************/
 
-/************************ CALLING AND ANSWERING **********************/
+/*********************** CALLING AND ANSWERING ***********************/
 
 // - ensures myStream is set, delegates to startCallHelper()
 function startCall(other_user_id) {
@@ -69,15 +77,17 @@ function startCallHelper(other_user_id) {
 
 	var call = peer.call(other_user_id, myStream);
 
+	console.log("start call with id: " + call.id)
+
 	// reference to the call so we can close it
 	myCalls.push(call);
 
-	console.log("my stream id is " + myStream.id)
+	console.log("outgoing stream id: " + myStream.id)
 
 	call.on('stream', function(remoteStream) {
-		console.log("received stream with id " + remoteStream.id)
+		console.log("incoming stream id: " + remoteStream.id)
 
-		addTrack(remoteStream, call.id);
+		addRemoteStream(remoteStream, call.id);
 
 	});
 
@@ -88,7 +98,7 @@ function startCallHelper(other_user_id) {
 
 // - ensures myStream is set, delegates to answerCallHelper()
 function answerCall(call) {
-	console.log("call received from " + call.id)
+	console.log("received call with id " + call.id)
 
 	// myStream already set
 	if (myStream != null) {
@@ -117,12 +127,12 @@ function answerCallHelper(call) {
 	// reference to the call so we can close it
 	myCalls.push(call);
 
-	console.log("my stream id is " + myStream.id)
+	console.log("outgoing stream id: " + myStream.id)
 	call.on('stream', function(remoteStream) {
 
- 		console.log("received stream with id " + remoteStream.id)	
+ 		console.log("incoming stream id: " + remoteStream.id)	
 		
-		addTrack(remoteStream, call.id);
+		addRemoteStream(remoteStream, call.id);
 	});
 
 	call.on('close', function() {
@@ -131,7 +141,7 @@ function answerCallHelper(call) {
 }
 /*********************************************************************/
 
-/********************** LEAVING AND JOINING ROOMS ********************/
+/********************* LEAVING AND JOINING ROOMS *********************/
 
 // - updates server and returns list of user_id's
 // - calls all user_id's
@@ -196,8 +206,8 @@ function leaveRoom() {
 	}
 }
 
-// - creates audio track and stores in myTracks
-function addTrack(remoteStream, call_id) {
+// - creates audio track and stores in myRemoteStreams
+function addRemoteStream(remoteStream, call_id) {
 
 	// create a new audio element and make it play automatically
 	var audio = document.createElement('audio');
@@ -209,28 +219,43 @@ function addTrack(remoteStream, call_id) {
     // add it to the page
     document.getElementById("myBody").insertBefore(audio, document.getElementById("myDiv"));
 
-    // store the element in myTracks
-    myTracks[call_id] = audio;
+    // store the element in myRemoteStreams
+    myRemoteStreams[call_id] = audio;
 }
 
-// - removes the audio track that corresponds to call_id
-function removeTrack(call_id) {
+// - removes the audio track that streaming the remoteStream from call_id
+function removeRemoteStream(call_id) {
 
 	// remove the audio track from the page
-	document.getElementById("myBody").removeChild(myTracks[call_id]);
+	document.getElementById("myBody").removeChild(myRemoteStreams[call_id]);
 
-	// remove the audio track from myTracks
-	delete myTracks[call_id];
+	// remove the remoteStream from myRemoteStreams
+	delete myRemoteStreams[call_id];
 }
 
-// - closes all calls and empties myCalls
-// - removes all tracks and empties myTracks
+// - removes all {user_id: call} pairs in myCalls and closes calls
+// - removes all {call.id: audio} pairs myRemoteStreams and removes audio tracks
 function leaveCalls() {
-	for (i = 0; i < myCalls.length; i++) {
-		removeTrack(myCalls[i].id);
+	for (var i = 0; i < myCalls.length; i++) {
+		removeRemoteStream(myCalls[i].id);
 		myCalls[i].close();
 	}
 	myCalls = [];
 }
 
 /*********************************************************************/
+
+/********************** MUTING / UNMUTING AUDIO **********************/
+// - toggle my own microphone
+function toggleMyStreamAudioEnabled() {
+	myStream.getAudioTracks()[0].enabled = !(myStream.getAudioTracks()[0].enabled);
+};
+
+// - toggle whether I receive audio from another person
+function toggleRemoteStreamAudioEnabled(call_id) {
+	console.log(myRemoteStreams);
+	myRemoteStreams[call_id].muted = !(myRemoteStreams[call_id].muted);
+}
+/*********************************************************************/
+
+
