@@ -12,7 +12,7 @@ angular.module('logInApp', []).controller('LogInCtrl', ['$scope', '$http', funct
   // - calls onResponseReceived when it gets a response
   var verifyLogin = function(user, onResponseReceived) {
     console.log(LOG + "verifyLogin");
-    $http.post('/users', user).then(function onSuccess(response) {
+    $http.post('/accountlogin', user).then(function onSuccess(response) {
       onResponseReceived(response.data);
     })
   }
@@ -27,11 +27,17 @@ angular.module('logInApp', []).controller('LogInCtrl', ['$scope', '$http', funct
       // verify email / password
       verifyLogin($scope.user, function(user) {
 
-        // login succeeded
+        // login returned a user
+        // check if user activated account or not
         if (user != null) {
+          if (user.active) {
+            console.log(LOG + "login succeeded");
+            console.log(user);
+          }
+          else {
+            console.log(LOG + "need to verify account, verify email");
+          }
 
-          console.log(LOG + "login succeeded");
-          console.log(user);
         }
 
         // login failed 
