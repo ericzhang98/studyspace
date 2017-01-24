@@ -40,6 +40,7 @@ peer.on('call', function(call) {
 	answerCall(call);
 });
 
+/************************ CALLING AND ANSWERING **********************/
 
 // - ensures myStream is set, delegates to startCallHelper()
 function startCall(other_user_id) {
@@ -128,38 +129,9 @@ function answerCallHelper(call) {
 		console.log("call closed");
 	});
 }
+/*********************************************************************/
 
-// - creates audio track and stores in myTracks
-function addTrack(remoteStream, call_id) {
-
-	// create a new audio element
-	var audio = document.createElement('audio');
-	audio.autoplay = true;
-	/*
-	var test = document.createElement('p');
-	var node = document.createTextNode("This is new.");
-	test.appendChild(node);*/
-
-    // set the source for our new element   
-    audio.src = window.URL.createObjectURL(remoteStream); 
-
-    // add it to the page
-    document.getElementById("myBody").insertBefore(audio, document.getElementById("myDiv"));
-    //document.getElementById("myBody").insertBefore(test, document.getElementById("myDiv"));
-
-    // store the element in myTracks
-    myTracks[call_id] = audio;
-}
-
-// - removes the audio track that corresponds to call_id
-function removeTrack(call_id) {
-
-	// remove the audio track from the page
-	document.getElementById("myBody").removeChild(myTracks[call_id]);
-
-	// remove the audio track from myTracks
-	delete myTracks[call_id];
-}
+/********************** LEAVING AND JOINING ROOMS ********************/
 
 // - updates server and returns list of user_id's
 // - calls all user_id's
@@ -183,7 +155,6 @@ function joinRoom(room_id) {
 	// send request to server
 	var xhr = new XMLHttpRequest();
 	xhr.open('GET', "/join_room/" + room_id + "/" + me.user_id, true);
-
 	xhr.send();
 
 	// on response
@@ -207,7 +178,9 @@ function joinRoom(room_id) {
 
 // - updates server and leave all current calls
 function leaveRoom() {
-	if (currRoomID != null) {
+
+	// are we even in a room?
+	if (currRoomID != null) {}
 		console.log("leaving room with id " + currRoomID);
 
 		// leave our calls
@@ -216,7 +189,6 @@ function leaveRoom() {
 		// send request to server to tell them we left
 		var xhr = new XMLHttpRequest();
 		xhr.open('GET', "/leave_room/" + currRoomID + "/" + me.user_id, true);
-
 		xhr.send();
 
 		// reset currRoomID
@@ -224,7 +196,35 @@ function leaveRoom() {
 	}
 }
 
+// - creates audio track and stores in myTracks
+function addTrack(remoteStream, call_id) {
+
+	// create a new audio element and make it play automatically
+	var audio = document.createElement('audio');
+	audio.autoplay = true;
+
+    // set the source for our new element   
+    audio.src = window.URL.createObjectURL(remoteStream); 
+
+    // add it to the page
+    document.getElementById("myBody").insertBefore(audio, document.getElementById("myDiv"));
+
+    // store the element in myTracks
+    myTracks[call_id] = audio;
+}
+
+// - removes the audio track that corresponds to call_id
+function removeTrack(call_id) {
+
+	// remove the audio track from the page
+	document.getElementById("myBody").removeChild(myTracks[call_id]);
+
+	// remove the audio track from myTracks
+	delete myTracks[call_id];
+}
+
 // - closes all calls and empties myCalls
+// - removes all tracks and empties myTracks
 function leaveCalls() {
 	for (i = 0; i < myCalls.length; i++) {
 		removeTrack(myCalls[i].id);
@@ -233,3 +233,4 @@ function leaveCalls() {
 	myCalls = [];
 }
 
+/*********************************************************************/
