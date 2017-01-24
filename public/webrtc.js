@@ -1,13 +1,10 @@
 var peer = new Peer("id1", {key: 'tirppc8o5c9xusor'});
 var myCalls = [];
 var myStream = null;
+
 navigator.getUserMedia = navigator.getUserMedia || navigator.webkitGetUserMedia || navigator.mozGetUserMedia;
 
 console.log("Hello peer.js");
-
-peer.on('open', function(id) {
-	console.log('My peer ID is: ' + id);
-});
 
 /*
 // Connect
@@ -25,15 +22,16 @@ function call_button_on_click() {
 }
 
 function hang_up_button_on_click() {
-	for (i = 0; i < myCalls.length; i++) {
-		myCalls[i].close();
-	}
-
-	myCalls = [];
+	leaveCalls();
 }
 
 
-// Answer Call
+// Respond to open
+peer.on('open', function(id) {
+	console.log('My peer ID is: ' + id);
+});
+
+// Respond to call
 peer.on('call', function(call) {
 	answerCall(call);
 });
@@ -79,7 +77,6 @@ function startCallHelper(other_user_id) {
 
 	    //inserting our stream to the video tag     
 	    audio.src = window.URL.createObjectURL(remoteStream); 
-
 	});
 
 	call.on('close', function() {
@@ -112,13 +109,16 @@ function answerCall(call) {
 
 // - with myStream set, answers the call
 function answerCallHelper(call) {
-	call.answer(myStream); // Answer the call with an A/V stream.
+	
+	// Answer the call with an A/V stream
+	call.answer(myStream); 
     	
 	// reference to the call so we can close it
 	myCalls.push(call);
 
 	console.log("my stream id is " + myStream.id)
 	call.on('stream', function(remoteStream) {
+
  		// Show stream in some video/canvas element.
  		console.log("received stream with id " + remoteStream.id)	
 		
@@ -131,5 +131,14 @@ function answerCallHelper(call) {
 	call.on('close', function() {
 		console.log("call closed");
 	});
+}
+
+// - closes all calls and empties myCalls
+function leaveCalls() {
+	for (i = 0; i < myCalls.length; i++) {
+		myCalls[i].close();
+	}
+
+	myCalls = [];
 }
 
