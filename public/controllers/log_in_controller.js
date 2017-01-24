@@ -32,6 +32,7 @@ angular.module('logInApp', []).controller('LogInCtrl', ['$scope', '$http', funct
 
           console.log(LOG + "login succeeded");
           console.log(user);
+          
         }
 
         // login failed 

@@ -1,4 +1,6 @@
-var peer = new Peer("id1", {key: 'tirppc8o5c9xusor'});
+var me = {user_id: "id2"}
+
+var peer = new Peer(me.user_id, {key: 'tirppc8o5c9xusor'});
 var myCalls = [];
 var myStream = null;
 
@@ -6,23 +8,20 @@ navigator.getUserMedia = navigator.getUserMedia || navigator.webkitGetUserMedia 
 
 console.log("Hello peer.js");
 
-/*
-// Connect
-function connect(other_user_id) {
-	var conn = peer.connect(other_user_id);
-
-// Receive Connection
-peer.on('connection', function(conn) {
-	console.log('received connection from ' + conn.peer);
-});
-}*/
-
 function call_button_on_click() {
 	startCall(document.getElementById("target_id_input").value);
 }
 
 function hang_up_button_on_click() {
 	leaveCalls();
+}
+
+function join_room_button_on_click() {
+	joinRoom("ucsd_cse_110_1");
+}
+
+function leave_room_button_on_click() {
+	leaveRoom("ucsd_cse_110_1");
 }
 
 
@@ -140,5 +139,44 @@ function leaveCalls() {
 	}
 
 	myCalls = [];
+}
+
+function joinRoom(room_id) {
+	console.log("joining room with id " + room_id);
+
+	// send request to server
+	var xhr = new XMLHttpRequest();
+	xhr.open('GET', "/join_room/" + room_id + "/" + me.user_id, true);
+
+	xhr.send();
+
+	// on response
+	xhr.onreadystatechange = function(e) {
+		if (xhr.readyState == 4 && xhr.status == 200) {
+	        var response = JSON.parse(xhr.responseText);
+
+	        // call all those users
+	        for (i = 0; i < response.other_user_ids.length; i++) {
+	        	var other_user_id = response.other_user_ids[i];
+	        	console.log(other_user_id);
+	        	console.log(me.user_id);
+	        	if (other_user_id != me.user_id) {
+	        		startCall(other_user_id);
+	    		}
+	        }
+    	}
+	}
+}
+
+function leaveRoom(room_id) {
+	console.log("joining room with id " + room_id);
+
+	// send request to server
+	var xhr = new XMLHttpRequest();
+	xhr.open('GET', "/leave_room/" + room_id + "/" + me.user_id, true);
+
+	xhr.send();
+
+	leaveCalls();
 }
 

@@ -29,6 +29,43 @@ app.use(bodyParser.json());
   })
 });*/
 
+var class_to_rooms_dict = {};
+class_to_rooms_dict["ucsd_cse_110"] = ["ucsd_cse_110_1"];
+class_to_rooms_dict["ucsd_cse_105"] = ["ucsd_cse_105_1", "ucsd_cse_105_2"];
+
+var room_to_users_dict = {};
+room_to_users_dict["ucsd_cse_110_1"] = [];
+room_to_users_dict["ucsd_cse_105_1"] = [];
+room_to_users_dict["ucsd_cse_105_2"] = [];
+
+app.get('/join_room/:room_id/:user_id', function(req, res) {
+	var room_id = req.params.room_id;
+	var user_id = req.params.user_id;
+	console.log("Adding user " + user_id + " to room " + room_id);
+
+	// add the userID to the room if it doesn't already contain it
+	if (room_to_users_dict[room_id].indexOf(user_id) == -1) {
+		(room_to_users_dict[room_id]).push(user_id);
+	}
+
+	console.log(room_to_users_dict[room_id]);
+
+	// send back the list of userID's in the room
+	res.send({other_user_ids: room_to_users_dict[room_id]});
+})
+
+app.get('/leave_room/:room_id/:user_id', function(req, res) {
+	var room_id = req.params.room_id;
+	var user_id = req.params.user_id;
+	console.log("Adding user " + user_id + " to room " + room_id);
+
+	// remove the userID from the room if it does already contain it
+	var index = room_to_users_dict[room_id].indexOf(user_id);
+	if (index > -1) {
+    	room_to_users_dict[room_id].splice(index, 1);
+	}
+})
+
 // returns user with given email / password
 app.post('/users', function(req, res) {
   var email = req.body.email;
