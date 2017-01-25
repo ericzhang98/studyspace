@@ -1,15 +1,17 @@
+/***** General variables **************************/
 var me = {user_id: "id2"}
+var currRoomID = null;
+/**************************************************/
 
+/***** Audio conferencing variables ***************/
 var peer = new Peer(me.user_id, {key: 'tirppc8o5c9xusor'});
 var myCalls = [];
 var myRemoteStreams = {}; // Dictionary from call.id to audio track
 var myStream = null;
-var currRoomID = null;
-
 navigator.getUserMedia = navigator.getUserMedia || navigator.webkitGetUserMedia || navigator.mozGetUserMedia;
+/**************************************************/
 
-console.log("Hello peer.js");
-
+/***** onClicks for testing ***********************/
 function call_button_on_click() {
 	startCall(document.getElementById("target_id_input").value);
 }
@@ -36,6 +38,9 @@ function mute_button_on_click() {
 function mute_other_button_on_click() {
 	toggleRemoteStreamAudioEnabled(document.getElementById("target_id_input").value);
 }
+/**************************************************/
+
+/*********************** CALLING AND ANSWERING ***********************/
 
 // Respond to open
 peer.on('open', function(id) {
@@ -46,9 +51,6 @@ peer.on('open', function(id) {
 peer.on('call', function(call) {
 	answerCall(call);
 });
-/*********************************************************************/
-
-/*********************** CALLING AND ANSWERING ***********************/
 
 // - ensures myStream is set, delegates to startCallHelper()
 function startCall(other_user_id) {
@@ -257,5 +259,10 @@ function toggleRemoteStreamAudioEnabled(call_id) {
 	myRemoteStreams[call_id].muted = !(myRemoteStreams[call_id].muted);
 }
 /*********************************************************************/
+
+/*window.addEventListener('beforeunload', function(event) {
+  //do something here
+  leaveRoom();
+}, false);*/
 
 
