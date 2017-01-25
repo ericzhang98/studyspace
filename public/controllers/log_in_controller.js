@@ -37,7 +37,6 @@ angular.module('logInApp', []).controller('LogInCtrl', ['$scope', '$http', funct
           else {
             console.log(LOG + "need to verify account, verify email");
           }
-
         }
 
         // login failed 

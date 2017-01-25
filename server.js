@@ -43,7 +43,53 @@ app.use(bodyParser.json());
   })
 });*/
 
-// returns user with given email / password
+var class_to_rooms_dict = {};
+class_to_rooms_dict["ucsd_cse_110"] = ["ucsd_cse_110_1", "ucsd_cse_110_2"];
+class_to_rooms_dict["ucsd_cse_105"] = ["ucsd_cse_105_1"];
+
+var room_to_users_dict = {};
+room_to_users_dict["ucsd_cse_110_1"] = [];
+room_to_users_dict["ucsd_cse_110_2"] = [];
+room_to_users_dict["ucsd_cse_105_2"] = [];
+
+// - adds user_id to room with id room_id
+// - returns list of user_id's in that room
+app.get('/join_room/:room_id/:user_id', function(req, res) {
+
+	var room_id = req.params.room_id;
+	var user_id = req.params.user_id;
+	console.log("Adding user " + user_id + " to room " + room_id);
+
+	// add the userID to the room if it doesn't already contain it
+	if (room_to_users_dict[room_id].indexOf(user_id) == -1) {
+		(room_to_users_dict[room_id]).push(user_id);
+	}
+
+	console.log(room_to_users_dict[room_id]);
+
+	// send back the list of userID's in the room
+	res.send({other_user_ids: room_to_users_dict[room_id]});
+})
+
+// - removes user_id from room with id room_id
+app.get('/leave_room/:room_id/:user_id', function(req, res) {
+	
+	var room_id = req.params.room_id;
+	var user_id = req.params.user_id;
+	console.log("Removing user " + user_id + " from room " + room_id);
+
+	// remove the userID from the room if it does already contain it
+	var index = room_to_users_dict[room_id].indexOf(user_id);
+	if (index > -1) {
+    	room_to_users_dict[room_id].splice(index, 1);
+	}
+
+	// without this res.send, server.js will not allow leave_room to be spammed
+	// so leaving rooms constantly will not work
+	res.send({success: true});
+})
+
+// - returns user with given email / password
 app.post('/accountlogin', function(req, res) {
   var email = req.body.email;
   var password = req.body.password;
