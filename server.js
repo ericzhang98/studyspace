@@ -13,7 +13,6 @@ var app = express();
 // - mongojs is a module that has some useful functions
 var mongojs = require('mongojs');
 var db = mongojs('users', ['users']); // we want the 'users' database
-
 // - body-parser is middle-ware that parses http objects
 // or something to that effect (don't worry about it)
 var bodyParser = require('body-parser');
@@ -34,6 +33,9 @@ app.use(bodyParser.json());
 
 /* HTTP requests ---------------------------------------------------------*/
 
+// forces the name property to be unique in user_classes collection
+db.user_classes.createIndex({name: 1}, {unique:true});
+
 // returns all users, not useful atm
 /*app.get('/users', function(req, res) {
   console.log(LOG + "get users");
@@ -42,6 +44,32 @@ app.use(bodyParser.json());
     res.json(docs);
   })
 });*/
+
+
+app.post('/user_classes', function(req, res) {
+	
+	db.user_classes.insert(req.body, function(err, docs){
+		db.user_classes.ensureIndex({name: req.body}, {unique:true});
+		res.json(docs);
+	});	
+});
+
+app.delete('/user_classes/:id', function(req, res){
+
+	var id = req.params.id;
+	db.user_classes.remove({_id: mongojs.ObjectId(id)}, function(err, doc){
+		res.json(doc);
+	});
+});
+
+//NOTE:Need to get userID working so it only gets the classes of this user
+app.get('/user_classes/:id', function(req, res) {
+
+	db.user_classes.find({user_id: req.params.id}, function(err, docs){
+		res.json(docs);
+	});
+});
+
 
 var class_to_rooms_dict = {};
 class_to_rooms_dict["ucsd_cse_110"] = ["ucsd_cse_110_1", "ucsd_cse_110_2"];
@@ -91,6 +119,7 @@ app.get('/leave_room/:room_id/:user_id', function(req, res) {
 
 // - returns user with given email / password
 app.post('/accountlogin', function(req, res) {
+
   var email = req.body.email;
   var password = req.body.password;
   console.log("get user with email " + email + " and pass " + password);

@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html ng-app="UserPreferences">
+<head>
+	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+
+	<title>User Preferences</title>
+</head>
+<body>
+	<div class="container" ng-controller="preferences">
+	<!--
+		<input class="form-control" ng-model="user_preferences.school">
+		<button class="btn btn-primary" ng-click="addSchool()">Add School</button></th>
+		-->
+		<table class="table">
+			<thead>
+				<tr>
+					<th>Add classes</th>
+					<th><input class="form-control" ng-model="user_classes.name"></th>
+					<th><button class="btn btn-primary" ng-click="addClass()">Add Class</button></th>
+				</tr>
+			</thead>
+			<tbody>
+				<tr ng-repeat="user_class in user_classes_list">
+					<td></td>
+          <td>{{user_class.name}}</td>
+					<td><button class="btn btn-danger" ng-click="remove(user_class._id)">Remove</button></td>
+				</tr>
+			</tbody>
+		</table>
+	</div>
+	<script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.6.1/angular.min.js"></script>
+	<script src ="https://ajax.googleapis.com/ajax/libs/angularjs/1.6.1/angular-cookies.js"></script>
+	<script src="controllers/user_preferences_controller.js"></script>
+</body>
+</html>
