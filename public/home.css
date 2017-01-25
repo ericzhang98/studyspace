@@ -6,7 +6,7 @@ main {
 
 #navbar-site {
   background-color: #aaaaaa;
-  font-size: 1.5rem;
+  font-size: 2rem;
   font-weight: 500;
   height: 6rem;
   border: none;
@@ -16,15 +16,35 @@ main {
   color: white;
 }
 
-#navbar-site .nav-link:hover,
-#navbar-site .navbar-brand:hover {
-  background-color: transparent;
-  color: #eeeeee;
+#navbar-site .container-fluid {
+  padding-left: 2.5rem;
+  padding-right: 2.5rem;
 }
 
-#navbar-site .container-fluid {
-  padding-left: 4rem;
-  padding-right: 4rem;
+#navbar-site .navbar-brand,
+#navbar-site .nav-link {
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-align: center;
+  -ms-flex-align: center;
+  align-items: center;
+  height: 6rem;
+  padding-top: 0;
+  padding-bottom: 0; 
+}
+
+#navbar-site .nav-link {
+  padding: 0 1em;
+}
+
+#navbar-site .nav-link:visited {
+  background: #aaaaaa;
+}
+
+#navbar-site .nav-link:hover {
+  color: #aaaaaa;
+  background-color: white;
 }
 
 #navbar-site .navbar-brand {
@@ -35,11 +55,8 @@ main {
   display: none;
 }
 
-#navbar-site .nav-link,
-#navbar-site .navbar-brand {
-  padding-top: 0;
-  padding-bottom: 0; 
-  line-height: 6rem;
+#navbar-site .text-log-in {
+  display: none;
 }
 
 #splash {
@@ -65,33 +82,50 @@ main {
 }
 
 #splash .btn-container {
-  margin-top: 3rem;
+  margin-top: 4rem;
 }
 
 #btn-signup {
+  border: none;
   border-radius: 0;
   padding: 0.5em 1em;
   font-size: 2.5rem;
   font-weight: 500;
 }
 
-@media screen and (min-width: 768px) {
-  main {
-    margin-top: 8rem;
-  }
+#btn-signup:visited {
+  background: #337ab7;
+}
 
-  #navbar-site {
-    font-size: 2rem;
-    height: 8rem;
+#btn-signup:hover {
+  color: #337ab7;
+  background: white;
+  box-shadow: none;
+}
+
+@media screen and (min-width: 768px) {
+  #navbar-site .container-fluid {
+    padding-left: 4rem;
+    padding-right: 4rem;
   }
 
   #navbar-site .brand-name {
     display: inline;
   }
 
-  #navbar-site .nav-link,
-  #navbar-site .navbar-brand {
-    line-height: 8rem;
+  #navbar-site .navbar-brand,
+  #navbar-site .nav-link {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  #navbar-site .glyphicon {
+    display: none;
+  }
+
+  #navbar-site .text-log-in {
+    display: inline;
   }
 
   #splash {
@@ -113,7 +147,7 @@ main {
   }
 
   #splash .btn-container {
-    margin-top: 4rem;
+    margin-top: 8rem;
   }
 
   #btn-signup {
