@@ -52,6 +52,11 @@ room_to_users_dict["ucsd_cse_110_1"] = [];
 room_to_users_dict["ucsd_cse_110_2"] = [];
 room_to_users_dict["ucsd_cse_105_2"] = [];
 
+// room name
+// users in the room
+// room host?
+// kicked from room list
+
 // - adds user_id to room with id room_id
 // - returns list of user_id's in that room
 app.get('/join_room/:room_id/:user_id', function(req, res) {
