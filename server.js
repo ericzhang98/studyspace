@@ -18,6 +18,13 @@ var db = mongojs('users', ['users']); // we want the 'users' database
 // or something to that effect (don't worry about it)
 var bodyParser = require('body-parser');
 
+// - email stuff
+var nodemailer = require("nodemailer");
+var mailTransporter = nodemailer.createTransport({
+  service: "Gmail",
+  auth: {user: "studyspacehelper@gmail.com", pass: "raindropdroptop"} 
+});
+
 // - app configuration
 app.use(express.static(__dirname + "/public"));
 app.use(bodyParser.json());
@@ -60,6 +67,7 @@ app.post("/accountsignup", function(req, res) {
       db.users.insert(newUser, function(err, doc) {
         if (doc) {
           console.log("Account signup: ACCOUNT CREATED");
+          //sendVerifyEmail(newUser);
           res.json({success: true});
         }
         else {
@@ -83,7 +91,6 @@ app.get("/accountverify/:id/:token", function(req, res) {
       //check if user exists
       if (doc) {
         //verify the user if the token matches
-        console.log(doc);
         if (token == doc.token) {
           db.users.findAndModify({query: {_id: mongojs.ObjectId(id)}, 
             update: {$set: {active: true}}, new: true}, function(err, doc) {
@@ -126,7 +133,8 @@ function User(email, password) {
   this.email = email;
   this.password = password;
   this.token = "dank";
-  this.active = false; //has verified email
+  //this.token = generateToken();
+  this.active = true; //has verified email
 }
 
 /*------------------------------------------------------------------------*/
@@ -134,10 +142,12 @@ function User(email, password) {
 
 /* Helper methods --------------------------------------------------------*/
 
+//send any error messages back to client
 function sendVerifyError(res) {
-  res.json({success:false});
+  res.json({success:false}); //add anything needed to json
 }
 
+//generate a token of 10 random chars
 function generateToken() {
   var token = "";
   var possible = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
@@ -146,6 +156,22 @@ function generateToken() {
     token += possible.charAt(Math.floor(Math.random() * possible.length));
   }
   return token;
+}
+
+//sends a verification email to user
+function sendVerifyEmail(user, callback) {
+  var receiver = user.email;
+  var id = user._id;
+  var token = user.token;
+  var emailText = "http://localhost:3000/accountverify/" + id + "/" + token;
+  var verifyEmailOptions = {
+    from: "studyspacehelper@gmail.com",
+    to: receiver, 
+    subject: "Account verification",
+    text: emailText,
+    html: "<a href='" + emailText + "'>" + emailText + "</a>"
+  };
+  mailTransporter.sendMail(verifyEmailOptions, callback);
 }
 
 /*------------------------------------------------------------------------*/
