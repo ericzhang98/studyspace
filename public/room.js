@@ -93,8 +93,14 @@ function startCallHelper(other_user_id) {
 
 	});
 
+	// used for onClose
+	var call_id = call.id;
+
 	call.on('close', function() {
 		console.log("call closed");
+
+		// when a call closes, remove the corresponding stream
+		removeRemoteStream(call_id);
 	});
 }
 
@@ -136,9 +142,15 @@ function answerCallHelper(call) {
 		
 		addRemoteStream(remoteStream, call.id);
 	});
+	
+	// used for onClose
+	var call_id = call.id;
 
 	call.on('close', function() {
 		console.log("call closed");
+
+		// when a call closes, remove the corresponding stream
+		removeRemoteStream(call_id);
 	});
 }
 /*********************************************************************/
@@ -239,7 +251,6 @@ function removeRemoteStream(call_id) {
 // - removes all {call.id: audio} pairs myRemoteStreams and removes audio tracks
 function leaveCalls() {
 	for (var i = 0; i < myCalls.length; i++) {
-		removeRemoteStream(myCalls[i].id);
 		myCalls[i].close();
 	}
 	myCalls = [];
@@ -248,21 +259,27 @@ function leaveCalls() {
 /*********************************************************************/
 
 /********************** MUTING / UNMUTING AUDIO **********************/
-// - toggle my own microphone
+// - toggle my own audio
 function toggleMyStreamAudioEnabled() {
 	myStream.getAudioTracks()[0].enabled = !(myStream.getAudioTracks()[0].enabled);
-};
+}
 
-// - toggle whether I receive audio from another person
+// - toggle audio from another person
 function toggleRemoteStreamAudioEnabled(call_id) {
 	console.log(myRemoteStreams);
 	myRemoteStreams[call_id].muted = !(myRemoteStreams[call_id].muted);
 }
 /*********************************************************************/
 
-/*window.addEventListener('beforeunload', function(event) {
-  //do something here
-  leaveRoom();
-}, false);*/
-
-
+/******************************* MISC ********************************/
+// when the window is about to close
+window.onbeforeunload = function(event) {
+	// send request to server to tell them we left
+	// we don't use leaveRoom because request needs to be async
+	if (currRoomID != null) {
+		var xhr = new XMLHttpRequest();
+		xhr.open('GET', "/leave_room/" + currRoomID + "/" + me.user_id, false);
+		xhr.send();
+	}
+};
+/*********************************************************************/
