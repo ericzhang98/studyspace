@@ -99,7 +99,6 @@ app.post('/accountlogin', function(req, res) {
   });
 });
 
-
 /* POST data: New account info with {email, password}
  * Returns: {success} - whether or not it succeeded */
 app.post("/accountsignup", function(req, res) {
