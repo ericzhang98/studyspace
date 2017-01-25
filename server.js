@@ -129,6 +129,8 @@ app.post("/accountsignup", function(req, res) {
   });
 });
 
+/* GET data: {ID of account to verify, token} - verify account with token
+ * Returns: {success} - whether or not the account was verified */
 app.get("/accountverify/:id/:token", function(req, res) {
   var id = req.params.id;
   var token = req.params.token;

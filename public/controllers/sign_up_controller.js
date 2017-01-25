@@ -30,3 +30,10 @@ myApp.controller("SignUpController", ["$scope", "$http",
       };
 
     }]);
+
+myApp.controller("TestController", ["$scope", "$http",
+    function($scope, $http) {
+      console.log("woot");
+
+      $scope.dank = "WOOT";
+    }]);
