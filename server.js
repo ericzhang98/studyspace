@@ -18,6 +18,13 @@ var db = mongojs('users', ['users']); // we want the 'users' database
 // or something to that effect (don't worry about it)
 var bodyParser = require('body-parser');
 
+// - email stuff
+var nodemailer = require("nodemailer");
+var mailTransporter = nodemailer.createTransport({
+  service: "Gmail",
+  auth: {user: "studyspacehelper@gmail.com", pass: "raindropdroptop"} 
+});
+
 // - app configuration
 app.use(express.static(__dirname + "/public"));
 app.use(bodyParser.json());
@@ -36,7 +43,53 @@ app.use(bodyParser.json());
   })
 });*/
 
-// returns user with given email / password
+var class_to_rooms_dict = {};
+class_to_rooms_dict["ucsd_cse_110"] = ["ucsd_cse_110_1", "ucsd_cse_110_2"];
+class_to_rooms_dict["ucsd_cse_105"] = ["ucsd_cse_105_1"];
+
+var room_to_users_dict = {};
+room_to_users_dict["ucsd_cse_110_1"] = [];
+room_to_users_dict["ucsd_cse_110_2"] = [];
+room_to_users_dict["ucsd_cse_105_2"] = [];
+
+// - adds user_id to room with id room_id
+// - returns list of user_id's in that room
+app.get('/join_room/:room_id/:user_id', function(req, res) {
+
+	var room_id = req.params.room_id;
+	var user_id = req.params.user_id;
+	console.log("Adding user " + user_id + " to room " + room_id);
+
+	// add the userID to the room if it doesn't already contain it
+	if (room_to_users_dict[room_id].indexOf(user_id) == -1) {
+		(room_to_users_dict[room_id]).push(user_id);
+	}
+
+	console.log(room_to_users_dict[room_id]);
+
+	// send back the list of userID's in the room
+	res.send({other_user_ids: room_to_users_dict[room_id]});
+})
+
+// - removes user_id from room with id room_id
+app.get('/leave_room/:room_id/:user_id', function(req, res) {
+	
+	var room_id = req.params.room_id;
+	var user_id = req.params.user_id;
+	console.log("Removing user " + user_id + " from room " + room_id);
+
+	// remove the userID from the room if it does already contain it
+	var index = room_to_users_dict[room_id].indexOf(user_id);
+	if (index > -1) {
+    	room_to_users_dict[room_id].splice(index, 1);
+	}
+
+	// without this res.send, server.js will not allow leave_room to be spammed
+	// so leaving rooms constantly will not work
+	res.send({success: true});
+})
+
+// - returns user with given email / password
 app.post('/accountlogin', function(req, res) {
   var email = req.body.email;
   var password = req.body.password;
@@ -60,6 +113,7 @@ app.post("/accountsignup", function(req, res) {
       db.users.insert(newUser, function(err, doc) {
         if (doc) {
           console.log("Account signup: ACCOUNT CREATED");
+          //sendVerifyEmail(newUser);
           res.json({success: true});
         }
         else {
@@ -83,7 +137,6 @@ app.get("/accountverify/:id/:token", function(req, res) {
       //check if user exists
       if (doc) {
         //verify the user if the token matches
-        console.log(doc);
         if (token == doc.token) {
           db.users.findAndModify({query: {_id: mongojs.ObjectId(id)}, 
             update: {$set: {active: true}}, new: true}, function(err, doc) {
@@ -126,7 +179,8 @@ function User(email, password) {
   this.email = email;
   this.password = password;
   this.token = "dank";
-  this.active = false; //has verified email
+  //this.token = generateToken();
+  this.active = true; //has verified email
 }
 
 /*------------------------------------------------------------------------*/
@@ -134,10 +188,12 @@ function User(email, password) {
 
 /* Helper methods --------------------------------------------------------*/
 
+//send any error messages back to client
 function sendVerifyError(res) {
-  res.json({success:false});
+  res.json({success:false}); //add anything needed to json
 }
 
+//generate a token of 10 random chars
 function generateToken() {
   var token = "";
   var possible = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
@@ -146,6 +202,22 @@ function generateToken() {
     token += possible.charAt(Math.floor(Math.random() * possible.length));
   }
   return token;
+}
+
+//sends a verification email to user
+function sendVerifyEmail(user, callback) {
+  var receiver = user.email;
+  var id = user._id;
+  var token = user.token;
+  var emailText = "http://localhost:3000/accountverify/" + id + "/" + token;
+  var verifyEmailOptions = {
+    from: "studyspacehelper@gmail.com",
+    to: receiver, 
+    subject: "Account verification",
+    text: emailText,
+    html: "<a href='" + emailText + "'>" + emailText + "</a>"
+  };
+  mailTransporter.sendMail(verifyEmailOptions, callback);
 }
 
 /*------------------------------------------------------------------------*/

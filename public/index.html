@@ -10,8 +10,8 @@
 		<title>StudySpace - Log In</title>
 	</head>
 
-	<body>
-		<div class="container" ng-controller="LogInCtrl">
+	<body id="myBody">
+		<div id="myDiv" class="container" ng-controller="LogInCtrl">
 			<h1> Log In </h1>
 			<input class="form-control" ng-model="user.email">
 			<input class="form-control" ng-model="user.password">
@@ -19,10 +19,11 @@
 			<input class="form-control" id="target_id_input">
 			<button class="btn btn-primary" onclick="call_button_on_click()">Call</button>
 			<button class="btn btn-primary" onclick="hang_up_button_on_click()">Hang Up</button>
+			<button class="btn btn-primary" onclick="join_room1_button_on_click()">Join Room1</button>
+			<button class="btn btn-primary" onclick="join_room2_button_on_click()">Join Room2</button>						
+			<button class="btn btn-primary" onclick="leave_room_button_on_click()">Leave Room</button>
+
 		</div>
-
-		<audio autoplay></audio> 
-
 
 		<!-- Angular scripts -->
 		<script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.6.1/angular.min.js"></script>
