@@ -1,22 +1,29 @@
+<!--
+   _____     ______     __   __     __  __
+  /\  __-.  /\  __ \   /\ "-.\ \   /\ \/ /
+  \ \ \/\ \ \ \  __ \  \ \ \-.  \  \ \  _"-.
+   \ \____-  \ \_\ \_\  \ \_\\"\_\  \ \_\ \_\
+    \/____/   \/_/\/_/   \/_/ \/_/   \/_/\/_/
+
+-->
+
 <!DOCTYPE html>
-<html ng-app="signupApp">
+<html>
   <head>
-    <!-- Latest compiled and minified CSS -->
+    <!-- Bootstrap -->
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
-    <title>StudySpace - Sign Up</title>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>
+
+    <!-- For mobile scaling -->
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <!-- Login/Signup Page Stylesheet -->
+    <link rel="stylesheet" type="text/css" href="login.css">
+
+    <!-- Title -->
+    <title>Study Space - Sign Up</title>
   </head>
 
-  <div class="container" ng-controller="SignUpController">
-    <h1> Sign Up </h1>
-    <input class="form-control" ng-model="signupEmail">
-    <input class="form-control" ng-model="signupPassword">
-    <button class="btn btn-primary" ng-click="signUp(signupEmail, signupPassword)">Sign Up</button>
-
-    <p>{{successMessage}}</p>
-  </div>
-
-  <!-- Angular scripts -->
-  <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.6.1/angular.min.js"></script>
-  <script src="controllers/sign_up_controller.js"></script>
+  <body>
   </body>
 </html>

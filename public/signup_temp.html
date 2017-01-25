@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html ng-app="signupApp">
+  <head>
+    <!-- Latest compiled and minified CSS -->
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
+    <title>StudySpace - Sign Up</title>
+  </head>
+
+  <body>
+
+    <div class="container" ng-controller="SignUpController">
+      <h1>Sign Up</h1>
+      <input class="form-control" ng-model="signupEmail">
+      <input class="form-control" ng-model="signupPassword">
+      <button class="btn btn-primary" ng-click="signUp(signupEmail, signupPassword)">Sign Up</button>
+
+      <p>{{successMessage}}</p>
+    </div>
+
+    <div class="container" ng-controller="TestController">
+      <h1>{{dank}}</h1>
+    </div>
+    
+  </body>
+
+  <!-- Angular scripts -->
+  <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.6.1/angular.min.js"></script>
+  <script src="controllers/sign_up_controller.js"></script>
+  </body>
+</html>
