@@ -8,7 +8,7 @@ var config = {
 };
 firebase.initializeApp(config);
 var databaseRef = firebase.database().ref(); //root
-var chatDatabase = databaseRef.child("ChatDatabase");
+var chatDatabase = databaseRef.child("ChatDatabase").child("rooms");
 var roomID = "roomID";
 var firstLoad = true;
 
@@ -37,23 +37,26 @@ myApp.controller("ChatController", ["$scope", "$http",
 
       //Firebase chat db listener
       chatDatabase.child(roomID).on("value", function(snapshot) {
-        var snapshotValueObject = (snapshot.val());
-        var chatMessageList = Object.values(snapshotValueObject);
-        console.log(chatMessageList);
-        updateChatView(chatMessageList);
+        var snapshotValueObject = snapshot.val();
+        if (snapshotValueObject) {
+          var chatMessageList = Object.values(snapshotValueObject);
+          console.log(chatMessageList);
+          updateChatView(chatMessageList);
+        }
       });
 
       function updateChatView(chatMessageList) {
         console.log("updated chat view");
         $scope.chatMessageList = chatMessageList;
         safeApply();
+        setTimeout(scrollDown, 1);
       }
 
-      var safeApply = function(func) {
+      function safeApply(func) {
         var phase = $scope.$root.$$phase;
         if (phase != "$apply" && phase != "$digest") {
           if (func && (typeof(func) == "function")) {
-            func();
+            $scope.$apply(func);
           }
           $scope.$apply();
         }
@@ -61,6 +64,13 @@ myApp.controller("ChatController", ["$scope", "$http",
           console.log("Already applying");
         }
       }
+
+      function scrollDown() {
+        console.log("scrolling");
+        var div = document.getElementById("chatMessageDiv");
+        div.scrollTop = div.scrollHeight - div.clientHeight;
+      }
+
 
     }]);
 
