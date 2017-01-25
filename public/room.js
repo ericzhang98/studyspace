@@ -4,14 +4,16 @@ var currRoomID = null;
 /**************************************************/
 
 /***** Audio conferencing variables ***************/
-var peer = new Peer(me.user_id, {key: 'tirppc8o5c9xusor'});
+//var peer = new Peer(me.user_id, {key: 'tirppc8o5c9xusor'});
+var peer = new Peer(me.user_id, {host: "localhost", port: "9000", path: '/peerjs'});
+
 var myCalls = [];
 var myRemoteStreams = {}; // Dictionary from call.id to audio track
 var myStream = null;
 navigator.getUserMedia = navigator.getUserMedia || navigator.webkitGetUserMedia || navigator.mozGetUserMedia;
 /**************************************************/
 
-/***** onClicks for testing ***********************/
+/***** onClicks for testing ***********************/	
 function call_button_on_click() {
 	startCall(document.getElementById("target_id_input").value);
 }
@@ -20,11 +22,12 @@ function hang_up_button_on_click() {
 	leaveCalls();
 }
 
-function join_room2_button_on_click() {
-	joinRoom("ucsd_cse_110_1");
-}
 function join_room1_button_on_click() {
-	joinRoom("ucsd_cse_110_2");
+	joinRoom("ucsd_cse_110_1_r0");
+}
+
+function join_room2_button_on_click() {
+	joinRoom("ucsd_cse_105_1_r0");
 }
 
 function leave_room_button_on_click() {
@@ -142,7 +145,7 @@ function answerCallHelper(call) {
 		
 		addRemoteStream(remoteStream, call.id);
 	});
-	
+
 	// used for onClose
 	var call_id = call.id;
 
