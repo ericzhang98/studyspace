@@ -11,7 +11,6 @@ var app = express();
 // - mongojs is a module that has some useful functions
 var mongojs = require('mongojs');
 var db = mongojs('users', ['users']); // we want the 'users' database
-
 // - body-parser is middle-ware that parses http objects
 // or something to that effect (don't worry about it)
 var bodyParser = require('body-parser');
@@ -22,6 +21,9 @@ var LOG = "server: "
 app.use(express.static(__dirname + "/public"));
 app.use(bodyParser.json());
 
+// forces the name property to be unique in user_classes collection
+db.user_classes.createIndex({name: 1}, {unique:true});
+
 // returns all users, not useful atm
 /*app.get('/users', function(req, res) {
   console.log(LOG + "get users");
@@ -30,6 +32,30 @@ app.use(bodyParser.json());
     res.json(docs);
   })
 });*/
+
+app.post('/user_classes', function(req, res) {
+	
+	db.user_classes.insert(req.body, function(err, docs){
+		db.user_classes.ensureIndex({name: req.body}, {unique:true});
+		res.json(docs);
+	});	
+});
+
+app.delete('/user_classes/:id', function(req, res){
+
+	var id = req.params.id;
+	db.user_classes.remove({_id: mongojs.ObjectId(id)}, function(err, doc){
+		res.json(doc);
+	});
+});
+
+//NOTE:Need to get userID working so it only gets the classes of this user
+app.get('/user_classes/:id', function(req, res) {
+
+	db.user_classes.find({user_id: req.params.id}, function(err, docs){
+		res.json(docs);
+	});
+});
 
 // returns user with given email / password
 app.post('/users', function(req, res) {
