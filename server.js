@@ -4,7 +4,6 @@
 
 /* SETUP ---------------------------------------------------------------*/
 
-"use strict";
 // - Express is a Node framework that makes everything easier
 // - require returns a 'module', which is essentially an object
 // packed with functions
@@ -56,6 +55,12 @@ var rooms_dict = {};
   })
 });*/
 
+app.get('/add_room/:class_id/:room_name/:host_id/:is_lecture', function(req, res) {
+	var room_id = addRoom(req.params.class_id, req.params.room_name, 
+		req.params.host_id, req.params.is_lecture);
+	res.send({room_id: room_id});
+})
+
 // - adds user_id to room with id room_id
 // - returns list of user_id's in that room
 app.get('/join_room/:room_id/:user_id', function(req, res) {
@@ -64,6 +69,12 @@ app.get('/join_room/:room_id/:user_id', function(req, res) {
 	var user_id = req.params.user_id;
 	console.log("Adding user " + user_id + " to room " + room_id);
 
+	if (!(room_id in rooms_dict)) {
+		console.log("room no longer exists");
+		res.send({id: null});
+		return;
+	}
+
 	// add the userID to the room if it doesn't already contain it
 	if (rooms_dict[room_id].users.indexOf(user_id) == -1) {
 		(rooms_dict[room_id].users).push(user_id);
@@ -71,8 +82,8 @@ app.get('/join_room/:room_id/:user_id', function(req, res) {
 
 	logRooms();
 
-	// send back the list of userID's in the room
-	res.send({other_user_ids: rooms_dict[room_id].users});
+	// send back the room
+	res.send(rooms_dict[room_id]);
 })
 
 // - removes user_id from room with id room_id
@@ -81,6 +92,12 @@ app.get('/leave_room/:room_id/:user_id', function(req, res) {
 	var room_id = req.params.room_id;
 	var user_id = req.params.user_id;
 	console.log("Removing user " + user_id + " from room " + room_id);
+
+	if (!(room_id in rooms_dict)) {
+		console.log("room no longer exists");
+		res.send({});
+		return;
+	}
 
 	// remove the userID from the room if it does already contain it
 	var index = rooms_dict[room_id].users.indexOf(user_id);
@@ -97,7 +114,7 @@ app.get('/leave_room/:room_id/:user_id', function(req, res) {
 
 	// without this res.send, server.js will not allow leave_room to be spammed
 	// so leaving rooms constantly will not work
-	res.send({success: true});
+	res.send({});
 })
 
 // - returns user with given email / password
@@ -201,15 +218,16 @@ function Class(class_id, class_name, class_room_ids) {
 	this.room_ids = class_room_ids; // list of room ids for this class
 }
 
-function Room(room_id, room_name, room_host_id, room_users, class_id) {
+function Room(room_id, room_name, room_host_id, room_users, class_id, is_lecture) {
 	this.id = room_id;
 	this.name = room_name;
 	this.host_id = room_host_id;
 	this.users = room_users;
-	this.class_id = class_id
+	this.class_id = class_id;
+	this.is_lecture = is_lecture;
 }
 
-function addRoom(class_id, room_name, room_host_id) {
+function addRoom(class_id, room_name, room_host_id, is_lecture) {
 
 	// generate the room_id
 	var room_id = class_id + "_r" + classes_dict[class_id].room_ids.length; // rmain, r1, r2, etc
@@ -220,9 +238,11 @@ function addRoom(class_id, room_name, room_host_id) {
 	classes_dict[class_id].room_ids.push(room_id);
 
 	// create the room and add it to rooms_dict
-	rooms_dict[room_id] = new Room(room_id, room_name, room_host_id, [], class_id);
+	rooms_dict[room_id] = new Room(room_id, room_name, room_host_id, [], class_id, is_lecture);
 
 	logClassesAndRooms();
+
+	return room_id;
 }
 
 function removeRoom(room_id) {
@@ -244,7 +264,7 @@ function removeRoom(room_id) {
 function generateMainRooms() {
 	console.log("generating main rooms");
 	for (var class_id in classes_dict) {
-		addRoom(class_id, "main", MAINHOST);
+		addRoom(class_id, "main", MAINHOST, false);
 	}
 }
 
