@@ -1,5 +1,10 @@
 /* home.css */
 
+body {
+  font-family: 'Raleway', sans-serif;
+  letter-spacing: 0.05em;
+}
+
 main {
   margin-top: 6rem;
 }
@@ -7,7 +12,7 @@ main {
 #navbar-site {
   background-color: #aaaaaa;
   font-size: 2rem;
-  font-weight: 500;
+  font-weight: 700;
   height: 6rem;
   border: none;
 }
@@ -71,7 +76,7 @@ main {
 }
 
 #splash .title {
-  font-weight: 900;
+  font-weight: 700;
   font-size: 5rem;
 }
 
@@ -90,7 +95,7 @@ main {
   border-radius: 0;
   padding: 0.5em 1em;
   font-size: 2.5rem;
-  font-weight: 500;
+  font-weight: 700;
 }
 
 #btn-signup:visited {
