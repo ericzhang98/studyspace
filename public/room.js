@@ -1,17 +1,20 @@
 /***** General variables **************************/
-var me = {user_id: "id2"}
+var me = {user_id: "id3", block_list: ["block1"]};
 var currRoomID = null;
+var isLecturer = false;
 /**************************************************/
 
 /***** Audio conferencing variables ***************/
-var peer = new Peer(me.user_id, {key: 'tirppc8o5c9xusor'});
+//var peer = new Peer(me.user_id, {key: 'tirppc8o5c9xusor'});
+var peer = new Peer(me.user_id, {host: "localhost", port: "9000", path: '/peerjs'});
+
 var myCalls = [];
 var myRemoteStreams = {}; // Dictionary from call.id to audio track
 var myStream = null;
 navigator.getUserMedia = navigator.getUserMedia || navigator.webkitGetUserMedia || navigator.mozGetUserMedia;
 /**************************************************/
 
-/***** onClicks for testing ***********************/
+/***** onClicks for testing ***********************/	
 function call_button_on_click() {
 	startCall(document.getElementById("target_id_input").value);
 }
@@ -20,11 +23,20 @@ function hang_up_button_on_click() {
 	leaveCalls();
 }
 
-function join_room2_button_on_click() {
-	joinRoom("ucsd_cse_110_1");
+function create_room_button_on_click() {
+	addRoom("ucsd_cse_110_1", "Gary Appreciation Room", true);
 }
+
 function join_room1_button_on_click() {
-	joinRoom("ucsd_cse_110_2");
+	joinRoom("ucsd_cse_110_1_r0");
+}
+
+function join_room2_button_on_click() {
+	joinRoom("ucsd_cse_105_1_r0");
+}
+
+function join_room3_button_on_click() {
+	joinRoom("ucsd_cse_110_1_r1");
 }
 
 function leave_room_button_on_click() {
@@ -49,12 +61,21 @@ peer.on('open', function(id) {
 
 // Respond to call
 peer.on('call', function(call) {
-	answerCall(call);
+
+	// If the user isn't blocked, answer the call
+	if (me.block_list.indexOf(call.peer) == -1) {
+		answerCall(call);
+	}
 });
 
 // - ensures myStream is set, delegates to startCallHelper()
 function startCall(other_user_id) {
 	console.log("calling " + other_user_id);
+
+	// do not send out calls to users that we've blocked
+	if (me.block_list.indexOf(other_user_id) != -1) {
+		return;
+	}
 
 	// myStream already set
 	if (myStream != null) {
@@ -79,7 +100,7 @@ function startCallHelper(other_user_id) {
 
 	var call = peer.call(other_user_id, myStream);
 
-	console.log("start call with id: " + call.id)
+	console.log("sent call to user with id: " + call.peer)
 
 	// reference to the call so we can close it
 	myCalls.push(call);
@@ -93,14 +114,20 @@ function startCallHelper(other_user_id) {
 
 	});
 
+	// used for onClose
+	var call_id = call.id;
+
 	call.on('close', function() {
 		console.log("call closed");
+
+		// when a call closes, remove the corresponding stream
+		removeRemoteStream(call_id);
 	});
 }
 
 // - ensures myStream is set, delegates to answerCallHelper()
 function answerCall(call) {
-	console.log("received call with id " + call.id)
+	console.log("received call from user with id: " + call.peer)
 
 	// myStream already set
 	if (myStream != null) {
@@ -137,10 +164,37 @@ function answerCallHelper(call) {
 		addRemoteStream(remoteStream, call.id);
 	});
 
+	// used for onClose
+	var call_id = call.id;
+
 	call.on('close', function() {
 		console.log("call closed");
+
+		// when a call closes, remove the corresponding stream
+		removeRemoteStream(call_id);
 	});
 }
+/*********************************************************************/
+
+/*************************** CREATING ROOMS **************************/
+
+function addRoom(class_id, room_name, is_lecture) {
+	console.log("adding room with class_id: " + class_id + ", room_name: " + room_name);
+	var xhr = new XMLHttpRequest();
+	xhr.open('GET', "/add_room/" + class_id + "/" + room_name + "/" + me.user_id + "/" + is_lecture, true);
+	xhr.send();
+
+	xhr.onreadystatechange = function(e) {
+		// room has been created
+		if (xhr.readyState == 4 && xhr.status == 200) {
+			var response = JSON.parse(xhr.responseText);
+
+			// join the room
+			joinRoom(response.room_id);
+		}
+	}
+}
+
 /*********************************************************************/
 
 /********************* LEAVING AND JOINING ROOMS *********************/
@@ -175,15 +229,32 @@ function joinRoom(room_id) {
 
 	        var response = JSON.parse(xhr.responseText);
 
-	        // call all those users
-	        for (i = 0; i < response.other_user_ids.length; i++) {
-	        	var other_user_id = response.other_user_ids[i];
-	        	console.log(other_user_id);
-	        	console.log(me.user_id);
-	        	if (other_user_id != me.user_id) {
-	        		startCall(other_user_id);
-	    		}
+	        // room no longer exists
+	        if (response.id == null) {
+	        	console.log("room does not exist");
+	        	return;
 	        }
+
+	        // if this is a lecture and I am the host, I am the lecturer
+	        isLecturer = (response.is_lecture && response.host_id == me.user_id);
+	        
+	        // if this is a lecture-style room and I am not the lecturer,
+	        // then call only the lecturer
+	        if (response.is_lecture && !isLecturer) {
+	        	startCall(response.host_id);
+	        }
+
+	      	// otherwise, call everyone in the room who isn't me
+	        else {
+		        for (i = 0; i < response.users.length; i++) {
+		        	var other_user_id = response.users[i];
+		        	console.log(other_user_id);
+		        	console.log(me.user_id);
+		        	if (other_user_id != me.user_id) {
+		        		startCall(other_user_id);
+		    		}
+		        }
+	    	}
     	}
 	}
 }
@@ -218,11 +289,16 @@ function addRemoteStream(remoteStream, call_id) {
     // set the source for our new element   
     audio.src = window.URL.createObjectURL(remoteStream); 
 
-    // add it to the page
-    document.getElementById("myBody").insertBefore(audio, document.getElementById("myDiv"));
-
     // store the element in myRemoteStreams
     myRemoteStreams[call_id] = audio;
+
+    // if I am the lecturer, I want everyone else muted by default
+	if (isLecturer) {
+		toggleRemoteStreamAudioEnabled(call_id);
+	}
+
+    // add audio stream to the page
+    document.getElementById("myBody").insertBefore(audio, document.getElementById("myDiv"));
 }
 
 // - removes the audio track that streaming the remoteStream from call_id
@@ -239,30 +315,34 @@ function removeRemoteStream(call_id) {
 // - removes all {call.id: audio} pairs myRemoteStreams and removes audio tracks
 function leaveCalls() {
 	for (var i = 0; i < myCalls.length; i++) {
-		removeRemoteStream(myCalls[i].id);
 		myCalls[i].close();
 	}
 	myCalls = [];
 }
-
 /*********************************************************************/
 
 /********************** MUTING / UNMUTING AUDIO **********************/
-// - toggle my own microphone
+// - toggle my own audio
 function toggleMyStreamAudioEnabled() {
 	myStream.getAudioTracks()[0].enabled = !(myStream.getAudioTracks()[0].enabled);
-};
+}
 
-// - toggle whether I receive audio from another person
+// - toggle audio from another person
 function toggleRemoteStreamAudioEnabled(call_id) {
 	console.log(myRemoteStreams);
 	myRemoteStreams[call_id].muted = !(myRemoteStreams[call_id].muted);
 }
 /*********************************************************************/
 
-/*window.addEventListener('beforeunload', function(event) {
-  //do something here
-  leaveRoom();
-}, false);*/
-
-
+/******************************* MISC ********************************/
+// when the window is about to close
+window.onbeforeunload = function(event) {
+	// send request to server to tell them we left
+	// we don't use leaveRoom because request needs to be async
+	if (currRoomID != null) {
+		var xhr = new XMLHttpRequest();
+		xhr.open('GET', "/leave_room/" + currRoomID + "/" + me.user_id, false);
+		xhr.send();
+	}
+};
+/*********************************************************************/
