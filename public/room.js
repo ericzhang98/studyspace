@@ -1,5 +1,5 @@
 /***** General variables **************************/
-var me = {user_id: "id2", block_list: ["block1"]};
+var me = {user_id: "id3", block_list: ["block1"]};
 var currRoomID = null;
 var isLecturer = false;
 /**************************************************/
@@ -24,7 +24,7 @@ function hang_up_button_on_click() {
 }
 
 function create_room_button_on_click() {
-	addRoom("ucsd_cse_110_1", "Gary Appreciation Room", false)
+	addRoom("ucsd_cse_110_1", "Gary Appreciation Room", true);
 }
 
 function join_room1_button_on_click() {

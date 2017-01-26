@@ -46,7 +46,7 @@ var rooms_dict = {};
 /* HTTP requests ---------------------------------------------------------*/
 
 // forces the name property to be unique in user_classes collection
-db.user_classes.createIndex({name: 1}, {unique:true});
+//db.user_classes.createIndex({name: 1}, {unique:true});
 
 // returns all users, not useful atm
 /*app.get('/users', function(req, res) {
