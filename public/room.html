@@ -16,9 +16,11 @@
 
       <br>
 
-      <ul style="list-style-type:none" ng-repeat="chatMessage in chatMessageList">
-        <li>{{chatMessage.userID}}: {{chatMessage.text}}</li>
-      </ul>
+      <div id="chatMessageDiv" class="container" style="height:200px; overflow-x:hidden">
+        <ul style="list-style-type:none" ng-repeat="chatMessage in chatMessageList">
+          <li>{{chatMessage.userID}}: {{chatMessage.text}}</li>
+        </ul>
+      </div>
 
     </div>
 
