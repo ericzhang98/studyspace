@@ -206,10 +206,10 @@ app.get("/accountverify/:id/:token", function(req, res) {
 /* Model -----------------------------------------------------------------*/
 
 function User(email, password) {
+//this._id = whatever mongo gives us
   this.email = email;
   this.password = password;
-  this.token = "dank";
-  //this.token = generateToken();
+  this.token = "dank"; //generateToken();
   this.active = true; //has verified email
 }
 
