@@ -14,6 +14,8 @@ var app = express();
 // - mongojs is a module that has some useful functions
 var mongojs = require('mongojs');
 var db = mongojs('users', ['users']); // we want the 'users' database
+var db_classes = mongojs("classes", ["classes"]); 
+var db_rooms = mongojs("rooms", ["rooms"]); //yung flat data
 
 // - body-parser is middle-ware that parses http objects,
 // or something to that effect (don't worry about it)
@@ -93,8 +95,8 @@ app.get('/add_tutor/:class_id/:tutor_id/:admin_key', function (req, res) {
 
 app.get('/add_room/:class_id/:room_name/:host_id/:is_lecture', function(req, res) {
 	var room_id = addRoom(req.params.class_id, req.params.room_name, 
-		req.params.host_id, req.params.is_lecture);
-	res.send({room_id: room_id});
+		req.params.host_id, req.params.is_lecture, function(json){res.send(json);});
+	//res.send({room_id: room_id});
 })
 
 // - adds user_id to room with id room_id
@@ -105,6 +107,7 @@ app.get('/join_room/:room_id/:user_id', function(req, res) {
 	var user_id = req.params.user_id;
 	console.log("Adding user " + user_id + " to room " + room_id);
 
+  /*
 	if (!(room_id in rooms_dict)) {
 		console.log("room no longer exists");
 		res.send({id: null});
@@ -120,11 +123,25 @@ app.get('/join_room/:room_id/:user_id', function(req, res) {
 			rooms_dict[room_id].has_tutor = tutorInRoom(rooms_dict[room_id]);
 		}
 	}
+  */
+
+  db_rooms.rooms.findAndModify({query: {room_id: room_id},
+      update: {$addToSet: {users: user_id}}, upsert: true, new: true}, function(err, doc) {
+        if (doc) {
+          console.log("DATABASE: Successfully added user " + user_id + " to room" + room_id);
+        }
+        else {
+          console.log("DATABASE: Failed - Didn't add user");
+          console.log("Error message if it helps: " + err);
+        }
+        //console.log(doc);
+        res.send(doc);
+  });
 
 	logRooms();
 
 	// send back the room
-	res.send(rooms_dict[room_id]);
+	//res.send(rooms_dict[room_id]);
 })
 
 // - removes user_id from room with id room_id
@@ -134,6 +151,7 @@ app.get('/leave_room/:room_id/:user_id', function(req, res) {
 	var user_id = req.params.user_id;
 	console.log("Removing user " + user_id + " from room " + room_id);
 
+  /*
 	if (!(room_id in rooms_dict)) {
 		console.log("room no longer exists");
 		res.send({});
@@ -150,18 +168,45 @@ app.get('/leave_room/:room_id/:user_id', function(req, res) {
 			rooms_dict[room_id].has_tutor = tutorInRoom(rooms_dict[room_id]);
 		}
 	}
+  */
+
+  db_rooms.rooms.findAndModify({query: {room_id: room_id},
+      update: {$pull: {users: user_id}}, new: true}, function(err, doc) {
+        if (doc) {
+          console.log("DATABASE: Successfully removed user " + user_id + " from room" + room_id);
+          if (doc.users.length == 0 && doc.host_id != MAIN_HOST) {
+            removeRoom(room_id);
+          }
+        }
+        else {
+          console.log("DATABASE: Failed - Didn't remove user");
+          console.log("Error message if it helps: " + err);
+        }
+        //console.log(doc);
+        res.send({});
+  });
 
 	logRooms();
 
+  /*
 	// if the room is empty and is not a main room, remove the room
 	if (rooms_dict[room_id].users.length == 0 && rooms_dict[room_id].host_id != MAIN_HOST) {
 		removeRoom(room_id);
 	}
+  */
 
 	// without this res.send, server.js will not allow leave_room to be spammed
 	// so leaving rooms constantly will not work
-	res.send({});
+	//res.send({});
 })
+
+
+
+
+
+
+
+/* Account system (login, signup, verification) -----*/
 
 // - returns user with given email / password
 app.post('/accountlogin', function(req, res) {
@@ -259,15 +304,17 @@ function User(email, password) {
   this.active = true; //has verified email
 }
 
+//TODO ISAAC: change id to class_id
 function Class(class_id, class_name, class_room_ids) {
-	this.id = class_id;	// "ucsd_cse_110_1"
+	this.class_id = class_id;	// "ucsd_cse_110_1"
 	this.name = class_name; // "CSE 110 Gillespie"
 	this.room_ids = class_room_ids; // list of room ids for this class
 	this.tutor_ids = {};
 }
 
+//TODO ISAAC: change id to room_id 
 function Room(room_id, room_name, room_host_id, room_users, class_id, is_lecture) {
-	this.id = room_id;
+	this.room_id = room_id;
 	this.name = room_name;
 	this.host_id = room_host_id;
 	this.users = room_users;
@@ -276,27 +323,74 @@ function Room(room_id, room_name, room_host_id, room_users, class_id, is_lecture
 	this.has_tutor = false;
 }
 
-function addRoom(class_id, room_name, room_host_id, is_lecture) {
+function addRoom(class_id, room_name, room_host_id, is_lecture, callback) {
 
-	// generate the room_id
-	var room_id = class_id + "_r" + classes_dict[class_id].room_ids.length; // rmain, r1, r2, etc
+  //var room_id = class_id + "_r" + classes_dict[class_id].room_ids.length; // rmain, r1, r2, etc
+  db_classes.classes.findOne({class_id: class_id}, function(err, doc) {
+    // generate the room_id
+    if (doc) {
+      var room_id = class_id + "_r" + doc.room_ids.length; // rmain, r1, r2, etc
+    }
+    else {
+      var room_id = class_id + "_r" + "0";
+    }
+    var newRoom = new Room(room_id, room_name, room_host_id, [], class_id, is_lecture);
 
-	console.log("adding room with id " + room_id);
+    /*
+    console.log("adding room with id " + room_id);
 
-	// add the room_id to the corresponding class in classes_dict
-	classes_dict[class_id].room_ids.push(room_id);
+    // add the room_id to the corresponding class in classes_dict
+    classes_dict[class_id].room_ids.push(room_id);
 
-	// create the room and add it to rooms_dict
-	rooms_dict[room_id] = new Room(room_id, room_name, room_host_id, [], class_id, is_lecture);
+    // create the room and add it to rooms_dict
+    rooms_dict[room_id] = newRoom;
+    */
+
+    //Push updates to db
+    //Class database --> find the class object with {class_id} --> modify the object's
+    //{room_ids} property (an array of room ids) to contain the newly created room's id
+    db_classes.classes.findAndModify({query: {class_id: class_id},
+        update: {$addToSet: {room_ids: room_id}}, upsert: true, new: true}, function(err, doc) {
+          if (doc) {
+            console.log("DATABASE: Successfully added roomid " + room_id + " to class " + class_id);
+          }
+          else {
+            console.log("DATABASE: Failed - Didn't add roomid");
+            console.log("Error message if it helps: " + err);
+          }
+          //console.log(doc);
+    });
+
+    //Rooms database --> insert the newly created room into database
+    //To access it, query for the room with {room_id}
+    db_rooms.rooms.createIndex({room_id: 1}, {unique: true}); //specify room_id as unique
+    db_rooms.rooms.insert(newRoom, function(err, doc) {
+      if (doc) {
+        console.log("DATABASE: Room " + room_id  + " successfully inserted into rooms database");
+      }
+      else {
+        console.log("DATABASE: Failed - Didn't insert room into rooms database");
+        console.log("Error message if it helps: " + err); //should fail if room already exists
+      }
+      //console.log(doc);
+    });
+
+    if (callback) {
+      callback({room_id: room_id});
+    }
+  });
+  
+
+  //return room_id;
 
 	logClassesAndRooms();
 
-	return room_id;
 }
 
 function removeRoom(room_id) {
 	console.log("removing room with id " + room_id);
 
+  /*
 	// id of the class this room belongs to
 	var class_id = rooms_dict[room_id].class_id;
 
@@ -306,6 +400,45 @@ function removeRoom(room_id) {
 
 	// remove the room from rooms_dict
 	delete rooms_dict[room_id];
+  */
+
+  db_rooms.rooms.findOne({room_id:room_id}, function(err, doc) {
+    if (doc) {
+      //Class database --> find the class object with {class_id} --> modify the object's
+      //{room_ids} property (an array of room ids) to remove the room's id
+      db_classes.classes.findAndModify({query: {class_id: doc.class_id},
+          update: {$pull: {room_ids: room_id}}, new: true}, function(err, doc) {
+            if (doc) {
+              console.log("DATABASE: Successfully removed roomid " + room_id + " from class " + doc.class_id);
+            }
+            else {
+              console.log("DATABASE: Failed - Didn't remove roomid");
+              console.log("Error message if it helps: " + err);
+            }
+            //console.log(doc);
+      });
+
+      //Rooms database --> delete the room from database
+      db_rooms.rooms.remove({room_id: room_id}, function(err, doc) {
+        if (doc) {
+          console.log("DATABASE: Room " + room_id  + " succesfully deleted from rooms database");
+        }
+        else {
+          console.log("DATABASE: Failed - Didn't delete room from rooms database");
+          console.log("Error message if it helps: " + err); 
+        }
+        //console.log(doc);
+      });
+
+    }
+    else {
+      console.log("Error when deleting room");
+    }
+
+  });
+
+
+
 
 	logClassesAndRooms();
 }
@@ -329,17 +462,35 @@ function generateMainRooms() {
 }
 
 function logClassesAndRooms() {
+  /*
 	console.log("******************** CLASSES ********************")
 	console.log(classes_dict);
 	console.log("*************************************************")	
 	logRooms();	
+  */
 }
 
 function logRooms() {
+  /*
 	console.log("******************** ROOMS **********************")
 	console.log(rooms_dict);
 	console.log("*************************************************")	
+  */
 }
+
+
+/* Class/room database methods--------*/
+
+function addRoomIDToClass(class_id, room_id) {
+
+}
+
+function addRoomToDatabase(room) {
+
+}
+
+
+
 
 /*------------------------------------------------------------------------*/
 
