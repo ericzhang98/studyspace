@@ -12,7 +12,11 @@
   <head>
     <!-- Bootstrap -->
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>
+
+    <!-- jQueryUI-->
+    <script src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.12.1/jquery-ui.min.js"></script>
 
     <!-- For mobile scaling -->
     <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -22,6 +26,9 @@
 
     <!-- Additional Typefaces -->
     <link href="https://fonts.googleapis.com/css?family=Raleway:300,400,700" rel="stylesheet">
+
+    <!-- javascript files -->
+    <!--<script type="text/javascript" src="toggleMenu.js"></script>-->
 
     <!-- Title -->
     <title>Study Space - Home</title>
@@ -36,28 +43,37 @@
           <a class="navbar-brand brand-logo" href="home.html">
             <!-- Brand (Logo) -->
           </a>
-          <a class="navbar-brand brand-name" href="home.html">studyspace</a>
+          <a class="navbar-brand brand-name" href="home.html">bubbly</a>
         </div>
 
         <!-- Navbar (Right) -->
         <div class="navbar-header pull-right">
           <ul class="nav">
             <li class="nav-item">
-              <a class="nav-link" href="login.html">
+              <div id="btn-login" class="nav-link">
                 <span class="glyphicon glyphicon-log-in"></span><span class="text-log-in">log in</span>
-              </a>
+              </div>
             </li>
           </ul>
         </div>
       </div>
     </nav>
 
+    <!--
+    <div id="login-screen">
+      <div class="container-fluid">
+        <h1>LOG IN</h1>
+        <!-- Log in fields -->
+      </div>
+    </div>
+    -->
+
     <!-- Main Content -->
     <main role="main">
       <!-- Application Info -->
       <div id="splash" class="jumbotron">
         <div class="container">
-          <h1 class="title">studyspace</h1>
+          <h1 class="title">bubbly</h1>
           <p class="subtitle">Some description of the app that will knock their socks off.</p>
           <div class="btn-container text-center">
             <a id="btn-signup" class="btn btn-primary btn-lg" href="signup.html">Sign Up</a>
