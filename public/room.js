@@ -1,5 +1,5 @@
 /***** General variables **************************/
-var me = {user_id: "id10", block_list: ["block1"]};
+var me = {user_id: "id1", block_list: ["block1"]};
 var currRoomID = null;
 var isLecturer = false;
 /**************************************************/
@@ -229,7 +229,8 @@ function joinRoom(room_id) {
 	        var response = JSON.parse(xhr.responseText);
 
 	        // room no longer exists
-	        if (response.id == null) {
+            console.log(response);
+	        if (response.room_id == null) {
 	        	console.log("room does not exist");
 	        	return;
 	        }
