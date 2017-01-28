@@ -1,13 +1,18 @@
 /* home.css */
 
+body {
+  font-family: 'Raleway', sans-serif;
+  letter-spacing: 0.05em;
+}
+
 main {
   margin-top: 6rem;
 }
 
+/* Navigation Bar */
 #navbar-site {
-  background-color: #aaaaaa;
   font-size: 2rem;
-  font-weight: 500;
+  font-weight: 700;
   height: 6rem;
   border: none;
 }
@@ -17,11 +22,12 @@ main {
 }
 
 #navbar-site .container-fluid {
+  background-color: #aaaaaa;
   padding-left: 2.5rem;
   padding-right: 2.5rem;
 }
 
-#navbar-site .navbar-brand,
+#navbar-site .navbar-header,
 #navbar-site .nav-link {
   display: -webkit-box;
   display: -ms-flexbox;
@@ -59,6 +65,35 @@ main {
   display: none;
 }
 
+#btn-login {
+  color: white;
+  cursor: pointer;
+}
+
+/* Login Menu */
+#login-screen {
+  display: none;
+  position: fixed;
+  background: #aaaaaa;
+  width: 100%;
+  height: 100%;
+  color: white;
+}
+
+#login-screen .container-fluid {
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-align: center;
+  -ms-flex-align: center;
+  align-items: center;
+  -webkit-justify-content: center;
+  -ms-flex-pack: center;
+  justify-content: center;
+  height: 100%;
+}
+
+/* Splash Art */
 #splash {
   padding-top: 5rem;
   padding-bottom: 5rem;
@@ -71,7 +106,7 @@ main {
 }
 
 #splash .title {
-  font-weight: 900;
+  font-weight: 700;
   font-size: 5rem;
 }
 
@@ -90,7 +125,7 @@ main {
   border-radius: 0;
   padding: 0.5em 1em;
   font-size: 2.5rem;
-  font-weight: 500;
+  font-weight: 700;
 }
 
 #btn-signup:visited {
