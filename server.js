@@ -14,7 +14,8 @@ var app = express();
 // - mongojs is a module that has some useful functions
 var mongojs = require('mongojs');
 var db = mongojs('users', ['users']); // we want the 'users' database
-// - body-parser is middle-ware that parses http objects
+
+// - body-parser is middle-ware that parses http objects,
 // or something to that effect (don't worry about it)
 var bodyParser = require('body-parser');
 
@@ -36,11 +37,11 @@ app.use(express.static(__dirname + "/public"));
 app.use(bodyParser.json());
 /*-----------------------------------------------------------------------*/
 
-var MAINHOST = "mainhost";
+var MAIN_HOST = "mainhost";
+var ADMIN_KEY = "ABCD"
 var classes_dict = {};
 classes_dict["ucsd_cse_110_1"] = new Class("ucsd_cse_110_1", "CSE 110 Gillespie", []);
 classes_dict["ucsd_cse_105_1"] = new Class("ucsd_cse_105_1", "CSE 105 Tiefenbruck", []);
-
 var rooms_dict = {};
 
 /* HTTP requests ---------------------------------------------------------*/
@@ -48,27 +49,13 @@ var rooms_dict = {};
 // forces the name property to be unique in user_classes collection
 //db.user_classes.createIndex({name: 1}, {unique:true});
 
-// returns all users, not useful atm
-/*app.get('/users', function(req, res) {
-  console.log(LOG + "get users");
-  db.users.find(function (err, docs) {
-    console.log(LOG + docs);
-    res.json(docs);
-  })
-});*/
-
-app.get('/add_room/:class_id/:room_name/:host_id/:is_lecture', function(req, res) {
-	var room_id = addRoom(req.params.class_id, req.params.room_name, 
-		req.params.host_id, req.params.is_lecture);
-	res.send({room_id: room_id});
-})
-
 app.post('/user_classes', function(req, res) {
-	
+
 	db.user_classes.insert(req.body, function(err, docs){
 		db.user_classes.ensureIndex({name: req.body}, {unique:true});
 		res.json(docs);
 	});	
+
 });
 
 app.delete('/user_classes/:id', function(req, res){
@@ -87,6 +74,29 @@ app.get('/user_classes/:id', function(req, res) {
 	});
 });
 
+app.get('/add_tutor/:class_id/:tutor_id/:admin_key', function (req, res) {
+	var class_id = req.params.class_id;
+	var tutor_id = req.params.tutor_id;
+	var admin_key = req.params.admin_key;
+
+	// if the admin_key is correct
+	if (admin_key == ADMIN_KEY) {
+
+		// if the tutor is not already a tutor for this class
+		if (classes_dict[class_id].tutor_ids.indexOf(tutor_id) == -1) {
+			classes_dict[class_id].tutor_ids.push(tutor_id);
+		}
+
+		// back up tutor in database
+	}
+});
+
+app.get('/add_room/:class_id/:room_name/:host_id/:is_lecture', function(req, res) {
+	var room_id = addRoom(req.params.class_id, req.params.room_name, 
+		req.params.host_id, req.params.is_lecture);
+	res.send({room_id: room_id});
+})
+
 // - adds user_id to room with id room_id
 // - returns list of user_id's in that room
 app.get('/join_room/:room_id/:user_id', function(req, res) {
@@ -104,6 +114,11 @@ app.get('/join_room/:room_id/:user_id', function(req, res) {
 	// add the userID to the room if it doesn't already contain it
 	if (rooms_dict[room_id].users.indexOf(user_id) == -1) {
 		(rooms_dict[room_id].users).push(user_id);
+
+		// if the room didn't have a tutor before, check if it has one now
+		if (!rooms_dict[room_id].has_tutor) {			
+			rooms_dict[room_id].has_tutor = tutorInRoom(rooms_dict[room_id]);
+		}
 	}
 
 	logRooms();
@@ -129,12 +144,17 @@ app.get('/leave_room/:room_id/:user_id', function(req, res) {
 	var index = rooms_dict[room_id].users.indexOf(user_id);
 	if (index > -1) {
     	rooms_dict[room_id].users.splice(index, 1);
+
+    	// if the room had a tutor before, check if it has one now
+    	if (rooms_dict[room_id].has_tutor) {
+			rooms_dict[room_id].has_tutor = tutorInRoom(rooms_dict[room_id]);
+		}
 	}
 
 	logRooms();
 
 	// if the room is empty and is not a main room, remove the room
-	if (rooms_dict[room_id].users.length == 0 && rooms_dict[room_id].host_id != MAINHOST) {
+	if (rooms_dict[room_id].users.length == 0 && rooms_dict[room_id].host_id != MAIN_HOST) {
 		removeRoom(room_id);
 	}
 
@@ -243,6 +263,7 @@ function Class(class_id, class_name, class_room_ids) {
 	this.id = class_id;	// "ucsd_cse_110_1"
 	this.name = class_name; // "CSE 110 Gillespie"
 	this.room_ids = class_room_ids; // list of room ids for this class
+	this.tutor_ids = {};
 }
 
 function Room(room_id, room_name, room_host_id, room_users, class_id, is_lecture) {
@@ -252,6 +273,7 @@ function Room(room_id, room_name, room_host_id, room_users, class_id, is_lecture
 	this.users = room_users;
 	this.class_id = class_id;
 	this.is_lecture = is_lecture;
+	this.has_tutor = false;
 }
 
 function addRoom(class_id, room_name, room_host_id, is_lecture) {
@@ -288,10 +310,21 @@ function removeRoom(room_id) {
 	logClassesAndRooms();
 }
 
+function tutorInRoom(room) {
+	for (user_id in room.users) {
+		for (tutor_id in classes_dict[room.class_id].tutor_ids) {
+			if (user_id = tutor_id) {
+				return true;
+			}
+		}
+	}
+	return false;
+}
+
 function generateMainRooms() {
 	console.log("generating main rooms");
 	for (var class_id in classes_dict) {
-		addRoom(class_id, "main", MAINHOST, false);
+		addRoom(class_id, "main", MAIN_HOST, false);
 	}
 }
 
