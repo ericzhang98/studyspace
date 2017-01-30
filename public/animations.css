@@ -1,0 +1,34 @@
+/* CSS Animations */
+
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    -webkit-transform: translateY(50%);
+    transform: translateY(50%);
+  }
+
+  to {
+    opacity: 1;
+    -webkit-transform: translateY(50%);
+    transform: translateY(0);
+  }
+}
+
+@-webkit-keyframes fadeInUp {
+  from {
+    opacity: 0;
+    -webkit-transform: translateY(50%);
+    transform: translateY(50%);
+  }
+
+  to {
+    opacity: 1;
+    -webkit-transform: translateY(50%);
+    transform: translateY(0);
+  }
+}
+
+.fadeInUp {
+  -webkit-animation: fadeInUp 1s;
+  animation: fadeInUp 1s;
+}
