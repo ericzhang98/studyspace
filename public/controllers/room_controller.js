@@ -8,7 +8,7 @@ var config = {
 };
 firebase.initializeApp(config);
 var databaseRef = firebase.database().ref(); //root
-var chatDatabase = databaseRef.child("ChatDatabase").child("rooms");
+var chatDatabase = databaseRef.child("ChatDatabase").child("rooms_msgs");
 var roomID = "roomID";
 var firstLoad = true;
 

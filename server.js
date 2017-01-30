@@ -93,10 +93,81 @@ app.get('/add_tutor/:class_id/:tutor_id/:admin_key', function (req, res) {
 	}
 });
 
+/*************************************************************************************/
+
+/******************************** GET CLASSES & ROOMS ********************************/
+
+// return class_ids
+app.get('/get_classes/:user_id', function(req, res) {
+	var user_id = req.params.user_id;
+	db.users.findOne({user_id: user_id}, function (err, doc) {
+    	res.send({class_ids: doc.class_ids});
+  	});
+});
+
+// return name and room_ids
+app.get('/get_class/:class_id', function(req, res) {
+	var class_id = req.params.class_id;
+	var name = null;
+	var room_ids = null;
+
+	// look up name in mongoDB
+	db.classes.findOne({class_id: class_id}, function (err, doc) {
+
+		// set name
+		name = doc.name;
+
+		// if we have all our info, respond
+		if (name != null && room_ids != null) {
+			res.send({name: name, room_ids: room_ids});
+		}
+	});
+
+	// look up room in Firebase
+	classRoomsDatabase.child(class_id).once("value", function(snapshot) {
+
+        var class_rooms = snapshot.val();
+
+        if (class_rooms) {
+        	
+        	// set room_ids
+        	room_ids = Object.values(class_rooms);
+
+			// if we have all our info, respond
+			if (name != null && room_ids != null) {
+				res.send({name: name, room_ids: room_ids});
+			}
+        }
+
+    });
+});
+
+// return room info
+app.get('/get_room/:room_id', function(req, res) {
+	room_id, room_name, room_host_id, room_users, class_id, is_lecture, has_tutor
+	var room_id = req.params.room_id;
+
+	// get room info
+	roomsDatabase.child(room_id).once("value", function(snapshot) {
+		var room = snapshot.val();
+
+        if (snapshotValueObject) {
+
+        	// send the response
+        	res.send({name: room.name, host_id: room.host_id, class_id: room.class_id,
+        		is_lecture: room.is_lecture, has_tutor: room.has_tutor, users: room.users});
+
+        }
+	});
+});
+/*************************************************************************************/
+
+/*************************************** ROOMS ***************************************/
+
 app.get('/add_room/:class_id/:room_name/:host_id/:is_lecture', function(req, res) {
 	var room_id = addRoom(req.params.class_id, req.params.room_name, 
 		req.params.host_id, req.params.is_lecture, function(json){res.send(json);});
-	//res.send({room_id: room_id});
+	res.send({room_id: room_id});
 })
 
 // - adds user_id to room with id room_id
@@ -124,7 +195,7 @@ app.get('/join_room/:room_id/:user_id', function(req, res) {
 		}
 	}
   */
-
+	
   db_rooms.rooms.findAndModify({query: {room_id: room_id},
       update: {$addToSet: {users: user_id}}, upsert: true, new: true}, function(err, doc) {
         if (doc) {
@@ -136,7 +207,8 @@ app.get('/join_room/:room_id/:user_id', function(req, res) {
         }
         //console.log(doc);
         res.send(doc);
-  });
+  }); 
+	
 
 	logRooms();
 
@@ -305,19 +377,16 @@ function User(email, password) {
 }
 
 //TODO ISAAC: change id to class_id
-function Class(class_id, class_name, class_room_ids) {
+function Class(class_id, class_name) {
 	this.class_id = class_id;	// "ucsd_cse_110_1"
 	this.name = class_name; // "CSE 110 Gillespie"
-	this.room_ids = class_room_ids; // list of room ids for this class
-	this.tutor_ids = {};
 }
 
 //TODO ISAAC: change id to room_id 
-function Room(room_id, room_name, room_host_id, room_users, class_id, is_lecture) {
+function Room(room_id, room_name, room_host_id, class_id, is_lecture) {
 	this.room_id = room_id;
 	this.name = room_name;
 	this.host_id = room_host_id;
-	this.users = room_users;
 	this.class_id = class_id;
 	this.is_lecture = is_lecture;
 	this.has_tutor = false;
@@ -325,63 +394,13 @@ function Room(room_id, room_name, room_host_id, room_users, class_id, is_lecture
 
 function addRoom(class_id, room_name, room_host_id, is_lecture, callback) {
 
-  //var room_id = class_id + "_r" + classes_dict[class_id].room_ids.length; // rmain, r1, r2, etc
-  db_classes.classes.findOne({class_id: class_id}, function(err, doc) {
-    // generate the room_id
-    if (doc) {
-      var room_id = class_id + "_r" + doc.room_ids.length; // rmain, r1, r2, etc
-    }
-    else {
-      var room_id = class_id + "_r" + "0";
-    }
-    var newRoom = new Room(room_id, room_name, room_host_id, [], class_id, is_lecture);
+	var room_id = class_id + "_r" + classes_dict[class_id].room_ids.length; // rmain, r1, r2, etc
 
-    /*
-    console.log("adding room with id " + room_id);
+	roomInfoDatabase.child(room_id).push().set(newRoom);
 
-    // add the room_id to the corresponding class in classes_dict
-    classes_dict[class_id].room_ids.push(room_id);
+	classRoomsDatabase.child(class_id).push().set(room_id);
 
-    // create the room and add it to rooms_dict
-    rooms_dict[room_id] = newRoom;
-    */
-
-    //Push updates to db
-    //Class database --> find the class object with {class_id} --> modify the object's
-    //{room_ids} property (an array of room ids) to contain the newly created room's id
-    db_classes.classes.findAndModify({query: {class_id: class_id},
-        update: {$addToSet: {room_ids: room_id}}, upsert: true, new: true}, function(err, doc) {
-          if (doc) {
-            console.log("DATABASE: Successfully added roomid " + room_id + " to class " + class_id);
-          }
-          else {
-            console.log("DATABASE: Failed - Didn't add roomid");
-            console.log("Error message if it helps: " + err);
-          }
-          //console.log(doc);
-    });
-
-    //Rooms database --> insert the newly created room into database
-    //To access it, query for the room with {room_id}
-    db_rooms.rooms.createIndex({room_id: 1}, {unique: true}); //specify room_id as unique
-    db_rooms.rooms.insert(newRoom, function(err, doc) {
-      if (doc) {
-        console.log("DATABASE: Room " + room_id  + " successfully inserted into rooms database");
-      }
-      else {
-        console.log("DATABASE: Failed - Didn't insert room into rooms database");
-        console.log("Error message if it helps: " + err); //should fail if room already exists
-      }
-      //console.log(doc);
-    });
-
-    if (callback) {
-      callback({room_id: room_id});
-    }
-  });
-  
-
-  //return room_id;
+	return room_id;
 
 	logClassesAndRooms();
 
@@ -389,7 +408,7 @@ function addRoom(class_id, room_name, room_host_id, is_lecture, callback) {
 
 function removeRoom(room_id) {
 	console.log("removing room with id " + room_id);
-
+	roomInfoDatabase.child(room_id).child("class_id")
   /*
 	// id of the class this room belongs to
 	var class_id = rooms_dict[room_id].class_id;
@@ -401,6 +420,7 @@ function removeRoom(room_id) {
 	// remove the room from rooms_dict
 	delete rooms_dict[room_id];
   */
+
 
   db_rooms.rooms.findOne({room_id:room_id}, function(err, doc) {
     if (doc) {
