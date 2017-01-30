@@ -3,30 +3,94 @@
 	<head>
 		<!-- Bootstrap -->
 		<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
-		<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap-theme.min.css" integrity="sha384-rHyoN1iRsVXV4nD0JutlnGaslCJuC7uwjduW9SVrLvRYooPp2bWYgmgJQIXwl/Sp" crossorigin="anonymous">
-
-		<script src="http://cdn.peerjs.com/0.3/peer.js"></script>
-		<script src="webrtc.js"></script>
 		<title>StudySpace - Log In</title>
 	</head>
 
-	<body>
-		<div class="container" ng-controller="LogInCtrl">
+	<body id="myBody">
+		<div id="myDiv" class="container" ng-controller="LogInCtrl">
 			<h1> Log In </h1>
 			<input class="form-control" ng-model="user.email">
 			<input class="form-control" ng-model="user.password">
 			<button class="btn btn-primary" ng-click="attemptLogin()">Log In</button>
 			<input class="form-control" id="target_id_input">
-			<button class="btn btn-primary" onclick="call_button_on_click()">Call</button>
-			<button class="btn btn-primary" onclick="hang_up_button_on_click()">Hang Up</button>
-		</div>
+			<!--<button class="btn btn-primary" onclick="call_button_on_click()">Call</button>
+			<button class="btn btn-primary" onclick="hang_up_button_on_click()">Hang Up</button>-->
 
-		<audio autoplay></audio> 
+			<button class="btn btn-primary" onclick="create_room_button_on_click()">Create Room</button>
+			<button class="btn btn-primary" onclick="join_room1_button_on_click()">Join Room1</button>
+			<button class="btn btn-primary" onclick="join_room2_button_on_click()">Join Room2</button>
+			<button class="btn btn-primary" onclick="join_room3_button_on_click()">Join Room3</button>
+			<button class="btn btn-primary" onclick="mute_button_on_click()">Mute/Unmute</button>
+			<button class="btn btn-primary" onclick="mute_other_button_on_click()">Mute/Unmute Other</button>
+			<button class="btn btn-primary" onclick="leave_room_button_on_click()">Leave Room</button>
+		    <!--<script>
+		      var canvas = document.getElementById('myCanvas');
+		      var context = canvas.getContext('2d');
+		      var centerX = canvas.width / 2;
+		      var centerY = canvas.height / 2;
+		      var radius = 140;
+
+		      context.beginPath();
+		      context.arc(centerX, centerY, radius, 0, 2 * Math.PI, false);
+		      /*context.fillStyle = 'green';
+		      context.fill();*/
+		      context.lineWidth = 5;
+		      context.strokeStyle = '#f4428f';
+		      context.stroke();
+		    </script>-->
+		    <link rel="stylesheet" type="text/css" href="index.css">
+		    <!--
+		    <div class="row no-gutter">
+    			<div class="col-md-2 vcenter col-xs-offset-0">
+				    <div class="round-button">
+				    	<div class="round-button-circle">
+				    		<a href="http://example.com" class="round-button">CSE 110</a>
+				    	</div>
+				    </div>
+		    	</div>
+    			<div class="col-md-2 vcenter col-xs-offset-0">
+    				<div class="round-button">
+				    	<div class="round-button-circle">
+				    		<a href="http://example.com" class="round-button">CSE 105</a>
+				    	</div>
+    				</div>
+    			</div>
+    			<div class="col-md-2 vcenter col-xs-offset-0">
+    				<div class="round-button">
+				    	<div class="round-button-circle">
+				    		<a href="http://example.com" class="round-button">MATH 109</a>
+				    	</div>
+    				</div>
+    			</div>
+
+    			<div class="col-md-2 vcenter col-xs-offset-0">
+    				<div class="round-button">
+				    	<div class="round-button-circle">
+				    		<a href="http://example.com" class="round-button">ETHN 2</a>
+				    	</div>
+    				</div>
+    			</div>
+    		</div>
+    		<div class="row">
+			</div>-->
+		    <!--<div class="round-button">
+		    	<div class="round-button-circle">
+		    		<a href="http://example.com" class="round-button">CSE 110<br/>0 Active</a>
+		    	</div>
+		    	<div class="round-button-circle">
+		    		<a href="http://example.com" class="round-button">CSE 105<br/>0 Active</a>
+		    	</div>
+		    </div>-->
+        <a href="preferences.html">Preferences</a>
+
+		</div>
 
 
 		<!-- Angular scripts -->
+		<script src="http://cdn.peerjs.com/0.3/peer.js"></script>
+		<script src="room.js"></script>
 		<script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.6.1/angular.min.js"></script>
 		<script src="controllers/log_in_controller.js"></script>
-	    <script src="controllers/sign_up_controller.js"></script>
+	  <script src="controllers/sign_up_controller.js"></script>
 	</body>
 </html>

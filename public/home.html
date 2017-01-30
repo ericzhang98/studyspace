@@ -1,9 +1,34 @@
+<!--
+   _____     ______     __   __     __  __
+  /\  __-.  /\  __ \   /\ "-.\ \   /\ \/ /
+  \ \ \/\ \ \ \  __ \  \ \ \-.  \  \ \  _"-.
+   \ \____-  \ \_\ \_\  \ \_\\"\_\  \ \_\ \_\
+    \/____/   \/_/\/_/   \/_/ \/_/   \/_/\/_/
+
+-->
+
 <!DOCTYPE html>
 <html>
   <head>
     <!-- Bootstrap -->
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>
+
+    <!-- jQueryUI-->
+    <script src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.12.1/jquery-ui.min.js"></script>
+
+    <!-- For mobile scaling -->
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <!-- Home Page Stylesheet -->
+    <link rel="stylesheet" type="text/css" href="home.css">
+
+    <!-- Additional Typefaces -->
+    <link href="https://fonts.googleapis.com/css?family=Raleway:300,400,700" rel="stylesheet">
+
+    <!-- javascript files -->
+    <!--<script type="text/javascript" src="toggleMenu.js"></script>-->
 
     <!-- Title -->
     <title>Study Space - Home</title>
@@ -11,33 +36,48 @@
 
   <body>
     <!-- Navbar -->
-    <nav class="navbar navbar-fixed-top" role="banner">
-      <div class="container">
+    <nav id="navbar-site" class="navbar navbar-fixed-top" role="banner">
+      <div class="container-fluid">
         <!-- Navbar (Brand) -->
-        <div class="navbar-header">
-          <a class="navbar-brand" href="#">
+        <div class="navbar-header pull-left">
+          <a class="navbar-brand brand-logo" href="home.html">
             <!-- Brand (Logo) -->
           </a>
-          <a class="navbar-brand" href="#">studyspace</a>
+          <a class="navbar-brand brand-name" href="home.html">bubbly</a>
         </div>
 
         <!-- Navbar (Right) -->
-        <ul class="nav navbar-nav navbar-right">
-          <li class="navbar-item">
-            <a class="navbar-link" href="#">Login</a>
-          </li>
-        </ul>
+        <div class="navbar-header pull-right">
+          <ul class="nav">
+            <li class="nav-item">
+              <div id="btn-login" class="nav-link">
+                <span class="glyphicon glyphicon-log-in"></span><span class="text-log-in">log in</span>
+              </div>
+            </li>
+          </ul>
+        </div>
       </div>
     </nav>
+
+    <!--
+    <div id="login-screen">
+      <div class="container-fluid">
+        <h1>LOG IN</h1>
+        <!-- Log in fields -->
+      </div>
+    </div>
+    -->
 
     <!-- Main Content -->
     <main role="main">
       <!-- Application Info -->
-      <div class="jumbotron">
+      <div id="splash" class="jumbotron">
         <div class="container">
-          <h1>studyspace</h1>
-          <p>Some description of the app that will knock their socks off.</p>
-          <p><a class="btn btn-primary btn-lg" href="#">Sign Up</a></p>
+          <h1 class="title">bubbly</h1>
+          <p class="subtitle">Some description of the app that will knock their socks off.</p>
+          <div class="btn-container text-center">
+            <a id="btn-signup" class="btn btn-primary btn-lg" href="signup.html">Sign Up</a>
+          </div>
         </div>
       </div>
     </main>

@@ -1,0 +1,54 @@
+
+.round-button {
+	width:25%;
+}
+
+.round-button-circle {
+	width: 100%;
+
+	/* sets height equal to width */
+	height:0;
+	padding-bottom: 100%;
+
+	/* make it circle */
+    border-radius: 50%;
+
+
+	border:8px solid #f4428f;
+    overflow:hidden;
+  
+    background: #ffffff; 
+    box-shadow: 0 0 2px gray;
+}
+.round-button-circle:hover a {
+	color:#ffffff;
+}
+
+.round-button a {
+    display:block;
+	float:left;
+	width:100%;
+	padding-top:50%;
+    padding-bottom:50%;
+	line-height:1.5em;
+	margin-top:-1.0em;
+    
+	text-align:center;
+	color:#424242;
+    font-family:Verdana;
+    font-size:1.6em;
+    font-weight:bold;
+    text-decoration:none;
+
+}
+
+.vcenter {
+    display: inline-block;
+    vertical-align: middle;
+    float: none;
+}
+
+.no-gutter > [class*='col-'] {
+    /*padding-right:0;
+    padding-left:0;*/
+}

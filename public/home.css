@@ -1,0 +1,191 @@
+/* home.css */
+
+body {
+  font-family: 'Raleway', sans-serif;
+  letter-spacing: 0.05em;
+}
+
+main {
+  margin-top: 6rem;
+}
+
+/* Navigation Bar */
+#navbar-site {
+  font-size: 2rem;
+  font-weight: 700;
+  height: 6rem;
+  border: none;
+}
+
+#navbar-site a {
+  color: white;
+}
+
+#navbar-site .container-fluid {
+  background-color: #aaaaaa;
+  padding-left: 2.5rem;
+  padding-right: 2.5rem;
+}
+
+#navbar-site .navbar-header,
+#navbar-site .nav-link {
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-align: center;
+  -ms-flex-align: center;
+  align-items: center;
+  height: 6rem;
+  padding-top: 0;
+  padding-bottom: 0; 
+}
+
+#navbar-site .nav-link {
+  padding: 0 1em;
+}
+
+#navbar-site .nav-link:visited {
+  background: #aaaaaa;
+}
+
+#navbar-site .nav-link:hover {
+  color: #aaaaaa;
+  background-color: white;
+}
+
+#navbar-site .navbar-brand {
+  font-size: 3rem;
+}
+
+#navbar-site .brand-name {
+  display: none;
+}
+
+#navbar-site .text-log-in {
+  display: none;
+}
+
+#btn-login {
+  color: white;
+  cursor: pointer;
+}
+
+/* Login Menu */
+#login-screen {
+  display: none;
+  position: fixed;
+  background: #aaaaaa;
+  width: 100%;
+  height: 100%;
+  color: white;
+}
+
+#login-screen .container-fluid {
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-align: center;
+  -ms-flex-align: center;
+  align-items: center;
+  -webkit-justify-content: center;
+  -ms-flex-pack: center;
+  justify-content: center;
+  height: 100%;
+}
+
+/* Splash Art */
+#splash {
+  padding-top: 5rem;
+  padding-bottom: 5rem;
+}
+
+#splash .container {
+  text-align: center;
+  padding-left: 2rem;
+  padding-right: 2rem;
+}
+
+#splash .title {
+  font-weight: 700;
+  font-size: 5rem;
+}
+
+#splash .subtitle {
+  margin-top: 2rem;
+  font-size: 2rem;
+  font-weight: 300;
+}
+
+#splash .btn-container {
+  margin-top: 4rem;
+}
+
+#btn-signup {
+  border: none;
+  border-radius: 0;
+  padding: 0.5em 1em;
+  font-size: 2.5rem;
+  font-weight: 700;
+}
+
+#btn-signup:visited {
+  background: #337ab7;
+}
+
+#btn-signup:hover {
+  color: #337ab7;
+  background: white;
+  box-shadow: none;
+}
+
+@media screen and (min-width: 768px) {
+  #navbar-site .container-fluid {
+    padding-left: 4rem;
+    padding-right: 4rem;
+  }
+
+  #navbar-site .brand-name {
+    display: inline;
+  }
+
+  #navbar-site .navbar-brand,
+  #navbar-site .nav-link {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  #navbar-site .glyphicon {
+    display: none;
+  }
+
+  #navbar-site .text-log-in {
+    display: inline;
+  }
+
+  #splash {
+    padding-top: 10rem;
+    padding-bottom: 10rem;
+  }
+
+  #splash .container {
+    text-align: left;
+  }
+
+  #splash .title {
+    font-size: 9rem;
+  }
+
+  #splash .subtitle {
+    margin-top: 2.5rem;
+    font-size: 2.5rem;
+  }
+
+  #splash .btn-container {
+    margin-top: 8rem;
+  }
+
+  #btn-signup {
+    font-size: 3rem;
+  }
+}
