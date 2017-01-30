@@ -1,9 +1,5 @@
 /***** General variables **************************/
-<<<<<<< HEAD
-var me = {user_id: "id3", block_list: ["block1"]};
-=======
 var me = {user_id: "id1", block_list: ["block1"]};
->>>>>>> 11918bad9729f4ebe2fc875b82f0a9d05e5720eb
 var currRoomID = null;
 var isLecturer = false;
 /**************************************************/
@@ -183,17 +179,11 @@ function answerCallHelper(call) {
 /*************************** CREATING ROOMS **************************/
 
 function addRoom(class_id, room_name, is_lecture) {
-<<<<<<< HEAD
-	console.log("adding room with class_id: " + class_id + ", room_name: " + room_name);
-	var xhr = new XMLHttpRequest();
-	xhr.open('GET', "/add_room/" + class_id + "/" + room_name + "/" + me.user_id + "/" + is_lecture, true);
-=======
 	console.log("adding room with class_id: " + class_id + 
 		", room_name: " + room_name);
 	var xhr = new XMLHttpRequest();
 	xhr.open('GET', "/add_room/" + class_id + "/" + 
 		room_name + "/" + me.user_id + "/" + is_lecture, true);
->>>>>>> 11918bad9729f4ebe2fc875b82f0a9d05e5720eb
 	xhr.send();
 
 	xhr.onreadystatechange = function(e) {
@@ -239,22 +229,15 @@ function joinRoom(room_id) {
 	        var response = JSON.parse(xhr.responseText);
 
 	        // room no longer exists
-<<<<<<< HEAD
-	        if (response.id == null) {
-=======
             console.log(response);
 	        if (response.room_id == null) {
->>>>>>> 11918bad9729f4ebe2fc875b82f0a9d05e5720eb
 	        	console.log("room does not exist");
 	        	return;
 	        }
 
-<<<<<<< HEAD
-=======
 			// set currRoomID
 			currRoomID = room_id;
 
->>>>>>> 11918bad9729f4ebe2fc875b82f0a9d05e5720eb
 	        // if this is a lecture and I am the host, I am the lecturer
 	        isLecturer = (response.is_lecture && response.host_id == me.user_id);
 	        

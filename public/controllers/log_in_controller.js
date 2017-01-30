@@ -4,13 +4,6 @@
 // used for log messages
 var LOG = "log_in_controller: "
 
-angular.module('logInApp', []).config(function($stateProvider) {    
-    $stateProvider
-        .state('home', {
-            url: 'public/buddy_system_tester/:id',
-            templateUrl: 'buddy_system_tester.html'
-        })
-});
 // defining the controller
 angular.module('logInApp', []).controller('LogInCtrl', ['$scope', '$http', function($scope, $http) {
   console.log(LOG + "started");

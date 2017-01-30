@@ -39,43 +39,17 @@ app.use(express.static(__dirname + "/public"));
 app.use(bodyParser.json());
 /*-----------------------------------------------------------------------*/
 
-<<<<<<< HEAD
-var MAINHOST = "mainhost";
-var classes_dict = {};
-classes_dict["ucsd_cse_110_1"] = new Class("ucsd_cse_110_1", "CSE 110 Gillespie", []);
-classes_dict["ucsd_cse_105_1"] = new Class("ucsd_cse_105_1", "CSE 105 Tiefenbruck", []);
-
-=======
 var MAIN_HOST = "mainhost";
 var ADMIN_KEY = "ABCD"
 var classes_dict = {};
 classes_dict["ucsd_cse_110_1"] = new Class("ucsd_cse_110_1", "CSE 110 Gillespie", []);
 classes_dict["ucsd_cse_105_1"] = new Class("ucsd_cse_105_1", "CSE 105 Tiefenbruck", []);
->>>>>>> 11918bad9729f4ebe2fc875b82f0a9d05e5720eb
 var rooms_dict = {};
 
 /* HTTP requests ---------------------------------------------------------*/
 
 // forces the name property to be unique in user_classes collection
 //db.user_classes.createIndex({name: 1}, {unique:true});
-<<<<<<< HEAD
-
-// returns all users, not useful atm
-/*app.get('/users', function(req, res) {
-  console.log(LOG + "get users");
-  db.users.find(function (err, docs) {
-    console.log(LOG + docs);
-    res.json(docs);
-  })
-});*/
-
-app.get('/add_room/:class_id/:room_name/:host_id/:is_lecture', function(req, res) {
-	var room_id = addRoom(req.params.class_id, req.params.room_name, 
-		req.params.host_id, req.params.is_lecture);
-	res.send({room_id: room_id});
-})
-=======
->>>>>>> 11918bad9729f4ebe2fc875b82f0a9d05e5720eb
 
 app.post('/user_classes', function(req, res) {
 
@@ -102,8 +76,6 @@ app.get('/user_classes/:id', function(req, res) {
 	});
 });
 
-<<<<<<< HEAD
-=======
 app.get('/add_tutor/:class_id/:tutor_id/:admin_key', function (req, res) {
 	var class_id = req.params.class_id;
 	var tutor_id = req.params.tutor_id;
@@ -127,7 +99,6 @@ app.get('/add_room/:class_id/:room_name/:host_id/:is_lecture', function(req, res
 	//res.send({room_id: room_id});
 })
 
->>>>>>> 11918bad9729f4ebe2fc875b82f0a9d05e5720eb
 // - adds user_id to room with id room_id
 // - returns list of user_id's in that room
 app.get('/join_room/:room_id/:user_id', function(req, res) {
@@ -136,10 +107,7 @@ app.get('/join_room/:room_id/:user_id', function(req, res) {
 	var user_id = req.params.user_id;
 	console.log("Adding user " + user_id + " to room " + room_id);
 
-<<<<<<< HEAD
-=======
   /*
->>>>>>> 11918bad9729f4ebe2fc875b82f0a9d05e5720eb
 	if (!(room_id in rooms_dict)) {
 		console.log("room no longer exists");
 		res.send({id: null});
@@ -149,23 +117,14 @@ app.get('/join_room/:room_id/:user_id', function(req, res) {
 	// add the userID to the room if it doesn't already contain it
 	if (rooms_dict[room_id].users.indexOf(user_id) == -1) {
 		(rooms_dict[room_id].users).push(user_id);
-<<<<<<< HEAD
-=======
 
 		// if the room didn't have a tutor before, check if it has one now
 		if (!rooms_dict[room_id].has_tutor) {			
 			rooms_dict[room_id].has_tutor = tutorInRoom(rooms_dict[room_id]);
 		}
->>>>>>> 11918bad9729f4ebe2fc875b82f0a9d05e5720eb
 	}
   */
 
-<<<<<<< HEAD
-	logRooms();
-
-	// send back the room
-	res.send(rooms_dict[room_id]);
-=======
   db_rooms.rooms.findAndModify({query: {room_id: room_id},
       update: {$addToSet: {users: user_id}}, upsert: true, new: true}, function(err, doc) {
         if (doc) {
@@ -183,7 +142,6 @@ app.get('/join_room/:room_id/:user_id', function(req, res) {
 
 	// send back the room
 	//res.send(rooms_dict[room_id]);
->>>>>>> 11918bad9729f4ebe2fc875b82f0a9d05e5720eb
 })
 
 // - removes user_id from room with id room_id
@@ -193,10 +151,7 @@ app.get('/leave_room/:room_id/:user_id', function(req, res) {
 	var user_id = req.params.user_id;
 	console.log("Removing user " + user_id + " from room " + room_id);
 
-<<<<<<< HEAD
-=======
   /*
->>>>>>> 11918bad9729f4ebe2fc875b82f0a9d05e5720eb
 	if (!(room_id in rooms_dict)) {
 		console.log("room no longer exists");
 		res.send({});
@@ -207,21 +162,11 @@ app.get('/leave_room/:room_id/:user_id', function(req, res) {
 	var index = rooms_dict[room_id].users.indexOf(user_id);
 	if (index > -1) {
     	rooms_dict[room_id].users.splice(index, 1);
-<<<<<<< HEAD
-	}
-
-	logRooms();
-
-	// if the room is empty and is not a main room, remove the room
-	if (rooms_dict[room_id].users.length == 0 && rooms_dict[room_id].host_id != MAINHOST) {
-		removeRoom(room_id);
-=======
 
     	// if the room had a tutor before, check if it has one now
     	if (rooms_dict[room_id].has_tutor) {
 			rooms_dict[room_id].has_tutor = tutorInRoom(rooms_dict[room_id]);
 		}
->>>>>>> 11918bad9729f4ebe2fc875b82f0a9d05e5720eb
 	}
   */
 
@@ -252,11 +197,7 @@ app.get('/leave_room/:room_id/:user_id', function(req, res) {
 
 	// without this res.send, server.js will not allow leave_room to be spammed
 	// so leaving rooms constantly will not work
-<<<<<<< HEAD
-	res.send({});
-=======
 	//res.send({});
->>>>>>> 11918bad9729f4ebe2fc875b82f0a9d05e5720eb
 })
 
 
@@ -363,16 +304,6 @@ function User(email, password) {
   this.active = true; //has verified email
 }
 
-<<<<<<< HEAD
-function Class(class_id, class_name, class_room_ids) {
-	this.id = class_id;	// "ucsd_cse_110_1"
-	this.name = class_name; // "CSE 110 Gillespie"
-	this.room_ids = class_room_ids; // list of room ids for this class
-}
-
-function Room(room_id, room_name, room_host_id, room_users, class_id, is_lecture) {
-	this.id = room_id;
-=======
 //TODO ISAAC: change id to class_id
 function Class(class_id, class_name, class_room_ids) {
 	this.class_id = class_id;	// "ucsd_cse_110_1"
@@ -384,32 +315,11 @@ function Class(class_id, class_name, class_room_ids) {
 //TODO ISAAC: change id to room_id 
 function Room(room_id, room_name, room_host_id, room_users, class_id, is_lecture) {
 	this.room_id = room_id;
->>>>>>> 11918bad9729f4ebe2fc875b82f0a9d05e5720eb
 	this.name = room_name;
 	this.host_id = room_host_id;
 	this.users = room_users;
 	this.class_id = class_id;
 	this.is_lecture = is_lecture;
-<<<<<<< HEAD
-}
-
-function addRoom(class_id, room_name, room_host_id, is_lecture) {
-
-	// generate the room_id
-	var room_id = class_id + "_r" + classes_dict[class_id].room_ids.length; // rmain, r1, r2, etc
-
-	console.log("adding room with id " + room_id);
-
-	// add the room_id to the corresponding class in classes_dict
-	classes_dict[class_id].room_ids.push(room_id);
-
-	// create the room and add it to rooms_dict
-	rooms_dict[room_id] = new Room(room_id, room_name, room_host_id, [], class_id, is_lecture);
-
-	logClassesAndRooms();
-
-	return room_id;
-=======
 	this.has_tutor = false;
 }
 
@@ -475,16 +385,12 @@ function addRoom(class_id, room_name, room_host_id, is_lecture, callback) {
 
 	logClassesAndRooms();
 
->>>>>>> 11918bad9729f4ebe2fc875b82f0a9d05e5720eb
 }
 
 function removeRoom(room_id) {
 	console.log("removing room with id " + room_id);
 
-<<<<<<< HEAD
-=======
   /*
->>>>>>> 11918bad9729f4ebe2fc875b82f0a9d05e5720eb
 	// id of the class this room belongs to
 	var class_id = rooms_dict[room_id].class_id;
 
@@ -494,8 +400,6 @@ function removeRoom(room_id) {
 
 	// remove the room from rooms_dict
 	delete rooms_dict[room_id];
-<<<<<<< HEAD
-=======
   */
 
   db_rooms.rooms.findOne({room_id:room_id}, function(err, doc) {
@@ -535,17 +439,10 @@ function removeRoom(room_id) {
 
 
 
->>>>>>> 11918bad9729f4ebe2fc875b82f0a9d05e5720eb
 
 	logClassesAndRooms();
 }
 
-<<<<<<< HEAD
-function generateMainRooms() {
-	console.log("generating main rooms");
-	for (var class_id in classes_dict) {
-		addRoom(class_id, "main", MAINHOST, false);
-=======
 function tutorInRoom(room) {
 	for (user_id in room.users) {
 		for (tutor_id in classes_dict[room.class_id].tutor_ids) {
@@ -561,29 +458,15 @@ function generateMainRooms() {
 	console.log("generating main rooms");
 	for (var class_id in classes_dict) {
 		addRoom(class_id, "main", MAIN_HOST, false);
->>>>>>> 11918bad9729f4ebe2fc875b82f0a9d05e5720eb
 	}
 }
 
 function logClassesAndRooms() {
-<<<<<<< HEAD
-=======
   /*
->>>>>>> 11918bad9729f4ebe2fc875b82f0a9d05e5720eb
 	console.log("******************** CLASSES ********************")
 	console.log(classes_dict);
 	console.log("*************************************************")	
 	logRooms();	
-<<<<<<< HEAD
-}
-
-function logRooms() {
-	console.log("******************** ROOMS **********************")
-	console.log(rooms_dict);
-	console.log("*************************************************")	
-}
-
-=======
   */
 }
 
@@ -609,7 +492,6 @@ function addRoomToDatabase(room) {
 
 
 
->>>>>>> 11918bad9729f4ebe2fc875b82f0a9d05e5720eb
 /*------------------------------------------------------------------------*/
 
 
