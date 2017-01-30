@@ -1,0 +1,45 @@
+---General---
+ - Use spaces (rather than tabs)
+ - 2 spaces per indentation
+ - Lines under 80 characters
+ 
+---HTML5 Style Guidelines---
+1.  Declare document type as first first line in HTML file
+    <!DOCTYPE html>	
+	
+2.  Only use lower-case element names
+    YES: <div class="menu">
+    NO: <div CLASS="menu">
+
+3.  Use double quotes around attribute values (Don't use single quotes)
+    YES: <a href="//www.google.com">Link</a>
+    NO: <a href='//www.google.com'>Link</a>
+	
+4.  Don't use spaces around equal signs (in JS, DO use spaces around operators)
+	
+5.  Omit protocol from embedded resources
+    YES:<script src="//www.google.com/js/autotrack.js"></script>
+    NO: <script src="https://www.google.com/js/autotrack.js"></script>
+
+---CSS Style Guidelines---
+1.  Opening bracket should be on the same line as selector
+2.  Use one space before opening bracket
+3.  Put closing bracket on new line, without leading spaces
+4.  Semicolon after each property-value pair
+5.  Only use quotes around values if the value contains spaces
+ex)
+body {
+  background-color: lightgrey;
+  font-family: "Arial Black", Helvetica, sans-serif;
+  font-size: 16em;
+  color: black;
+}
+
+---JavaScript Style Guidelines---
+1.  camelCaseNames and UPPERCASE constants
+2.  Spaces around operators (in HTML5, don't put spaces around equal signs)
+    YES: var x = y + z;
+    NO: var x=y+z;
+3.  Opening bracket at the end of the first line
+4.  One space before the opening bracket
+5.  Put closing bracket on a new line, without leading spaces
