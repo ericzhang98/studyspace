@@ -42,6 +42,7 @@ main {
 
 #navbar-site .nav-link {
   padding: 0 1em;
+  transition: background 0.15s, color 0.15s;
 }
 
 #navbar-site .nav-link:visited {
@@ -50,7 +51,7 @@ main {
 
 #navbar-site .nav-link:hover {
   color: #aaaaaa;
-  background-color: white;
+  background: white;
 }
 
 #navbar-site .navbar-brand {
@@ -97,6 +98,7 @@ main {
 #splash {
   padding-top: 5rem;
   padding-bottom: 5rem;
+  background: #ecf0f1;
 }
 
 #splash .container {
@@ -126,6 +128,7 @@ main {
   padding: 0.5em 1em;
   font-size: 2.5rem;
   font-weight: 700;
+  transition: background 0.15s, color 0.15s;
 }
 
 #btn-signup:visited {

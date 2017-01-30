@@ -1,0 +1,33 @@
+#buttons {
+    width: 50%;
+    margin: 4em auto;
+    padding: 10px;
+    text-align: center;
+}
+
+#school-classes {
+    margin: 10px auto;
+}
+
+.form-control {
+    width: 50%;
+    margin: 10px auto;
+}
+
+.main-container {
+    width: 50%;
+    margin: 4em auto;
+    padding: 10px;
+    border: 3px solid #DCDCDC;
+    text-align: center;
+}
+
+.school-class {
+    font-size: 1.5em;
+    width: 50%;
+    margin: 10px auto;
+}
+
+h1 {
+    margin-bottom: 10px;
+}
