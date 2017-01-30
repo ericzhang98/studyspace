@@ -1,5 +1,5 @@
 /***** General variables **************************/
-var me = {user_id: "id3", block_list: ["block1"]};
+var me = {user_id: "id1", block_list: ["block1"]};
 var currRoomID = null;
 var isLecturer = false;
 /**************************************************/
@@ -179,9 +179,11 @@ function answerCallHelper(call) {
 /*************************** CREATING ROOMS **************************/
 
 function addRoom(class_id, room_name, is_lecture) {
-	console.log("adding room with class_id: " + class_id + ", room_name: " + room_name);
+	console.log("adding room with class_id: " + class_id + 
+		", room_name: " + room_name);
 	var xhr = new XMLHttpRequest();
-	xhr.open('GET', "/add_room/" + class_id + "/" + room_name + "/" + me.user_id + "/" + is_lecture, true);
+	xhr.open('GET', "/add_room/" + class_id + "/" + 
+		room_name + "/" + me.user_id + "/" + is_lecture, true);
 	xhr.send();
 
 	xhr.onreadystatechange = function(e) {
@@ -215,12 +217,9 @@ function joinRoom(room_id) {
 
 	console.log("joining room with id " + room_id);
 
-	// set currRoomID
-	currRoomID = room_id;
-
 	// send request to server
 	var xhr = new XMLHttpRequest();
-	xhr.open('GET', "/join_room/" + room_id + "/" + me.user_id, true);
+	xhr.open('GET', "/join_room/" + room_id + "/" + me.user_id + "/", true);
 	xhr.send();
 
 	// on response
@@ -230,10 +229,14 @@ function joinRoom(room_id) {
 	        var response = JSON.parse(xhr.responseText);
 
 	        // room no longer exists
-	        if (response.id == null) {
+            console.log(response);
+	        if (response.room_id == null) {
 	        	console.log("room does not exist");
 	        	return;
 	        }
+
+			// set currRoomID
+			currRoomID = room_id;
 
 	        // if this is a lecture and I am the host, I am the lecturer
 	        isLecturer = (response.is_lecture && response.host_id == me.user_id);
