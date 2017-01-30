@@ -3,6 +3,7 @@
 
 
 /* SETUP ---------------------------------------------------------------*/
+
 // - Express is a Node framework that makes everything easier
 // - require returns a 'module', which is essentially an object
 // packed with functions
@@ -24,17 +25,28 @@ var mailTransporter = nodemailer.createTransport({
   auth: {user: "studyspacehelper@gmail.com", pass: "raindropdroptop"} 
 });
 
+// - Peer server stuff
+var ExpressPeerServer = require('peer').ExpressPeerServer;
+var server = require('http').createServer(app);
+app.use('/peerjs', ExpressPeerServer(server, {debug: true}));
+server.listen(9000);
+
 // - app configuration
 app.use(express.static(__dirname + "/public"));
 app.use(bodyParser.json());
 /*-----------------------------------------------------------------------*/
 
+var MAINHOST = "mainhost";
+var classes_dict = {};
+classes_dict["ucsd_cse_110_1"] = new Class("ucsd_cse_110_1", "CSE 110 Gillespie", []);
+classes_dict["ucsd_cse_105_1"] = new Class("ucsd_cse_105_1", "CSE 105 Tiefenbruck", []);
 
+var rooms_dict = {};
 
 /* HTTP requests ---------------------------------------------------------*/
 
 // forces the name property to be unique in user_classes collection
-db.user_classes.createIndex({name: 1}, {unique:true});
+//db.user_classes.createIndex({name: 1}, {unique:true});
 
 // returns all users, not useful atm
 /*app.get('/users', function(req, res) {
@@ -45,6 +57,11 @@ db.user_classes.createIndex({name: 1}, {unique:true});
   })
 });*/
 
+app.get('/add_room/:class_id/:room_name/:host_id/:is_lecture', function(req, res) {
+	var room_id = addRoom(req.params.class_id, req.params.room_name, 
+		req.params.host_id, req.params.is_lecture);
+	res.send({room_id: room_id});
+})
 
 app.post('/user_classes', function(req, res) {
 	
@@ -70,16 +87,6 @@ app.get('/user_classes/:id', function(req, res) {
 	});
 });
 
-
-var class_to_rooms_dict = {};
-class_to_rooms_dict["ucsd_cse_110"] = ["ucsd_cse_110_1", "ucsd_cse_110_2"];
-class_to_rooms_dict["ucsd_cse_105"] = ["ucsd_cse_105_1"];
-
-var room_to_users_dict = {};
-room_to_users_dict["ucsd_cse_110_1"] = [];
-room_to_users_dict["ucsd_cse_110_2"] = [];
-room_to_users_dict["ucsd_cse_105_2"] = [];
-
 // - adds user_id to room with id room_id
 // - returns list of user_id's in that room
 app.get('/join_room/:room_id/:user_id', function(req, res) {
@@ -88,15 +95,21 @@ app.get('/join_room/:room_id/:user_id', function(req, res) {
 	var user_id = req.params.user_id;
 	console.log("Adding user " + user_id + " to room " + room_id);
 
-	// add the userID to the room if it doesn't already contain it
-	if (room_to_users_dict[room_id].indexOf(user_id) == -1) {
-		(room_to_users_dict[room_id]).push(user_id);
+	if (!(room_id in rooms_dict)) {
+		console.log("room no longer exists");
+		res.send({id: null});
+		return;
 	}
 
-	console.log(room_to_users_dict[room_id]);
+	// add the userID to the room if it doesn't already contain it
+	if (rooms_dict[room_id].users.indexOf(user_id) == -1) {
+		(rooms_dict[room_id].users).push(user_id);
+	}
 
-	// send back the list of userID's in the room
-	res.send({other_user_ids: room_to_users_dict[room_id]});
+	logRooms();
+
+	// send back the room
+	res.send(rooms_dict[room_id]);
 })
 
 // - removes user_id from room with id room_id
@@ -106,15 +119,28 @@ app.get('/leave_room/:room_id/:user_id', function(req, res) {
 	var user_id = req.params.user_id;
 	console.log("Removing user " + user_id + " from room " + room_id);
 
+	if (!(room_id in rooms_dict)) {
+		console.log("room no longer exists");
+		res.send({});
+		return;
+	}
+
 	// remove the userID from the room if it does already contain it
-	var index = room_to_users_dict[room_id].indexOf(user_id);
+	var index = rooms_dict[room_id].users.indexOf(user_id);
 	if (index > -1) {
-    	room_to_users_dict[room_id].splice(index, 1);
+    	rooms_dict[room_id].users.splice(index, 1);
+	}
+
+	logRooms();
+
+	// if the room is empty and is not a main room, remove the room
+	if (rooms_dict[room_id].users.length == 0 && rooms_dict[room_id].host_id != MAINHOST) {
+		removeRoom(room_id);
 	}
 
 	// without this res.send, server.js will not allow leave_room to be spammed
 	// so leaving rooms constantly will not work
-	res.send({success: true});
+	res.send({});
 })
 
 // - returns user with given email / password
@@ -206,11 +232,80 @@ app.get("/accountverify/:id/:token", function(req, res) {
 /* Model -----------------------------------------------------------------*/
 
 function User(email, password) {
+//this._id = whatever mongo gives us
   this.email = email;
   this.password = password;
-  this.token = "dank";
-  //this.token = generateToken();
+  this.token = "dank"; //generateToken();
   this.active = true; //has verified email
+}
+
+function Class(class_id, class_name, class_room_ids) {
+	this.id = class_id;	// "ucsd_cse_110_1"
+	this.name = class_name; // "CSE 110 Gillespie"
+	this.room_ids = class_room_ids; // list of room ids for this class
+}
+
+function Room(room_id, room_name, room_host_id, room_users, class_id, is_lecture) {
+	this.id = room_id;
+	this.name = room_name;
+	this.host_id = room_host_id;
+	this.users = room_users;
+	this.class_id = class_id;
+	this.is_lecture = is_lecture;
+}
+
+function addRoom(class_id, room_name, room_host_id, is_lecture) {
+
+	// generate the room_id
+	var room_id = class_id + "_r" + classes_dict[class_id].room_ids.length; // rmain, r1, r2, etc
+
+	console.log("adding room with id " + room_id);
+
+	// add the room_id to the corresponding class in classes_dict
+	classes_dict[class_id].room_ids.push(room_id);
+
+	// create the room and add it to rooms_dict
+	rooms_dict[room_id] = new Room(room_id, room_name, room_host_id, [], class_id, is_lecture);
+
+	logClassesAndRooms();
+
+	return room_id;
+}
+
+function removeRoom(room_id) {
+	console.log("removing room with id " + room_id);
+
+	// id of the class this room belongs to
+	var class_id = rooms_dict[room_id].class_id;
+
+	// remove the room_id from the class
+	var index = classes_dict[class_id].room_ids.indexOf(room_id);
+	classes_dict[class_id].room_ids.splice(index, 1);
+
+	// remove the room from rooms_dict
+	delete rooms_dict[room_id];
+
+	logClassesAndRooms();
+}
+
+function generateMainRooms() {
+	console.log("generating main rooms");
+	for (var class_id in classes_dict) {
+		addRoom(class_id, "main", MAINHOST, false);
+	}
+}
+
+function logClassesAndRooms() {
+	console.log("******************** CLASSES ********************")
+	console.log(classes_dict);
+	console.log("*************************************************")	
+	logRooms();	
+}
+
+function logRooms() {
+	console.log("******************** ROOMS **********************")
+	console.log(rooms_dict);
+	console.log("*************************************************")	
 }
 
 /*------------------------------------------------------------------------*/
@@ -255,3 +350,4 @@ function sendVerifyEmail(user, callback) {
 
 app.listen(3000);
 console.log("Server running on port 3000");
+generateMainRooms();
