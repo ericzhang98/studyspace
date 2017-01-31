@@ -1,0 +1,16 @@
+<!DOCTYPE html>
+<html ng-app="BuddySystem">
+<head>
+	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+
+	<title>User Preferences</title>
+</head>
+<body>
+	<div class="container" ng-controller="buddies">
+    <input class="form-control" ng-model="friend.name">
+		<button class="btn btn-primary" ng-click="addFriend()">Add Friend</button>
+	</div>
+	<script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.6.1/angular.min.js"></script>
+	<script src="controllers/buddy.js"></script>
+</body>
+</html>

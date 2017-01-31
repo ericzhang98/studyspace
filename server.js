@@ -62,6 +62,54 @@ var ADMIN_KEY = "ABCD"
 
 
 /* User settings ---------------*/
+app.post('/buddy_existing_user', function(req, res) {
+
+  console.log(req.body.name);
+	db.users.findOne({email:req.body.name}, function(err, docs){
+    console.log(docs);
+		res.json(docs);
+	});	
+
+});
+
+app.post('/buddy_existing_request', function(req, res) {
+
+  console.log(req.body.user_id);
+  console.log(req.body.friend_id);
+  var user_id = req.body.user_id;
+  var friend_id = req.body.friend_id;
+  db.user_buddy_requests.find(
+  {$or:[{sent_from_id:user_id, sent_to_id:friend_id},
+  {sent_from_id:friend_id, sent_to_id:user_id}]},
+  function(err, docs){
+    console.log(docs);
+		res.json(docs);
+	});	
+
+});
+
+app.post('/buddies_already', function(req, res) {
+
+  console.log("Friendship check");
+  var user_id = req.body.user_id;
+  var friend_id = req.body.friend_id;
+  db.user_buddies.find(
+  {$or:[ {user_one_id:user_id, user_two_id:friend_id},
+  {user_one_id:friend_id, user_two_id:user_id}]},
+  function(err, docs){
+    console.log(docs);
+		res.json(docs);
+	});	
+});
+
+app.post('/send_buddy_request', function(req, res) {
+
+	db.user_buddy_requests.insert(req.body, function(err, docs){
+		res.json(docs);
+	});	
+
+});
+
 // forces the name property to be unique in user_classes collection
 //db.user_classes.createIndex({name: 1}, {unique:true});
 
@@ -111,6 +159,31 @@ app.get('/add_tutor/:class_id/:tutor_id/:admin_key', function (req, res) {
 		// back up tutor in database
 	}
 });
+
+/*************************************************************************************/
+
+/******************************** GET CLASSES & ROOMS ********************************/
+
+// return class_ids
+app.get('/get_classes/:user_id', function(req, res) {
+	var user_id = req.params.user_id;
+	db.users.findOne({user_id: user_id}, function (err, doc) {
+    	res.send({class_ids: doc.class_ids});
+  	});
+});
+
+// return name of the class
+app.get('/get_class/:class_id', function(req, res) {
+	var class_id = req.params.class_id;
+
+	// look up name in mongoDB
+	db_classes.classes.findOne({class_id: class_id}, function (err, doc) {
+		res.send({name: doc.name});
+	});
+});
+/*************************************************************************************/
+
+/*************************************** ROOMS ***************************************/
 
 app.get('/add_room/:class_id/:room_name/:host_id/:is_lecture', function(req, res) {
 	var room_id = addRoom(req.params.class_id, req.params.room_name, 
@@ -239,29 +312,25 @@ function User(email, password) {
   this.active = true; //has verified email
 }
 
-function Class(class_id, class_name, class_room_ids) {
+function Class(class_id, class_name) {
 	this.class_id = class_id;	// "ucsd_cse_110_1"
 	this.name = class_name; // "CSE 110 Gillespie"
-	this.room_ids = class_room_ids; // list of room ids for this class
-	this.tutor_ids = {};
 }
 
-function Room(room_id, room_name, room_host_id, room_users, class_id, is_lecture) {
+function Room(room_id, room_name, room_host_id, class_id, is_lecture) {
 	this.room_id = room_id;
 	this.name = room_name;
 	this.host_id = room_host_id;
-	this.users = room_users;
 	this.class_id = class_id;
 	this.is_lecture = is_lecture;
 	this.has_tutor = false;
 }
 
 function addRoom(class_id, room_name, room_host_id, is_lecture, callback) {
-
   var room_id = class_id + "_" + generateToken();
   console.log("FIREBASE: Attempting to add room with id " + room_id);
 
-  var newRoom = new Room(room_id, room_name, room_host_id, [], class_id, is_lecture);
+  var newRoom = new Room(room_id, room_name, room_host_id, class_id, is_lecture);
   var classRoomRef = classRoomsDatabase.child(class_id).push(); //push new room id into class list of rooms
   classRoomRef.set(room_id);
   console.log("FIREBASE: Successfully added roomid " + room_id + " to class " + class_id);
@@ -310,17 +379,6 @@ function joinRoom(user_id, room_id, callback) {
       roomInfoDatabase.child(room_id).child("users").push().set(user_id, function(err) {
         if (!err) {
           console.log("FIREBASE: Successfully added user " + user_id + " to room" + room_id);
-        }
-        else {
-          console.log("FIREBASE: Failed - Didn't add user");
-          console.log("Error message if it helps: " + err);
-        }
-        
-        //send back room in callback
-        if (callback) {
-          roomInfoDatabase.child(room_id).once("value").then(function(snapshot) {
-            callback(snapshot.val());
-          });
         }
       });
     }
@@ -392,33 +450,6 @@ function tutorInRoom(room) {
 	return false;
 }
 
-function generateMainRooms() {
-  /*
-	console.log("generating main rooms");
-	for (var class_id in classes_dict) {
-		addRoom(class_id, "main", MAIN_HOST, false);
-	}
-  */
-}
-
-function logClassesAndRooms() {
-  /*
-	console.log("******************** CLASSES ********************")
-	console.log(classes_dict);
-	console.log("*************************************************")	
-	logRooms();	
-  */
-}
-
-function logRooms() {
-  /*
-	console.log("******************** ROOMS **********************")
-	console.log(rooms_dict);
-	console.log("*************************************************")	
-  */
-}
-
-
 /* Class/room database methods--------*/
 
 function addRoomIDToClass(class_id, room_id) {
@@ -474,10 +505,10 @@ function sendVerifyEmail(user, callback) {
 
 app.listen(3000);
 console.log("Server running on port 3000");
-generateMainRooms();
 
 //addRoom("TEST", "TEST_ROOM", MAIN_HOST, false);
 //removeRoom("TEST_fLOXccNn2q");
-//joinRoom("ID2", "TEST_rcf0hH5Xk7");
-//leaveRoom("ID1", "TEST_rcf0hH5Xk7");
-//checkToDelete("cse110_mP0GFqH181");
+//joinRoom("ID1", "TEST_4yGGyVKzaM");
+//joinRoom("ID2", "TEST_bE4iOJGtke");
+leaveRoom("ID1", "TEST_4yGGyVKzaM");
+//checkToDelete("TEST_bE4iOJGtke");

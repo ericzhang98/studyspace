@@ -1,4 +1,4 @@
-/* login.css */
+/* signup.css */
 
 html, body {
   margin: 0;
@@ -15,7 +15,7 @@ main {
   height: 100%;
 }
 
-#menu-login {
+#menu-signup {
   background: #aaaaaa;
   height: 50%;
 }
