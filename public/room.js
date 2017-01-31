@@ -13,21 +13,6 @@ var myRemoteStreams = {}; // Dictionary from call.id to audio track
 navigator.getUserMedia = navigator.getUserMedia || navigator.webkitGetUserMedia || navigator.mozGetUserMedia;
 /**************************************************/
 
-/***** Firebase setup *****************************/
-
-var config = {
-  apiKey: "AIzaSyB8eBxo5mqiVVskav5dCUQ1Hr_UQeiJAL4",
-  authDomain: "studyspace-490cd.firebaseapp.com",
-  databaseURL: "https://studyspace-490cd.firebaseio.com",
-  storageBucket: "studyspace-490cd.appspot.com",
-  messagingSenderId: "293916419475"
-};
-firebase.initializeApp(config);
-var databaseRef = firebase.database().ref(); //root
-var roomInfoDatabase = databaseRef.child("RoomInfoDatabase");
-var roomUsersDatabase = databaseRef.child("RoomUsersDatabase");
-/**************************************************/
-
 /***** onClicks for testing ***********************/	
 function call_button_on_click() {
 	startCall(document.getElementById("target_id_input").value);

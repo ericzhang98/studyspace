@@ -5,22 +5,7 @@ var class_names = {} // class_id : class name
 var rooms = {}		// room_id : room
 /**************************************************/
 
-/***** Firebase setup *****************************/
-/*var config = {
-  apiKey: "AIzaSyB8eBxo5mqiVVskav5dCUQ1Hr_UQeiJAL4",
-  authDomain: "studyspace-490cd.firebaseapp.com",
-  databaseURL: "https://studyspace-490cd.firebaseio.com",
-  storageBucket: "studyspace-490cd.appspot.com",
-  messagingSenderId: "293916419475"
-};
-firebase.initializeApp(config);*/
-var databaseRef = firebase.database().ref(); //root
-var classRoomsDatabase = databaseRef.child("ClassRooms");
-var roomsDatabase = databaseRef.child("RoomInfo");
-/**************************************************/
-
 getClasses();
-
 
 /******************************** MODEL ******************************/
 
@@ -110,7 +95,7 @@ function onClassRoomsChange(class_id, updated_rooms) {
 	for (i = 0; i < updated_rooms.length; i++) {
 
 		var room_id = updated_rooms[i];
-		
+
 		// only if we haven't already gotten it
 		if (class_rooms[class_id] == null || 
 			class_rooms[class_id].indexOf(room_id) == -1) {
@@ -122,12 +107,13 @@ function onClassRoomsChange(class_id, updated_rooms) {
 }
 
 // - gets all room info for specified room
-// - adds the room to the UI
+// - adds the room to rooms and the UI
 function getRoom(class_id, room_id) {
 	console.log("Getting room with id " + room_id);
 
 	// add listener for room info
 	roomsDatabase.child(room_id).on("value", function(snapshot) {
+
 		var room = snapshot.val();
 
         if (room) {
@@ -144,7 +130,7 @@ function getRoom(class_id, room_id) {
 	});
 }
 
-// - removes room from logic and UI
+// - removes room from rooms and the UI
 function removeRoom(room_id) {
 
 	delete rooms[room_id];

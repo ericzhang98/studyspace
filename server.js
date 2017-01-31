@@ -146,7 +146,7 @@ app.get('/add_tutor/:class_id/:tutor_id/:admin_key', function (req, res) {
 
 /******************************** GET CLASSES & ROOMS ********************************/
 
-// return class_ids
+// return the class_ids of classes this user is enrolled in
 app.get('/get_classes/:user_id', function(req, res) {
 	var user_id = req.params.user_id;
 	db.users.findOne({user_id: user_id}, function (err, doc) {
@@ -154,7 +154,7 @@ app.get('/get_classes/:user_id', function(req, res) {
   	});
 });
 
-// return name of the class
+// return name of the class with specified id
 app.get('/get_class/:class_id', function(req, res) {
 	var class_id = req.params.class_id;
 
