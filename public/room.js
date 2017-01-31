@@ -1,5 +1,5 @@
 /***** General variables **************************/
-var me = {user_id: "id1", block_list: ["block1"]};
+var me = {user_id: "id2", block_list: ["block1"]};
 var currRoomID = null;
 var isLecturer = false;
 /**************************************************/
