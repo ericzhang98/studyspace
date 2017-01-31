@@ -48,6 +48,55 @@ var rooms_dict = {};
 
 /* HTTP requests ---------------------------------------------------------*/
 
+
+app.post('/buddy_existing_user', function(req, res) {
+
+  console.log(req.body.name);
+	db.users.findOne({email:req.body.name}, function(err, docs){
+    console.log(docs);
+		res.json(docs);
+	});	
+
+});
+
+app.post('/buddy_existing_request', function(req, res) {
+
+  console.log(req.body.user_id);
+  console.log(req.body.friend_id);
+  var user_id = req.body.user_id;
+  var friend_id = req.body.friend_id;
+  db.user_buddy_requests.find(
+  {$or:[{sent_from_id:user_id, sent_to_id:friend_id},
+  {sent_from_id:friend_id, sent_to_id:user_id}]},
+  function(err, docs){
+    console.log(docs);
+		res.json(docs);
+	});	
+
+});
+
+app.post('/buddies_already', function(req, res) {
+
+  console.log("Friendship check");
+  var user_id = req.body.user_id;
+  var friend_id = req.body.friend_id;
+  db.user_buddies.find(
+  {$or:[ {user_one_id:user_id, user_two_id:friend_id},
+  {user_one_id:friend_id, user_two_id:user_id}]},
+  function(err, docs){
+    console.log(docs);
+		res.json(docs);
+	});	
+});
+
+app.post('/send_buddy_request', function(req, res) {
+
+	db.user_buddy_requests.insert(req.body, function(err, docs){
+		res.json(docs);
+	});	
+
+});
+
 // forces the name property to be unique in user_classes collection
 //db.user_classes.createIndex({name: 1}, {unique:true});
 
