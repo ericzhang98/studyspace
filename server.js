@@ -105,59 +105,13 @@ app.get('/get_classes/:user_id', function(req, res) {
   	});
 });
 
-// return name and room_ids
+// return name of the class
 app.get('/get_class/:class_id', function(req, res) {
 	var class_id = req.params.class_id;
-	var name = null;
-	var room_ids = null;
 
 	// look up name in mongoDB
-	db.classes.findOne({class_id: class_id}, function (err, doc) {
-
-		// set name
-		name = doc.name;
-
-		// if we have all our info, respond
-		if (name != null && room_ids != null) {
-			res.send({name: name, room_ids: room_ids});
-		}
-	});
-
-	// look up room in Firebase
-	classRoomsDatabase.child(class_id).once("value", function(snapshot) {
-
-        var class_rooms = snapshot.val();
-
-        if (class_rooms) {
-        	
-        	// set room_ids
-        	room_ids = Object.values(class_rooms);
-
-			// if we have all our info, respond
-			if (name != null && room_ids != null) {
-				res.send({name: name, room_ids: room_ids});
-			}
-        }
-
-    });
-});
-
-// return room info
-app.get('/get_room/:room_id', function(req, res) {
-	room_id, room_name, room_host_id, room_users, class_id, is_lecture, has_tutor
-	var room_id = req.params.room_id;
-
-	// get room info
-	roomsDatabase.child(room_id).once("value", function(snapshot) {
-		var room = snapshot.val();
-
-        if (snapshotValueObject) {
-
-        	// send the response
-        	res.send({name: room.name, host_id: room.host_id, class_id: room.class_id,
-        		is_lecture: room.is_lecture, has_tutor: room.has_tutor, users: room.users});
-
-        }
+	db_classes.classes.findOne({class_id: class_id}, function (err, doc) {
+		res.send({name: doc.name});
 	});
 });
 /*************************************************************************************/
@@ -380,6 +334,7 @@ function User(email, password) {
 function Class(class_id, class_name) {
 	this.class_id = class_id;	// "ucsd_cse_110_1"
 	this.name = class_name; // "CSE 110 Gillespie"
+	this.room_ids = [];
 }
 
 //TODO ISAAC: change id to room_id 
@@ -393,7 +348,7 @@ function Room(room_id, room_name, room_host_id, class_id, is_lecture) {
 }
 
 function addRoom(class_id, room_name, room_host_id, is_lecture, callback) {
-
+	/*
 	var room_id = class_id + "_r" + classes_dict[class_id].room_ids.length; // rmain, r1, r2, etc
 
 	roomInfoDatabase.child(room_id).push().set(newRoom);
@@ -402,7 +357,7 @@ function addRoom(class_id, room_name, room_host_id, is_lecture, callback) {
 
 	return room_id;
 
-	logClassesAndRooms();
+	logClassesAndRooms();*/
 
 }
 
@@ -475,10 +430,11 @@ function tutorInRoom(room) {
 }
 
 function generateMainRooms() {
+	/*
 	console.log("generating main rooms");
 	for (var class_id in classes_dict) {
 		addRoom(class_id, "main", MAIN_HOST, false);
-	}
+	}*/
 }
 
 function logClassesAndRooms() {

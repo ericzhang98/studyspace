@@ -338,6 +338,7 @@ function leaveCalls() {
 	myCalls = [];
 }
 /*********************************************************************/
+
 /************************* LISTENING TO ROOMS ************************/
 
 function listenToRoom() {
@@ -364,6 +365,7 @@ function listenToRoom() {
 }
 
 /*********************************************************************/
+
 /********************** MUTING / UNMUTING AUDIO **********************/
 // - toggle my own audio
 function toggleMyStreamAudioEnabled() {
