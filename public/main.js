@@ -1,26 +1,11 @@
 /***** General variables **************************/
 var me = {user_id: "id1"};
 var class_rooms = {} 	// class_id : class rooms
-var class_names = {} // class_id : class name
-var rooms = {}		// room_id : room
-/**************************************************/
-
-/***** Firebase setup *****************************/
-/*var config = {
-  apiKey: "AIzaSyB8eBxo5mqiVVskav5dCUQ1Hr_UQeiJAL4",
-  authDomain: "studyspace-490cd.firebaseapp.com",
-  databaseURL: "https://studyspace-490cd.firebaseio.com",
-  storageBucket: "studyspace-490cd.appspot.com",
-  messagingSenderId: "293916419475"
-};
-firebase.initializeApp(config);*/
-var databaseRef = firebase.database().ref(); //root
-var classRoomsDatabase = databaseRef.child("ClassRooms");
-var roomsDatabase = databaseRef.child("RoomInfo");
+var class_names = {} 	// class_id : class name
+var rooms = {}			// room_id : room
 /**************************************************/
 
 getClasses();
-
 
 /******************************** MODEL ******************************/
 
@@ -94,15 +79,22 @@ function getClass(class_id) {
 }
 
 // - respond to change in a class's rooms
-// - calls getRoom/removeRoom accordingly
+// - calls removeRoom/getRoom accordingly
 function onClassRoomsChange(class_id, updated_rooms) {
 
-	// remove old rooms
-	for (room_id in class_rooms[class_id]) {
+	console.log("rooms for class " + class_id + " are now " + updated_rooms);
+	
+	// if we have a previous record of this class
+	if (class_rooms[class_id] != null) {	
 
-		// if they aren't in the new list
-		if (updated_rooms.indexOf(room_id) == -1) {
-			removeRoom(room_id);
+		// remove old rooms
+		for (i = 0; i < class_rooms[class_id].length; i++) {
+			var room_id = class_rooms[class_id][i]; 
+
+			// if they aren't in the new list
+			if (updated_rooms.indexOf(room_id) == -1) {
+				removeRoom(room_id);
+			}
 		}
 	}
 
@@ -110,7 +102,7 @@ function onClassRoomsChange(class_id, updated_rooms) {
 	for (i = 0; i < updated_rooms.length; i++) {
 
 		var room_id = updated_rooms[i];
-		
+
 		// only if we haven't already gotten it
 		if (class_rooms[class_id] == null || 
 			class_rooms[class_id].indexOf(room_id) == -1) {
@@ -118,16 +110,18 @@ function onClassRoomsChange(class_id, updated_rooms) {
 		}
 	}
 
+	// set the rooms for this class to the updated version
 	class_rooms[class_id] = updated_rooms;
 }
 
 // - gets all room info for specified room
-// - adds the room to the UI
+// - adds the room to rooms and the UI
 function getRoom(class_id, room_id) {
 	console.log("Getting room with id " + room_id);
 
 	// add listener for room info
 	roomsDatabase.child(room_id).on("value", function(snapshot) {
+
 		var room = snapshot.val();
 
         if (room) {
@@ -144,8 +138,12 @@ function getRoom(class_id, room_id) {
 	});
 }
 
-// - removes room from logic and UI
+// - removes room from rooms and the UI
 function removeRoom(room_id) {
+
+	console.log("Removing room with id " + room_id);
+
+	roomsDatabase.child(room_id).off();
 
 	delete rooms[room_id];
 

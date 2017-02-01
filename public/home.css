@@ -42,11 +42,8 @@ main {
 
 #navbar-site .nav-link {
   padding: 0 1em;
+  -webkit-transition: background 0.15s, color 0.15s;
   transition: background 0.15s, color 0.15s;
-}
-
-#navbar-site .nav-link:visited {
-  background: #aaaaaa;
 }
 
 #navbar-site .nav-link:hover {
@@ -62,8 +59,26 @@ main {
   display: none;
 }
 
+#navbar-site .icon {
+  height: 2.5rem;
+  width: auto;
+}
+
+#navbar-site .icon #log-in {
+  -webkit-transition: background 0.15s, color 0.15s;
+  transition: background 0.15s, color 0.15s;
+}
+
+#navbar-site .nav-link:hover #log-in {
+  fill: #aaaaaa;
+}
+
 #navbar-site .text-log-in {
   display: none;
+}
+
+#icon-log-in {
+  margin-left: -0.4rem;
 }
 
 #btn-login {
@@ -108,14 +123,14 @@ main {
 }
 
 #splash .title {
-  font-weight: 700;
+  font-weight: 800;
   font-size: 5rem;
 }
 
 #splash .subtitle {
   margin-top: 2rem;
   font-size: 2rem;
-  font-weight: 300;
+  font-weight: 600;
 }
 
 #splash .btn-container {
@@ -128,6 +143,7 @@ main {
   padding: 0.5em 1em;
   font-size: 2.5rem;
   font-weight: 700;
+  -webkit-transition: background 0.15s, color 0.15s;
   transition: background 0.15s, color 0.15s;
 }
 
@@ -158,7 +174,7 @@ main {
     justify-content: center;
   }
 
-  #navbar-site .glyphicon {
+  #navbar-site .icon {
     display: none;
   }
 
@@ -167,8 +183,8 @@ main {
   }
 
   #splash {
-    padding-top: 10rem;
-    padding-bottom: 10rem;
+    padding-top: 15rem;
+    padding-bottom: 15rem;
   }
 
   #splash .container {
@@ -176,7 +192,7 @@ main {
   }
 
   #splash .title {
-    font-size: 9rem;
+    font-size: 10rem;
   }
 
   #splash .subtitle {

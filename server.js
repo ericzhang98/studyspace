@@ -107,9 +107,53 @@ app.post('/send_buddy_request', function(req, res) {
 	db.user_buddy_requests.insert(req.body, function(err, docs){
 		res.json(docs);
 	});	
-
 });
 
+app.post('/buddy_requests', function(req, res) {
+
+	db.user_buddy_requests.find({sent_to_id:req.body.sent_to_id}, function(err, docs){
+    console.log(docs);
+		res.json(docs);
+	});	
+});
+
+app.post('/accept_buddy', function(req, res) {
+
+  var user_one_id = req.body.user_one_id;
+  var user_one_name = req.body.user_one_name;
+  var user_two_id = req.body.user_two_id;
+  var user_two_name = req.body.user_two_name;
+	db.user_buddies.insert([{user_one_id:user_one_id, user_one_name:user_one_name, 
+                          user_two_id:user_two_id, user_two_name:user_two_name},
+                          {user_one_id:user_two_id, user_one_name:user_two_name, 
+                          user_two_id:user_one_id, user_two_name:user_one_name}], function(err, docs){
+    console.log(docs);
+		res.json(docs);
+	});	
+});
+
+app.post('/get_added_buddies', function(req, res){
+  
+	db.user_buddies.find({user_one_id:req.body.user_one_id}, function(err, docs){
+		res.json(docs);
+	});	
+});
+
+app.delete('/reject_buddy/:id', function(req, res){
+
+	var id = req.params.id;
+	db.user_buddy_requests.remove({_id: mongojs.ObjectId(id)}, function(err, doc){
+		res.json(doc);
+	});
+});
+
+app.delete('/remove_buddy/:id', function(req, res){
+
+	var id = req.params.id;
+	db.user_buddies.remove({_id: mongojs.ObjectId(id)}, function(err, doc){
+		res.json(doc);
+	});
+});
 // forces the name property to be unique in user_classes collection
 //db.user_classes.createIndex({name: 1}, {unique:true});
 
@@ -164,20 +208,20 @@ app.get('/add_tutor/:class_id/:tutor_id/:admin_key', function (req, res) {
 
 /******************************** GET CLASSES & ROOMS ********************************/
 
-// return class_ids
+// return the class_ids of classes this user is enrolled in
 app.get('/get_classes/:user_id', function(req, res) {
 	var user_id = req.params.user_id;
 	db.users.findOne({user_id: user_id}, function (err, doc) {
-    if (doc) {
-    	res.send({class_ids: doc.class_ids});
-    }
-    else {
-      res.send({class_ids: []});
-    }
+	    if (doc) {
+	    	res.send({class_ids: doc.class_ids});
+	    }
+	    else {
+	      res.send({class_ids: []});
+	    }
   	});
 });
 
-// return name of the class
+// return name of the class with specified id
 app.get('/get_class/:class_id', function(req, res) {
 	var class_id = req.params.class_id;
 
@@ -604,7 +648,9 @@ function sendResetPassword(user, callback) {
 app.listen(3000);
 console.log("Server running on port 3000");
 
-//addRoom("TEST", "TEST_ROOM", MAIN_HOST, false);
+/*addRoom("cse110", "CSE110 Trollmao", MAIN_HOST, false);
+addRoom("cse110", "CSE110 Trollmao2", MAIN_HOST, false);
+addRoom("cse110", "test room name", MAIN_HOST, false);*/
 //removeRoom("TEST_fLOXccNn2q");
 //joinRoom("ID1", "TEST_4yGGyVKzaM");
 //joinRoom("ID2", "TEST_bE4iOJGtke");
