@@ -208,20 +208,20 @@ app.get('/add_tutor/:class_id/:tutor_id/:admin_key', function (req, res) {
 
 /******************************** GET CLASSES & ROOMS ********************************/
 
-// return class_ids
+// return the class_ids of classes this user is enrolled in
 app.get('/get_classes/:user_id', function(req, res) {
 	var user_id = req.params.user_id;
 	db.users.findOne({user_id: user_id}, function (err, doc) {
-    if (doc) {
-    	res.send({class_ids: doc.class_ids});
-    }
-    else {
-      res.send({class_ids: []});
-    }
+	    if (doc) {
+	    	res.send({class_ids: doc.class_ids});
+	    }
+	    else {
+	      res.send({class_ids: []});
+	    }
   	});
 });
 
-// return name of the class
+// return name of the class with specified id
 app.get('/get_class/:class_id', function(req, res) {
 	var class_id = req.params.class_id;
 
@@ -645,7 +645,9 @@ function sendResetPassword(user, callback) {
 app.listen(3000);
 console.log("Server running on port 3000");
 
-//addRoom("TEST", "TEST_ROOM", MAIN_HOST, false);
+/*addRoom("cse110", "CSE110 Trollmao", MAIN_HOST, false);
+addRoom("cse110", "CSE110 Trollmao2", MAIN_HOST, false);
+addRoom("cse110", "test room name", MAIN_HOST, false);*/
 //removeRoom("TEST_fLOXccNn2q");
 //joinRoom("ID1", "TEST_4yGGyVKzaM");
 //joinRoom("ID2", "TEST_bE4iOJGtke");
