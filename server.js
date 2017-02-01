@@ -168,7 +168,12 @@ app.get('/add_tutor/:class_id/:tutor_id/:admin_key', function (req, res) {
 app.get('/get_classes/:user_id', function(req, res) {
 	var user_id = req.params.user_id;
 	db.users.findOne({user_id: user_id}, function (err, doc) {
+    if (doc) {
     	res.send({class_ids: doc.class_ids});
+    }
+    else {
+      res.send({class_ids: []});
+    }
   	});
 });
 
@@ -206,6 +211,12 @@ app.get('/leave_room/:room_id/:user_id', function(req, res) {
 	var user_id = req.params.user_id;
 
   leaveRoom(user_id, room_id, function(success){res.send(success);});
+});
+
+app.post("/send_room_message", function(req, res) {
+  console.log("room message");
+  var roomID = req.body.roomID;
+  roomMessagesDatabase.child(roomID).push().set(req.body);
 });
 
 /*------------------------------------------------*/
@@ -263,7 +274,7 @@ app.get("/accountverify/:id/:token", function(req, res) {
   var id = req.params.id;
   var token = req.params.token;
   if (id.length == 24) {
-    db.users.findOne({_id: mongojs.ObjectId(id)}, function (err, doc) {
+    db.users.findOne({_id: mongojs.ObjectId(id)}, function(err, doc) {
       //check if user exists
       if (doc) {
         //verify the user if the token matches
@@ -295,6 +306,75 @@ app.get("/accountverify/:id/:token", function(req, res) {
   }
   else {
     console.log("Account verification: error - impossible ID");
+    sendVerifyError(res);
+  }
+});
+
+/* POST data: {email of account to reset password} - send password reset link to email
+ * Returns: {success} - whether or not password reset link was sent */
+app.post("/sendforgotpassword", function(req, res) {
+  var email = req.body.email;
+  db.users.findOne({email: email}, function(err, doc) {
+    //check if user with email exists
+    if (doc) {
+      db.users.findAndModify({query: {email: email},
+        update: {$set: {resetToken: generateToken()}}, new: true}, function(err, doc) {
+          if (doc) {
+            console.log("Account forgot password: sending reset link");
+            sendForgotPassword(doc);
+            res.send({success:true});
+          }
+          else {
+            console.log("WEIRD ASS ERROR - ACCOUNT EXISTS, BUT CAN'T MODIFY");
+            res.send({success:false});
+          }
+        });
+    }
+    else {
+      console.log("Account forgot password: error - account with email doesn't eixsts");
+      res.send({success:false});
+    }
+  });
+});
+
+/* GET data: {ID, resetToken} - reset password if resetToken matches
+ * POST data: {password} - new password
+ * Returns: {success} - whether or not password reset was succesful */
+app.post("/resetpassword/:id/:resetToken", function(req, res) {
+  var id = req.params.id;
+  var resetToken = req.params.resetToken;
+  var password = req.body.password;
+  if (id.length == 24) {
+    db.users.findOne({_id: mongojs.ObjectId(id)}, function(err, doc) {
+      //check if user exists
+      if (doc) {
+        //verify the user if the token matches
+        if (resetToken == doc.resetToken) {
+          db.users.findAndModify({query: {_id: mongojs.ObjectId(id)}, 
+            update: {$set: {password: password}}, new: true}, function(err, doc) {
+              if (doc) {
+                console.log("Account reset password: password reset");
+                res.json({success:true});
+              }
+              else {
+                console.log("WEIRD ASS ERROR - ACCOUNT EXISTS, BUT CAN'T MODIFY");
+                res.json({success:false});
+              }
+          });
+        }
+        else {
+          console.log("Account reset password: error - wrong token");
+          sendVerifyError(res);
+        }
+      }
+      else {
+        console.log("Account reset password: error - non-existent account");
+        sendVerifyError(res);
+      }
+    });
+  }
+  else {
+    console.log("Account reset password: error - impossible ID");
     sendVerifyError(res);
   }
 });
@@ -500,6 +580,21 @@ function sendVerifyEmail(user, callback) {
   mailTransporter.sendMail(verifyEmailOptions, callback);
 }
 
+function sendResetPassword(user, callback) {
+  var receiver = user.email;
+  var id = user._id;
+  var resetToken = user.resetToken;
+  var emailText = "http://localhost:3000/resetpassword/" + id + "/" + resetToken;
+  var resetPasswordEmailOptions = {
+    from: "studyspacehelper@gmail.com",
+    to: receiver,
+    subject: "Password reset",
+    text: emailText,
+    html: "<a href='" + emailText + "'>" + emailText + "</a>"
+  };
+  mailTransporter.sendMail(resetPasswordEmailOptions, callback);
+}
+
 /*------------------------------------------------------------------------*/
 
 
@@ -510,5 +605,5 @@ console.log("Server running on port 3000");
 //removeRoom("TEST_fLOXccNn2q");
 //joinRoom("ID1", "TEST_4yGGyVKzaM");
 //joinRoom("ID2", "TEST_bE4iOJGtke");
-leaveRoom("ID1", "TEST_4yGGyVKzaM");
+//leaveRoom("ID1", "TEST_4yGGyVKzaM");
 //checkToDelete("TEST_bE4iOJGtke");
