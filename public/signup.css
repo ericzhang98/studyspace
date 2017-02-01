@@ -5,17 +5,109 @@ html, body {
   height: 100%;
 }
 
+body {
+  font-family: 'Raleway', sans-serif;
+  letter-spacing: 0.05em;
+  background: #ecf0f1;
+}
+
 main {
-  display: -webkit-box;
-  display: -ms-flexbox;
-  display: flex;
-  -webkit-box-align: center;
-  -ms-flex-align: center;
-  align-items: center;
+  background: white;
   height: 100%;
 }
 
-#menu-signup {
-  background: #aaaaaa;
-  height: 50%;
+.form-control {
+  border-radius: 0;
+  border: none;
+  border-bottom: 3px solid #333333;
+  box-shadow: none;
+  height: 3rem;
+  font-size: 2rem;
+  padding: 0;
+  margin-top: 0rem;
+  background: transparent;
+  color: #333333;
+  font-weight: 700;
+}
+
+.form-control:focus {
+  box-shadow: none;
+  border-bottom: 3px solid #888888;
+  color: #888888;
+}
+
+/* Sign Up Form */
+#signup {
+  width: 100%;
+  background: white;
+  padding: 5rem 2rem;
+}
+
+#signup .title {
+  font-size: 3rem;
+  font-weight: 800;
+  margin: 0;
+}
+
+#signup .form-container {
+  margin-top: 5rem;
+}
+
+#signup label {
+  font-size: 1.5rem;
+  font-weight: 800;
+}
+
+#signup .form-group {
+  margin-top: 2.5rem;
+  margin-bottom: 0;
+}
+
+#signup .btn-container {
+  margin-top: 7rem;
+}
+
+#btn-submit {
+  border: none;
+  border-radius: 0;
+  padding: 0.5em 1em;
+  font-size: 2.5rem;
+  font-weight: 700;
+  background: #286090;
+}
+
+#btn-submit:hover {
+  background: #337ab7;
+}
+
+#btn-submit:visited {
+  background: #337ab7;
+}
+
+#btn-submit:active {
+  box-shadow: none;
+  outline: none;
+}
+
+#btn-submit:focus {
+  outline: none;
+}
+
+@media screen and (min-width: 768px) {
+  main {
+    display: -webkit-box;
+    display: -ms-flexbox;
+    display: flex;
+    -webkit-box-align: center;
+    -ms-flex-align: center;
+    align-items: center;
+    background: #ecf0f1;
+  }
+
+  #signup {
+    width: 50rem;
+    height: auto;
+    margin: 0 auto;
+    padding: 8rem;
+  }
 }
