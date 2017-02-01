@@ -8,9 +8,10 @@ var config = {
 };
 firebase.initializeApp(config);
 var databaseRef = firebase.database().ref(); //root
-var roomID = "roomID";
+var roomID = "cse110_asdf";
 var chatDatabase = databaseRef.child("RoomMessages").child(roomID);
 var firstLoad = true;
+var userEmail = getCookie("email");
 
 //Room app
 var myApp = angular.module("roomApp", []);
@@ -25,7 +26,7 @@ myApp.controller("ChatController", ["$scope", "$http",
       $scope.sendChatMessage = function(chatInput) {
         if (chatInput) {
           console.log("Sending chat with: " + chatInput);
-          var newChatMessage = new ChatMessage("test", chatInput, roomID, Date.now()/1000);
+          var newChatMessage = new ChatMessage(userEmail, chatInput, roomID, Date.now()/1000);
           console.log(newChatMessage);
           //chatDatabase.child(roomID).push().set(newChatMessage);
           $http.post("/send_room_message", newChatMessage);
@@ -33,7 +34,7 @@ myApp.controller("ChatController", ["$scope", "$http",
         else {
           console.log("chatInput is empty");
         }
-      }
+      };
 
 
       //Firebase chat db listener
@@ -45,6 +46,24 @@ myApp.controller("ChatController", ["$scope", "$http",
           updateChatView(chatMessageList);
         }
       });
+
+      $scope.timeAgo= function(chatMessage) {
+        var timeSentDate = new Date(chatMessage.timeSent * 1000);
+        var monthDayString = (timeSentDate.getMonth()+1) + "/" + timeSentDate.getDate();
+        var hour = timeSentDate.getHours();
+        var AMPM = "AM";
+        if (hour > 12) {
+          hour -= 12;
+          AMPM = "PM";
+        }
+        else if (hour == 0) {
+          hour = 12;
+        }
+        var timeString = hour + ":" + timeSentDate.getMinutes() + " " + AMPM;
+
+        var dateString = monthDayString + " " + timeString;
+        return dateString;
+      };
 
       function updateChatView(chatMessageList) {
         console.log("updated chat view");

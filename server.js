@@ -213,10 +213,13 @@ app.get('/leave_room/:room_id/:user_id', function(req, res) {
   leaveRoom(user_id, room_id, function(success){res.send(success);});
 });
 
+/* POST data: {chatMessage} - post chat message to firebase in respective room
+ * Returns: nothing */
 app.post("/send_room_message", function(req, res) {
   console.log("room message");
   var roomID = req.body.roomID;
   roomMessagesDatabase.child(roomID).push().set(req.body);
+  res.send({}); //close the http request
 });
 
 /*------------------------------------------------*/
