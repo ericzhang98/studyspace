@@ -107,9 +107,53 @@ app.post('/send_buddy_request', function(req, res) {
 	db.user_buddy_requests.insert(req.body, function(err, docs){
 		res.json(docs);
 	});	
-
 });
 
+app.post('/buddy_requests', function(req, res) {
+
+	db.user_buddy_requests.find({sent_to_id:req.body.sent_to_id}, function(err, docs){
+    console.log(docs);
+		res.json(docs);
+	});	
+});
+
+app.post('/accept_buddy', function(req, res) {
+
+  var user_one_id = req.body.user_one_id;
+  var user_one_name = req.body.user_one_name;
+  var user_two_id = req.body.user_two_id;
+  var user_two_name = req.body.user_two_name;
+	db.user_buddies.insert([{user_one_id:user_one_id, user_one_name:user_one_name, 
+                          user_two_id:user_two_id, user_two_name:user_two_name},
+                          {user_one_id:user_two_id, user_one_name:user_two_name, 
+                          user_two_id:user_one_id, user_two_name:user_one_name}], function(err, docs){
+    console.log(docs);
+		res.json(docs);
+	});	
+});
+
+app.post('/get_added_buddies', function(req, res){
+  
+	db.user_buddies.find({user_one_id:req.body.user_one_id}, function(err, docs){
+		res.json(docs);
+	});	
+});
+
+app.delete('/reject_buddy/:id', function(req, res){
+
+	var id = req.params.id;
+	db.user_buddy_requests.remove({_id: mongojs.ObjectId(id)}, function(err, doc){
+		res.json(doc);
+	});
+});
+
+app.delete('/remove_buddy/:id', function(req, res){
+
+	var id = req.params.id;
+	db.user_buddies.remove({_id: mongojs.ObjectId(id)}, function(err, doc){
+		res.json(doc);
+	});
+});
 // forces the name property to be unique in user_classes collection
 //db.user_classes.createIndex({name: 1}, {unique:true});
 
