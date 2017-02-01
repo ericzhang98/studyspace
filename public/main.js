@@ -1,8 +1,8 @@
 /***** General variables **************************/
 var me = {user_id: "id1"};
 var class_rooms = {} 	// class_id : class rooms
-var class_names = {} // class_id : class name
-var rooms = {}		// room_id : room
+var class_names = {} 	// class_id : class name
+var rooms = {}			// room_id : room
 /**************************************************/
 
 getClasses();
@@ -79,15 +79,22 @@ function getClass(class_id) {
 }
 
 // - respond to change in a class's rooms
-// - calls getRoom/removeRoom accordingly
+// - calls removeRoom/getRoom accordingly
 function onClassRoomsChange(class_id, updated_rooms) {
 
-	// remove old rooms
-	for (room_id in class_rooms[class_id]) {
+	console.log("rooms for class " + class_id + " are now " + updated_rooms);
+	
+	// if we have a previous record of this class
+	if (class_rooms[class_id] != null) {	
 
-		// if they aren't in the new list
-		if (updated_rooms.indexOf(room_id) == -1) {
-			removeRoom(room_id);
+		// remove old rooms
+		for (i = 0; i < class_rooms[class_id].length; i++) {
+			var room_id = class_rooms[class_id][i]; 
+
+			// if they aren't in the new list
+			if (updated_rooms.indexOf(room_id) == -1) {
+				removeRoom(room_id);
+			}
 		}
 	}
 
@@ -103,6 +110,7 @@ function onClassRoomsChange(class_id, updated_rooms) {
 		}
 	}
 
+	// set the rooms for this class to the updated version
 	class_rooms[class_id] = updated_rooms;
 }
 
@@ -132,6 +140,10 @@ function getRoom(class_id, room_id) {
 
 // - removes room from rooms and the UI
 function removeRoom(room_id) {
+
+	console.log("Removing room with id " + room_id);
+
+	roomsDatabase.child(room_id).off();
 
 	delete rooms[room_id];
 

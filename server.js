@@ -168,7 +168,9 @@ app.get('/add_tutor/:class_id/:tutor_id/:admin_key', function (req, res) {
 app.get('/get_classes/:user_id', function(req, res) {
 	var user_id = req.params.user_id;
 	db.users.findOne({user_id: user_id}, function (err, doc) {
-    	res.send({class_ids: doc.class_ids});
+		if (doc != null) {
+    		res.send({class_ids: doc.class_ids});
+    	}
   	});
 });
 
@@ -506,9 +508,11 @@ function sendVerifyEmail(user, callback) {
 app.listen(3000);
 console.log("Server running on port 3000");
 
-//addRoom("TEST", "TEST_ROOM", MAIN_HOST, false);
+/*addRoom("cse110", "CSE110 Trollmao", MAIN_HOST, false);
+addRoom("cse110", "CSE110 Trollmao2", MAIN_HOST, false);
+addRoom("cse110", "test room name", MAIN_HOST, false);*/
 //removeRoom("TEST_fLOXccNn2q");
 //joinRoom("ID1", "TEST_4yGGyVKzaM");
 //joinRoom("ID2", "TEST_bE4iOJGtke");
-leaveRoom("ID1", "TEST_4yGGyVKzaM");
+//leaveRoom("ID1", "TEST_4yGGyVKzaM");
 //checkToDelete("TEST_bE4iOJGtke");
