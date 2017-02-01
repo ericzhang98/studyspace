@@ -8,8 +8,8 @@ var config = {
 };
 firebase.initializeApp(config);
 var databaseRef = firebase.database().ref(); //root
-var chatDatabase = databaseRef.child("ChatDatabase").child("rooms");
 var roomID = "roomID";
+var chatDatabase = databaseRef.child("RoomMessages").child(roomID);
 var firstLoad = true;
 
 //Room app
@@ -27,7 +27,8 @@ myApp.controller("ChatController", ["$scope", "$http",
           console.log("Sending chat with: " + chatInput);
           var newChatMessage = new ChatMessage("test", chatInput, roomID, Date.now()/1000);
           console.log(newChatMessage);
-          chatDatabase.child(roomID).push().set(newChatMessage);
+          //chatDatabase.child(roomID).push().set(newChatMessage);
+          $http.post("/send_room_message", newChatMessage);
         }
         else {
           console.log("chatInput is empty");
@@ -36,7 +37,7 @@ myApp.controller("ChatController", ["$scope", "$http",
 
 
       //Firebase chat db listener
-      chatDatabase.child(roomID).on("value", function(snapshot) {
+      chatDatabase.on("value", function(snapshot) {
         var snapshotValueObject = snapshot.val();
         if (snapshotValueObject) {
           var chatMessageList = Object.values(snapshotValueObject);

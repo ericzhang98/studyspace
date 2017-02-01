@@ -1,17 +1,31 @@
 /***** General variables **************************/
-var me = {user_id: "id1", block_list: ["block1"]};
+var me = {user_id: "id2", block_list: ["block1"]};
 var currRoomID = null;
+var currRoomUsers = [];
 var isLecturer = false;
 /**************************************************/
 
 /***** Audio conferencing variables ***************/
-//var peer = new Peer(me.user_id, {key: 'tirppc8o5c9xusor'});
 var peer = new Peer(me.user_id, {host: "localhost", port: "9000", path: '/peerjs'});
-
+var myStream = null;
 var myCalls = [];
 var myRemoteStreams = {}; // Dictionary from call.id to audio track
-var myStream = null;
 navigator.getUserMedia = navigator.getUserMedia || navigator.webkitGetUserMedia || navigator.mozGetUserMedia;
+/**************************************************/
+
+/***** Firebase setup *****************************/
+
+var config = {
+  apiKey: "AIzaSyB8eBxo5mqiVVskav5dCUQ1Hr_UQeiJAL4",
+  authDomain: "studyspace-490cd.firebaseapp.com",
+  databaseURL: "https://studyspace-490cd.firebaseio.com",
+  storageBucket: "studyspace-490cd.appspot.com",
+  messagingSenderId: "293916419475"
+};
+firebase.initializeApp(config);
+var databaseRef = firebase.database().ref(); //root
+var roomInfoDatabase = databaseRef.child("RoomInfoDatabase");
+var roomUsersDatabase = databaseRef.child("RoomUsersDatabase");
 /**************************************************/
 
 /***** onClicks for testing ***********************/	
@@ -219,7 +233,7 @@ function joinRoom(room_id) {
 
 	// send request to server
 	var xhr = new XMLHttpRequest();
-	xhr.open('GET', "/join_room/" + room_id + "/" + me.user_id + "/", true);
+	xhr.open('GET', "/join_room/" + room_id + "/" + me.user_id, true);
 	xhr.send();
 
 	// on response
@@ -238,6 +252,9 @@ function joinRoom(room_id) {
 			// set currRoomID
 			currRoomID = room_id;
 
+			// listen to the room
+			listenToRoom();
+
 	        // if this is a lecture and I am the host, I am the lecturer
 	        isLecturer = (response.is_lecture && response.host_id == me.user_id);
 	        
@@ -251,8 +268,6 @@ function joinRoom(room_id) {
 	        else {
 		        for (i = 0; i < response.users.length; i++) {
 		        	var other_user_id = response.users[i];
-		        	console.log(other_user_id);
-		        	console.log(me.user_id);
 		        	if (other_user_id != me.user_id) {
 		        		startCall(other_user_id);
 		    		}
@@ -262,7 +277,7 @@ function joinRoom(room_id) {
 	}
 }
 
-// - updates server and leave all current calls
+// - updates server and leaves all current calls
 function leaveRoom() {
 
 	// are we even in a room?
@@ -322,6 +337,33 @@ function leaveCalls() {
 	}
 	myCalls = [];
 }
+/*********************************************************************/
+
+/************************* LISTENING TO ROOMS ************************/
+
+function listenToRoom() {
+
+	// detach any old listeners
+	roomUsersDatabase.child(currRoomID).off();
+
+	// attach listener to the current room
+	roomUsersDatabase.child(currRoomID).on("value", function(snapshot) {
+
+        var snapshotValueObject = snapshot.val();
+
+        if (snapshotValueObject) {
+        	// get the updated list of users in the room
+        	var updatedRoomUsers = Object.values(snapshotValueObject);
+
+        	// TODO: update UI with updated users list
+
+        	// set our currRoomUsers to the updated list
+        	currRoomUsers = updatedRoomUsers;
+        }
+
+    });
+}
+
 /*********************************************************************/
 
 /********************** MUTING / UNMUTING AUDIO **********************/
