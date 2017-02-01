@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="91px" height="76px" viewBox="0 0 91 76" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <!-- Generator: Sketch 42 (36781) - http://www.bohemiancoding.com/sketch -->
+    <title>Log In</title>
+    <desc>Created with Sketch.</desc>
+    <defs></defs>
+    <g id="Symbols" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+        <g id="Log-In" fill="#FFFFFF">
+            <g id="Group">
+                <path d="M48.6892655,34 L0,34 L0,42 L48.6814606,42 L37.8392422,52.8453388 L43.4960964,58.5021931 L59.9982895,42 L60,41.9982895 L64.0021931,37.9960964 L43.4960964,17.4899998 L37.8392422,23.146854 L48.6892655,34 Z" id="Combined-Shape"></path>
+                <path d="M16.9336255,50 C21.9573379,65.1063064 36.2064897,76 53,76 C73.9868205,76 91,58.9868205 91,38 C91,17.0131795 73.9868205,0 53,0 C36.2064897,0 21.9573379,10.8936936 16.9336255,26 L25.4962621,26 C30.1256018,15.4045713 40.6980858,8 53,8 C69.5685425,8 83,21.4314575 83,38 C83,54.5685425 69.5685425,68 53,68 C40.6980858,68 30.1256018,60.5954287 25.4962621,50 L16.9336255,50 Z" id="Combined-Shape"></path>
+            </g>
+        </g>
+    </g>
+</svg>
