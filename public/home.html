@@ -49,25 +49,29 @@
 
         <!-- Navbar (Right) -->
         <div class="navbar-header pull-right">
-          <ul class="nav">
-            <li class="nav-item">
-              <div id="btn-login" class="nav-link">
-                <span class="text-log-in">log in</span>
-                <svg id="icon-log-in" class="icon" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="91" height="76" viewBox="0 0 91 76" version="1.1">
-                  <path d="M48.69 34L37.84 23.15 43.5 17.49 64 38 60 42 60 42 43.5 58.5 37.84 52.85 48.68 42 0 42 0 34 48.69 34ZM16.93 50L25.5 50C30.13 60.6 40.7 68 53 68 69.57 68 83 54.57 83 38 83 21.43 69.57 8 53 8 40.7 8 30.13 15.4 25.5 26L16.93 26C21.96 10.89 36.21 0 53 0 73.99 0 91 17.01 91 38 91 58.99 73.99 76 53 76 36.21 76 21.96 65.11 16.93 50Z" id="log-in" stroke="none" fill="#FFFFFF" fill-rule="evenodd"/>
-                </svg>
-              </div>
-            </li>
-          </ul>
+          <div id="link-login" class="nav-link">
+            <a class="text-log-in" href="#">log in</a>
+            <svg id="icon-log-in" class="icon" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="91" height="76" viewBox="0 0 91 76" version="1.1">
+              <path d="M48.69 34L37.84 23.15 43.5 17.49 64 38 60 42 60 42 43.5 58.5 37.84 52.85 48.68 42 0 42 0 34 48.69 34ZM16.93 50L25.5 50C30.13 60.6 40.7 68 53 68 69.57 68 83 54.57 83 38 83 21.43 69.57 8 53 8 40.7 8 30.13 15.4 25.5 26L16.93 26C21.96 10.89 36.21 0 53 0 73.99 0 91 17.01 91 38 91 58.99 73.99 76 53 76 36.21 76 21.96 65.11 16.93 50Z" id="log-in" stroke="none" fill="#FFFFFF" fill-rule="evenodd"/>
+            </svg>
+          </div>
         </div>
       </div>
     </nav>
 
-    <div id="login-screen">
-      <div class="container-fluid">
-        <h1>LOG IN</h1>
-        <!-- Log in fields -->
-      </div>
+    <!-- Login Modal -->
+    <div id="modal-login" class="modal">
+        <div class="modal-dialog">
+          <div id="login" class="modal-content">
+            <div id="close-login" class="close" aria-label="Close">
+              <span class="glyphicon glyphicon-remove" aria-hidden="true"></span>
+            </div>
+            <div class="title-container text-center"> 
+              <h1 class="title">LOG IN</h1>
+            </div>
+            <!-- Log in fields -->
+          </div>
+        </div>
     </div>
 
     <!-- Main Content -->
@@ -75,8 +79,10 @@
       <!-- Application Info -->
       <div id="splash" class="jumbotron">
         <div class="container">
-          <h1 class="title fadeInUp">studyspace</h1>
-          <p class="subtitle fadeInUp">Some description of the app that will knock their socks off.</p>
+          <h1 class="title fadeInUp">Time to love studying.</h1>
+          <p class="subtitle fadeInUp">
+            Find students in your class and start studying. Join live virtual lectures hosted by tutors and get up to speed for an upcoming exam.
+          </p>
           <div class="btn-container text-center">
             <a id="btn-signup" class="btn btn-primary btn-lg" href="signup.html">Sign Up</a>
           </div>
