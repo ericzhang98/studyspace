@@ -649,7 +649,7 @@ function sendResetPassword(user, callback) {
 app.listen(3000);
 console.log("Server running on port 3000");
 
-addRoom("cse110", "ucsd_cse_110_1_r0", MAIN_HOST, false);
+//addRoom("cse110", "ucsd_cse_110_1_r0", MAIN_HOST, false);
 /*addRoom("cse110", "CSE110 Trollmao", MAIN_HOST, false);
 addRoom("cse110", "CSE110 Trollmao2", MAIN_HOST, false);
 addRoom("cse110", "test room name", MAIN_HOST, false);*/

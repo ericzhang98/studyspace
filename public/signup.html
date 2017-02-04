@@ -8,7 +8,7 @@
 -->
 
 <!DOCTYPE html>
-<html>
+<html ng-app="signupApp">
   <head>
     <!-- Bootstrap -->
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
@@ -31,7 +31,7 @@
 
   <body>
     <main role="main">
-      <div id="signup" class="signup-container">
+      <div id="signup" class="signup-container" ng-controller="SignUpController">
         <div class="title-container text-center">
           <h1 class="title">Sign Up</h1>
         </div>
@@ -47,22 +47,27 @@
             </div>
             <div class="form-group">
               <label for="input-email">Email</label>
-              <input type="email" class="form-control" id="input-email" placeholder="email@example.com">
+              <input type="email" class="form-control" id="input-email" placeholder="email@example.com" ng-model="signupEmail">
             </div>
             <div class="form-group">
               <label for="input-password">Password</label>
-              <input type="password" class="form-control" id="input-password">
+              <input type="password" class="form-control" id="input-password" ng-model="signupPassword">
             </div>
             <div class="form-group">
               <label for="input-confirm-password">Confirm Password</label>
               <input type="password" class="form-control" id="input-confirm-password">
             </div>
             <div class="btn-container text-center">
-              <button type="submit" id="btn-submit" class="btn btn-primary" disabled="disabled">Submit</button>
+              <button type="submit" id="btn-submit" class="btn btn-primary"
+                ng-click="signUp(signupEmail,signupPassword)">
+                Submit</button>
             </div>
           </form>
         </div>
       </div>
     </main>
+  <!-- Angular scripts -->
+  <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.6.1/angular.min.js"></script>
+  <script src="controllers/sign_up_controller.js"></script>
   </body>
 </html>
