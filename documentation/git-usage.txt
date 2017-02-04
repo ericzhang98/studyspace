@@ -21,6 +21,8 @@ git clone https://github.com/ericzhang98/studyspace.git
 
 Change to staging:
 git checkout -b staging
+
+Pulling from staging:
 git pull origin staging
 
 
