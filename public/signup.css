@@ -19,21 +19,21 @@ main {
 .form-control {
   border-radius: 0;
   border: none;
-  border-bottom: 3px solid #333333;
+  border-bottom: 3px solid #888888;
   box-shadow: none;
   height: 3rem;
   font-size: 2rem;
   padding: 0;
   margin-top: 0rem;
   background: transparent;
-  color: #333333;
+  color: #888888;
   font-weight: 700;
 }
 
 .form-control:focus {
   box-shadow: none;
-  border-bottom: 3px solid #888888;
-  color: #888888;
+  border-bottom: 3px solid #333333;
+  color: #333333;
 }
 
 /* Sign Up Form */
@@ -41,6 +41,13 @@ main {
   width: 100%;
   background: white;
   padding: 5rem 2rem;
+}
+
+#signup h1::selection,
+#signup label::selection,
+#signup input::selection {
+  background: #333333;
+  color: white;
 }
 
 #signup .title {

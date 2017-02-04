@@ -15,10 +15,12 @@ main {
   font-weight: 700;
   height: 6rem;
   border: none;
+  z-index: 100;
 }
 
 #navbar-site a {
   color: white;
+  text-decoration: none;
 }
 
 #navbar-site .container-fluid {
@@ -42,13 +44,21 @@ main {
 
 #navbar-site .nav-link {
   padding: 0 1em;
+  cursor: pointer;
   -webkit-transition: background 0.15s, color 0.15s;
   transition: background 0.15s, color 0.15s;
 }
 
 #navbar-site .nav-link:hover {
-  color: #aaaaaa;
   background: white;
+}
+
+#navbar-site .nav-link:hover .text-log-in {
+  color: #aaaaaa;
+}
+
+#navbar-site .nav-link:hover #log-in {
+  fill: #aaaaaa;
 }
 
 #navbar-site .navbar-brand {
@@ -64,15 +74,6 @@ main {
   width: auto;
 }
 
-#navbar-site .icon #log-in {
-  -webkit-transition: background 0.15s, color 0.15s;
-  transition: background 0.15s, color 0.15s;
-}
-
-#navbar-site .nav-link:hover #log-in {
-  fill: #aaaaaa;
-}
-
 #navbar-site .text-log-in {
   display: none;
 }
@@ -81,22 +82,17 @@ main {
   margin-left: -0.4rem;
 }
 
-#btn-login {
-  color: white;
-  cursor: pointer;
-}
-
-/* Login Menu */
-#login-screen {
-  display: none;
-  position: fixed;
-  background: #aaaaaa;
-  width: 100%;
-  height: 100%;
+#btn-login .text-log-in::selection {
+  background: #333333;
   color: white;
 }
 
-#login-screen .container-fluid {
+/* Login Modal */
+.modal {
+  background: rgba(0,0,0,0.5);
+}
+
+.modal-dialog {
   display: -webkit-box;
   display: -ms-flexbox;
   display: flex;
@@ -106,7 +102,46 @@ main {
   -webkit-justify-content: center;
   -ms-flex-pack: center;
   justify-content: center;
+  width: 100%;
   height: 100%;
+  margin: 0;
+}
+
+.modal-content {
+  border: none;
+  border-radius: 0;
+  box-shadow: none;
+  width: 50rem;
+  padding: 8rem;
+  margin: 0;
+}
+
+#login {
+  position: relative;
+  background: white;
+  color: #333333;
+}
+
+#login .close {
+  position: absolute;
+  top: 3rem;
+  right: 3rem;
+  font-size: 2rem;
+  opacity: 1;
+  color: #333333;
+  text-shadow: none;
+  -webkit-transition: color 0.15s;
+  transition: color 0.15s;
+}
+
+#login .close:hover {
+  color: #888888;
+}
+
+#login .title {
+  font-size: 3rem;
+  font-weight: 800;
+  margin: 0;
 }
 
 /* Splash Art */
@@ -116,6 +151,12 @@ main {
   background: #ecf0f1;
 }
 
+#splash h1::selection,
+#splash p::selection {
+  background: #333333;
+  color: white;
+}
+
 #splash .container {
   text-align: center;
   padding-left: 2rem;
@@ -123,14 +164,14 @@ main {
 }
 
 #splash .title {
-  font-weight: 800;
-  font-size: 5rem;
+  font-weight: 700;
+  font-size: 4rem;
 }
 
 #splash .subtitle {
-  margin-top: 2rem;
+  margin-top: 1.5rem;
   font-size: 2rem;
-  font-weight: 600;
+  font-weight: 400;
 }
 
 #splash .btn-container {
@@ -167,13 +208,6 @@ main {
     display: inline;
   }
 
-  #navbar-site .navbar-brand,
-  #navbar-site .nav-link {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-  }
-
   #navbar-site .icon {
     display: none;
   }
@@ -192,12 +226,12 @@ main {
   }
 
   #splash .title {
-    font-size: 10rem;
+    font-size: 6rem;
   }
 
   #splash .subtitle {
     margin-top: 2.5rem;
-    font-size: 2.5rem;
+    font-size: 3rem;
   }
 
   #splash .btn-container {

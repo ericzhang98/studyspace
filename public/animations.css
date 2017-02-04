@@ -62,6 +62,6 @@
 }
 
 .fadeInBack {
-  -webkit-animation: fadeInBack 0.5s;
-  animation: fadeInBack 0.5s;
+  -webkit-animation: fadeInBack 0.2s;
+  animation: fadeInBack 0.2s;
 }
