@@ -9,6 +9,7 @@
 // packed with functions
 var express = require('express');
 var app = express();
+var socsjs = require('socsjs');
 
 // - Mongodb is the database that we will be using
 // - mongojs is a module that has some useful functions
@@ -180,6 +181,29 @@ app.get('/user_classes/:id', function(req, res) {
 	db.user_classes.find({user_id: req.params.id}, function(err, docs){
 		res.json(docs);
 	});
+});
+
+app.get('/scrape_classes', function(req, res) {
+
+  var depts = ['AIP', 'AAS', 'ANES', 'ANBI', 'ANAR', 'ANTH', 'ANSC', 'AESE', 'AUD', 'BENG', 'BNFO', 'BIEB',
+               'BICD','BIPN','BIBC','BGGN','BGSE','BILD','BIMM','BISP','BIOM','CMM','CENG','CHEM','CHIN','CLIN',
+               'CLRE','COGS','COMM','COGR','CSE','ICAM', 'CONT','CGS','CAT','TDCH','TDHD','TDMV','TDPF','TDTR',
+               'DSE','DERM','DSGN','DOC','ECON','EAP','EDS','ERC','ECE']; // TODO::ADD MORE DEPARTMENTS YOU FUCKS
+ 
+  for (var i = 0; i < depts.length; i++) {
+    var dept = depts[i];
+    var quarter = 'WI17';
+    var timeout = 10000;
+    var undergrad = true;   // optional boolean to select only undergrad courses (< 200)
+    socsjs.searchDepartment(quarter, dept, timeout, undergrad).then(function(result) {
+      for (var i = 0; i < result.length; i++){
+        var obj = result[i];
+        console.log(obj['name']);
+      }
+    }).catch(function(err) {
+        console.log(err, 'oops!');
+    });
+  }
 });
 
 /*---------------------------*/
