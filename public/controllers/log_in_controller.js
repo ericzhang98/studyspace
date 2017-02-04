@@ -38,10 +38,13 @@ angular.module('logInApp', []).controller('LogInCtrl', ['$scope', '$http', funct
             console.log(LOG + "login succeeded");
             console.log(user);
 
-            //store user info in cookie
+            // store user info in cookie
             console.log("saving cookie too");
             storeCookie("_id", user._id);
             storeCookie("email", user.email);
+
+            // go to main.html
+            document.location.href = "./mainRoom.html";
 
           }
           else {
