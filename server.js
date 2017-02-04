@@ -9,6 +9,7 @@
 // packed with functions
 var express = require('express');
 var app = express();
+var socsjs = require('socsjs');
 
 // - Mongodb is the database that we will be using
 // - mongojs is a module that has some useful functions
@@ -182,6 +183,29 @@ app.get('/user_classes/:id', function(req, res) {
 	});
 });
 
+app.get('/scrape_classes', function(req, res) {
+
+  var depts = ['AIP', 'AAS', 'ANES', 'ANBI', 'ANAR', 'ANTH', 'ANSC', 'AESE', 'AUD', 'BENG', 'BNFO', 'BIEB',
+               'BICD','BIPN','BIBC','BGGN','BGSE','BILD','BIMM','BISP','BIOM','CMM','CENG','CHEM','CHIN','CLIN',
+               'CLRE','COGS','COMM','COGR','CSE','ICAM', 'CONT','CGS','CAT','TDCH','TDHD','TDMV','TDPF','TDTR',
+               'DSE','DERM','DSGN','DOC','ECON','EAP','EDS','ERC','ECE']; // TODO::ADD MORE DEPARTMENTS YOU FUCKS
+ 
+  for (var i = 0; i < depts.length; i++) {
+    var dept = depts[i];
+    var quarter = 'WI17';
+    var timeout = 10000;
+    var undergrad = true;   // optional boolean to select only undergrad courses (< 200)
+    socsjs.searchDepartment(quarter, dept, timeout, undergrad).then(function(result) {
+      for (var i = 0; i < result.length; i++){
+        var obj = result[i];
+        console.log(obj['name']);
+      }
+    }).catch(function(err) {
+        console.log(err, 'oops!');
+    });
+  }
+});
+
 /*---------------------------*/
 
 
@@ -289,13 +313,15 @@ app.post('/accountlogin', function(req, res) {
 /* POST data: New account info with {email, password}
  * Returns: {success} - whether or not it succeeded */
 app.post("/accountsignup", function(req, res) {
+  var name = req.body.name;
+  var school = req.body.school;
   var email = req.body.email;
   var password = req.body.password;
   console.log("Account signup: attempt with - " + email);
   db.users.findOne({email:email}, function (err, doc) {
     //if user doesn't exist yet (doc is null), insert it in
     if (!doc) {
-      var newUser = new User(email, password);
+      var newUser = new User(email, password, name, school);
       db.users.insert(newUser, function(err, doc) {
         if (doc) {
           console.log("Account signup: ACCOUNT CREATED");
@@ -431,10 +457,12 @@ app.post("/resetpassword/:id/:resetToken", function(req, res) {
 
 /* Model -----------------------------------------------------------------*/
 
-function User(email, password) {
+function User(email, password, name, school) {
 //this._id = whatever mongo gives us
   this.email = email;
   this.password = password;
+  this.name = name;
+  this.school = school;
   this.token = "dank"; //generateToken();
   this.active = true; //has verified email
 }
