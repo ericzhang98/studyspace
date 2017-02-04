@@ -289,13 +289,15 @@ app.post('/accountlogin', function(req, res) {
 /* POST data: New account info with {email, password}
  * Returns: {success} - whether or not it succeeded */
 app.post("/accountsignup", function(req, res) {
+  var name = req.body.name;
+  var school = req.body.school;
   var email = req.body.email;
   var password = req.body.password;
   console.log("Account signup: attempt with - " + email);
   db.users.findOne({email:email}, function (err, doc) {
     //if user doesn't exist yet (doc is null), insert it in
     if (!doc) {
-      var newUser = new User(email, password);
+      var newUser = new User(email, password, name, school);
       db.users.insert(newUser, function(err, doc) {
         if (doc) {
           console.log("Account signup: ACCOUNT CREATED");
@@ -431,10 +433,12 @@ app.post("/resetpassword/:id/:resetToken", function(req, res) {
 
 /* Model -----------------------------------------------------------------*/
 
-function User(email, password) {
+function User(email, password, name, school) {
 //this._id = whatever mongo gives us
   this.email = email;
   this.password = password;
+  this.name = name;
+  this.school = school;
   this.token = "dank"; //generateToken();
   this.active = true; //has verified email
 }
