@@ -25,6 +25,5 @@ git checkout -b staging
 Pulling from staging:
 git pull origin staging
 
-
-
-
+Pushing to staging:
+git push origin staging
