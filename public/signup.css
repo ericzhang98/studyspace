@@ -100,6 +100,21 @@ main {
   outline: none;
 }
 
+#signup .msg-error {
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-align: center;
+  -ms-flex-align: center;
+  align-items: center;
+  margin-top: 1rem;
+  height: 2.5rem;
+}
+
+#signup .msg-error .glyphicon {
+  margin-right: 1rem;
+}
+
 @media screen and (min-width: 768px) {
   main {
     display: -webkit-box;
