@@ -13,12 +13,18 @@ myApp.controller('preferences',['$scope', '$http', function($scope, $http){
 		});
 	};
 	
+  var getClassList = function(){
+    $http.get('/scrape_classes').then(function(response){
+			console.log(response.data);
+		});    
+  }
 	var refresh = function(id){
 		$http.get('/user_classes/' + id).then(function(response){
 			$scope.user_classes_list = response.data;
 		});
 	};
-
+  
+  getClassList();
 	refresh($scope.user_id);
 	
 	$scope.remove = function(id){
