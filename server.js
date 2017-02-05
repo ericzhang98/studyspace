@@ -14,9 +14,7 @@ var socsjs = require('socsjs');
 // - Mongodb is the database that we will be using
 // - mongojs is a module that has some useful functions
 var mongojs = require('mongojs');
-var db = mongojs('users', ['users']); // we want the 'users' database
-var db_classes = mongojs("classes", ["classes"]); 
-var db_rooms = mongojs("rooms", ["rooms"]); //yung flat data
+var db = mongojs('mongodb://studyspace:raindropdroptop@ds033086.mlab.com:33086/studyspace', []);
 
 // - body-parser is middle-ware that parses http objects,
 // or something to that effect (don't worry about it)
@@ -54,10 +52,6 @@ app.use(bodyParser.json());
 
 var MAIN_HOST = "mainhost";
 var ADMIN_KEY = "ABCD"
-//var classes_dict = {};
-//classes_dict["ucsd_cse_110_1"] = new Class("ucsd_cse_110_1", "CSE 110 Gillespie", []);
-//classes_dict["ucsd_cse_105_1"] = new Class("ucsd_cse_105_1", "CSE 105 Tiefenbruck", []);
-//var rooms_dict = {};
 
 /* HTTP requests ---------------------------------------------------------*/
 
@@ -230,6 +224,22 @@ app.get('/add_tutor/:class_id/:tutor_id/:admin_key', function (req, res) {
 
 /*************************************************************************************/
 
+/************************************ HTML PAGES *************************************/
+
+app.get('/', function(req, res) {
+  res.sendFile(__dirname + "/public/home.html");
+});
+
+app.get('/signup', function(req, res) {
+  res.sendFile(__dirname + "/public/signup.html");
+});
+
+app.get('/main', function(req, res) {
+  res.sendFile(__dirname + "/public/mainRoom.html");
+});
+
+/*************************************************************************************/
+
 /******************************** GET CLASSES & ROOMS ********************************/
 
 // return the class_ids of classes this user is enrolled in
@@ -250,7 +260,7 @@ app.get('/get_class/:class_id', function(req, res) {
 	var class_id = req.params.class_id;
 
 	// look up name in mongoDB
-	db_classes.classes.findOne({class_id: class_id}, function (err, doc) {
+	db.classes.findOne({class_id: class_id}, function (err, doc) {
 		res.send({name: doc.name});
 	});
 });

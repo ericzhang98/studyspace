@@ -1,9 +1,9 @@
 <!--
-_____     ______     __   __     __  __
-/\  __-.  /\  __ \   /\ "-.\ \   /\ \/ /
-\ \ \/\ \ \ \  __ \  \ \ \-.  \  \ \  _"-.
-\ \____-  \ \_\ \_\  \ \_\\"\_\  \ \_\ \_\
-\/____/   \/_/\/_/   \/_/ \/_/   \/_/\/_/
+  _____     ______     __   __     __  __
+  /\  __-.  /\  __ \   /\ "-.\ \   /\ \/ /
+  \ \ \/\ \ \ \  __ \  \ \ \-.  \  \ \  _"-.
+  \ \____-  \ \_\ \_\  \ \_\\"\_\  \ \_\ \_\
+  \/____/   \/_/\/_/   \/_/ \/_/   \/_/\/_/
 
 -->
 
@@ -35,83 +35,85 @@ _____     ______     __   __     __  __
    <body>
       <!-- Main Content -->
       <div class="container-fluid">
-            <div class="col-xs-2 col-sm-2 col-md-2 col-lg-2" style="background-color:red">
-              <h4>User info and rooms</h4>
-              <div>
-                 <img class="img-responsive" src="assets/images/user_icon.png" />
-                 <p class="text-center" size="8sp">FirstName LastName</p>
-              </div>
 
-              <div class="panel-group" id="accordion">
+        <div class="col-xs-2 col-sm-2 col-md-2 col-lg-2" 
+           style="background-color:SteelBlue; padding-top:30px">
+        
+        <div class="row" style="padding-left:10px; 
+          border-bottom-style=solid; border-color=Gray; border-width: 20px">
+          <img class="user-icon center-block" style="display:inline" src="assets/images/user_icon.png" />
+          <p style="float:left; padding-left:10px; 
+          padding-right: 10px; padding-top:20px; padding-bottom:40px">FirstName LastName</p>
+        </div>
 
+        <div class="panel-group" id="accordion">
 
-                <!--first class in drop down-->
-                <div class="panel panel-default">                               
-                  <div class="panel-heading">
-                    <h4 class="panel-title">
-                      <a data-toggle="collapse" data-parent="#accordion" href="#cse110">
-                      CSE 110</a>
-                       <span class="glyphicon glyphicon-triangle-bottom" aria-hidden="true"></span> 
-                    </h4>
-                  </div>
-                  <div id="cse110" class="panel-collapse collapse">
-                    <ul class="list-group">
-                      <li class="list-group-item">Main</li>
-                      <li class="list-group-item">Room 1</li>
-                      <li class="list-group-item">Public Room 2</li>
-                      <li class="list-group-item">Public Room 3</li>
-                      <li class="list-group-item">DANK</li>
-                    </ul>
-                  </div>
-                </div>
+          <!--first class in drop down-->
+          <div class="panel panel-default">                               
+            <div class="panel-heading">
+              <h4 class="panel-title">
+                <a data-toggle="collapse" data-parent="#accordion" href="#cse110">
+                CSE 110</a>
+                <span class="glyphicon glyphicon-triangle-bottom" aria-hidden="true"></span> 
+              </h4>
+            </div>
+            <div id="cse110" class="panel-collapse collapse">
+              <ul class="list-group">
+                <li class="list-group-item">Main</li>
+                <li class="list-group-item">Room 1</li>
+                <li class="list-group-item">Public Room 2</li>
+                <li class="list-group-item">Public Room 3</li>
+                <li class="list-group-item">DANK</li>
+              </ul>
+            </div>
+          </div>
 
-                <!--second class in drop down-->
-                <div class="panel panel-default">                               
-                  <div class="panel-heading">
-                    <h4 class="panel-title">
-                      <a data-toggle="collapse" data-parent="#accordion" href="#cse140">
-                      CSE 140</a>
-                    </h4>
-                  </div>
-                  <div id="cse140" class="panel-collapse collapse">
-                    <ul class="list-group">
-                      <li class="list-group-item">Main</li>
-                      <li class="list-group-item">140 room 1</li>
-                      <li class="list-group-item">140 room 2</li>
-                    </ul>
-                  </div>
-                </div>
+          <!--second class in drop down-->
+          <div class="panel panel-default">                               
+            <div class="panel-heading">
+              <h4 class="panel-title">
+                <a data-toggle="collapse" data-parent="#accordion" href="#cse140">
+                CSE 140</a>
+              </h4>
+            </div>
+            <div id="cse140" class="panel-collapse collapse">
+              <ul class="list-group">
+                <li class="list-group-item">Main</li>
+                <li class="list-group-item">140 room 1</li>
+                <li class="list-group-item">140 room 2</li>
+              </ul>
+            </div>
+          </div>
 
-                <!--third class in drop down-->
-                <div class="panel panel-default">                               
-                  <div class="panel-heading">
-                    <h4 class="panel-title">
-                      <a data-toggle="collapse" data-parent="#accordion" href="#phil28">
-                      PHIL 28</a>
-                    </h4>
-                  </div>
-                  <div id="phil28" class="panel-collapse collapse">
-                    <ul class="list-group">
-                      <li class="list-group-item">Main</li>
-                      <li class="list-group-item">study group</li>
-                      <li class="list-group-item">random shit</li>
-                      <li class="list-group-item">philosophers</li>
-                    </ul>
-                  </div>
-                </div>
+          <!--third class in drop down-->
+          <div class="panel panel-default">                               
+            <div class="panel-heading">
+              <h4 class="panel-title">
+                <a data-toggle="collapse" data-parent="#accordion" href="#phil28">
+                PHIL 28</a>
+              </h4>
+            </div>
+            <div id="phil28" class="panel-collapse collapse">
+              <ul class="list-group">
+               <li class="list-group-item">Main</li>
+                <li class="list-group-item">study group</li>
+                <li class="list-group-item">random shit</li>
+                <li class="list-group-item">philosophers</li>
+              </ul>
+            </div>
+          </div>
                 
-              </div> <!--end panel group-->
-            </div> <!--end left column-->
+        </div> <!--end panel group-->
+      </div> <!--end left column-->
 
-            <div class="col-sm-8" style="background-color:blue">
-               <h3>Column 2</h3>
-
-            </div>
-            <div class="col-sm-2" style="background-color:green">
-               <h3>Column 3</h3>        
-
-            </div>
-      </div>   
+      <div class="col-sm-8" style="background-color:blue">
+         <h3>Column 2</h3>
+      </div>
+      <div class="col-sm-2" style="background-color:green">
+        <h3>Column 3</h3>        
+      </div>
+    
+    </div>   
       <!-- Application Info -->
    </body>
 </html>

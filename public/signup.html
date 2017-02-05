@@ -35,6 +35,10 @@
         <div class="title-container text-center">
           <h1 class="title">Sign Up</h1>
         </div>
+        <div class="msg-error alert-danger hide">
+          <span class="glyphicon glyphicon-exclamation-sign" aria-hidden="true"></span>
+          <span>{{successMessage}}</span>
+        </div>
         <div class="form-container">
           <form>
             <div class="form-group">
@@ -69,15 +73,12 @@
                 Submit</button>
             </div>
           </form>
-          <div class="msg-error text-center alert-warning">
-            <span class="glyphicon glyphicon-exclamation-sign" aria-hidden="true"></span>
-            <span>{{successMessage}}</span>
-          </div>
         </div>
       </div>
     </main>
   <!-- Angular scripts -->
   <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.6.1/angular.min.js"></script>
+  <script src="sha1.js"></script>
   <script src="controllers/sign_up_controller.js"></script>
   </body>
 </html>
