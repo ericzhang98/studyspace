@@ -42,9 +42,8 @@ angular.module('logInApp', []).controller('LogInCtrl', ['$scope', '$http', funct
             console.log("saving cookie too");
             storeCookie("_id", user._id);
             storeCookie("email", user.email);
-
-            // go to main.html
-            document.location.href = "./mainRoom.html";
+            
+            document.location.href = "main";
 
           }
           else {

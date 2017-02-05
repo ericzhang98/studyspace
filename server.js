@@ -10,6 +10,7 @@
 var express = require('express');
 var app = express();
 var socsjs = require('socsjs');
+var path = require("path");
 
 // - Mongodb is the database that we will be using
 // - mongojs is a module that has some useful functions
@@ -226,6 +227,24 @@ app.get('/add_tutor/:class_id/:tutor_id/:admin_key', function (req, res) {
 
 		// back up tutor in database
 	}
+});
+
+/*************************************************************************************/
+
+/************************************ HTML PAGES *************************************/
+
+app.get('/', function(req, res) {
+  res.sendFile(path.join(__dirname + "/views/home.html"));
+});
+
+app.get('/signup', function(req, res) {
+  console.log("rendering signuplul");
+  res.sendFile(path.join(__dirname + "/views/signup.html"));
+});
+
+app.get('/main', function(req, res) {
+  console.log("rendering mainlul");
+  res.sendFile(path.join(__dirname + "/views/mainRoom.html"));
 });
 
 /*************************************************************************************/
