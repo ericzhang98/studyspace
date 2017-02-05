@@ -1,0 +1,39 @@
+.container-fluid {
+  padding-right: 0;
+  padding-left: 0;
+  margin-left: 0;
+  margin-right: 0;
+}
+
+
+
+@media screen and (max-width: 768px) {
+
+  .left-bar {
+    width: 120px;
+  }
+  .user-icon {
+    float:left;
+    width: 30px;
+  }
+}
+
+@media screen and (min-width: 769px) and (max-width: 1199px) {
+  .left-bar {
+    width: 200px;
+  }
+  .user-icon {
+    float:left;
+    width: 50px;
+  }
+}
+
+@media screen and (min-width: 1200px) {
+  .left-bar {
+    width: 300px;
+  }
+  .user-icon {
+    float:left;
+    width: 60px;
+  }
+}
