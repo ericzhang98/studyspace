@@ -12,6 +12,8 @@ _____     ______     __   __     __  __
    <head>
       <!-- Bootstrap -->
 
+      <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>
+
       <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
 
       <link rel="stylesheet" href="mainRoom.css">
@@ -33,14 +35,75 @@ _____     ______     __   __     __  __
    <body>
       <!-- Main Content -->
       <div class="container-fluid">
-            <div class="col-xs-2 col-sm-2 col-md-3 col-lg-2" style="background-color:red">
+            <div class="col-xs-2 col-sm-2 col-md-2 col-lg-2" style="background-color:red">
               <h4>User info and rooms</h4>
               <div>
                  <img class="img-responsive" src="assets/images/user_icon.png" />
                  <p class="text-center" size="8sp">FirstName LastName</p>
               </div>
-            </div>
-            <div class="col-sm-7" style="background-color:blue">
+
+              <div class="panel-group" id="accordion">
+
+
+                <!--first class in drop down-->
+                <div class="panel panel-default">                               
+                  <div class="panel-heading">
+                    <h4 class="panel-title">
+                      <a data-toggle="collapse" data-parent="#accordion" href="#cse110">
+                      CSE 110</a>
+                       <span class="glyphicon glyphicon-triangle-bottom" aria-hidden="true"></span> 
+                    </h4>
+                  </div>
+                  <div id="cse110" class="panel-collapse collapse">
+                    <ul class="list-group">
+                      <li class="list-group-item">Main</li>
+                      <li class="list-group-item">Room 1</li>
+                      <li class="list-group-item">Public Room 2</li>
+                      <li class="list-group-item">Public Room 3</li>
+                      <li class="list-group-item">DANK</li>
+                    </ul>
+                  </div>
+                </div>
+
+                <!--second class in drop down-->
+                <div class="panel panel-default">                               
+                  <div class="panel-heading">
+                    <h4 class="panel-title">
+                      <a data-toggle="collapse" data-parent="#accordion" href="#cse140">
+                      CSE 140</a>
+                    </h4>
+                  </div>
+                  <div id="cse140" class="panel-collapse collapse">
+                    <ul class="list-group">
+                      <li class="list-group-item">Main</li>
+                      <li class="list-group-item">140 room 1</li>
+                      <li class="list-group-item">140 room 2</li>
+                    </ul>
+                  </div>
+                </div>
+
+                <!--third class in drop down-->
+                <div class="panel panel-default">                               
+                  <div class="panel-heading">
+                    <h4 class="panel-title">
+                      <a data-toggle="collapse" data-parent="#accordion" href="#phil28">
+                      PHIL 28</a>
+                    </h4>
+                  </div>
+                  <div id="phil28" class="panel-collapse collapse">
+                    <ul class="list-group">
+                      <li class="list-group-item">Main</li>
+                      <li class="list-group-item">study group</li>
+                      <li class="list-group-item">random shit</li>
+                      <li class="list-group-item">philosophers</li>
+                    </ul>
+                  </div>
+                </div>
+                
+              </div> <!--end panel group-->
+            </div> <!--end left column-->
+
+            <div class="col-sm-8" style="background-color:blue">
                <h3>Column 2</h3>
 
             </div>
