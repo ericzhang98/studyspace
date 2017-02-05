@@ -73,7 +73,7 @@ function getClass(class_id) {
 
 			console.log("class name is: " + response.name);
 
-			// TODO: update UI
+			// TODO: update UI to add the class
 		}
 	}
 }
@@ -126,7 +126,7 @@ function getRoom(class_id, room_id) {
 
         if (room) {
 
-			// TODO: update UI 
+			// TODO: update UI to add the room
 
         	// store the room
         	rooms[room_id] = new Room(room_id, room.name, room.host_id, room.class_id,

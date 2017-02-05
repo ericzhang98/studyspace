@@ -20,7 +20,6 @@ main {
 
 #navbar-site a {
   color: white;
-  text-decoration: none;
 }
 
 #navbar-site .container-fluid {
@@ -57,8 +56,9 @@ main {
   color: #aaaaaa;
 }
 
-#navbar-site .nav-link:hover #log-in {
-  fill: #aaaaaa;
+#navbar-site .nav-link:hover #log-in path,
+#navbar-site .nav-link:hover #log-in polyline {
+  stroke: #aaaaaa;
 }
 
 #navbar-site .navbar-brand {
@@ -80,11 +80,6 @@ main {
 
 #icon-log-in {
   margin-left: -0.4rem;
-}
-
-#btn-login .text-log-in::selection {
-  background: #333333;
-  color: white;
 }
 
 /* Login Modal */
@@ -199,6 +194,7 @@ main {
 }
 
 @media screen and (min-width: 768px) {
+  /* Navbar */
   #navbar-site .container-fluid {
     padding-left: 4rem;
     padding-right: 4rem;
@@ -212,10 +208,17 @@ main {
     display: none;
   }
 
-  #navbar-site .text-log-in {
+  #link-login .text-log-in {
     display: inline;
+    color: white;
   }
 
+  #link-login .text-log-in::selection {
+    background: #333333;
+    color: white;
+  }
+
+  /* Splash */
   #splash {
     padding-top: 15rem;
     padding-bottom: 15rem;

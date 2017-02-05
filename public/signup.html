@@ -31,7 +31,7 @@
 
   <body>
     <main role="main">
-      <div id="signup" class="signup-container" ng-controller="SignUpController">
+      <div id="signup" class="signup-container fadeInBack" ng-controller="SignUpController">
         <div class="title-container text-center">
           <h1 class="title">Sign Up</h1>
         </div>
@@ -69,7 +69,10 @@
                 Submit</button>
             </div>
           </form>
-          <p>{{successMessage}}</p>
+          <div class="msg-error text-center alert-warning">
+            <span class="glyphicon glyphicon-exclamation-sign" aria-hidden="true"></span>
+            <span>{{successMessage}}</span>
+          </div>
         </div>
       </div>
     </main>
