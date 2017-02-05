@@ -232,17 +232,17 @@ app.get('/add_tutor/:class_id/:tutor_id/:admin_key', function (req, res) {
 /************************************ HTML PAGES *************************************/
 
 app.get('/', function(req, res) {
-  res.sendFile(path.join(__dirname + "/views/home.html"));
+  res.sendFile(__dirname + "/public/home.html");
 });
 
 app.get('/signup', function(req, res) {
   console.log("rendering signuplul");
-  res.sendFile(path.join(__dirname + "/views/signup.html"));
+  res.sendFile(path.join(__dirname + "/public/signup.html"));
 });
 
 app.get('/main', function(req, res) {
   console.log("rendering mainlul");
-  res.sendFile(path.join(__dirname + "/views/mainRoom.html"));
+  res.sendFile(path.join(__dirname + "/public/mainRoom.html"));
 });
 
 /*************************************************************************************/
