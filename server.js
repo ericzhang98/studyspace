@@ -59,6 +59,9 @@ var ADMIN_KEY = "ABCD"
 //var rooms_dict = {};
 
 /* HTTP requests ---------------------------------------------------------*/
+app.get("/testtest", function(req, res) {
+  res.sendFile(__dirname + "/public/signup.html");
+});
 
 
 /* User settings ---------------*/
