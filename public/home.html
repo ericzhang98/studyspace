@@ -8,15 +8,18 @@
 -->
 
 <!DOCTYPE html>
-<html>
+<html ng-app="logInApp">
   <head>
     <!-- Bootstrap -->
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>
 
-    <!-- jQueryUI-->
+    <!-- jQueryUI -->
     <script src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.12.1/jquery-ui.min.js"></script>
+
+    <!-- Angular -->
+    <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.6.1/angular.min.js"></script>
 
     <!-- For mobile scaling -->
     <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -30,6 +33,7 @@
 
     <!-- javascript files -->
     <script type="text/javascript" src="toggleMenu.js"></script>
+    <script src="controllers/log_in_controller.js"></script>
 
     <!-- Title -->
     <title>Study Space - Home</title>
@@ -73,6 +77,27 @@
             <div class="title-container text-center"> 
               <h1 class="title">Log In</h1>
             </div>
+            <div id="myDiv" class="signup-container fadeInBack" ng-controller="LogInCtrl">
+              <div class="form-container">
+                <form>
+                  <div class="form-group">
+                    <label for="input-name">Email</label>
+                    <input type="text" class="form-control" id="input-name"
+                    placeholder="Email" ng-model="user.email">
+                  </div>
+                  <div class="form-group">
+                    <label for="input-name">Password</label>
+                    <input type="password" class="form-control" id="input-name"
+                      placeholder="Password" ng-model="user.password">
+                  </div>
+                  <div class="btn-container text-center">
+                    <button class="btn btn-primary"
+                      ng-click=attemptLogin()>
+                      Submit</button>
+                  </div>
+                </form>
+              </div>
+            </div>
             <!-- Log in fields -->
           </div>
         </div>
@@ -83,9 +108,9 @@
       <!-- Application Info -->
       <div id="splash" class="jumbotron">
         <div class="container">
-          <h1 class="title fadeInUp">Time to love studying.</h1>
+          <h1 class="title fadeInUp">Your study group is bigger than ever.</h1>
           <p class="subtitle fadeInUp">
-            Find students in your class and start studying. Join live virtual lectures hosted by tutors and get up to speed for an upcoming exam.
+            Studyspace pairs you with classmates and instructors to tackle assignments and prepare for exams.
           </p>
           <div class="btn-container text-center">
             <a id="btn-signup" class="btn btn-primary btn-lg" href="signup.html">Sign Up</a>
