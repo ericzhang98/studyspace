@@ -20,6 +20,7 @@ myApp.controller("SignUpController", ["$scope", "$http",
             else {
               console.log("Failed!");
               $scope.successMessage = "Failed! Account already exists";
+              $(".msg-error").removeClass("hide");
             }
           });
         }
@@ -41,14 +42,17 @@ myApp.controller("SignUpController", ["$scope", "$http",
             }
             else {
               $scope.successMessage = "Passwords don't match";
+              $(".msg-error").removeClass("hide");
             }
           }
           else {
             $scope.successMessage = "Password needs at least 6 characters";
+            $(".msg-error").removeClass("hide");
           }
         }
         else {
           $scope.successMessage = "Ayyylmao fill out the fields";
+          $(".msg-error").removeClass("hide");
         }
 
       }
@@ -62,6 +66,7 @@ myApp.controller("SignUpController", ["$scope", "$http",
           else {
             console.log("Failed!");
             $scope.successMessage = "Failed! Account already exists";
+            $(".msg-error").removeClass("hide");
           }
         });
       }
