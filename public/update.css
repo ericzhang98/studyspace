@@ -1,3 +1,7 @@
+#add-class-div {
+    display: inline-block;
+}
+
 #buttons {
     width: 50%;
     margin: 4em auto;
@@ -5,13 +9,20 @@
     text-align: center;
 }
 
+#class-dropdown {
+    background-color: inherit;
+}
+
 #school-classes {
     margin: 10px auto;
 }
 
 .form-control {
-    width: 50%;
     margin: 10px auto;
+}
+
+.half {
+    width: 50%;
 }
 
 .main-container {
@@ -22,12 +33,47 @@
     text-align: center;
 }
 
+.middle {
+    margin: 0 auto;
+}
+
 .school-class {
     font-size: 1.5em;
     width: 50%;
     margin: 10px auto;
 }
 
+.span2 {
+  display: inline-block;
+}
+
+.x-button {
+    margin-left: 8px;
+}
+
 h1 {
     margin-bottom: 10px;
+}
+
+html {
+    background-color: white;
+}
+
+li {
+  padding: 10px;
+  width: 100%;
+  border-top: 1px solid gray;
+}
+
+li:first-child {
+  border: none;
+}
+
+li:hover {
+  background-color: gray;
+}
+
+ul {
+  padding: 0;
+  margin: 0;
 }
