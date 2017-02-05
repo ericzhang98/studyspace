@@ -14,22 +14,23 @@ angular.module('logInApp', []).controller('LogInCtrl', ['$scope', '$http', funct
 
   // - verifyLogin looks for a user with specified info and
   // - calls onResponseReceived when it gets a response
-  var verifyLogin = function(user, onResponseReceived) {
+  var verifyLogin = function(loginAttempt, onResponseReceived) {
     console.log(LOG + "verifyLogin");
-    $http.post('/accountlogin', user).then(function onSuccess(response) {
+    $http.post('/accountlogin', loginAttempt).then(function onSuccess(response) {
       onResponseReceived(response.data);
     })
   }
 
   // - attempts to login
-  $scope.attemptLogin = function() {
+  $scope.attemptLogin = function(email, password) {
     console.log(LOG + "attemptLogin");
+    var loginAttempt = {email: email, password: Sha1.hash(password)};
 
     // valid login info
-    if (validLoginInfo($scope.user)) {
+    if (validLoginInfo(loginAttempt)) {
 
       // verify email / password
-      verifyLogin($scope.user, function(user) {
+      verifyLogin(loginAttempt, function(user) {
 
         // login returned a user
         // check if user activated account or not
@@ -38,10 +39,13 @@ angular.module('logInApp', []).controller('LogInCtrl', ['$scope', '$http', funct
             console.log(LOG + "login succeeded");
             console.log(user);
 
-            //store user info in cookie
+            // store user info in cookie
             console.log("saving cookie too");
             storeCookie("_id", user._id);
             storeCookie("email", user.email);
+
+            // go to main.html
+            document.location.href = "./mainRoom.html";
 
           }
           else {

@@ -9,13 +9,12 @@
 // packed with functions
 var express = require('express');
 var app = express();
+var socsjs = require('socsjs');
 
 // - Mongodb is the database that we will be using
 // - mongojs is a module that has some useful functions
 var mongojs = require('mongojs');
-var db = mongojs('users', ['users']); // we want the 'users' database
-var db_classes = mongojs("classes", ["classes"]); 
-var db_rooms = mongojs("rooms", ["rooms"]); //yung flat data
+var db = mongojs('mongodb://studyspace:raindropdroptop@ds033086.mlab.com:33086/studyspace', []);
 
 // - body-parser is middle-ware that parses http objects,
 // or something to that effect (don't worry about it)
@@ -182,6 +181,29 @@ app.get('/user_classes/:id', function(req, res) {
 	});
 });
 
+app.get('/scrape_classes', function(req, res) {
+
+  var depts = ['AIP', 'AAS', 'ANES', 'ANBI', 'ANAR', 'ANTH', 'ANSC', 'AESE', 'AUD', 'BENG', 'BNFO', 'BIEB',
+               'BICD','BIPN','BIBC','BGGN','BGSE','BILD','BIMM','BISP','BIOM','CMM','CENG','CHEM','CHIN','CLIN',
+               'CLRE','COGS','COMM','COGR','CSE','ICAM', 'CONT','CGS','CAT','TDCH','TDHD','TDMV','TDPF','TDTR',
+               'DSE','DERM','DSGN','DOC','ECON','EAP','EDS','ERC','ECE']; // TODO::ADD MORE DEPARTMENTS YOU FUCKS
+ 
+  for (var i = 0; i < depts.length; i++) {
+    var dept = depts[i];
+    var quarter = 'WI17';
+    var timeout = 10000;
+    var undergrad = true;   // optional boolean to select only undergrad courses (< 200)
+    socsjs.searchDepartment(quarter, dept, timeout, undergrad).then(function(result) {
+      for (var i = 0; i < result.length; i++){
+        var obj = result[i];
+        console.log(obj['name']);
+      }
+    }).catch(function(err) {
+        console.log(err, 'oops!');
+    });
+  }
+});
+
 /*---------------------------*/
 
 
@@ -226,7 +248,7 @@ app.get('/get_class/:class_id', function(req, res) {
 	var class_id = req.params.class_id;
 
 	// look up name in mongoDB
-	db_classes.classes.findOne({class_id: class_id}, function (err, doc) {
+	db.classes.findOne({class_id: class_id}, function (err, doc) {
 		res.send({name: doc.name});
 	});
 });
@@ -289,13 +311,15 @@ app.post('/accountlogin', function(req, res) {
 /* POST data: New account info with {email, password}
  * Returns: {success} - whether or not it succeeded */
 app.post("/accountsignup", function(req, res) {
+  var name = req.body.name;
+  var school = req.body.school;
   var email = req.body.email;
   var password = req.body.password;
   console.log("Account signup: attempt with - " + email);
   db.users.findOne({email:email}, function (err, doc) {
     //if user doesn't exist yet (doc is null), insert it in
     if (!doc) {
-      var newUser = new User(email, password);
+      var newUser = new User(email, password, name, school);
       db.users.insert(newUser, function(err, doc) {
         if (doc) {
           console.log("Account signup: ACCOUNT CREATED");
@@ -431,10 +455,12 @@ app.post("/resetpassword/:id/:resetToken", function(req, res) {
 
 /* Model -----------------------------------------------------------------*/
 
-function User(email, password) {
+function User(email, password, name, school) {
 //this._id = whatever mongo gives us
   this.email = email;
   this.password = password;
+  this.name = name;
+  this.school = school;
   this.token = "dank"; //generateToken();
   this.active = true; //has verified email
 }
@@ -453,6 +479,7 @@ function Room(room_id, room_name, room_host_id, class_id, is_lecture) {
 	this.has_tutor = false;
 }
 
+//TODO: ERIC - fix callback stuff so res gets sent back
 function addRoom(class_id, room_name, room_host_id, is_lecture, callback) {
   var room_id = class_id + "_" + generateToken();
   console.log("FIREBASE: Attempting to add room with id " + room_id);
@@ -648,6 +675,7 @@ function sendResetPassword(user, callback) {
 app.listen(3000);
 console.log("Server running on port 3000");
 
+//addRoom("cse110", "ucsd_cse_110_1_r0", MAIN_HOST, false);
 /*addRoom("cse110", "CSE110 Trollmao", MAIN_HOST, false);
 addRoom("cse110", "CSE110 Trollmao2", MAIN_HOST, false);
 addRoom("cse110", "test room name", MAIN_HOST, false);*/

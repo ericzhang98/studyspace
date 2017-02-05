@@ -1,0 +1,79 @@
+<!--
+_____     ______     __   __     __  __
+/\  __-.  /\  __ \   /\ "-.\ \   /\ \/ /
+\ \ \/\ \ \ \  __ \  \ \ \-.  \  \ \  _"-.
+\ \____-  \ \_\ \_\  \ \_\\"\_\  \ \_\ \_\
+\/____/   \/_/\/_/   \/_/ \/_/   \/_/\/_/
+
+-->
+
+<!DOCTYPE html>
+<html>
+   <head>
+      <!-- Bootstrap -->
+
+      <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>
+
+      <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
+
+      <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>
+
+      <!-- For mobile scaling -->
+      <meta name="viewport" content="width=device-width, initial-scale=1">
+
+      <!-- Stylesheets -->
+
+      <!-- Additional Typefaces -->
+      <link href="https://fonts.googleapis.com/css?family=Raleway:300,400,700,800" rel="stylesheet">
+
+      <!-- Title -->
+      <title>Main Room</title>
+   </head>
+
+   <body>
+      <!-- Main Content -->
+      <div class="container-fluid">
+         <div class="row">
+            <div class="col-sm-2" style="background-color:red">
+               <h3>Column 1</h3>
+            </div>
+
+            <div class="col-sm-8" id="message-wrapper" style="background-color:blue">
+              <nav class="navbar navbar-inverse navbar-static-top">
+                <div class="container-fluid">
+                  <div class="navbar-header">
+                    <a class="navbar-brand">CSE 110</a>
+                  </div>
+                  <ul class="nav navbar-nav navbar-right">
+                    <li class="dropdown">
+                      <a class="dropdown-toggle" data-toggle="dropdown" href="#">Rooms <span class="caret"></span></a>
+                      <ul class="dropdown-menu" id="room-list">
+                        <li><a href="#">Room 1</a></li>
+                        <li><a href="#">Room 2</a></li>
+                        <li><a href="#">Room 3</a></li>
+                      </ul>
+                    </li>
+                  </ul>
+                </div>
+              </nav>
+
+              <div class="container fill" id="message-pane">
+
+              </div>
+
+              <div class="navbar navbar-static-bottom" id="message-bar">
+                <input class="form-control" ng-model="chatInput">
+              </div>
+
+
+            </div>
+
+            <div class="col-sm-2" style="background-color:green">
+               <h3>Column 3</h3>
+
+            </div>
+         </div>
+      </div>
+      <!-- Application Info -->
+   </body>
+</html>

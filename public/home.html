@@ -8,15 +8,18 @@
 -->
 
 <!DOCTYPE html>
-<html>
+<html ng-app="logInApp">
   <head>
     <!-- Bootstrap -->
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>
 
-    <!-- jQueryUI-->
+    <!-- jQueryUI -->
     <script src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.12.1/jquery-ui.min.js"></script>
+
+    <!-- Angular -->
+    <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.6.1/angular.min.js"></script>
 
     <!-- For mobile scaling -->
     <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -30,6 +33,8 @@
 
     <!-- javascript files -->
     <script type="text/javascript" src="toggleMenu.js"></script>
+    <script src="sha1.js"></script>
+    <script src="controllers/log_in_controller.js"></script>
 
     <!-- Title -->
     <title>Study Space - Home</title>
@@ -50,9 +55,13 @@
         <!-- Navbar (Right) -->
         <div class="navbar-header pull-right">
           <div id="link-login" class="nav-link">
-            <a class="text-log-in" href="#">log in</a>
-            <svg id="icon-log-in" class="icon" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="91" height="76" viewBox="0 0 91 76" version="1.1">
-              <path d="M48.69 34L37.84 23.15 43.5 17.49 64 38 60 42 60 42 43.5 58.5 37.84 52.85 48.68 42 0 42 0 34 48.69 34ZM16.93 50L25.5 50C30.13 60.6 40.7 68 53 68 69.57 68 83 54.57 83 38 83 21.43 69.57 8 53 8 40.7 8 30.13 15.4 25.5 26L16.93 26C21.96 10.89 36.21 0 53 0 73.99 0 91 17.01 91 38 91 58.99 73.99 76 53 76 36.21 76 21.96 65.11 16.93 50Z" id="log-in" stroke="none" fill="#FFFFFF" fill-rule="evenodd"/>
+            <span class="text-log-in">log in</span>
+            <svg id="icon-log-in" class="icon" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="62" height="46" viewBox="-3 0 62 46" version="1.1">
+              <g id="log-in" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd" transform="translate(0.000000, 3.000000)">
+                <path d="M17.14 11C20.43 4.47 27.19 0 35 0 46.05 0 55 8.95 55 20 55 31.05 46.05 40 35 40 27.2 40 20.43 35.53 17.14 29" id="space" stroke="#FFFFFF" stroke-width="6"/>
+                <path d="M0 20L34 20" id="arrow-shaft" stroke="#FFFFFF" stroke-width="6"/>
+                <polyline id="arrow-head" stroke="#FFFFFF" stroke-width="6" points="28 10 38 20 28 30"/>
+              </g>
             </svg>
           </div>
         </div>
@@ -67,7 +76,28 @@
               <span class="glyphicon glyphicon-remove" aria-hidden="true"></span>
             </div>
             <div class="title-container text-center"> 
-              <h1 class="title">LOG IN</h1>
+              <h1 class="title">Log In</h1>
+            </div>
+            <div id="myDiv" class="signup-container fadeInBack" ng-controller="LogInCtrl">
+              <div class="form-container">
+                <form>
+                  <div class="form-group">
+                    <label for="input-name">Email</label>
+                    <input type="text" class="form-control" id="input-name"
+                    placeholder="Email" ng-model="email">
+                  </div>
+                  <div class="form-group">
+                    <label for="input-name">Password</label>
+                    <input type="password" class="form-control" id="input-name"
+                      placeholder="Password" ng-model="password">
+                  </div>
+                  <div class="btn-container text-center">
+                    <button id="btn-submit" class="btn btn-primary"
+                      ng-click="attemptLogin(email, password)">
+                      Submit</button>
+                  </div>
+                </form>
+              </div>
             </div>
             <!-- Log in fields -->
           </div>
@@ -79,9 +109,9 @@
       <!-- Application Info -->
       <div id="splash" class="jumbotron">
         <div class="container">
-          <h1 class="title fadeInUp">Time to love studying.</h1>
+          <h1 class="title fadeInUp">Your study group is bigger than ever.</h1>
           <p class="subtitle fadeInUp">
-            Find students in your class and start studying. Join live virtual lectures hosted by tutors and get up to speed for an upcoming exam.
+            Studyspace pairs you with classmates and instructors to tackle assignments and prepare for exams.
           </p>
           <div class="btn-container text-center">
             <a id="btn-signup" class="btn btn-primary btn-lg" href="signup.html">Sign Up</a>
