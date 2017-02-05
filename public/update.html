@@ -1,11 +1,21 @@
 <!DOCTYPE html>
-<html>
+<html ng-app="MyApp" ng-controller="updateController as ctrl">
   <head>
     <!-- Bootstrap -->
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
 
+    <!-- Angular Material style sheet -->
+    <link rel="stylesheet" href="http://ajax.googleapis.com/ajax/libs/angular_material/1.1.0/angular-material.min.css">
+
     <!-- CSS -->
     <link rel="stylesheet" href="./update.css">
+
+    <!-- AngularJS -->
+    <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.6.1/angular.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/angular-material/1.1.3/angular-material.js"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.4.8/angular-animate.min.js"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.4.8/angular-aria.min.js"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.4.8/angular-messages.min.js"></script>
 
     <!-- Jquery -->
     <script type="text/javascript" src="https://code.jquery.com/jquery-2.2.1.min.js"></script>
@@ -20,20 +30,29 @@
     <div class="main-container">
         <h1>School Information</h1>
         <h3>School</h3>
-        <input class="form-control" type="password" placeholder="Change School">
+        <input class="form-control half" placeholder="Change School">
 
         <h3>Classes</h3>
-        <div id="school-classes">
-            <div class="school-class">
-                <button id="cancel-button" class="btn btn-warning">Class1</button>
-            </div>
-            <div class="school-class">
-                <button id="cancel-button" class="btn btn-warning">Class2</button>
-            </div>
-            <div class="school-class">
-                <button id="cancel-button" class="btn btn-warning">Class3</button>
-            </div>
+
+        <div layout="column" class="half middle" ng-cloak>
+            <md-content id="class-dropdown" class="md-padding">
+                <form ng-submit="ctrl.submitForm()">
+                    <md-autocomplete
+                    md-selected-item="ctrl.selectedItem"
+                    md-search-text="ctrl.searchText"
+                    md-items="item in ctrl.querySearch(ctrl.searchText)"
+                    md-item-text="item"
+                    md-min-length="0"
+                    placeholder="Enter a Class Code (e.g. 'CSE110')">
+                        <md-item-template>
+                            <span md-highlight-text="ctrl.searchText" md-highlight-flags="^i">{{item}}</span>
+                        </md-item-template>
+                    </md-autocomplete>
+                </form>
+            </md-content>
         </div>
+
+        <div id="school-classes"></div>
     </div>
 
     <div class="main-container">
