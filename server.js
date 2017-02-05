@@ -14,9 +14,7 @@ var socsjs = require('socsjs');
 // - Mongodb is the database that we will be using
 // - mongojs is a module that has some useful functions
 var mongojs = require('mongojs');
-var db = mongojs('users', ['users']); // we want the 'users' database
-var db_classes = mongojs("classes", ["classes"]); 
-var db_rooms = mongojs("rooms", ["rooms"]); //yung flat data
+var db = mongojs('mongodb://studyspace:raindropdroptop@ds033086.mlab.com:33086/studyspace', []);
 
 // - body-parser is middle-ware that parses http objects,
 // or something to that effect (don't worry about it)
@@ -250,7 +248,7 @@ app.get('/get_class/:class_id', function(req, res) {
 	var class_id = req.params.class_id;
 
 	// look up name in mongoDB
-	db_classes.classes.findOne({class_id: class_id}, function (err, doc) {
+	db.classes.findOne({class_id: class_id}, function (err, doc) {
 		res.send({name: doc.name});
 	});
 });
