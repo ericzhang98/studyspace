@@ -11,7 +11,8 @@ var databaseRef = firebase.database().ref(); //root
 var roomID = "cse110_asdf";
 var chatDatabase = databaseRef.child("RoomMessages").child(roomID);
 var firstLoad = true;
-var userEmail = getCookie("email");
+var user_id = getCookie("user_id");
+var email = getCookie("email");
 
 //Room app
 var myApp = angular.module("roomApp", []);
@@ -26,7 +27,7 @@ myApp.controller("ChatController", ["$scope", "$http",
       $scope.sendChatMessage = function(chatInput) {
         if (chatInput) {
           console.log("Sending chat with: " + chatInput);
-          var newChatMessage = new ChatMessage(userEmail, chatInput, roomID, Date.now()/1000);
+          var newChatMessage = new ChatMessage(user_id, email, chatInput, roomID, Date.now()/1000);
           console.log(newChatMessage);
           //chatDatabase.child(roomID).push().set(newChatMessage);
           $http.post("/send_room_message", newChatMessage);
@@ -99,8 +100,9 @@ myApp.controller("ChatController", ["$scope", "$http",
 
 /* Model ----------------------------------------------*/
 
-function ChatMessage(userID, text, roomID, timeSent) {
+function ChatMessage(userID, email, text, roomID, timeSent) {
   this.userID = userID;
+  this.email = email;
   this.text = text;
   this.roomID = roomID;
   this.timeSent = timeSent;

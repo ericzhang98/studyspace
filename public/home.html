@@ -8,7 +8,7 @@
 -->
 
 <!DOCTYPE html>
-<html ng-app="logInApp">
+<html> 
   <head>
     <!-- Bootstrap -->
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
@@ -69,7 +69,7 @@
     </nav>
 
     <!-- Login Modal -->
-    <div id="modal-login" class="modal">
+    <div id="modal-login" class="modal" ng-app="logInApp">
         <div class="modal-dialog">
           <div id="login" class="modal-content" ng-controller="LogInCtrl">
             <div id="close-login" class="close" aria-label="Close">
