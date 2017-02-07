@@ -10,7 +10,6 @@
 var express = require('express');
 var app = express();
 var socsjs = require('socsjs');
-var path = require("path");
 
 // - Mongodb is the database that we will be using
 // - mongojs is a module that has some useful functions
@@ -53,10 +52,6 @@ app.use(bodyParser.json());
 
 var MAIN_HOST = "mainhost";
 var ADMIN_KEY = "ABCD"
-//var classes_dict = {};
-//classes_dict["ucsd_cse_110_1"] = new Class("ucsd_cse_110_1", "CSE 110 Gillespie", []);
-//classes_dict["ucsd_cse_105_1"] = new Class("ucsd_cse_105_1", "CSE 105 Tiefenbruck", []);
-//var rooms_dict = {};
 
 /* HTTP requests ---------------------------------------------------------*/
 
@@ -236,13 +231,11 @@ app.get('/', function(req, res) {
 });
 
 app.get('/signup', function(req, res) {
-  console.log("rendering signuplul");
-  res.sendFile(path.join(__dirname + "/public/signup.html"));
+  res.sendFile(__dirname + "/public/signup.html");
 });
 
 app.get('/main', function(req, res) {
-  console.log("rendering mainlul");
-  res.sendFile(path.join(__dirname + "/public/mainRoom.html"));
+  res.sendFile(__dirname + "/public/mainRoom.html");
 });
 
 /*************************************************************************************/
