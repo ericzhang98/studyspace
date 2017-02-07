@@ -11,7 +11,9 @@ var databaseRef = firebase.database().ref(); //root
 var roomID = "cse110_asdf";
 var chatDatabase = databaseRef.child("RoomMessages").child(roomID);
 var firstLoad = true;
-var userEmail = getCookie("email");
+var user_id = getCookie("user_id");
+var email = getCookie("email");
+var name = getCookie("name");
 
 //Room app
 var myApp = angular.module("roomApp", []);
@@ -22,19 +24,30 @@ var myApp = angular.module("roomApp", []);
 myApp.controller("ChatController", ["$scope", "$http", 
     function($scope, $http) {
       console.log("Hell yeah");
+      var chatInputBox = document.getElementById("chatInputBox");
+
+      function uploadMessage(chatInput) {
+        console.log("Sending chat with: " + chatInput);
+        var newChatMessage = new ChatMessage(name, email, chatInput, roomID, Date.now()/1000);
+        //chatDatabase.child(roomID).push().set(newChatMessage);
+        $http.post("/send_room_message", newChatMessage);
+        chatInputBox.value = "";
+        chatInputBox.focus();
+      }
 
       $scope.sendChatMessage = function(chatInput) {
         if (chatInput) {
-          console.log("Sending chat with: " + chatInput);
-          var newChatMessage = new ChatMessage(userEmail, chatInput, roomID, Date.now()/1000);
-          console.log(newChatMessage);
-          //chatDatabase.child(roomID).push().set(newChatMessage);
-          $http.post("/send_room_message", newChatMessage);
-        }
-        else {
-          console.log("chatInput is empty");
+          uploadMessage(chatInput);
         }
       };
+
+      $scope.keypress = function(e) {
+        if (e.keyCode == 13) {
+          if (chatInputBox.value) {
+            uploadMessage(chatInputBox.value);
+          }
+        }
+      }
 
 
       //Firebase chat db listener
@@ -66,7 +79,7 @@ myApp.controller("ChatController", ["$scope", "$http",
       };
 
       function updateChatView(chatMessageList) {
-        console.log("updated chat view");
+        //console.log("updated chat view");
         $scope.chatMessageList = chatMessageList;
         safeApply();
         setTimeout(scrollDown, 1);
@@ -86,7 +99,7 @@ myApp.controller("ChatController", ["$scope", "$http",
       }
 
       function scrollDown() {
-        console.log("scrolling");
+        //console.log("scrolling");
         var div = document.getElementById("chatMessageDiv");
         div.scrollTop = div.scrollHeight - div.clientHeight;
       }
@@ -99,8 +112,9 @@ myApp.controller("ChatController", ["$scope", "$http",
 
 /* Model ----------------------------------------------*/
 
-function ChatMessage(userID, text, roomID, timeSent) {
-  this.userID = userID;
+function ChatMessage(name, email, text, roomID, timeSent) {
+  this.name = name;
+  this.email = email;
   this.text = text;
   this.roomID = roomID;
   this.timeSent = timeSent;
@@ -113,7 +127,6 @@ function ChatMessage(userID, text, roomID, timeSent) {
 function getCookie(key) {
   var cookieName = key + "=";
   var cookieArray = document.cookie.split(";");
-  console.log("All cookies: " + cookieArray);
   for (var i = 0; i < cookieArray.length; i++) {
     var cookie = cookieArray[i];
     while (cookie.charAt(0) == ' ') {
@@ -131,5 +144,25 @@ function storeCookie(key, value) {
   var expirationDate = new Date(Date.now() + 7*24*60*60*1000);
   document.cookie = key + "=" + value + ";expires=" + 
     expirationDate.toUTCString() + ";path=/";
+}
+
+/* Returns the cookie value for a key, ONLY USE ON SIGNED COOKIES */
+function getSignedCookie(key) {
+  var cookieName = key + "=";
+  var cookieArray = document.cookie.split(";");
+  for (var i = 0; i < cookieArray.length; i++) {
+    var cookie = cookieArray[i];
+    while (cookie.charAt(0) == ' ') {
+      cookie = cookie.substring(1);
+    }
+    if (cookie.indexOf(cookieName) == 0) {
+      var cookieValue = decodeURIComponent(cookie.split("=")[1]);
+      var periodSplit = cookieValue.split(".");
+      periodSplit.pop();
+      var value = periodSplit.join(".");
+      return value.substring(2);
+    }
+  }
+  return null;
 }
 /*----------------------------------------------------------------------------*/
