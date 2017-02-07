@@ -11,14 +11,15 @@
 
     <div class="container" ng-controller="ChatController" ng-cloak>
       <h1>CSE 110 Room Chat Channel</h1>
-      <input class="form-control" ng-model="chatInput">
+      <input class="form-control" id="chatInputBox" ng-model="chatInput"
+      ng-keydown="keypress($event)">
       <button class="btn btn-primary" ng-click="sendChatMessage(chatInput)">Send</button>
 
       <br>
 
       <div id="chatMessageDiv" class="container" style="height:200px; overflow-x:hidden">
         <ul style="list-style-type:none" ng-repeat="chatMessage in chatMessageList">
-          <li>{{chatMessage.userID}}: {{chatMessage.text}} --
+          <li>{{chatMessage.name}} ({{chatMessage.email}}): {{chatMessage.text}} --
           {{timeAgo(chatMessage)}}</li>
         </ul>
       </div>

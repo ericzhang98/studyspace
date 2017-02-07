@@ -298,11 +298,10 @@ app.get('/leave_room/:room_id/:user_id', function(req, res) {
 /* POST data: {chatMessage} - post chat message to firebase in respective room
  * Returns: nothing */
 app.post("/send_room_message", function(req, res) {
-  console.log("room message");
   var roomID = req.body.roomID;
   //roomMessagesDatabase.child(roomID).push().set(req.body);
-  if (req.signedCookies.user_id && req.signedCookies.email) {
-    var newChatMessage = new ChatMessage(req.signedCookies.user_id, 
+  if (req.signedCookies.user_id && req.signedCookies.email && req.signedCookies.name) {
+    var newChatMessage = new ChatMessage(req.signedCookies.name, 
       req.signedCookies.email, req.body.text, roomID, req.body.timeSent);
     roomMessagesDatabase.child(roomID).push().set(newChatMessage);
   }
@@ -328,6 +327,7 @@ app.post('/accountlogin', function(req, res) {
   db.users.findOne({email: email, password: password}, function (err, doc) {
     res.cookie("user_id", doc.user_id, {signed: true, maxAge: COOKIE_TIME});
     res.cookie("email", doc.email, {signed: true, maxAge: COOKIE_TIME});
+    res.cookie("name", doc.name, {signed: true, maxAge: COOKIE_TIME});
     res.json(doc);
     //res.sendFile(VIEW_DIR + "mainRoom.html");
   });
@@ -511,8 +511,8 @@ function Room(room_id, room_name, room_host_id, class_id, is_lecture) {
 	this.has_tutor = false;
 }
 
-function ChatMessage(userID, email, text, roomID, timeSent) {
-  this.userID = userID;
+function ChatMessage(name, email, text, roomID, timeSent) {
+  this.name = name;
   this.email = email;
   this.text = text;
   this.roomID = roomID;
