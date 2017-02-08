@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html ng-app="BlockSystem">
+<head>
+	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+
+	<title>Block Users</title>
+</head>
+<body>
+	<div class="container" ng-controller="blocker">
+	<!--
+		<input class="form-control" ng-model="user_preferences.school">
+		<button class="btn btn-primary" ng-click="addSchool()">Add School</button></th>
+		-->
+		<table class="table">
+			<thead>
+				<tr>
+					<th>Block User</th>
+					<th><input class="form-control" ng-model="block_user.name"></th>
+					<th><button class="btn btn-primary" ng-click="blockUser()">Block User</button></th>
+				</tr>
+			</thead>
+			<tbody>
+				<tr ng-repeat="block_user in block_user_list">
+					<td></td>
+          <td>{{block_user.name}}</td>
+					<td><button class="btn btn-danger" ng-click="unblock(block_user._id)">Unblock</button></td>
+				</tr>
+			</tbody>
+		</table>
+	</div>
+	<script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.6.1/angular.min.js"></script>
+	<script src ="https://ajax.googleapis.com/ajax/libs/angularjs/1.6.1/angular-cookies.js"></script>
+	<script src="controllers/block_controller.js"></script>
+</body>
+</html>
