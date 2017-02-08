@@ -103,6 +103,17 @@ app.get('/main', function(req, res) {
 
 
 /* User settings ---------------*/
+
+app.post('/get_Id_From_Name', function(req, res) {
+  var emailFind = req.body.email;
+  console.log(emailFind);
+  
+	db.users.findOne({email:"x"}, function(err, docs){
+    console.log(docs);
+		res.json(docs);
+	});	
+});
+
 app.post('/buddy_existing_user', function(req, res) {
 
   console.log(req.body.name);
@@ -197,7 +208,6 @@ app.delete('/remove_buddy/:id', function(req, res){
 });
 // forces the name property to be unique in user_classes collection
 //db.user_classes.createIndex({name: 1}, {unique:true});
-
 app.post('/user_classes', function(req, res) {
 
 	db.user_classes.insert(req.body, function(err, docs){
