@@ -69,9 +69,12 @@ app.get('/', function(req, res) {
   //check login and decide whether to send login or home
   var user_id = req.signedCookies.user_id;
   if (user_id) {
+    console.log("checking user credentials: " + req.signedCookies.user_id);
     db.users.findOne({user_id: user_id}, function(err, doc){
+      console.log("got info");
       if (doc) {
-        res.sendFile(VIEW_DIR + "home.html");
+        console.log("user logged in");
+        res.sendFile(VIEW_DIR + "mainRoom.html");
       }
       else {
         res.sendFile(VIEW_DIR + "home.html");
@@ -299,6 +302,7 @@ app.get('/leave_room/:room_id/:user_id', function(req, res) {
  * Returns: nothing */
 app.post("/send_room_message", function(req, res) {
   var roomID = req.body.roomID;
+  
   //roomMessagesDatabase.child(roomID).push().set(req.body);
   if (req.signedCookies.user_id && req.signedCookies.email && req.signedCookies.name) {
     var newChatMessage = new ChatMessage(req.signedCookies.name, 
@@ -540,6 +544,9 @@ function addRoom(class_id, room_name, room_host_id, is_lecture, callback) {
     }
     else {
       console.log("FIREBASE: Error - failed to add room " + room_id + " to RoomInfo database");
+      if (callback) {
+        callback({room_id: null});
+      }
     }
   });
 
@@ -573,6 +580,19 @@ function joinRoom(user_id, room_id, callback) {
       roomInfoDatabase.child(room_id).child("users").push().set(user_id, function(err) {
         if (!err) {
           console.log("FIREBASE: Successfully added user " + user_id + " to room" + room_id);
+          if (callback) { //have to grab all of room info for callback TODO: change this?
+            roomInfoDatabase.child(room_id).once("value").then(function(snapshot) {
+              if (callback) {
+                callback(snapshot.val());
+              }
+            });
+          }
+        }
+        else {
+          if (callback) {
+            console.log("FIREBASE: Failed - User wasn't added for some reason");
+            callback(null);
+          }
         }
       });
     }
@@ -588,6 +608,9 @@ function joinRoom(user_id, room_id, callback) {
 
 function leaveRoom(user_id, room_id, callback) {
 	console.log("FIREBASE: Attempting to remove user " + user_id + " from room " + room_id);
+  if (callback) {
+    callback({success: true}); //assume user succesfully leaves the room
+  }
 
   roomInfoDatabase.child(room_id).child("users").once("value").then(function(snapshot) {
     if (snapshot.val()) {
@@ -600,15 +623,10 @@ function leaveRoom(user_id, room_id, callback) {
           });
         }
       });
-
     }
     else {
       console.log("FIREBASE: Error - room no longer exists");
-      if (callback) {
-        callback({success:false});
-      }
     }
-
   });
 }
 
