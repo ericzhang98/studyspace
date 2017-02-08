@@ -24,6 +24,7 @@
       <meta name="viewport" content="width=device-width, initial-scale=1">
 
       <!-- Stylesheets -->
+      <link rel="stylesheet" type="text/css" href="home.css">
 
       <!-- Additional Typefaces -->
       <link href="https://fonts.googleapis.com/css?family=Raleway:300,400,700,800" rel="stylesheet">
@@ -36,34 +37,99 @@
       <!-- Main Content -->
       <div class="container-fluid">
 
+        <!--<div class="col-xs-2 col-sm-2 col-md-2 col-lg-2" 
+           style="background-color:SteelBlue; padding-top:10px">-->
         <div class="col-xs-2 col-sm-2 col-md-2 col-lg-2" 
-           style="background-color:SteelBlue; padding-top:30px">
+           style="background-color:SteelBlue; padding-top:10px">
         
         <div class="row" style="padding-left:10px; 
           border-bottom-style=solid; border-color=Gray; border-width: 20px">
           <img class="user-icon center-block" style="display:inline" src="assets/images/user_icon.png" />
           <p style="float:left; padding-left:10px; 
-          padding-right: 10px; padding-top:20px; padding-bottom:40px">FirstName LastName</p>
+          padding-right: 10px; padding-top:10px; padding-bottom:5px">FirstName LastName</p>
         </div>
 
+        <!-- Create Room -->
+        <button class="btn-primary" data-toggle="modal" data-target="#modal-login" style="margin-bottom:8px">Create Room</button>
+        
+        <!-- Create Room Modal -->
+        <div id="modal-login" class="modal" ng-app="createRoomApp">
+            <div class="modal-dialog">
+
+              <!-- Content -->
+              <div id="login" class="modal-content" ng-controller="CreateRoomCtrl">
+                <div id="close-login" class="close" aria-label="Close">
+                  <span class="glyphicon glyphicon-remove" aria-hidden="true"></span>
+                </div>
+                <div class="login-container">
+                  <div class="login-content">
+                    <div class="title-container text-center"> 
+                      <h1 class="title">Create a room</h1>
+                    </div>
+                    <div class="form-container">
+                      <form>
+                        <!-- Class selection -->
+                        <div class="form-group">
+                          <label for="class">Class</label><br/>
+                          <div id="create_room_course" class="btn-group" data-toggle="buttons" ng-model="email">
+                            <label class="btn btn-primary btn-xs" style="margin-right:5px">
+                              <input type="radio" autocomplete="off" value="cse110id"> CSE 110
+                            </label>
+                            <label class="btn btn-primary btn-xs" style="margin-right:5px">
+                              <input type="radio" autocomplete="off" value="cse140id"> CSE 140
+                            </label>
+                            <label class="btn btn-primary btn-xs" style="margin-right:5px">
+                              <input type="radio" autocomplete="off" value="phil28id"> PHIL 28
+                            </label>
+                            <label class="btn btn-primary btn-xs" style="margin-right:5px">
+                              <input type="radio" autocomplete="off" value="cse110id"> ETHN 2
+                            </label>
+                          </div>
+                        </div>
+
+                        <div class="form-group">
+                          <label for="room_name">Room Name</label>
+                          <input type="text" class="form-control" id="room_name" placeholder="e.g. Midterm Review">
+                        </div>
+                        <div class="btn-container text-center">
+                          <button id="btn-submit" class="btn btn-primary">Create</button>
+                        </div>
+                      </form>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+            </div>
+        </div>
+        <!-- Buttons -->
         <div class="panel-group" id="accordion">
+
+  
+
 
           <!--first class in drop down-->
           <div class="panel panel-default">                               
             <div class="panel-heading">
               <h4 class="panel-title">
-                <a data-toggle="collapse" data-parent="#accordion" href="#cse110">
-                CSE 110</a>
-                <span class="glyphicon glyphicon-triangle-bottom" aria-hidden="true"></span> 
+                <!--<a data-toggle="collapse" data-parent="#accordion" href="#cse110">-->
+                <a data-toggle="collapse" href="#cse110">CSE 110</a>
+                <!--<span class="glyphicon glyphicon-triangle-bottom" aria-hidden="true"></span>-->
               </h4>
             </div>
-            <div id="cse110" class="panel-collapse collapse">
+            <div id="cse110" class="panel-collapse collapse in">
               <ul class="list-group">
+
+                <button class="list-group-item">General (3)</button>                
+                <button class="list-group-item">Midterm Review (6)</button>
+                <button class="list-group-item">More...</button>
+        
+                <!--
                 <li class="list-group-item">Main</li>
                 <li class="list-group-item">Room 1</li>
                 <li class="list-group-item">Public Room 2</li>
                 <li class="list-group-item">Public Room 3</li>
-                <li class="list-group-item">DANK</li>
+                <li class="list-group-item">DANK</li>-->
               </ul>
             </div>
           </div>
@@ -72,15 +138,22 @@
           <div class="panel panel-default">                               
             <div class="panel-heading">
               <h4 class="panel-title">
-                <a data-toggle="collapse" data-parent="#accordion" href="#cse140">
+                <!--<a data-toggle="collapse" data-parent="#accordion" href="#cse140">-->
+                <a data-toggle="collapse" href="#cse140">
                 CSE 140</a>
               </h4>
             </div>
-            <div id="cse140" class="panel-collapse collapse">
+            <div id="cse140" class="panel-collapse collapse in">
               <ul class="list-group">
+
+                <button class="list-group-item">General (0)</button>
+                <button class="list-group-item">Ashani Office Hours (3)</button>
+                <button class="list-group-item">More...</button>
+                <!--
                 <li class="list-group-item">Main</li>
                 <li class="list-group-item">140 room 1</li>
                 <li class="list-group-item">140 room 2</li>
+                -->
               </ul>
             </div>
           </div>
@@ -89,16 +162,22 @@
           <div class="panel panel-default">                               
             <div class="panel-heading">
               <h4 class="panel-title">
-                <a data-toggle="collapse" data-parent="#accordion" href="#phil28">
+                <!--<a data-toggle="collapse" data-parent="#accordion" href="#phil28">-->
+                <a data-toggle="collapse" href="#phil28">
                 PHIL 28</a>
+
               </h4>
             </div>
-            <div id="phil28" class="panel-collapse collapse">
+            <div id="phil28" class="panel-collapse collapse in">
               <ul class="list-group">
-               <li class="list-group-item">Main</li>
+
+                <button class="list-group-item">General (3)</button>
+                <button class="list-group-item">Essay Help (4)</button>
+
+                <!--<li class="list-group-item">Main</li>
                 <li class="list-group-item">study group</li>
                 <li class="list-group-item">random shit</li>
-                <li class="list-group-item">philosophers</li>
+                <li class="list-group-item">philosophers</li>-->
               </ul>
             </div>
           </div>
@@ -116,4 +195,17 @@
     </div>   
       <!-- Application Info -->
    </body>
+
+
+   <!-- Peer -->
+   <script src="http://cdn.peerjs.com/0.3/peer.js"></script>
+   <!-- Firebase -->
+   <script src="https://www.gstatic.com/firebasejs/3.6.7/firebase.js"></script>
+
+   <!-- Other -->
+   <script src="firebase_setup.js"></script>  
+   <script src="call.js"></script>
+   <script src="main.js"></script>
+   <script type="text/javascript" src="toggleMenu.js"></script>
+
 </html>
