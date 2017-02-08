@@ -53,11 +53,11 @@
         <button class="btn-primary" data-toggle="modal" data-target="#modal-login" style="margin-bottom:8px">Create Room</button>
         
         <!-- Create Room Modal -->
-        <div id="modal-login" class="modal" ng-app="createRoomApp">
+        <div id="modal-login" class="modal">
             <div class="modal-dialog">
 
               <!-- Content -->
-              <div id="login" class="modal-content" ng-controller="CreateRoomCtrl">
+              <div id="login" class="modal-content">
                 <div id="close-login" class="close" aria-label="Close">
                   <span class="glyphicon glyphicon-remove" aria-hidden="true"></span>
                 </div>
@@ -71,7 +71,7 @@
                         <!-- Class selection -->
                         <div class="form-group">
                           <label for="class">Class</label><br/>
-                          <div id="create_room_course" class="btn-group" data-toggle="buttons" ng-model="email">
+                          <div id="class_id" class="btn-group" data-toggle="buttons">
                             <label class="btn btn-primary btn-xs" style="margin-right:5px">
                               <input type="radio" autocomplete="off" value="cse110id"> CSE 110
                             </label>
@@ -89,10 +89,10 @@
 
                         <div class="form-group">
                           <label for="room_name">Room Name</label>
-                          <input type="text" class="form-control" id="room_name" placeholder="e.g. Midterm Review">
+                          <input type="text" class="form-control" placeholder="e.g. Midterm Review" id="room_name">
                         </div>
                         <div class="btn-container text-center">
-                          <button id="btn-submit" class="btn btn-primary">Create</button>
+                          <button id="btn-submit" class="btn btn-primary" onclick="addRoomOnClick()">Create</button>
                         </div>
                       </form>
                     </div>

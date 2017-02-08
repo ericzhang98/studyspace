@@ -7,6 +7,18 @@ var rooms = {}			// room_id : room
 
 getClasses();
 
+/****************************** ON-CLICKS ****************************/
+function addRoomOnClick() {
+	var class_id = $('#class_id input:radio:checked').val();
+	var room_name = document.getElementById('room_name').value;
+	var is_lecture = false;
+
+	// TODO: check input here
+
+	addRoom(class_id, room_name, is_lecture);
+}
+/*********************************************************************/
+
 /******************************** MODEL ******************************/
 
 function Room(room_id, room_name, room_host_id, room_users, class_id, is_lecture, has_tutor) {
