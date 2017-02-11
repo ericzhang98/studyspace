@@ -1,12 +1,13 @@
-// log_in_controller.js will be a front-end javascript that
-// runs on the Log In page and communicates with server.js
+// create_room_controller.js will be a front-end javascript that runs on the create room modal
 
 // used for log messages
-var LOG = "log_in_controller: "
+var LOG = "create_room_controller: "
 
 // defining the controller
-angular.module('logInApp', []).controller('LogInCtrl', ['$scope', '$http', function($scope, $http) {
+angular.module('createRoomApp', []).controller('CreateRoomCtrl', ['$scope', '$http', function($scope, $http) {
   console.log(LOG + "started");
+
+  $scope.submitAddRoom = function(){}
 
   // - verifyLogin looks for a user with specified info and
   // - calls onResponseReceived when it gets a response
@@ -68,3 +69,5 @@ angular.module('logInApp', []).controller('LogInCtrl', ['$scope', '$http', funct
   }
 
 }]);
+}
+/*----------------------------------------------------------------------------*/
