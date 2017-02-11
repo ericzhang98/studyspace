@@ -108,10 +108,28 @@ app.post('/get_Id_From_Name', function(req, res) {
   var emailFind = req.body.email;
   console.log(emailFind);
   
-	db.users.findOne({email:"x"}, function(err, docs){
-    console.log(docs);
+	db.users.findOne({email:req.body.email}, function(err, docs){
 		res.json(docs);
 	});	
+});
+
+app.post('/add_blocked_user', function(req, res) {
+
+  db.blocked_users.find({user_id:req.signedCookies.user_id}, function(req, docs){
+    console.log(docs);
+    res.json(docs);
+  });
+});
+
+app.get('/get_blocked_users', function(req, res) {
+
+  var blocked_id = req.body.blocked_user_id;
+  var blocked_email = req.body.blocked_user_email;
+  db.blocked_users.insert({user_id:req.signedCookies.user_id, blocked_user_id:blocked_id, 
+                           blocked_user_email:blocked_email}, function(req, docs){
+    console.log(docs);
+    res.json(docs);
+  });
 });
 
 app.post('/buddy_existing_user', function(req, res) {
@@ -211,7 +229,7 @@ app.delete('/remove_buddy/:id', function(req, res){
 app.post('/user_classes', function(req, res) {
   console.log(req.body);
   var get_user_id = req.signedCookies.user_id;
-  db.user_classes.createIndex({name: 1}, {unique:true});
+  db.user_classes.createIndex({name: 1, user_id: 1}, {unique:true}); //BUG: NEEDS FIX
 	db.user_classes.insert({name:req.body.name, user_id:get_user_id}, function(err, docs){
 		res.json(docs);
 	});	

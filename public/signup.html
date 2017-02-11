@@ -36,13 +36,15 @@
         <div class="title-container text-center">
           <h1 class="title">Sign Up</h1>
         </div>
-        <div class="msg-error alert-danger hide">
-          <span class="glyphicon glyphicon-exclamation-sign" aria-hidden="true"></span>
-          <span>{{successMessage}}</span>
+        <div class="msg-container">
+          <div class="msg-error alert-danger hide">
+            <span class="glyphicon glyphicon-exclamation-sign" aria-hidden="true"></span>
+            <span>{{successMessage}}</span>
+          </div>
         </div>
         <div class="form-container">
           <form>
-            <div class="form-group">
+            <div id="in-name" class="form-group">
               <label for="input-name">Name</label>
               <input type="text" class="form-control" id="input-name"
               placeholder="first and last name" ng-model="signupName">
