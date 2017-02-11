@@ -40,7 +40,7 @@ function Room(room_id, room_name, room_host_id, room_users, class_id, is_lecture
 function getClasses() {
 	console.log("Getting classes...")
 	var xhr = new XMLHttpRequest();
-	xhr.open('GET', "/get_classes/" + me.user_id, true); // responds with class_ids
+	xhr.open('GET', "/get_classes", true); // responds with class_ids
 	xhr.send();
 
 	xhr.onreadystatechange = function(e) {
@@ -170,7 +170,7 @@ function addRoom(class_id, room_name, is_lecture) {
 		", room_name: " + room_name);
 	var xhr = new XMLHttpRequest();
 	xhr.open('GET', "/add_room/" + class_id + "/" + 
-		room_name + "/" + me.user_id + "/" + is_lecture, true);
+		room_name + "/" + is_lecture, true);
 	xhr.send();
 
 	xhr.onreadystatechange = function(e) {

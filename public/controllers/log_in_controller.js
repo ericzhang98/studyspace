@@ -33,6 +33,7 @@ angular.module('logInApp', []).controller('LogInCtrl', ['$scope', '$http', funct
         if (user != null) {
           if (user.active) {
             console.log(LOG + "login succeeded");
+            console.log(document.location.href);
             document.location.href = "main";
           }
           else {

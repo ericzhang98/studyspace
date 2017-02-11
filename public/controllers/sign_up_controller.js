@@ -55,13 +55,14 @@ myApp.controller("SignUpController", ["$scope", "$http",
           $scope.successMessage = "Ayyylmao fill out the fields";
           $(".msg-error").removeClass("hide");
         }
-
       }
 
       function postSignupInfo(newUser) {
         $http.post("/accountsignup", newUser).then(function(res) {
           if (res.data.success) {
             console.log("Create success!");
+
+            document.location.href = "main";
             $scope.successMessage = "Account successfully created!";
           }
           else {
