@@ -126,9 +126,8 @@ app.post('/buddy_existing_user', function(req, res) {
 
 app.post('/buddy_existing_request', function(req, res) {
 
-  console.log(req.body.user_id);
   console.log(req.body.friend_id);
-  var user_id = req.body.user_id;
+  var user_id = req.signedCookies.user_id;
   var friend_id = req.body.friend_id;
   db.user_buddy_requests.find(
   {$or:[{sent_from_id:user_id, sent_to_id:friend_id},
@@ -143,7 +142,7 @@ app.post('/buddy_existing_request', function(req, res) {
 app.post('/buddies_already', function(req, res) {
 
   console.log("Friendship check");
-  var user_id = req.body.user_id;
+  var user_id = req.signedCookies.user_id;
   var friend_id = req.body.friend_id;
   db.user_buddies.find(
   {$or:[ {user_one_id:user_id, user_two_id:friend_id},
@@ -156,6 +155,7 @@ app.post('/buddies_already', function(req, res) {
 
 app.post('/send_buddy_request', function(req, res) {
 
+  req.body.sent_from_id = req.signedCookies.user_id;
 	db.user_buddy_requests.insert(req.body, function(err, docs){
 		res.json(docs);
 	});	
@@ -163,7 +163,7 @@ app.post('/send_buddy_request', function(req, res) {
 
 app.post('/buddy_requests', function(req, res) {
 
-	db.user_buddy_requests.find({sent_to_id:req.body.sent_to_id}, function(err, docs){
+	db.user_buddy_requests.find({sent_to_id:req.signedCookies.user_id}, function(err, docs){
     console.log(docs);
 		res.json(docs);
 	});	
@@ -171,7 +171,7 @@ app.post('/buddy_requests', function(req, res) {
 
 app.post('/accept_buddy', function(req, res) {
 
-  var user_one_id = req.body.user_one_id;
+  var user_one_id = req.signedCookies.user_id;
   var user_one_name = req.body.user_one_name;
   var user_two_id = req.body.user_two_id;
   var user_two_name = req.body.user_two_name;
@@ -186,7 +186,7 @@ app.post('/accept_buddy', function(req, res) {
 
 app.post('/get_added_buddies', function(req, res){
   
-	db.user_buddies.find({user_one_id:req.body.user_one_id}, function(err, docs){
+	db.user_buddies.find({user_one_id:req.signedCookies.user_id}, function(err, docs){
 		res.json(docs);
 	});	
 });
