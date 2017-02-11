@@ -1,10 +1,6 @@
 /* home.css */
 
-body {
-  font-family: 'Raleway', sans-serif;
-  letter-spacing: 0.05em;
-}
-
+/* General */
 main {
   margin-top: 6rem;
 }
@@ -16,16 +12,16 @@ main {
   height: 6rem;
   border: none;
   z-index: 100;
+  background-color: #aaaaaa;
 }
 
 #navbar-site a {
   color: white;
 }
 
-#navbar-site .container-fluid {
-  background-color: #aaaaaa;
-  padding-left: 2.5rem;
-  padding-right: 2.5rem;
+#navbar-site .container {
+  padding-left: 2rem;
+  padding-right: 2rem;
 }
 
 #navbar-site .navbar-header,
@@ -83,55 +79,6 @@ main {
 }
 
 /* Login Modal */
-.modal {
-  background: rgba(0,0,0,0.5);
-}
-
-.modal-dialog {
-  display: -webkit-box;
-  display: -ms-flexbox;
-  display: flex;
-  -webkit-box-align: center;
-  -ms-flex-align: center;
-  align-items: center;
-  -webkit-justify-content: center;
-  -ms-flex-pack: center;
-  justify-content: center;
-  width: 100%;
-  height: 100%;
-  margin: 0;
-}
-
-.modal-content {
-  border: none;
-  border-radius: 0;
-  box-shadow: none;
-  width: 100%;
-  height: 100%;
-  padding: 7rem 3rem;
-  margin: 0;
-}
-
-.form-control {
-  border-radius: 0;
-  border: none;
-  border-bottom: 3px solid #888888;
-  box-shadow: none;
-  height: 3rem;
-  font-size: 2rem;
-  padding: 0;
-  margin-top: 0rem;
-  background: transparent;
-  color: #333333;
-  font-weight: 700;
-}
-
-.form-control:focus {
-  box-shadow: none;
-  border-bottom: 3px solid #333333;
-  color: #333333;
-}
-
 #login {
   position: relative;
   background: white;
@@ -146,8 +93,6 @@ main {
   opacity: 1;
   color: #333333;
   text-shadow: none;
-  -webkit-transition: color 0.15s;
-  transition: color 0.15s;
 }
 
 #login .close:hover {
@@ -201,8 +146,6 @@ main {
 }
 
 #btn-submit {
-  border: none;
-  border-radius: 0;
   padding: 0.5em 1em;
   font-size: 2.5rem;
   font-weight: 700;
@@ -211,19 +154,6 @@ main {
 
 #btn-submit:hover {
   background: #337ab7;
-}
-
-#btn-submit:visited {
-  background: #337ab7;
-}
-
-#btn-sbumit:active {
-  box-shadow: none;
-  outline: none;
-}
-
-#btn-sbumit:focus {
-  outline: none;
 }
 
 /* Splash Art */
@@ -261,23 +191,9 @@ main {
 }
 
 #btn-signup {
-  border: none;
-  border-radius: 0;
   padding: 0.5em 1em;
   font-size: 2.5rem;
   font-weight: 700;
-  -webkit-transition: background 0.15s, color 0.15s;
-  transition: background 0.15s, color 0.15s;
-}
-
-#btn-signup:visited {
-  background: #337ab7;
-}
-
-#btn-signup:hover {
-  color: #337ab7;
-  background: white;
-  box-shadow: none;
 }
 
 @media screen and (min-width: 768px) {
@@ -295,6 +211,15 @@ main {
     display: none;
   }
 
+  #navbar-site .navbar-brand::selection {
+    background: #333333;
+    color: white;
+  }
+
+  #link-login {
+    margin-right: -2rem;
+  }
+
   #link-login .text-log-in {
     display: inline;
     color: white;
@@ -309,8 +234,10 @@ main {
   .modal-content {
     width: 50rem;
     height: auto;
+    padding-top: 9rem;
     padding-left: 7rem;
     padding-right: 7rem;
+    padding-bottom: 7rem;
   }
 
   /* Splash */

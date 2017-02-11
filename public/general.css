@@ -1,0 +1,137 @@
+/* General CSS File Across All Pages */
+
+/* General */
+body {
+  font-family: 'Raleway', sans-serif;
+  letter-spacing: 0.07em;
+}
+
+a:focus,
+a:hover {
+  text-decoration: none;
+}
+
+/* General: modals */
+.modal {
+  background: rgba(0,0,0,0.5);
+}
+
+.modal-dialog {
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-align: center;
+  -ms-flex-align: center;
+  align-items: center;
+  -webkit-justify-content: center;
+  -ms-flex-pack: center;
+  justify-content: center;
+  width: 100%;
+  height: 100%;
+  margin: 0;
+}
+
+.modal-content {
+  border: none;
+  border-radius: 0;
+  box-shadow: none;
+  width: 100%;
+  height: 100%;
+  padding-left: 3rem;
+  padding-right: 3rem;
+  margin: 0;
+}
+
+/* General: forms */
+.form-control {
+  border-radius: 0;
+  border: none;
+  border-bottom: 3px solid #888888;
+  box-shadow: none;
+  height: 3rem;
+  font-size: 2rem;
+  padding: 0;
+  margin-top: 0rem;
+  background: transparent;
+  color: #333333;
+  font-weight: 700;
+}
+
+.form-control:focus {
+  box-shadow: none;
+  border-bottom: 3px solid #333333;
+  color: #333333;
+}
+
+/* General: btn */
+.btn {
+  border: none;
+  border-radius: 0;
+  letter-spacing: 0.05em;
+  -webkit-transition: background 0.15s, color 0.15s;
+  transition: background 0.15s, color 0.15s;
+}
+
+.btn.active,
+.btn:active {
+  -webkit-box-shadow: none;
+  box-shadow: none;
+  outline: none;
+}
+
+.btn.active.focus,
+.btn.active:focus,
+.btn.focus,
+.btn:active.focus,
+.btn:active:focus,
+.btn:focus {
+  outline: none;
+  outline-offset: 0;
+}
+
+.btn-primary.active,
+.btn-primary:active,
+.open>.dropdown-toggle.btn-primary {
+  border: none;
+}
+
+.btn-primary.active.focus,
+.btn-primary.active:focus,
+.btn-primary.active:hover,
+.btn-primary:active.focus,
+.btn-primary:active:focus,
+.btn-primary:active:hover,
+.open>.dropdown-toggle.btn-primary.focus,
+.open>.dropdown-toggle.btn-primary:focus,
+.open>.dropdown-toggle.btn-primary:hover {
+  border: none;
+}
+
+/* General: panel */
+.panel {
+  box-shadow: none;
+}
+
+.panel-group .panel,
+.panel {
+  border: none;
+  border-radius: 0;
+}
+
+.panel-group .panel+.panel {
+  margin-top: 0;
+  border-top: solid 1px #000000;
+}
+
+.panel-heading {
+  padding: 1.5rem 2rem;
+}
+
+.panel-title {
+  font-weight: 700;
+}
+
+.panel .list-group .list-group-item {
+  padding-left: 2rem;
+  padding-right: 2rem;
+}
