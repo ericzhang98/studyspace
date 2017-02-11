@@ -8,15 +8,12 @@
 -->
 
 <!DOCTYPE html>
-<html ng-app="logInApp">
+<html> 
   <head>
     <!-- Bootstrap -->
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>
-
-    <!-- jQueryUI -->
-    <script src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.12.1/jquery-ui.min.js"></script>
 
     <!-- Angular -->
     <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.6.1/angular.min.js"></script>
@@ -25,6 +22,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
 
     <!-- Stylesheets -->
+    <link rel="stylesheet" type="text/css" href="general.css">
     <link rel="stylesheet" type="text/css" href="home.css">
     <link rel="stylesheet" type="text/css" href="animations.css">
 
@@ -43,19 +41,19 @@
   <body>
     <!-- Navbar -->
     <nav id="navbar-site" class="navbar navbar-fixed-top" role="banner">
-      <div class="container-fluid">
+      <div class="container">
         <!-- Navbar (Brand) -->
         <div class="navbar-header pull-left">
-          <a class="navbar-brand brand-logo" href="home.html">
-            <!-- Brand (Logo) -->
-          </a>
+          <!--<a class="navbar-brand brand-logo" href="home.html">
+            
+          </a>-->
           <a class="navbar-brand brand-name" href="home.html">studyspace</a>
         </div>
 
         <!-- Navbar (Right) -->
         <div class="navbar-header pull-right">
           <div id="link-login" class="nav-link">
-            <span class="text-log-in">log in</span>
+            <span class="text-log-in">Log In</span>
             <svg id="icon-log-in" class="icon" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="62" height="46" viewBox="-3 0 62 46" version="1.1">
               <g id="log-in" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd" transform="translate(0.000000, 3.000000)">
                 <path d="M17.14 11C20.43 4.47 27.19 0 35 0 46.05 0 55 8.95 55 20 55 31.05 46.05 40 35 40 27.2 40 20.43 35.53 17.14 29" id="space" stroke="#FFFFFF" stroke-width="6"/>
@@ -69,39 +67,38 @@
     </nav>
 
     <!-- Login Modal -->
-    <div id="modal-login" class="modal">
-        <div class="modal-dialog">
-          <div id="login" class="modal-content">
-            <div id="close-login" class="close" aria-label="Close">
-              <span class="glyphicon glyphicon-remove" aria-hidden="true"></span>
-            </div>
-            <div class="title-container text-center"> 
-              <h1 class="title">Log In</h1>
-            </div>
-            <div id="myDiv" class="signup-container fadeInBack" ng-controller="LogInCtrl">
+    <div id="modal-login" class="modal" ng-app="logInApp" role="dialog">
+      <div class="modal-dialog">
+
+        <!-- Login Modal Content -->
+        <div id="login" class="modal-content hide" ng-controller="LogInCtrl">
+          <button id="close-login" class="btn close" aria-label="Close">
+            <span class="glyphicon glyphicon-remove" aria-hidden="true"></span>
+          </button>
+          <div class="login-container">
+            <div class="login-content">
+              <div class="title-container text-center"> 
+                <h1 class="title">Log In</h1>
+              </div>
               <div class="form-container">
                 <form>
                   <div class="form-group">
                     <label for="input-name">Email</label>
-                    <input type="text" class="form-control" id="input-name"
-                    placeholder="Email" ng-model="email">
+                    <input type="text" class="form-control" id="input-name" placeholder="Email" ng-model="email">
                   </div>
                   <div class="form-group">
                     <label for="input-name">Password</label>
-                    <input type="password" class="form-control" id="input-name"
-                      placeholder="Password" ng-model="password">
+                    <input type="password" class="form-control" id="input-name" placeholder="Password" ng-model="password">
                   </div>
                   <div class="btn-container text-center">
-                    <button id="btn-submit" class="btn btn-primary"
-                      ng-click="attemptLogin(email, password)">
-                      Submit</button>
+                    <button id="btn-submit" class="btn btn-primary" ng-click="attemptLogin(email, password)">Submit</button>
                   </div>
                 </form>
               </div>
             </div>
-            <!-- Log in fields -->
           </div>
         </div>
+      </div>
     </div>
 
     <!-- Main Content -->

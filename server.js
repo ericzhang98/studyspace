@@ -20,6 +20,9 @@ var db = mongojs('mongodb://studyspace:raindropdroptop@ds033086.mlab.com:33086/s
 // or something to that effect (don't worry about it)
 var bodyParser = require('body-parser');
 
+// - cookie-parser helps read cookies
+var cookieParser = require("cookie-parser");
+
 // - email stuff
 var nodemailer = require("nodemailer");
 var mailTransporter = nodemailer.createTransport({
@@ -48,15 +51,69 @@ var roomMessagesDatabase = firebaseRoot.child("RoomMessages");
 // - app configuration
 app.use(express.static(__dirname + "/public"));
 app.use(bodyParser.json());
+app.use(cookieParser("raindropdroptop")); //secret key
 /*-----------------------------------------------------------------------*/
 
 var MAIN_HOST = "mainhost";
 var ADMIN_KEY = "ABCD"
+var PUBLIC_DIR = __dirname + "/public/";
+var VIEW_DIR = __dirname + "/public/";
+var COOKIE_TIME = 7*24*60*60*1000;
 
 /* HTTP requests ---------------------------------------------------------*/
 
 
+/************************************ HTML PAGES *************************************/
+
+app.get('/', function(req, res) {
+  //check login and decide whether to send login or home
+  var user_id = req.signedCookies.user_id;
+  if (user_id) {
+    console.log("checking user credentials: " + req.signedCookies.user_id);
+    db.users.findOne({user_id: user_id}, function(err, doc){
+      console.log("got info");
+      if (doc) {
+        console.log("user logged in");
+        res.sendFile(VIEW_DIR + "mainRoom.html");
+      }
+      else {
+        res.sendFile(VIEW_DIR + "home.html");
+      }
+    });
+  }
+  else {
+    res.sendFile(VIEW_DIR + "home.html");
+  }
+});
+
+app.get('/signup', function(req, res) {
+  res.sendFile(VIEW_DIR + "signup.html");
+});
+
+app.get('/main', function(req, res) {
+  res.sendFile(VIEW_DIR + "mainRoom.html");
+});
+
+/*************************************************************************************/
+
+
+
+
+
+
+
 /* User settings ---------------*/
+
+app.post('/get_Id_From_Name', function(req, res) {
+  var emailFind = req.body.email;
+  console.log(emailFind);
+  
+	db.users.findOne({email:"x"}, function(err, docs){
+    console.log(docs);
+		res.json(docs);
+	});	
+});
+
 app.post('/buddy_existing_user', function(req, res) {
 
   console.log(req.body.name);
@@ -151,7 +208,6 @@ app.delete('/remove_buddy/:id', function(req, res){
 });
 // forces the name property to be unique in user_classes collection
 //db.user_classes.createIndex({name: 1}, {unique:true});
-
 app.post('/user_classes', function(req, res) {
 
 	db.user_classes.insert(req.body, function(err, docs){
@@ -200,45 +256,6 @@ app.get('/scrape_classes', function(req, res) {
   }
 });
 
-/*---------------------------*/
-
-
-/* Class/room functionality ----------------*/
-
-app.get('/add_tutor/:class_id/:tutor_id/:admin_key', function (req, res) {
-	var class_id = req.params.class_id;
-	var tutor_id = req.params.tutor_id;
-	var admin_key = req.params.admin_key;
-
-	// if the admin_key is correct
-	if (admin_key == ADMIN_KEY) {
-
-		// if the tutor is not already a tutor for this class
-		if (classes_dict[class_id].tutor_ids.indexOf(tutor_id) == -1) {
-			classes_dict[class_id].tutor_ids.push(tutor_id);
-		}
-
-		// back up tutor in database
-	}
-});
-
-/*************************************************************************************/
-
-/************************************ HTML PAGES *************************************/
-
-app.get('/', function(req, res) {
-  res.sendFile(__dirname + "/public/home.html");
-});
-
-app.get('/signup', function(req, res) {
-  res.sendFile(__dirname + "/public/signup.html");
-});
-
-app.get('/main', function(req, res) {
-  res.sendFile(__dirname + "/public/mainRoom.html");
-});
-
-/*************************************************************************************/
 
 /******************************** GET CLASSES & ROOMS ********************************/
 
@@ -294,9 +311,15 @@ app.get('/leave_room/:room_id/:user_id', function(req, res) {
 /* POST data: {chatMessage} - post chat message to firebase in respective room
  * Returns: nothing */
 app.post("/send_room_message", function(req, res) {
-  console.log("room message");
   var roomID = req.body.roomID;
-  roomMessagesDatabase.child(roomID).push().set(req.body);
+  
+  //roomMessagesDatabase.child(roomID).push().set(req.body);
+  if (req.signedCookies.user_id && req.signedCookies.email && req.signedCookies.name) {
+    var newChatMessage = new ChatMessage(req.signedCookies.name, 
+      req.signedCookies.email, req.body.text, roomID, req.body.timeSent);
+    roomMessagesDatabase.child(roomID).push().set(newChatMessage);
+  }
+
   res.send({}); //close the http request
 });
 
@@ -307,7 +330,7 @@ app.post("/send_room_message", function(req, res) {
 
 
 
-/* Account system (login, signup, verification) -----*/
+/* ACCOUNT LOGIN, SIGNUP, VERIFICATION ----------------------*/
 
 // - returns user with given email / password
 app.post('/accountlogin', function(req, res) {
@@ -316,7 +339,11 @@ app.post('/accountlogin', function(req, res) {
   var password = req.body.password;
   console.log("get user with email " + email + " and pass " + password);
   db.users.findOne({email: email, password: password}, function (err, doc) {
+    res.cookie("user_id", doc.user_id, {signed: true, maxAge: COOKIE_TIME});
+    res.cookie("email", doc.email, {signed: true, maxAge: COOKIE_TIME});
+    res.cookie("name", doc.name, {signed: true, maxAge: COOKIE_TIME});
     res.json(doc);
+    //res.sendFile(VIEW_DIR + "mainRoom.html");
   });
 });
 
@@ -341,8 +368,7 @@ app.post("/accountsignup", function(req, res) {
         else {
           console.log("Account signup: SOMETHING WEIRD HAPPENED");
           res.json({success: true});
-        }
-      });
+        } });
     }
     else {
       console.log("Account signup: error - account already exists");
@@ -465,10 +491,18 @@ app.post("/resetpassword/:id/:resetToken", function(req, res) {
 /*------------------------------------------------------------------------*/
 
 
+
+
+
+
+
+
+
 /* Model -----------------------------------------------------------------*/
 
 function User(email, password, name, school) {
 //this._id = whatever mongo gives us
+  this.user_id = generateToken(20);
   this.email = email;
   this.password = password;
   this.name = name;
@@ -489,6 +523,14 @@ function Room(room_id, room_name, room_host_id, class_id, is_lecture) {
 	this.class_id = class_id;
 	this.is_lecture = is_lecture;
 	this.has_tutor = false;
+}
+
+function ChatMessage(name, email, text, roomID, timeSent) {
+  this.name = name;
+  this.email = email;
+  this.text = text;
+  this.roomID = roomID;
+  this.timeSent = timeSent;
 }
 
 //TODO: ERIC - fix callback stuff so res gets sent back
@@ -512,6 +554,9 @@ function addRoom(class_id, room_name, room_host_id, is_lecture, callback) {
     }
     else {
       console.log("FIREBASE: Error - failed to add room " + room_id + " to RoomInfo database");
+      if (callback) {
+        callback({room_id: null});
+      }
     }
   });
 
@@ -545,6 +590,19 @@ function joinRoom(user_id, room_id, callback) {
       roomInfoDatabase.child(room_id).child("users").push().set(user_id, function(err) {
         if (!err) {
           console.log("FIREBASE: Successfully added user " + user_id + " to room" + room_id);
+          if (callback) { //have to grab all of room info for callback TODO: change this?
+            roomInfoDatabase.child(room_id).once("value").then(function(snapshot) {
+              if (callback) {
+                callback(snapshot.val());
+              }
+            });
+          }
+        }
+        else {
+          if (callback) {
+            console.log("FIREBASE: Failed - User wasn't added for some reason");
+            callback(null);
+          }
         }
       });
     }
@@ -560,6 +618,9 @@ function joinRoom(user_id, room_id, callback) {
 
 function leaveRoom(user_id, room_id, callback) {
 	console.log("FIREBASE: Attempting to remove user " + user_id + " from room " + room_id);
+  if (callback) {
+    callback({success: true}); //assume user succesfully leaves the room
+  }
 
   roomInfoDatabase.child(room_id).child("users").once("value").then(function(snapshot) {
     if (snapshot.val()) {
@@ -572,15 +633,10 @@ function leaveRoom(user_id, room_id, callback) {
           });
         }
       });
-
     }
     else {
       console.log("FIREBASE: Error - room no longer exists");
-      if (callback) {
-        callback({success:false});
-      }
     }
-
   });
 }
 
@@ -616,18 +672,6 @@ function tutorInRoom(room) {
 	return false;
 }
 
-/* Class/room database methods--------*/
-
-function addRoomIDToClass(class_id, room_id) {
-
-}
-
-function addRoomToDatabase(room) {
-
-}
-
-
-
 
 /*------------------------------------------------------------------------*/
 
@@ -639,13 +683,20 @@ function sendVerifyError(res) {
   res.json({success:false}); //add anything needed to json
 }
 
-//generate a token of 10 random chars
-function generateToken() {
+//generate a token of random chars
+function generateToken(num) {
   var token = "";
   var possible = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
 
-  for( var i=0; i < 10; i++ ) {
-    token += possible.charAt(Math.floor(Math.random() * possible.length));
+  if (num && num > 0) {
+    for(var i = 0; i < num; i++ ) {
+      token += possible.charAt(Math.floor(Math.random() * possible.length));
+    }
+  }
+  else {
+    for(var i = 0; i < 10; i++ ) {
+      token += possible.charAt(Math.floor(Math.random() * possible.length));
+    }
   }
   return token;
 }
@@ -679,6 +730,10 @@ function sendResetPassword(user, callback) {
     html: "<a href='" + emailText + "'>" + emailText + "</a>"
   };
   mailTransporter.sendMail(resetPasswordEmailOptions, callback);
+}
+
+function checkLogin(_id, callback) {
+
 }
 
 /*------------------------------------------------------------------------*/

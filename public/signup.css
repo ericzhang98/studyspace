@@ -1,13 +1,12 @@
 /* signup.css */
 
+/* General */
 html, body {
   margin: 0;
   height: 100%;
 }
 
 body {
-  font-family: 'Raleway', sans-serif;
-  letter-spacing: 0.05em;
   background: #ecf0f1;
 }
 
@@ -16,6 +15,7 @@ main {
   height: 100%;
 }
 
+/* General: forms */
 .form-control {
   border-radius: 0;
   border: none;
@@ -26,7 +26,7 @@ main {
   padding: 0;
   margin-top: 0rem;
   background: transparent;
-  color: #888888;
+  color: #333333;
   font-weight: 700;
 }
 
@@ -36,11 +36,55 @@ main {
   color: #333333;
 }
 
+/* General: btn */
+.btn {
+  border: none;
+  border-radius: 0;
+  letter-spacing: 0.05em;
+  -webkit-transition: background 0.15s, color 0.15s;
+  transition: background 0.15s, color 0.15s;
+}
+
+.btn.active,
+.btn:active {
+  -webkit-box-shadow: none;
+  box-shadow: none;
+  outline: none;
+}
+
+.btn.active.focus,
+.btn.active:focus,
+.btn.focus,
+.btn:active.focus,
+.btn:active:focus,
+.btn:focus {
+  outline: none;
+  outline-offset: 0;
+}
+
+.btn-primary.active,
+.btn-primary:active,
+.open>.dropdown-toggle.btn-primary {
+  border: none;
+}
+
+.btn-primary.active.focus,
+.btn-primary.active:focus,
+.btn-primary.active:hover,
+.btn-primary:active.focus,
+.btn-primary:active:focus,
+.btn-primary:active:hover,
+.open>.dropdown-toggle.btn-primary.focus,
+.open>.dropdown-toggle.btn-primary:focus,
+.open>.dropdown-toggle.btn-primary:hover {
+  border: none;
+}
+
 /* Sign Up Form */
 #signup {
   width: 100%;
   background: white;
-  padding: 5rem 2rem;
+  padding: 5rem 3rem;
 }
 
 #signup h1::selection,
@@ -54,7 +98,7 @@ main {
   font-size: 3rem;
   font-weight: 800;
   margin-top: 0;
-  margin-bottom: 3rem;
+  margin-bottom: 4rem;
 }
 
 #signup label {
@@ -72,8 +116,6 @@ main {
 }
 
 #btn-submit {
-  border: none;
-  border-radius: 0;
   padding: 0.5em 1em;
   font-size: 2.5rem;
   font-weight: 700;
@@ -86,15 +128,6 @@ main {
 
 #btn-submit:visited {
   background: #337ab7;
-}
-
-#btn-submit:active {
-  box-shadow: none;
-  outline: none;
-}
-
-#btn-submit:focus {
-  outline: none;
 }
 
 #signup .msg-error {
@@ -127,6 +160,6 @@ main {
     width: 50rem;
     height: auto;
     margin: 0 auto;
-    padding: 8rem;
+    padding: 7rem;
   }
 }

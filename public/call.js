@@ -175,29 +175,6 @@ function answerCallHelper(call) {
 }
 /*********************************************************************/
 
-/*************************** CREATING ROOMS **************************/
-
-function addRoom(class_id, room_name, is_lecture) {
-	console.log("adding room with class_id: " + class_id + 
-		", room_name: " + room_name);
-	var xhr = new XMLHttpRequest();
-	xhr.open('GET', "/add_room/" + class_id + "/" + 
-		room_name + "/" + me.user_id + "/" + is_lecture, true);
-	xhr.send();
-
-	xhr.onreadystatechange = function(e) {
-		// room has been created
-		if (xhr.readyState == 4 && xhr.status == 200) {
-			var response = JSON.parse(xhr.responseText);
-
-			// join the room
-			joinRoom(response.room_id);
-		}
-	}
-}
-
-/*********************************************************************/
-
 /********************* LEAVING AND JOINING ROOMS *********************/
 
 // - updates server and returns list of user_id's
