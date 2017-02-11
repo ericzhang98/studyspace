@@ -342,11 +342,12 @@ app.post('/accountlogin', function(req, res) {
   var password = req.body.password;
   console.log("get user with email " + email + " and pass " + password);
   db.users.findOne({email: email, password: password}, function (err, doc) {
-    res.cookie("user_id", doc.user_id, {signed: true, maxAge: COOKIE_TIME});
-    res.cookie("email", doc.email, {signed: true, maxAge: COOKIE_TIME});
-    res.cookie("name", doc.name, {signed: true, maxAge: COOKIE_TIME});
+    if (doc) {
+      res.cookie("user_id", doc.user_id, {signed: true, maxAge: COOKIE_TIME});
+      res.cookie("email", doc.email, {signed: true, maxAge: COOKIE_TIME});
+      res.cookie("name", doc.name, {signed: true, maxAge: COOKIE_TIME});
+    }
     res.json(doc);
-    //res.sendFile(VIEW_DIR + "mainRoom.html");
   });
 });
 
@@ -366,6 +367,9 @@ app.post("/accountsignup", function(req, res) {
         if (doc) {
           console.log("Account signup: ACCOUNT CREATED");
           //sendVerifyEmail(newUser);
+          res.cookie("user_id", doc.user_id, {signed: true, maxAge: COOKIE_TIME});
+          res.cookie("email", doc.email, {signed: true, maxAge: COOKIE_TIME});
+          res.cookie("name", doc.name, {signed: true, maxAge: COOKIE_TIME});
           res.json({success: true});
         }
         else {

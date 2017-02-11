@@ -47,6 +47,10 @@ function getClasses() {
 		if (xhr.readyState == 4 && xhr.status == 200) {
 			var response = JSON.parse(xhr.responseText);
 			console.log(response.class_ids);
+			if (!response.class_ids) {
+				console.log("user has no classes");
+				return;
+			}
 			for (i = 0; i < response.class_ids.length; i++) {
 				getClass(response.class_ids[i]);
 			}
