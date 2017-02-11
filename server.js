@@ -211,7 +211,7 @@ app.delete('/remove_buddy/:id', function(req, res){
 app.post('/user_classes', function(req, res) {
   console.log(req.body);
   var get_user_id = req.signedCookies.user_id;
-  db.user_classes.createIndex({name: 1}, {unique:true});
+  db.user_classes.createIndex({name: 1, user_id: 1}, {unique:true}); //BUG: NEEDS FIX
 	db.user_classes.insert({name:req.body.name, user_id:get_user_id}, function(err, docs){
 		res.json(docs);
 	});	
