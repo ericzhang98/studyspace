@@ -290,7 +290,7 @@ app.get('/get_class/:class_id', function(req, res) {
 app.get('/add_room/:class_id/:room_name/:is_lecture', function(req, res) {
   var host_id = req.signedCookies.user_id;
 	var room_id = addRoom(req.params.class_id, req.params.room_name, 
-		req.params.host_id, req.params.is_lecture, function(room_id){res.send(room_id);});
+		host_id, req.params.is_lecture, function(room_id){res.send(room_id);});
 });
 
 // - adds user_id to room with id room_id
