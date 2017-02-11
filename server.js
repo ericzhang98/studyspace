@@ -262,8 +262,8 @@ app.get('/scrape_classes', function(req, res) {
 /******************************** GET CLASSES & ROOMS ********************************/
 
 // return the class_ids of classes this user is enrolled in
-app.get('/get_classes/:user_id', function(req, res) {
-	var user_id = req.params.user_id;
+app.get('/get_classes/', function(req, res) {
+	var user_id = req.signedCookies.user_id;
 	db.users.findOne({user_id: user_id}, function (err, doc) {
 	    if (doc) {
 	    	res.send({class_ids: doc.class_ids});
@@ -287,25 +287,26 @@ app.get('/get_class/:class_id', function(req, res) {
 
 /*************************************** ROOMS ***************************************/
 
-app.get('/add_room/:class_id/:room_name/:host_id/:is_lecture', function(req, res) {
+app.get('/add_room/:class_id/:room_name/:is_lecture', function(req, res) {
+  var host_id = req.signedCookies.user_id;
 	var room_id = addRoom(req.params.class_id, req.params.room_name, 
 		req.params.host_id, req.params.is_lecture, function(room_id){res.send(room_id);});
 });
 
 // - adds user_id to room with id room_id
 // - returns list of user_id's in that room
-app.get('/join_room/:room_id/:user_id', function(req, res) {
+app.get('/join_room/:room_id/', function(req, res) {
 
 	var room_id = req.params.room_id;
-	var user_id = req.params.user_id;
+	var user_id = req.signedCookies.user_id;
   joinRoom(user_id, room_id, function(roomInfo){res.send(roomInfo);});
 });
 
 // - removes user_id from room with id room_id
-app.get('/leave_room/:room_id/:user_id', function(req, res) {
+app.get('/leave_room/:room_id/', function(req, res) {
 	
 	var room_id = req.params.room_id;
-	var user_id = req.params.user_id;
+	var user_id = req.signedCookies.user_id;
 
   leaveRoom(user_id, room_id, function(success){res.send(success);});
 });
