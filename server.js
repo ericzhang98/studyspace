@@ -171,7 +171,7 @@ app.post('/buddy_requests', function(req, res) {
 
 app.post('/accept_buddy', function(req, res) {
 
-  var user_one_id = req.body.user_one_id;
+  var user_one_id = req.signedCookies.user_id;
   var user_one_name = req.body.user_one_name;
   var user_two_id = req.body.user_two_id;
   var user_two_name = req.body.user_two_name;
