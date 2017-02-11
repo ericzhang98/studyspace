@@ -209,9 +209,10 @@ app.delete('/remove_buddy/:id', function(req, res){
 // forces the name property to be unique in user_classes collection
 //db.user_classes.createIndex({name: 1}, {unique:true});
 app.post('/user_classes', function(req, res) {
-
-	db.user_classes.insert(req.body, function(err, docs){
-		db.user_classes.ensureIndex({name: req.body}, {unique:true});
+  console.log(req.body);
+  var get_user_id = req.signedCookies.user_id;
+  db.user_classes.createIndex({name: 1}, {unique:true});
+	db.user_classes.insert({name:req.body.name, user_id:get_user_id}, function(err, docs){
 		res.json(docs);
 	});	
 
@@ -226,9 +227,10 @@ app.delete('/user_classes/:id', function(req, res){
 });
 
 //NOTE:Need to get userID working so it only gets the classes of this user
-app.get('/user_classes/:id', function(req, res) {
+app.get('/user_classes', function(req, res) {
 
-	db.user_classes.find({user_id: req.params.id}, function(err, docs){
+  var get_user_id = req.signedCookies.user_id;
+	db.user_classes.find({user_id: get_user_id}, function(err, docs){
 		res.json(docs);
 	});
 });
