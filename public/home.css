@@ -83,12 +83,13 @@ main {
   position: relative;
   background: white;
   color: #333333;
+  border-radius: 0;
 }
 
 #login .close {
   position: absolute;
-  top: 3rem;
-  right: 3rem;
+  top: 2.5rem;
+  right: 2.5rem;
   font-size: 2rem;
   opacity: 1;
   color: #333333;
@@ -118,9 +119,13 @@ main {
 }
 
 #login .title {
-  font-size: 3rem;
+  font-size: 2.5rem;
   font-weight: 800;
   margin-top: 0;
+  margin-bottom: 0;
+}
+
+#login .title-container {
   margin-bottom: 4rem;
 }
 
@@ -142,7 +147,7 @@ main {
 }
 
 #login .btn-container {
-  margin-top: 7rem;
+  margin-top: 5.5rem;
 }
 
 #btn-submit {
@@ -150,6 +155,7 @@ main {
   font-size: 2.5rem;
   font-weight: 700;
   background: #286090;
+  width: 100%;
 }
 
 #btn-submit:hover {
@@ -231,13 +237,14 @@ main {
   }
 
   /* Login Modal */
-  .modal-content {
-    width: 50rem;
+  #login {
+    width: 45rem;
     height: auto;
-    padding-top: 9rem;
-    padding-left: 7rem;
-    padding-right: 7rem;
-    padding-bottom: 7rem;
+    padding-top: 8rem;
+    padding-left: 6rem;
+    padding-right: 6rem;
+    padding-bottom: 6rem;
+    border-radius: 0.5rem;
   }
 
   /* Splash */

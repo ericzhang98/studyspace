@@ -93,8 +93,8 @@ html, body {
 
 #create-room .close {
   position: absolute;
-  top: 3rem;
-  right: 3rem;
+  top: 2.5rem;
+  right: 2.5rem;
   font-size: 2rem;
   opacity: 1;
   color: #333333;
@@ -124,9 +124,13 @@ html, body {
 }
 
 #create-room .title {
-  font-size: 3rem;
+  font-size: 2.5rem;
   font-weight: 800;
   margin-top: 0;
+  margin-bottom: 0;
+}
+
+#create-room .title-container {
   margin-bottom: 4rem;
 }
 
@@ -148,7 +152,7 @@ html, body {
 }
 
 #create-room .btn-container {
-  margin-top: 7rem;
+  margin-top: 5.5rem;
 }
 
 #btn-create {
@@ -156,6 +160,7 @@ html, body {
   font-size: 2.5rem;
   font-weight: 700;
   background: #286090;
+  width: 100%;
 }
 
 #btn-create:hover {
@@ -169,12 +174,12 @@ html, body {
 @media screen and (min-width: 768px) {
   /* Login Modal */
   .modal-content {
-    width: 50rem;
+    width: 45rem;
     height: auto;
-    padding-top: 9rem;
-    padding-left: 7rem;
-    padding-right: 7rem;
-    padding-bottom: 7rem;
+    padding-top: 8rem;
+    padding-left: 6rem;
+    padding-right: 6rem;
+    padding-bottom: 6rem;
   }
 
   /* Classes Sidebar */
@@ -197,5 +202,10 @@ html, body {
   /* Classmates Sidebar */
   #sidebar-classmates {
     width: 25rem;
+  }
+
+  /* Create Room Modal */
+  #create-room {
+    border-radius: 0.5rem;
   }
 }
