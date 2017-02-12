@@ -286,14 +286,19 @@ app.get('/scrape_classes', function(req, res) {
 // return the class_ids of classes this user is enrolled in
 app.get('/get_classes/', function(req, res) {
 	var user_id = req.signedCookies.user_id;
-	db.users.findOne({user_id: user_id}, function (err, doc) {
-	    if (doc) {
-	    	res.send({class_ids: doc.class_ids});
-	    }
-	    else {
-	      res.send({class_ids: []});
-	    }
-  	});
+  if (user_id) {
+    db.users.findOne({user_id: user_id}, function (err, doc) {
+      if (doc) {
+        res.send({class_ids: doc.class_ids});
+      }
+      else {
+        res.send({class_ids: []});
+      }
+    });
+  }
+  else {
+    res.send({class_ids: []});
+  }
 });
 
 // return name of the class with specified id
@@ -316,26 +321,39 @@ app.get('/get_class/:class_id', function(req, res) {
 
 app.get('/add_room/:class_id/:room_name/:is_lecture', function(req, res) {
   var host_id = req.signedCookies.user_id;
-	var room_id = addRoom(req.params.class_id, req.params.room_name, 
-		host_id, req.params.is_lecture, function(room_id){res.send(room_id);});
+  //needs error checking for class_id's (or just change to POST request)
+  if (host_id) {
+    addRoom(req.params.class_id, req.params.room_name, 
+      host_id, req.params.is_lecture, function(room_id){res.send(room_id);});
+  }
+  else {
+    res.send({});
+  }
 });
 
 // - adds user_id to room with id room_id
 // - returns list of user_id's in that room
 app.get('/join_room/:room_id/', function(req, res) {
-
-	var room_id = req.params.room_id;
 	var user_id = req.signedCookies.user_id;
-  joinRoom(user_id, room_id, function(roomInfo){res.send(roomInfo);});
+  if (user_id) {
+	  var room_id = req.params.room_id;
+    joinRoom(user_id, room_id, function(roomInfo){res.send(roomInfo);});
+  }
+  else {
+    res.send({});
+  }
 });
 
 // - removes user_id from room with id room_id
 app.get('/leave_room/:room_id/', function(req, res) {
-	
-	var room_id = req.params.room_id;
 	var user_id = req.signedCookies.user_id;
-
-  leaveRoom(user_id, room_id, function(success){res.send(success);});
+  if (user_id) {
+	  var room_id = req.params.room_id;
+    leaveRoom(user_id, room_id, function(success){res.send(success);});
+  }
+  else {
+    res.send({});
+  }
 });
 
 /* POST data: {chatMessage} - post chat message to firebase in respective room

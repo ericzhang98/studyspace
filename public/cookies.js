@@ -37,11 +37,26 @@ function getSignedCookie(key) {
       cookie = cookie.substring(1);
     }
     if (cookie.indexOf(cookieName) == 0) {
-      var cookieValue = decodeURIComponent(cookie.split("=")[1]);
-      var periodSplit = cookieValue.split(".");
-      periodSplit.pop();
-      var value = periodSplit.join(".");
-      return value.substring(2);
+      try {
+        var cookieValue = decodeURIComponent(cookie.split("=")[1]);
+      } catch(e) {return null;}
+      /* Signed cookie format = s:value.hash */
+      //make sure it's a signed cookie
+      if (cookieValue.indexOf("s:") == 0) {
+        var periodSplit = cookieValue.split(".");
+        //in case there's no hash at end
+        if (periodSplit.length > 1) {
+          periodSplit.pop();
+          var value = periodSplit.join(".");
+          return value.substring(2);
+        }
+        else {
+          return null;
+        }
+      }
+      else {
+        return null;
+      }
     }
   }
   return null;
