@@ -17,10 +17,9 @@
 
       <br>
 
-      <div id="chatMessageDiv" class="container" style="height:200px; overflow-x:hidden">
+      <div id="chatMessageDiv" class="container" style="height:200px; overflow-x:hidden; border-style:solid">
         <ul style="list-style-type:none" ng-repeat="chatMessage in chatMessageList">
-          <li>{{chatMessage.name}} ({{chatMessage.email}}): {{chatMessage.text}} --
-          {{timeAgo(chatMessage)}}</li>
+          <li>{{chatMessage.name}} ({{chatMessage.email}}): {{chatMessage.text}} -- {{timeAgo(chatMessage)}}</li>
         </ul>
       </div>
 

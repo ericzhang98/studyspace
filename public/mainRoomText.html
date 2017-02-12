@@ -8,7 +8,7 @@
 -->
 
 <!DOCTYPE html>
-<html>
+<html ng-app="roomApp">
    <head>
       <!-- Bootstrap -->
       <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.6.1/angular.min.js"></script>
@@ -30,18 +30,6 @@
 
       <!-- Title -->
       <title>Main Room</title>
-      <style>
-         #message-wrapper {
-            background-color: powderblue;
-         }
-
-         #message-pane {
-         }
-
-         #message-bar {
-         }
-
-      </style>
    </head>
 
    <body>
@@ -52,7 +40,8 @@
                <h3>Column 1</h3>
             </div>
 
-            <div class="col-xs-8 col-sm-8 col-md-8 col-lg-8" id="message-wrapper" style="background-color:powderblue">
+            <div class="col-xs-8 col-sm-8 col-md-8 col-lg-8" id="message-wrapper"
+               ng-controller="ChatController"> 
 
                <!--NAVBAR-->
                <nav class="navbar navbar-inverse navbar-static-top">
@@ -74,14 +63,17 @@
                </nav>
 
                <!--MESSAGE PANE -->
-               <div class="container fill" id="message-pane">
+               <div class="container" id="chatMessageDiv" style="height:200px; overflow-x:hidden; border-style:solid">
+                  
+                  <ul style="list-style-type:none" ng-repeat="chatMessage in chatMessageList">
+                     <li>{{chatMessage.name}} ({{chatMessage.email}}): {{chatMessage.text}} -- {{timeAgo(chatMessage)}}</li>
+                  </ul>
 
                </div>
 
                <!--MESSAGE BAR -->
 
-               <footer class="footer navbar-fixed-bottom col-xs-8 col-sm-8 col-md-8 col-lg-8
-               col-xs-offset-2 col-sm-offset-2 col-md-offset-2 col-lg-offset-2">
+               <footer class="footer navbar-fixed-bottom col-xs-8 col-sm-8 col-md-8 col-lg-8 col-xs-offset-2 col-sm-offset-2 col-md-offset-2 col-lg-offset-2">
                <form>
                   <div class="input-group" id="message-bar">
 
@@ -91,9 +83,14 @@
                         </button>
                      </div>
 
-                     <input type="text" class="form-control" placeholder="Type a message...">
+                     <input type="text" class="form-control" id="chatInputBox" 
+                        ng-model="chatInput" ng-keydown="keypress($event)" 
+                        placeholder="Type a message...">
+                     
                      <div class="input-group-btn">
-                        <button class="btn btn-default" type="submit">SEND</button>
+                        <button class="btn btn-primary" ng-click="sendChatMessage(chatInput)">
+                           SEND
+                        </button>
                      </div>
 
                   </div>
@@ -110,4 +107,11 @@
       </div>
       <!-- Application Info -->
    </body>
+
+  <!-- Firebase scripts -->
+  <script src="https://www.gstatic.com/firebasejs/3.6.7/firebase.js"></script>
+
+  <!-- Angular scripts -->
+  <script src="controllers/room_controller.js"></script>
+
 </html>
