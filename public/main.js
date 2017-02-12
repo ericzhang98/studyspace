@@ -5,7 +5,7 @@ var class_names = {} 	// class_id : class name
 var rooms = {}			// room_id : room
 /**************************************************/
 
-getClasses();
+//getClasses();
 
 /****************************** ON-CLICKS ****************************/
 function addRoomOnClick() {
@@ -37,7 +37,7 @@ function Room(room_id, room_name, room_host_id, room_users, class_id, is_lecture
 
 // - gets all class_ids for user
 // - delegates to getClass
-function getClasses() {
+/*function getClasses() {
 	console.log("Getting classes...")
 	var xhr = new XMLHttpRequest();
 	xhr.open('GET', "/get_classes/" + me.user_id, true); // responds with class_ids
@@ -89,7 +89,7 @@ function getClass(class_id) {
 		}
 	}
 }
-
+*/
 // - respond to change in a class's rooms
 // - calls removeRoom/getRoom accordingly
 function onClassRoomsChange(class_id, updated_rooms) {
