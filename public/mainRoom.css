@@ -48,7 +48,7 @@ html, body {
   padding-bottom: 2rem;
   margin-left: 2rem;
   margin-right: 2rem;
-  border-bottom: solid 1px #000000;
+  border-bottom: solid 2px #000000;
 }
 
 #info-user .container-user-icon {
@@ -68,7 +68,7 @@ html, body {
 }
 
 #info-user .user-name {
-  font-weight: 700;
+  font-weight: 600;
   font-size: 2rem;
 }
 
@@ -125,7 +125,7 @@ html, body {
 
 #create-room .title {
   font-size: 2.5rem;
-  font-weight: 800;
+  font-weight: 700;
   margin-top: 0;
   margin-bottom: 0;
 }
@@ -143,7 +143,7 @@ html, body {
 
 #create-room label {
   font-size: 1.5rem;
-  font-weight: 800;
+  font-weight: 700;
 }
 
 #create-room .form-group {
@@ -158,7 +158,7 @@ html, body {
 #btn-create {
   padding: 0.5em 1em;
   font-size: 2.5rem;
-  font-weight: 700;
+  font-weight: 600;
   background: #286090;
   width: 100%;
 }

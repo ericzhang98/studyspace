@@ -1,35 +1,53 @@
 <!DOCTYPE html>
 <html ng-app="UserPreferences">
-<head>
-	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+  <head>
+    <!-- Bootstrap -->
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>
 
-	<title>User Preferences</title>
-</head>
-<body>
-	<div class="container" ng-controller="preferences">
-	<!--
-		<input class="form-control" ng-model="user_preferences.school">
-		<button class="btn btn-primary" ng-click="addSchool()">Add School</button></th>
-		-->
-		<table class="table">
-			<thead>
-				<tr>
-					<th>Add classes</th>
-					<th><input class="form-control" ng-model="user_classes.name"></th>
-					<th><button class="btn btn-primary" ng-click="addClass()">Add Class</button></th>
-				</tr>
-			</thead>
-			<tbody>
-				<tr ng-repeat="user_class in user_classes_list">
-					<td></td>
-          <td>{{user_class.name}}</td>
-					<td><button class="btn btn-danger" ng-click="remove(user_class._id)">Remove</button></td>
-				</tr>
-			</tbody>
-		</table>
-	</div>
-	<script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.6.1/angular.min.js"></script>
-	<script src ="https://ajax.googleapis.com/ajax/libs/angularjs/1.6.1/angular-cookies.js"></script>
-	<script src="controllers/user_preferences_controller.js"></script>
-</body>
+    <!-- Angular -->
+    <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.6.1/angular.min.js"></script>
+
+    <!-- For mobile scaling -->
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <!-- Stylesheets -->
+    <link rel="stylesheet" type="text/css" href="general.css">
+    <link rel="stylesheet" type="text/css" href="preferences.css">
+    <link rel="stylesheet" type="text/css" href="animations.css">
+
+    <!-- Additional Typefaces -->
+    <link href="https://fonts.googleapis.com/css?family=Montserrat:400,500,600,700" rel="stylesheet">
+
+    <!-- Title -->
+    <title>User Preferences</title>
+  </head>
+  <body>
+    <main class="container" role="main" ng-controller="preferences">
+      <!--
+        <input class="form-control" ng-model="user_preferences.school">
+        <button class="btn btn-primary" ng-click="addSchool()">Add School</button></th>
+      -->
+      <table class="table">
+        <thead>
+          <tr>
+            <th>Add classes</th>
+            <th><input class="form-control" ng-model="user_classes.name"></th>
+            <th><button class="btn btn-primary" ng-click="addClass()">Add Class</button></th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr ng-repeat="user_class in user_classes_list">
+            <td></td>
+            <td>{{user_class.name}}</td>
+            <td><button class="btn btn-danger" ng-click="remove(user_class._id)">Remove</button></td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+    <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.6.1/angular.min.js"></script>
+    <script src ="https://ajax.googleapis.com/ajax/libs/angularjs/1.6.1/angular-cookies.js"></script>
+    <script src="controllers/user_preferences_controller.js"></script>
+  </main>
 </html>

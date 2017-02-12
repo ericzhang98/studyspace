@@ -31,7 +31,7 @@ main {
 
 #signup .title {
   font-size: 3rem;
-  font-weight: 800;
+  font-weight: 700;
   margin-top: 0;
   margin-bottom: 0;
 }
@@ -42,7 +42,7 @@ main {
 
 #signup label {
   font-size: 1.5rem;
-  font-weight: 800;
+  font-weight: 700;
 }
 
 #signup .form-group {
@@ -57,7 +57,7 @@ main {
 #btn-submit {
   padding: 0.5em 1em;
   font-size: 2.5rem;
-  font-weight: 700;
+  font-weight: 600;
   background: #286090;
   width: 100%;
 }
@@ -87,5 +87,11 @@ main {
     margin: 0 auto;
     padding: 6rem;
     border-radius: 0.5rem;
+  }
+}
+
+@media screen and (max-height: 688px) {
+  main {
+    display: block;
   }
 }
