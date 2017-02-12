@@ -94,6 +94,10 @@ app.get('/main', function(req, res) {
   res.sendFile(VIEW_DIR + "mainRoom.html");
 });
 
+app.get('/courses', function (req, res) {
+  res.sendFile(VIEW_DIR + "update.html");
+});
+
 /*************************************************************************************/
 
 

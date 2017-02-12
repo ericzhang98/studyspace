@@ -90,6 +90,7 @@ function getClass(class_id) {
 			console.log("class name is: " + response.name);
 
 			// TODO: update UI to add the class
+			
 		}
 	}
 }
