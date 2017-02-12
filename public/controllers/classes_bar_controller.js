@@ -13,6 +13,8 @@ myApp.controller("classesController", function($scope) {
     $scope.class_rooms = {} 	// class_id : room ids
     $scope.rooms = {}; // room_id : room
     $scope.room_names = {}; // room_id : room
+
+    $scope.class_id_to_room_list = {};
     getClasses();
 
     
@@ -127,12 +129,12 @@ myApp.controller("classesController", function($scope) {
                 $scope.rooms[room_id] = 
                     new Room(room_id, room.name, room.host_id, room.class_id,
                     room.is_lecture, room.has_tutor, room.users);
-                if (! $scope.class_rooms[class_id]){
-                    $scope.class_rooms[class_id] = [];    
+                if (! $scope.class_id_to_room_list[class_id]){
+                    $scope.class_id_to_room_list[class_id] = [];    
                 }
-                class_rooms.push(room.name);
+                $scope.class_id_to_room_list[class_id].push(room.name);
 
-                console.log("Got room: ");
+                console.log("Got room: " + room.name);
                 console.log($scope.rooms[room_id]);
             }
         });
