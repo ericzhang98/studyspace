@@ -1,3 +1,38 @@
+/* update.css */
+
+/* General */
+body {
+  background: #ecf0f1;
+}
+
+main {
+  background: white;
+  height: 100%;
+}
+
+/*
+h1 {
+    margin-bottom: 10px;
+}
+
+li {
+  padding: 10px;
+  width: 100%;
+  border-top: 1px solid gray;
+}
+
+li:first-child {
+  border: none;
+}
+
+li:hover {
+  background-color: gray;
+}
+
+ul {
+  padding: 0;
+  margin: 0;
+}
 #add-class-div {
     display: inline-block;
 }
@@ -50,30 +85,4 @@
 .x-button {
     margin-left: 8px;
 }
-
-h1 {
-    margin-bottom: 10px;
-}
-
-html {
-    background-color: white;
-}
-
-li {
-  padding: 10px;
-  width: 100%;
-  border-top: 1px solid gray;
-}
-
-li:first-child {
-  border: none;
-}
-
-li:hover {
-  background-color: gray;
-}
-
-ul {
-  padding: 0;
-  margin: 0;
-}
+*/

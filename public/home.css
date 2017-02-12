@@ -8,7 +8,7 @@ main {
 /* Navigation Bar */
 #navbar-site {
   font-size: 2rem;
-  font-weight: 700;
+  font-weight: 500;
   height: 6rem;
   border: none;
   z-index: 100;
@@ -120,7 +120,7 @@ main {
 
 #login .title {
   font-size: 2.5rem;
-  font-weight: 800;
+  font-weight: 700;
   margin-top: 0;
   margin-bottom: 0;
 }
@@ -138,7 +138,7 @@ main {
 
 #login label {
   font-size: 1.5rem;
-  font-weight: 800;
+  font-weight: 700;
 }
 
 #login .form-group {
@@ -153,7 +153,7 @@ main {
 #btn-submit {
   padding: 0.5em 1em;
   font-size: 2.5rem;
-  font-weight: 700;
+  font-weight: 600;
   background: #286090;
   width: 100%;
 }
@@ -199,7 +199,7 @@ main {
 #btn-signup {
   padding: 0.5em 1em;
   font-size: 2.5rem;
-  font-weight: 700;
+  font-weight: 600;
 }
 
 @media screen and (min-width: 768px) {

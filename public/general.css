@@ -2,7 +2,7 @@
 
 /* General */
 body {
-  font-family: 'Raleway', sans-serif;
+  font-family: 'Montserrat', sans-serif;
   letter-spacing: 0.07em;
 }
 
@@ -53,7 +53,7 @@ a:hover {
   margin-top: 0rem;
   background: transparent;
   color: #333333;
-  font-weight: 700;
+  font-weight: 500;
 }
 
 .form-control:focus {

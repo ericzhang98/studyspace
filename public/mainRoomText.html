@@ -36,15 +36,17 @@
       <!-- Main Content -->
       <div class="container-fluid">
          <div class="row no-gutter">
+            <!-- Room Column -->
             <div class="col-xs-2 col-sm-2 col-md-2 col-lg-2" style="background-color:red">
                <h3>Column 1</h3>
             </div>
 
+            <!-- Message Wrapper -->
             <div class="col-xs-8 col-sm-8 col-md-8 col-lg-8" id="message-wrapper"
                ng-controller="ChatController"> 
 
                <!--NAVBAR-->
-               <nav class="navbar navbar-inverse navbar-static-top">
+               <nav class="navbar navbar-inverse navbar-static-top span-8">
                <div class="container-fluid">
                   <div class="navbar-header">
                      <a class="navbar-brand">CSE 110</a>
@@ -62,17 +64,16 @@
                </div>
                </nav>
 
-               <!--MESSAGE PANE -->
-               <div class="container" id="chatMessageDiv" style="height:200px; overflow-x:hidden; border-style:solid">
+               <!-- MESSAGE PANE -->
+               <div class="container-fluid" id="chatMessageDiv">
                   
                   <ul style="list-style-type:none" ng-repeat="chatMessage in chatMessageList">
                      <li>{{chatMessage.name}} ({{chatMessage.email}}): {{chatMessage.text}} -- {{timeAgo(chatMessage)}}</li>
                   </ul>
-
+                   
                </div>
 
-               <!--MESSAGE BAR -->
-
+               <!-- MESSAGE BAR -->
                <footer class="footer navbar-fixed-bottom col-xs-8 col-sm-8 col-md-8 col-lg-8 col-xs-offset-2 col-sm-offset-2 col-md-offset-2 col-lg-offset-2">
                <form>
                   <div class="input-group" id="message-bar">
