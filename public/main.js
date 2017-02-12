@@ -189,3 +189,12 @@ function addRoom(class_id, room_name, is_lecture) {
 }
 
 /*********************************************************************/
+
+/************************* ACCOUNT MANAGEMENT ************************/
+
+function logOut() {
+	removeCookie("user_id");
+	document.location.href = "/";
+}
+
+/*********************************************************************/
