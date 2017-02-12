@@ -134,6 +134,8 @@ function addRoom(class_id, room_name, is_lecture) {
 
 function logOut() {
 	removeCookie("user_id");
+  removeCookie("email");
+  removeCookie("name");
 	document.location.href = "/";
 }
 
