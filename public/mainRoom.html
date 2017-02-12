@@ -60,7 +60,7 @@
 
           <!--first class in drop down-->
           <div ng-repeat="(id, name) in class_names" class="panel" 
-            data-toggle="collapse" data-parent="#accordion" href="#cse110">
+            data-toggle="collapse" data-parent="#accordion" href="#{{id}}">
             <div class="panel-heading">
               <h4 class="panel-title">
                 <span>{{name}}</span>
@@ -69,9 +69,12 @@
             </div>
             <div id="{{id}}" class="panel-collapse collapse">
               <ul class="list-group">
-                <button class="list-group-item">General (3)</button>                
+                <button ng-repeat="(room_id, room_name) 
+                in room_names" class="list-group-item">{{room_name}}</button>
+                
+                <!-- <button class="list-group-item">General (3)</button>                
                 <button class="list-group-item">Midterm Review (6)</button>
-                <button class="list-group-item">More...</button>
+                <button class="list-group-item">More...</button> -->
 
                 <!--
                   <li class="list-group-item">Main</li>
