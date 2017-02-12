@@ -14,10 +14,13 @@ myApp.controller("classesController", function($scope) {
     $scope.rooms = {}; // room_id : room
     $scope.room_names = {}; // room_id : room
 
-    $scope.class_id_to_room_list = {};
     getClasses();
 
     
+
+    $scope.joinRoomNG = function(room_id){
+        joinRoom(room_id);
+    };
     
     // - gets all class_ids for user
     // - delegates to getClass
@@ -129,10 +132,9 @@ myApp.controller("classesController", function($scope) {
                 $scope.rooms[room_id] = 
                     new Room(room_id, room.name, room.host_id, room.class_id,
                     room.is_lecture, room.has_tutor, room.users);
-                if (! $scope.class_id_to_room_list[class_id]){
-                    $scope.class_id_to_room_list[class_id] = [];    
-                }
-                $scope.class_id_to_room_list[class_id].push(room.name);
+               
+
+                $scope.$apply();
 
                 console.log("Got room: " + room.name);
                 console.log($scope.rooms[room_id]);
