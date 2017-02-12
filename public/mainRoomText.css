@@ -28,7 +28,6 @@ html, body{
 #chatMessageDiv {
   background-color: aliceblue;
   height: calc(100% - 85px);
-  padding-bottom: 30px;
   overflow-x: hidden;
   border-style: solid;
   word-wrap: break-word;
