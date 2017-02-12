@@ -34,7 +34,7 @@ angular.module('createRoomApp', []).controller('CreateRoomCtrl', ['$scope', '$ht
         if (user != null) {
           if (user.active) {
             console.log(LOG + "login succeeded");
-            document.location.href = "main";
+            document.location.href = "/";
           }
           else {
             console.log(LOG + "need to verify account, verify email");
