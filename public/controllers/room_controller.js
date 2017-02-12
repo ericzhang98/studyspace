@@ -29,6 +29,7 @@ myApp.controller("ChatController", ["$scope", "$http",
         //chatDatabase.child(roomID).push().set(newChatMessage);
         $http.post("/send_room_message", newChatMessage);
         chatInputBox.value = "";
+        $scope.chatInput = "";
         chatInputBox.focus();
       }
 
