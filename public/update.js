@@ -1,74 +1,92 @@
+Object.values = Object.values || function(o){return Object.keys(o).map(function(k){return o[k]})}
+
 angular
    .module('MyApp', ['ngMaterial'])
    .controller('updateController', autoCompleteController);
 
-function autoCompleteController ($timeout, $q, $log) {
+function autoCompleteController ($timeout, $q, $log, $http) {
     // Global Variables
-    var self = this;
-    var userClasses = getUserClasses();
+    var userClasses = getUserClasses(); // list of class_ids
     displayClasses(userClasses);
-    var classes = getAllClasses();
+    var allClassesNameToID = getAllClasses();     // name: class_id
+    //var allClasses = getAllClasses();
     // list of states to be displayed
-    self.querySearch = querySearch;
+    this.querySearch = querySearch;
 
     $("#cancel-button").click(cancelChanges)
 
     // If enter is pressed inside the dropdown
     $("#class-dropdown").keypress(function(event) {
         if(event.which == 13) {
+
             var className = $("#input-0").val();
-            var verify = verifyClass(className);
-            if(verify == true) {
+
+            if (verifyClass(className)) {
+
+                var class_id = allClassesNameToID[className];
                 // Make sure the user isn't already in the class
-                if($.inArray(className, userClasses) == -1) {
-                    addClass(className);
+                if($.inArray(class_id, userClasses) == -1) {
+                    addClass(class_id);
+                } else {
+                    console.log("already in class with name " + className + " and id " + class_id);
                 }
+            }
+            else {
+                console.log("could not verify class with name " + className + " and id " + class_id);
             }
         }
     });
 
     $("#save-button").click(saveChanges);
 
-    function addClass(className) {
-        console.log("adding class " + className);
-        userClasses.push(className);
+    function addClass(classID) {
+        console.log("adding class with ID " + classID);
+        userClasses.push(classID);
         displayClasses(userClasses);
-        // TODO Send new class to server
     }
 
     function cancelChanges() {
-        window.location.replace("./index.html")
+        document.location.href = "/";
     }
 
     //filter function for search query
     function createFilterFor(query) {
         var uppercaseQuery = query.toUpperCase();
         return function filterFn(thisClass) {
-            return (thisClass.indexOf(uppercaseQuery) === 0);
+            return (thisClass.toUpperCase().indexOf(uppercaseQuery) === 0);
         };
     }
 
     function displayClasses(classesArray) {
         classesArray.sort();
         var htmlString = '<div class="school-class">';
-        classesArray.forEach(function(element, index) {
-            htmlString += '<div class="school-class"><button class="btn btn-danger">' + element + '<span class="x-button" aria-hidden="true">&times;</span></button></div>';
-        })
+        classesArray.forEach(function(class_id, index) {
+            htmlString += '<div class="school-class"><button class="btn btn-danger">' 
+            + getNameOfClass(class_id) + '<span class="x-button" aria-hidden="true">&times;</span></button></div>';
+        });
         htmlString += '</div';
         $("#school-classes").html(htmlString);
 
-        // Add a listener to the new html
+        /*/ Add a listener to the new html
         $(".school-class").click(function() {
             removeClass($(this).innerHTML);
-        });
+        });*/
+    }
+
+    function getNameOfClass(class_id) {
+        for (var name in allClassesNameToID) {
+            if (allClassesNameToID[name] == class_id) {
+                return name;
+            }
+        }
     }
 
     function getAllClasses() {
-        var classArr = new Array();
-        classArr.push("CSE110");
-        classArr.push("MATH18");
-        classArr.push("ECE45");
-        return classArr.sort();
+        var nameToID = {};
+        nameToID["Class Name 1"] = "class_id_1";        
+        nameToID["Class Name 2"] = "class_id_2";
+        nameToID["Class Name 3"] = "class_id_3";
+        return nameToID;
     }
 
     function getUserClasses() {
@@ -77,7 +95,8 @@ function autoCompleteController ($timeout, $q, $log) {
     }
 
     function querySearch (query) {
-        return query ? classes.filter( createFilterFor(query) ) : classes;
+        //return query ? Object.keys(allClassesNameToID).filter(createFilterFor(query)) : Object.keys(allClassesNameToID);
+        return query ? Object.keys(allClassesNameToID).filter(createFilterFor(query)) : [];
     }
 
     function removeClass(className) {
@@ -87,14 +106,17 @@ function autoCompleteController ($timeout, $q, $log) {
 
     function saveChanges() {
         // Do whatever server stuff is needed to update the information
-
-        window.location.replace("index.html")
+            
+        
+        $http.post('/enroll', {class_ids: userClasses}).then(function(response){
+            document.location.href = "/";
+        });
     }
 
     function verifyClass(className) {
         className = className.toUpperCase();
-        console.log("verifying " + className)
-        var returnVal = $.inArray(className, classes);
+        console.log("verifying " + className);
+        var returnVal = $.inArray(className, Object.keys(allClassesNameToID).map(function(x){ return x.toUpperCase() }));
         return returnVal > -1;
     }
 }
