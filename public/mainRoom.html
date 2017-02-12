@@ -14,6 +14,8 @@
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.5.6/angular.min.js"></script>
+    <script src="./controllers/classes_bar_controller.js"></script>
 
     <!-- For mobile scaling -->
     <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -45,22 +47,27 @@
           <span class="user-name">FirstName L.</span>
         </div>
         <button onclick="logOut()">Log Out</button>
+        <div class="btn-container text-center">
+          <a class="btn-info" href="courses">Courses</a>
+        </div>
 
         <!-- Create Room -->
         <button id="btn-create-room" class="btn btn-primary">Create Room</button>
 
         <!-- Classes -->
-        <div class="panel-group" id="accordion">
+        <div ng-app="classesApp" ng-controller="classesController" 
+          class="panel-group" id="accordion">
 
           <!--first class in drop down-->
-          <div class="panel" data-toggle="collapse" data-parent="#accordion" href="#cse110">
+          <div ng-repeat="(id, name) in class_names" class="panel" 
+            data-toggle="collapse" data-parent="#accordion" href="#cse110">
             <div class="panel-heading">
               <h4 class="panel-title">
-                <span>CSE 110</span>
+                <span>{{name}}</span>
                 <!--<span class="glyphicon glyphicon-triangle-bottom" aria-hidden="true"></span>-->
               </h4>
             </div>
-            <div id="cse110" class="panel-collapse collapse">
+            <div id="{{id}}" class="panel-collapse collapse">
               <ul class="list-group">
                 <button class="list-group-item">General (3)</button>                
                 <button class="list-group-item">Midterm Review (6)</button>
@@ -76,48 +83,6 @@
             </div>
           </div>
 
-          <!--second class in drop down-->
-          <div class="panel" data-toggle="collapse" data-parent="#accordion" href="#cse140"> 
-            <div class="panel-heading">
-              <h4 class="panel-title">
-                <span>CSE 140</span>
-              </h4>
-            </div>
-            <div id="cse140" class="panel-collapse collapse">
-              <ul class="list-group">
-
-                <button class="list-group-item">General (0)</button>
-                <button class="list-group-item">Ashani Office Hours (3)</button>
-                <button class="list-group-item">More...</button>
-                <!--
-                  <li class="list-group-item">Main</li>
-                  <li class="list-group-item">140 room 1</li>
-                  <li class="list-group-item">140 room 2</li>
-                -->
-              </ul>
-            </div>
-          </div>
-
-          <!--third class in drop down-->
-          <div class="panel" data-toggle="collapse" data-parent="#accordion" href="#phil28">
-            <div class="panel-heading">
-              <h4 class="panel-title">
-                <span>PHIL 28</span>
-              </h4>
-            </div>
-            <div id="phil28" class="panel-collapse collapse">
-              <ul class="list-group">
-
-                <button class="list-group-item">General (3)</button>
-                <button class="list-group-item">Essay Help (4)</button>
-
-                <!--<li class="list-group-item">Main</li>
-                  <li class="list-group-item">study group</li>
-                  <li class="list-group-item">random shit</li>
-                  <li class="list-group-item">philosophers</li>-->
-              </ul>
-            </div>
-          </div>
 
         </div> <!--end panel group-->
       </aside> <!--end left column-->
