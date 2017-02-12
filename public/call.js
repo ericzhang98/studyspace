@@ -195,7 +195,7 @@ function joinRoom(room_id) {
 
 	// send request to server
 	var xhr = new XMLHttpRequest();
-	xhr.open('GET', "/join_room/" + room_id + "/" + me.user_id, true);
+	xhr.open('GET', "/join_room/" + room_id, true);
 	xhr.send();
 
 	// on response
@@ -251,7 +251,7 @@ function leaveRoom() {
 
 		// send request to server to tell them we left
 		var xhr = new XMLHttpRequest();
-		xhr.open('GET', "/leave_room/" + currRoomID + "/" + me.user_id, true);
+		xhr.open('GET', "/leave_room/" + currRoomID, true);
 		xhr.send();
 
 		// reset currRoomID
@@ -348,7 +348,7 @@ window.onbeforeunload = function(event) {
 	// we don't use leaveRoom because request needs to be async
 	if (currRoomID != null) {
 		var xhr = new XMLHttpRequest();
-		xhr.open('GET', "/leave_room/" + currRoomID + "/" + me.user_id, false);
+		xhr.open('GET', "/leave_room/" + currRoomID, false);
 		xhr.send();
 	}
 };

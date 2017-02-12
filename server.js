@@ -108,10 +108,28 @@ app.post('/get_Id_From_Name', function(req, res) {
   var emailFind = req.body.email;
   console.log(emailFind);
   
-	db.users.findOne({email:"x"}, function(err, docs){
-    console.log(docs);
+	db.users.findOne({email:req.body.email}, function(err, docs){
 		res.json(docs);
 	});	
+});
+
+app.post('/add_blocked_user', function(req, res) {
+
+  db.blocked_users.find({user_id:req.signedCookies.user_id}, function(req, docs){
+    console.log(docs);
+    res.json(docs);
+  });
+});
+
+app.get('/get_blocked_users', function(req, res) {
+
+  var blocked_id = req.body.blocked_user_id;
+  var blocked_email = req.body.blocked_user_email;
+  db.blocked_users.insert({user_id:req.signedCookies.user_id, blocked_user_id:blocked_id, 
+                           blocked_user_email:blocked_email}, function(req, docs){
+    console.log(docs);
+    res.json(docs);
+  });
 });
 
 app.post('/buddy_existing_user', function(req, res) {
@@ -126,9 +144,8 @@ app.post('/buddy_existing_user', function(req, res) {
 
 app.post('/buddy_existing_request', function(req, res) {
 
-  console.log(req.body.user_id);
   console.log(req.body.friend_id);
-  var user_id = req.body.user_id;
+  var user_id = req.signedCookies.user_id;
   var friend_id = req.body.friend_id;
   db.user_buddy_requests.find(
   {$or:[{sent_from_id:user_id, sent_to_id:friend_id},
@@ -143,7 +160,7 @@ app.post('/buddy_existing_request', function(req, res) {
 app.post('/buddies_already', function(req, res) {
 
   console.log("Friendship check");
-  var user_id = req.body.user_id;
+  var user_id = req.signedCookies.user_id;
   var friend_id = req.body.friend_id;
   db.user_buddies.find(
   {$or:[ {user_one_id:user_id, user_two_id:friend_id},
@@ -156,6 +173,7 @@ app.post('/buddies_already', function(req, res) {
 
 app.post('/send_buddy_request', function(req, res) {
 
+  req.body.sent_from_id = req.signedCookies.user_id;
 	db.user_buddy_requests.insert(req.body, function(err, docs){
 		res.json(docs);
 	});	
@@ -163,7 +181,7 @@ app.post('/send_buddy_request', function(req, res) {
 
 app.post('/buddy_requests', function(req, res) {
 
-	db.user_buddy_requests.find({sent_to_id:req.body.sent_to_id}, function(err, docs){
+	db.user_buddy_requests.find({sent_to_id:req.signedCookies.user_id}, function(err, docs){
     console.log(docs);
 		res.json(docs);
 	});	
@@ -171,7 +189,7 @@ app.post('/buddy_requests', function(req, res) {
 
 app.post('/accept_buddy', function(req, res) {
 
-  var user_one_id = req.body.user_one_id;
+  var user_one_id = req.signedCookies.user_id;
   var user_one_name = req.body.user_one_name;
   var user_two_id = req.body.user_two_id;
   var user_two_name = req.body.user_two_name;
@@ -186,7 +204,7 @@ app.post('/accept_buddy', function(req, res) {
 
 app.post('/get_added_buddies', function(req, res){
   
-	db.user_buddies.find({user_one_id:req.body.user_one_id}, function(err, docs){
+	db.user_buddies.find({user_one_id:req.signedCookies.user_id}, function(err, docs){
 		res.json(docs);
 	});	
 });
@@ -209,9 +227,10 @@ app.delete('/remove_buddy/:id', function(req, res){
 // forces the name property to be unique in user_classes collection
 //db.user_classes.createIndex({name: 1}, {unique:true});
 app.post('/user_classes', function(req, res) {
-
-	db.user_classes.insert(req.body, function(err, docs){
-		db.user_classes.ensureIndex({name: req.body}, {unique:true});
+  console.log(req.body);
+  var get_user_id = req.signedCookies.user_id;
+  db.user_classes.createIndex({name: 1, user_id: 1}, {unique:true}); //BUG: NEEDS FIX
+	db.user_classes.insert({name:req.body.name, user_id:get_user_id}, function(err, docs){
 		res.json(docs);
 	});	
 
@@ -226,9 +245,10 @@ app.delete('/user_classes/:id', function(req, res){
 });
 
 //NOTE:Need to get userID working so it only gets the classes of this user
-app.get('/user_classes/:id', function(req, res) {
+app.get('/user_classes', function(req, res) {
 
-	db.user_classes.find({user_id: req.params.id}, function(err, docs){
+  var get_user_id = req.signedCookies.user_id;
+	db.user_classes.find({user_id: get_user_id}, function(err, docs){
 		res.json(docs);
 	});
 });
@@ -260,8 +280,8 @@ app.get('/scrape_classes', function(req, res) {
 /******************************** GET CLASSES & ROOMS ********************************/
 
 // return the class_ids of classes this user is enrolled in
-app.get('/get_classes/:user_id', function(req, res) {
-	var user_id = req.params.user_id;
+app.get('/get_classes/', function(req, res) {
+	var user_id = req.signedCookies.user_id;
 	db.users.findOne({user_id: user_id}, function (err, doc) {
 	    if (doc) {
 	    	res.send({class_ids: doc.class_ids});
@@ -278,32 +298,38 @@ app.get('/get_class/:class_id', function(req, res) {
 
 	// look up name in mongoDB
 	db.classes.findOne({class_id: class_id}, function (err, doc) {
-		res.send({name: doc.name});
+    if (doc) {
+      res.send({name: doc.name});
+    }
+    else {
+      res.send({name: null});
+    }
 	});
 });
 /*************************************************************************************/
 
 /*************************************** ROOMS ***************************************/
 
-app.get('/add_room/:class_id/:room_name/:host_id/:is_lecture', function(req, res) {
+app.get('/add_room/:class_id/:room_name/:is_lecture', function(req, res) {
+  var host_id = req.signedCookies.user_id;
 	var room_id = addRoom(req.params.class_id, req.params.room_name, 
-		req.params.host_id, req.params.is_lecture, function(room_id){res.send(room_id);});
+		host_id, req.params.is_lecture, function(room_id){res.send(room_id);});
 });
 
 // - adds user_id to room with id room_id
 // - returns list of user_id's in that room
-app.get('/join_room/:room_id/:user_id', function(req, res) {
+app.get('/join_room/:room_id/', function(req, res) {
 
 	var room_id = req.params.room_id;
-	var user_id = req.params.user_id;
+	var user_id = req.signedCookies.user_id;
   joinRoom(user_id, room_id, function(roomInfo){res.send(roomInfo);});
 });
 
 // - removes user_id from room with id room_id
-app.get('/leave_room/:room_id/:user_id', function(req, res) {
+app.get('/leave_room/:room_id/', function(req, res) {
 	
 	var room_id = req.params.room_id;
-	var user_id = req.params.user_id;
+	var user_id = req.signedCookies.user_id;
 
   leaveRoom(user_id, room_id, function(success){res.send(success);});
 });
@@ -339,11 +365,12 @@ app.post('/accountlogin', function(req, res) {
   var password = req.body.password;
   console.log("get user with email " + email + " and pass " + password);
   db.users.findOne({email: email, password: password}, function (err, doc) {
-    res.cookie("user_id", doc.user_id, {signed: true, maxAge: COOKIE_TIME});
-    res.cookie("email", doc.email, {signed: true, maxAge: COOKIE_TIME});
-    res.cookie("name", doc.name, {signed: true, maxAge: COOKIE_TIME});
+    if (doc) {
+      res.cookie("user_id", doc.user_id, {signed: true, maxAge: COOKIE_TIME});
+      res.cookie("email", doc.email, {signed: true, maxAge: COOKIE_TIME});
+      res.cookie("name", doc.name, {signed: true, maxAge: COOKIE_TIME});
+    }
     res.json(doc);
-    //res.sendFile(VIEW_DIR + "mainRoom.html");
   });
 });
 
@@ -363,6 +390,9 @@ app.post("/accountsignup", function(req, res) {
         if (doc) {
           console.log("Account signup: ACCOUNT CREATED");
           //sendVerifyEmail(newUser);
+          res.cookie("user_id", doc.user_id, {signed: true, maxAge: COOKIE_TIME});
+          res.cookie("email", doc.email, {signed: true, maxAge: COOKIE_TIME});
+          res.cookie("name", doc.name, {signed: true, maxAge: COOKIE_TIME});
           res.json({success: true});
         }
         else {

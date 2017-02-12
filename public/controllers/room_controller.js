@@ -54,7 +54,11 @@ myApp.controller("ChatController", ["$scope", "$http",
       chatDatabase.on("value", function(snapshot) {
         var snapshotValueObject = snapshot.val();
         if (snapshotValueObject) {
-          var chatMessageList = Object.values(snapshotValueObject);
+          //var chatMessageList = Object.values(snapshotValueObject); apparently
+          //not supported by browser?!?!
+          var chatMessageList = Object.keys(snapshotValueObject).map(function(key) {
+                return snapshotValueObject[key];
+          });
           console.log(chatMessageList);
           updateChatView(chatMessageList);
         }

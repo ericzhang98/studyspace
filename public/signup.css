@@ -15,71 +15,6 @@ main {
   height: 100%;
 }
 
-/* General: forms */
-.form-control {
-  border-radius: 0;
-  border: none;
-  border-bottom: 3px solid #888888;
-  box-shadow: none;
-  height: 3rem;
-  font-size: 2rem;
-  padding: 0;
-  margin-top: 0rem;
-  background: transparent;
-  color: #333333;
-  font-weight: 700;
-}
-
-.form-control:focus {
-  box-shadow: none;
-  border-bottom: 3px solid #333333;
-  color: #333333;
-}
-
-/* General: btn */
-.btn {
-  border: none;
-  border-radius: 0;
-  letter-spacing: 0.05em;
-  -webkit-transition: background 0.15s, color 0.15s;
-  transition: background 0.15s, color 0.15s;
-}
-
-.btn.active,
-.btn:active {
-  -webkit-box-shadow: none;
-  box-shadow: none;
-  outline: none;
-}
-
-.btn.active.focus,
-.btn.active:focus,
-.btn.focus,
-.btn:active.focus,
-.btn:active:focus,
-.btn:focus {
-  outline: none;
-  outline-offset: 0;
-}
-
-.btn-primary.active,
-.btn-primary:active,
-.open>.dropdown-toggle.btn-primary {
-  border: none;
-}
-
-.btn-primary.active.focus,
-.btn-primary.active:focus,
-.btn-primary.active:hover,
-.btn-primary:active.focus,
-.btn-primary:active:focus,
-.btn-primary:active:hover,
-.open>.dropdown-toggle.btn-primary.focus,
-.open>.dropdown-toggle.btn-primary:focus,
-.open>.dropdown-toggle.btn-primary:hover {
-  border: none;
-}
-
 /* Sign Up Form */
 #signup {
   width: 100%;
@@ -96,14 +31,18 @@ main {
 
 #signup .title {
   font-size: 3rem;
-  font-weight: 800;
+  font-weight: 700;
   margin-top: 0;
+  margin-bottom: 0;
+}
+
+#signup .title-container {
   margin-bottom: 4rem;
 }
 
 #signup label {
   font-size: 1.5rem;
-  font-weight: 800;
+  font-weight: 700;
 }
 
 #signup .form-group {
@@ -112,14 +51,15 @@ main {
 }
 
 #signup .btn-container {
-  margin-top: 7rem;
+  margin-top: 5.5rem;
 }
 
 #btn-submit {
   padding: 0.5em 1em;
   font-size: 2.5rem;
-  font-weight: 700;
+  font-weight: 600;
   background: #286090;
+  width: 100%;
 }
 
 #btn-submit:hover {
@@ -128,21 +68,6 @@ main {
 
 #btn-submit:visited {
   background: #337ab7;
-}
-
-#signup .msg-error {
-  display: -webkit-box;
-  display: -ms-flexbox;
-  display: flex;
-  -webkit-box-align: center;
-  -ms-flex-align: center;
-  align-items: center;
-  padding-left: 1rem;
-  height: 3rem;
-}
-
-#signup .msg-error .glyphicon {
-  margin-right: 1rem;
 }
 
 @media screen and (min-width: 768px) {
@@ -160,6 +85,13 @@ main {
     width: 50rem;
     height: auto;
     margin: 0 auto;
-    padding: 7rem;
+    padding: 6rem;
+    border-radius: 0.5rem;
+  }
+}
+
+@media screen and (max-height: 688px) {
+  main {
+    display: block;
   }
 }

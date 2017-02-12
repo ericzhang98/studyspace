@@ -1,4 +1,31 @@
+html, body{
+  margin: 0;
+  height: 100%;
+}
+
 .no-gutter > [class*='col-'] {
-    padding-right:0;
-    padding-left:0;
+  padding-right:0;
+  padding-left:0;
+}
+
+.container-fluid{
+  height: 100%;
+}
+
+.row{
+  height: 100%;
+}
+
+#message-wrapper{
+  background-color: powderblue;
+  height: 100%;
+}
+
+#chatMessageDiv {
+  background-color: aliceblue;
+  height: 100%;
+  padding-bottom: 40px;
+  overflow-x: hidden;
+  border-style: solid;
+  word-wrap: break-word;
 }

@@ -1,9 +1,9 @@
 <!--
-  _____     ______     __   __     __  __
+   _____     ______     __   __     __  __
   /\  __-.  /\  __ \   /\ "-.\ \   /\ \/ /
   \ \ \/\ \ \ \  __ \  \ \ \-.  \  \ \  _"-.
-  \ \____-  \ \_\ \_\  \ \_\\"\_\  \ \_\ \_\
-  \/____/   \/_/\/_/   \/_/ \/_/   \/_/\/_/
+   \ \____-  \ \_\ \_\  \ \_\\"\_\  \ \_\ \_\
+    \/____/   \/_/\/_/   \/_/ \/_/   \/_/\/_/
 
 -->
 
@@ -26,7 +26,7 @@
     <link rel="stylesheet" type="text/css" href="animations.css">
 
     <!-- Additional Typefaces -->
-    <link href="https://fonts.googleapis.com/css?family=Raleway:300,400,700,800" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css?family=Montserrat:400,500,600,700" rel="stylesheet">
 
     <!-- javascript files -->
     <script type="text/javascript" src="toggleMenu.js"></script>
@@ -46,6 +46,7 @@
           </div>
           <span class="user-name">FirstName L.</span>
         </div>
+        <button onclick="logOut()">Log Out</button>
 
         <!-- Create Room -->
         <button id="btn-create-room" class="btn btn-primary">Create Room</button>
@@ -115,16 +116,13 @@
                       <label for="class">Class</label><br/>
                       <div id="class_id" class="btn-group" data-toggle="buttons">
                         <label class="btn btn-primary btn-xs" style="margin-right:5px">
-                          <input type="radio" name="class_id_radio" autocomplete="off" value="cse110id"> CSE 110
+                          <input type="radio" name="class_id_radio" autocomplete="off" value="class_id_1"> Class Name 1
                         </label>
                         <label class="btn btn-primary btn-xs" style="margin-right:5px">
-                          <input type="radio" name="class_id_radio" autocomplete="off" value="cse140id"> CSE 140
+                          <input type="radio" name="class_id_radio" autocomplete="off" value="class_id_2"> Class Name 2
                         </label>
                         <label class="btn btn-primary btn-xs" style="margin-right:5px">
-                          <input type="radio" name="class_id_radio" autocomplete="off" value="phil28id"> PHIL 28
-                        </label>
-                        <label class="btn btn-primary btn-xs" style="margin-right:5px">
-                          <input type="radio" name="class_id_radio" autocomplete="off" value="ethn2id"> ETHN 2
+                          <input type="radio" name="class_id_radio" autocomplete="off" value="class_id_3"> Class Name 3
                         </label>
                       </div>
                     </div>
@@ -158,5 +156,6 @@
   <script src="firebase_setup.js"></script>  
   <script src="call.js"></script>
   <script src="main.js"></script>
+  <script src="cookies.js"></script>
 
 </html>

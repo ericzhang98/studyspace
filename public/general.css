@@ -2,7 +2,7 @@
 
 /* General */
 body {
-  font-family: 'Raleway', sans-serif;
+  font-family: 'Montserrat', sans-serif;
   letter-spacing: 0.07em;
 }
 
@@ -33,7 +33,6 @@ a:hover {
 
 .modal-content {
   border: none;
-  border-radius: 0;
   box-shadow: none;
   width: 100%;
   height: 100%;
@@ -54,7 +53,7 @@ a:hover {
   margin-top: 0rem;
   background: transparent;
   color: #333333;
-  font-weight: 700;
+  font-weight: 500;
 }
 
 .form-control:focus {
@@ -66,7 +65,7 @@ a:hover {
 /* General: btn */
 .btn {
   border: none;
-  border-radius: 0;
+  border-radius: 0.5rem;
   letter-spacing: 0.05em;
   -webkit-transition: background 0.15s, color 0.15s;
   transition: background 0.15s, color 0.15s;

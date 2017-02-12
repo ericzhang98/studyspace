@@ -1,14 +1,30 @@
+<!--
+  _____     ______     __   __     __  __
+  /\  __-.  /\  __ \   /\ "-.\ \   /\ \/ /
+  \ \ \/\ \ \ \  __ \  \ \ \-.  \  \ \  _"-.
+  \ \____-  \ \_\ \_\  \ \_\\"\_\  \ \_\ \_\
+  \/____/   \/_/\/_/   \/_/ \/_/   \/_/\/_/
+
+-->
+
 <!DOCTYPE html>
 <html ng-app="MyApp" ng-controller="updateController as ctrl">
   <head>
     <!-- Bootstrap -->
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>
 
     <!-- Angular Material style sheet -->
     <link rel="stylesheet" href="http://ajax.googleapis.com/ajax/libs/angular_material/1.1.0/angular-material.min.css">
 
     <!-- CSS -->
-    <link rel="stylesheet" href="./update.css">
+    <link rel="stylesheet" type="text/css" href="general.css">
+    <link rel="stylesheet" type="text/css" href="update.css">
+    <link rel="stylesheet" type="text/css" href="animations.css">
+
+    <!-- Additional Typefaces -->
+    <link href="https://fonts.googleapis.com/css?family=Montserrat:400,500,600,700" rel="stylesheet">
 
     <!-- AngularJS -->
     <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.6.1/angular.js"></script>
@@ -17,57 +33,60 @@
     <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.4.8/angular-aria.min.js"></script>
     <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.4.8/angular-messages.min.js"></script>
 
-    <!-- Jquery -->
-    <script type="text/javascript" src="https://code.jquery.com/jquery-2.2.1.min.js"></script>
-
-    <!-- JavaScript -->
+    <!-- Custom JavaScript -->
     <script type="text/javascript" src="./update.js"></script>
 
     <!-- Title -->
-    <title>Study Space - Home</title>
+    <title>Study Space - Update</title>
   </head>
   <body>
-    <div class="main-container">
-        <h1>School Information</h1>
-        <h3>School</h3>
-        <input class="form-control half" placeholder="Change School">
+    <!-- Aesthetics TODO -->
+    <aside>
+    </aside>
 
-        <h3>Classes</h3>
-
-        <div layout="column" class="half middle" ng-cloak>
-            <md-content id="class-dropdown" class="md-padding">
-                <form ng-submit="ctrl.submitForm()">
-                    <md-autocomplete
-                    md-selected-item="ctrl.selectedItem"
-                    md-search-text="ctrl.searchText"
-                    md-items="item in ctrl.querySearch(ctrl.searchText)"
-                    md-item-text="item"
-                    md-min-length="0"
-                    placeholder="Enter a Class Code (e.g. 'CSE110')">
-                        <md-item-template>
-                            <span md-highlight-text="ctrl.searchText" md-highlight-flags="^i">{{item}}</span>
-                        </md-item-template>
-                    </md-autocomplete>
-                </form>
-            </md-content>
-        </div>
-
-        <div id="school-classes"></div>
-    </div>
-
-    <div class="main-container">
-        <h1>Account information</h1>
+    <main role="main" class="container">
+      <div id="info-account">
+        <h2>Account information</h2>
         <h3>Change Email</h3>
         <input class="form-control" placeholder="New Email">
 
         <h3>Change Password</h3>
         <input class="form-control" type="password" placeholder="New Password">
         <input class="form-control" type="password" placeholder="Confirm Password">
-    </div>
+      </div>
 
-    <div id="buttons">
+      <div id="info-school">
+        <h2>School Information</h2>
+        <h3>School</h3>
+        <input class="form-control half" placeholder="Change School">
+
+        <h3>Classes</h3>
+
+        <div layout="column" class="half middle" ng-cloak>
+          <md-content id="class-dropdown" class="md-padding">
+            <form ng-submit="ctrl.submitForm()">
+              <md-autocomplete
+                  md-selected-item="ctrl.selectedItem"
+                  md-search-text="ctrl.searchText"
+                  md-items="item in ctrl.querySearch(ctrl.searchText)"
+                  md-item-text="item"
+                  md-min-length="0"
+                  placeholder="Enter a Class Code (e.g. 'CSE110')">
+                <md-item-template>
+                  <span md-highlight-text="ctrl.searchText" md-highlight-flags="^i">{{item}}</span>
+                </md-item-template>
+              </md-autocomplete>
+            </form>
+          </md-content>
+        </div>
+
+        <div id="school-classes"></div>
+      </div>
+
+      <div id="buttons">
         <button id="cancel-button" class="btn btn-warning">Cancel</button>
         <button id="save-button" class="btn btn-primary">Save Changes</button>
-    </div>
+      </div>
+    </main>
   </body>
 </html>
