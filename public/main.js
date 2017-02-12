@@ -1,5 +1,4 @@
 /***** General variables **************************/
-var me = {user_id: "id1"};
 var class_rooms = {} 	// class_id : class rooms
 var rooms = {}			// room_id : room
 /**************************************************/
@@ -36,7 +35,7 @@ function Room(room_id, room_name, room_host_id, room_users, class_id, is_lecture
 
 // - respond to change in a class's rooms
 // - calls removeRoom/getRoom accordingly
-function onClassRoomsChange(class_id, updated_rooms) {
+/*function onClassRoomsChange(class_id, updated_rooms) {
 
 	console.log("rooms for class " + class_id + " are now " + updated_rooms);
 	
@@ -92,7 +91,7 @@ function getRoom(class_id, room_id) {
 			console.log(rooms[room_id]);
         }
 	});
-}
+}*/
 
 // - removes room from rooms and the UI
 function removeRoom(room_id) {
@@ -123,7 +122,7 @@ function addRoom(class_id, room_name, is_lecture) {
 			var response = JSON.parse(xhr.responseText);
 
 			// join the room
-			joinRoom(response.room_id);
+			//joinRoom(response.room_id);
 		}
 	}
 }

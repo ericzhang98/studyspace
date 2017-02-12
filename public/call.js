@@ -306,10 +306,10 @@ function leaveCalls() {
 function listenToRoom() {
 
 	// detach any old listeners
-	roomUsersDatabase.child(currRoomID).off();
+	classRoomsDatabase.child(currRoomID).off();
 
 	// attach listener to the current room
-	roomUsersDatabase.child(currRoomID).on("value", function(snapshot) {
+	classRoomsDatabase.child(currRoomID).on("value", function(snapshot) {
 
         var snapshotValueObject = snapshot.val();
 
