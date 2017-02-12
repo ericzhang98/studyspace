@@ -18,7 +18,7 @@ myApp.controller("classesController", function($scope) {
   function getClasses() {
     console.log("Getting classes...")
     var xhr = new XMLHttpRequest();
-    xhr.open('GET', "/get_classes", true); // responds with class_ids
+    xhr.open('GET', "/get_my_classes", true); // responds with class_ids
     xhr.send();
 
     xhr.onreadystatechange = function(e) {

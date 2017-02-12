@@ -285,7 +285,7 @@ app.get('/scrape_classes', function(req, res) {
 /******************************** GET CLASSES & ROOMS ********************************/
 
 // return the class_ids of classes this user is enrolled in
-app.get('/get_classes/', function(req, res) {
+app.get('/get_my_classes/', function(req, res) {
 	var user_id = req.signedCookies.user_id;
 	db.users.findOne({user_id: user_id}, function (err, doc) {
 	    if (doc) {
@@ -297,18 +297,20 @@ app.get('/get_classes/', function(req, res) {
   	});
 });
 
-// return name of the class with specified id
+// return the class objects for all classes
+app.get('/get_all_classes', function (req, res) {
+  db.classes.find({}, function (err, doc) {
+    res.send(doc);
+  });
+});
+
+// return the class object with this id
 app.get('/get_class/:class_id', function(req, res) {
 	var class_id = req.params.class_id;
 
 	// look up name in mongoDB
 	db.classes.findOne({class_id: class_id}, function (err, doc) {
-    if (doc) {
-      res.send({name: doc.name});
-    }
-    else {
-      res.send({name: null});
-    }
+    res.send(doc);
 	});
 });
 

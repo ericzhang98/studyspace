@@ -6,10 +6,12 @@ angular
 
 function autoCompleteController ($timeout, $q, $log, $http) {
     // Global Variables
-    var userClasses = getUserClasses(); // list of class_ids
-    displayClasses(userClasses);
-    var allClassesNameToID = getAllClasses();     // name: class_id
-    //var allClasses = getAllClasses();
+    var userClasses = []; // list of class_ids of classes user is enrolled in
+    var allClassesNameToID = {}; // name: class_id dictionary for all available classes
+
+    // Send requests to populate the two fields above
+    getAllClasses();
+
     // list of states to be displayed
     this.querySearch = querySearch;
 
@@ -39,17 +41,19 @@ function autoCompleteController ($timeout, $q, $log, $http) {
 
     $("#save-button").click(saveChanges);
 
+    // adds classID to list of user's classes and updates the UI to reflect this
     function addClass(classID) {
         console.log("adding class with ID " + classID);
         userClasses.push(classID);
         displayClasses(userClasses);
     }
 
+    // return to main
     function cancelChanges() {
         document.location.href = "/";
     }
 
-    //filter function for search query
+    // filter function for search query
     function createFilterFor(query) {
         var uppercaseQuery = query.toUpperCase();
         return function filterFn(thisClass) {
@@ -57,10 +61,11 @@ function autoCompleteController ($timeout, $q, $log, $http) {
         };
     }
 
-    function displayClasses(classesArray) {
-        classesArray.sort();
+    // updates UI to display currently enrolled classes
+    function displayClasses() {
+        userClasses.sort();
         var htmlString = '<div class="school-class">';
-        classesArray.forEach(function(class_id, index) {
+        userClasses.forEach(function(class_id, index) {
             htmlString += '<div class="school-class"><button class="btn btn-danger">' 
             + getNameOfClass(class_id) + '<span class="x-button" aria-hidden="true">&times;</span></button></div>';
         });
@@ -73,6 +78,7 @@ function autoCompleteController ($timeout, $q, $log, $http) {
         });*/
     }
 
+    // returns name of class given class_id
     function getNameOfClass(class_id) {
         for (var name in allClassesNameToID) {
             if (allClassesNameToID[name] == class_id) {
@@ -81,17 +87,58 @@ function autoCompleteController ($timeout, $q, $log, $http) {
         }
     }
 
+    // populates the allClassesNameToID dictionary with all available classes
     function getAllClasses() {
-        var nameToID = {};
+        /*var nameToID = {};
         nameToID["Class Name 1"] = "class_id_1";        
         nameToID["Class Name 2"] = "class_id_2";
         nameToID["Class Name 3"] = "class_id_3";
-        return nameToID;
+        return nameToID;*/
+
+        console.log("Getting all classes...")
+        var xhr = new XMLHttpRequest();
+        xhr.open('GET', "/get_all_classes", true); // responds with class_ids
+        xhr.send();
+
+        // once we have the user's classes
+        xhr.onreadystatechange = function(e) {
+          if (xhr.readyState == 4 && xhr.status == 200) {
+            var response = JSON.parse(xhr.responseText);
+            console.log(response);
+
+            // populate the classes dictionary
+            for (var i = 0; i < response.length; i++) {
+                var classObj = response[i];
+                allClassesNameToID[classObj.name] = classObj.class_id;
+            }
+
+            // get my classes
+            getUserClasses();
+          }
+        }
     }
 
+    // populates userClasses list with ids of all classes they are enrolled in
+    // calls displayClasses afterward to reflect changes
     function getUserClasses() {
-        // TODO query the server and get the users classes
-        return new Array();
+
+        console.log("Getting my classes...")
+        var xhr = new XMLHttpRequest();
+        xhr.open('GET', "/get_my_classes", true); // responds with class_ids
+        xhr.send();
+
+        // once we have the user's classes
+        xhr.onreadystatechange = function(e) {
+          if (xhr.readyState == 4 && xhr.status == 200) {
+            var response = JSON.parse(xhr.responseText);
+
+            // set userClasses to equal this list
+            userClasses = response.class_ids;
+
+            // update the UI
+            displayClasses();
+          }
+        }
     }
 
     function querySearch (query) {
@@ -107,7 +154,6 @@ function autoCompleteController ($timeout, $q, $log, $http) {
     function saveChanges() {
         // Do whatever server stuff is needed to update the information
             
-        
         $http.post('/enroll', {class_ids: userClasses}).then(function(response){
             document.location.href = "/";
         });
