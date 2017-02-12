@@ -338,11 +338,13 @@ app.get('/leave_room/:room_id/', function(req, res) {
  * Returns: nothing */
 app.post("/send_room_message", function(req, res) {
   var roomID = req.body.roomID;
+  var timeSent = req.body.timeSent;
+  var text = req.body.text;
   
   //roomMessagesDatabase.child(roomID).push().set(req.body);
   if (req.signedCookies.user_id && req.signedCookies.email && req.signedCookies.name) {
     var newChatMessage = new ChatMessage(req.signedCookies.name, 
-      req.signedCookies.email, req.body.text, roomID, req.body.timeSent);
+      req.signedCookies.email, text, roomID, timeSent);
     roomMessagesDatabase.child(roomID).push().set(newChatMessage);
   }
 
