@@ -1,0 +1,17 @@
+/* preferences.css */
+
+/* General */
+html, body {
+  margin: 0;
+  height: 100%;
+}
+
+body {
+  background: #ecf0f1;
+}
+
+main {
+  background: white;
+  height: 100%;
+}
+
