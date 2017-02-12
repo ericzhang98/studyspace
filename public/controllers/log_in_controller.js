@@ -9,7 +9,7 @@ angular.module('logInApp', []).controller('LogInCtrl', ['$scope', '$http', funct
   console.log(LOG + "started");
 
   // - verifyLogin looks for a user with specified info and
-  // - calls onResponseReceived when it gets a response
+  // - calls onResponseReceived when it gets and response
   var verifyLogin = function(loginAttempt, onResponseReceived) {
     console.log(LOG + "verifyLogin");
     $http.post('/accountlogin', loginAttempt).then(function onSuccess(response) {
