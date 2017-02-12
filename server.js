@@ -228,6 +228,7 @@ app.delete('/remove_buddy/:id', function(req, res){
 		res.json(doc);
 	});
 });
+
 // forces the name property to be unique in user_classes collection
 //db.user_classes.createIndex({name: 1}, {unique:true});
 app.post('/user_classes', function(req, res) {
@@ -310,6 +311,17 @@ app.get('/get_class/:class_id', function(req, res) {
     }
 	});
 });
+
+// sets the class_ids for this user to the class_ids array passed in
+app.post('/enroll', function (req, res) {
+  var user_id = req.signedCookies.user_id;
+  var class_ids = req.body.class_ids;
+  console.log("enrolling user with id " + user_id + " in " + class_ids);
+  db.users.update({user_id: user_id},
+    {$set: {class_ids: class_ids}}, function (err, doc) {
+      res.send({success: doc != null});
+    });
+})
 /*************************************************************************************/
 
 /*************************************** ROOMS ***************************************/
@@ -342,11 +354,13 @@ app.get('/leave_room/:room_id/', function(req, res) {
  * Returns: nothing */
 app.post("/send_room_message", function(req, res) {
   var roomID = req.body.roomID;
+  var timeSent = req.body.timeSent;
+  var text = req.body.text;
   
   //roomMessagesDatabase.child(roomID).push().set(req.body);
   if (req.signedCookies.user_id && req.signedCookies.email && req.signedCookies.name) {
     var newChatMessage = new ChatMessage(req.signedCookies.name, 
-      req.signedCookies.email, req.body.text, roomID, req.body.timeSent);
+      req.signedCookies.email, text, roomID, timeSent);
     roomMessagesDatabase.child(roomID).push().set(newChatMessage);
   }
 
