@@ -298,7 +298,12 @@ app.get('/get_class/:class_id', function(req, res) {
 
 	// look up name in mongoDB
 	db.classes.findOne({class_id: class_id}, function (err, doc) {
-		res.send({name: doc.name});
+    if (doc) {
+      res.send({name: doc.name});
+    }
+    else {
+      res.send({name: null});
+    }
 	});
 });
 /*************************************************************************************/
