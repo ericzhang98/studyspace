@@ -228,6 +228,7 @@ app.delete('/remove_buddy/:id', function(req, res){
 		res.json(doc);
 	});
 });
+
 // forces the name property to be unique in user_classes collection
 //db.user_classes.createIndex({name: 1}, {unique:true});
 app.post('/user_classes', function(req, res) {
@@ -310,6 +311,17 @@ app.get('/get_class/:class_id', function(req, res) {
     }
 	});
 });
+
+// sets the class_ids for this user to the class_ids array passed in
+app.post('/enroll', function (req, res) {
+  var user_id = req.signedCookies.user_id;
+  var class_ids = req.body.class_ids;
+  console.log("enrolling user with id " + user_id + " in " + class_ids);
+  db.users.update({user_id: user_id},
+    {$set: {class_ids: class_ids}}, function (err, doc) {
+      res.send({success: doc != null});
+    });
+})
 /*************************************************************************************/
 
 /*************************************** ROOMS ***************************************/
