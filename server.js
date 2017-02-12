@@ -58,7 +58,7 @@ var MAIN_HOST = "mainhost";
 var ADMIN_KEY = "ABCD"
 var PUBLIC_DIR = __dirname + "/public/";
 var VIEW_DIR = __dirname + "/public/";
-var COOKIE_TIME = 7*24*60*60*1000;
+var COOKIE_TIME = 7*24*60*60*1000; //one week
 
 /* HTTP requests ---------------------------------------------------------*/
 
@@ -92,6 +92,10 @@ app.get('/signup', function(req, res) {
 
 app.get('/main', function(req, res) {
   res.sendFile(VIEW_DIR + "mainRoom.html");
+});
+
+app.get('/courses', function (req, res) {
+  res.sendFile(VIEW_DIR + "update.html");
 });
 
 /*************************************************************************************/
