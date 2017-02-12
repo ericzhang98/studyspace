@@ -710,14 +710,17 @@ function checkToDelete(room_id) {
   console.log("FIREBASE: Checking delete conditions");
   roomInfoDatabase.child(room_id).child("users").once("value").then(function(snapshot) {
     if (!snapshot.val()) {
-      console.log("FIREBASE: Attempting to delete room");
+      console.log("FIREBASE: No more users left in room, checking host id");
       snapshot.ref.parent.once("value").then(function(snapshot) {
         if (snapshot.val()) {
-          var class_id = snapshot.val().class_id;
-          var firebase_push_id = snapshot.val().firebase_push_id;
-          classRoomsDatabase.child(class_id).child(firebase_push_id).remove();
-          snapshot.ref.remove();
-          console.log("FIREBASE: Succesfully deleted room " + room_id);
+          if (snapshot.val().host_id != MAIN_HOST) {
+            console.log("FIREBASE: Not main room, attempting to delete room");
+            var class_id = snapshot.val().class_id;
+            var firebase_push_id = snapshot.val().firebase_push_id;
+            classRoomsDatabase.child(class_id).child(firebase_push_id).remove();
+            snapshot.ref.remove();
+            console.log("FIREBASE: Succesfully deleted room " + room_id);
+          }
         }
         else {
           console.log("FIREBASE: Couldn't find room to delete");
