@@ -32,6 +32,8 @@ a:hover {
 }
 
 .modal-content {
+  background: white;
+  color: #333333;
   border: none;
   box-shadow: none;
   width: 100%;
@@ -39,6 +41,35 @@ a:hover {
   padding-left: 3rem;
   padding-right: 3rem;
   margin: 0;
+  border-radius: 0;
+}
+
+.modal-content .title {
+  font-size: 2.5rem;
+  font-weight: 700;
+  margin-top: 0;
+  margin-bottom: 0;
+}
+
+.modal-content .title-container {
+  margin-bottom: 4rem;
+}
+
+.modal-content h1::selection,
+.modal-content label::selection,
+.modal-content input::selection {
+  background: #333333;
+  color: white;
+}
+
+.modal-content label {
+  font-size: 1.5rem;
+  font-weight: 700;
+}
+
+.modal-content .form-group {
+  margin-top: 2.5rem;
+  margin-bottom: 0;
 }
 
 /* General: forms */
@@ -133,4 +164,16 @@ a:hover {
 .panel .list-group .list-group-item {
   padding-left: 2rem;
   padding-right: 2rem;
+}
+
+@media screen and (min-width: 768px) {
+  .modal-content {
+    width: 45rem;
+    height: auto;
+    padding-top: 8rem;
+    padding-left: 6rem;
+    padding-right: 6rem;
+    padding-bottom: 6rem;
+    border-radius: 0.5rem;
+  }
 }

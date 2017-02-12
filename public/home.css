@@ -81,9 +81,6 @@ main {
 /* Login Modal */
 #login {
   position: relative;
-  background: white;
-  color: #333333;
-  border-radius: 0;
 }
 
 #login .close {
@@ -116,34 +113,6 @@ main {
 
 #login .login-content {
   width: 100%;
-}
-
-#login .title {
-  font-size: 2.5rem;
-  font-weight: 700;
-  margin-top: 0;
-  margin-bottom: 0;
-}
-
-#login .title-container {
-  margin-bottom: 4rem;
-}
-
-#login h1::selection,
-#login label::selection,
-#login input::selection {
-  background: #333333;
-  color: white;
-}
-
-#login label {
-  font-size: 1.5rem;
-  font-weight: 700;
-}
-
-#login .form-group {
-  margin-top: 2.5rem;
-  margin-bottom: 0;
 }
 
 #login .btn-container {
@@ -234,17 +203,6 @@ main {
   #link-login .text-log-in::selection {
     background: #333333;
     color: white;
-  }
-
-  /* Login Modal */
-  #login {
-    width: 45rem;
-    height: auto;
-    padding-top: 8rem;
-    padding-left: 6rem;
-    padding-right: 6rem;
-    padding-bottom: 6rem;
-    border-radius: 0.5rem;
   }
 
   /* Splash */
