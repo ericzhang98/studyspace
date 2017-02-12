@@ -46,7 +46,7 @@
                ng-controller="ChatController"> 
 
                <!--NAVBAR-->
-               <nav class="navbar navbar-inverse navbar-static-top span-8">
+               <nav id="nav-room" class="navbar navbar-inverse navbar-static-top span-8">
                <div class="container-fluid">
                   <div class="navbar-header">
                      <a class="navbar-brand">CSE 110</a>
@@ -58,12 +58,12 @@
                         <li><a href="#">Room 1</a></li>
                         <li><a href="#">Room 2</a></li>
                         <li><a href="#">Room 3</a></li>
-                     </ul>
+                     </ul>  
                      </li>
                   </ul>
                </div>
                </nav>
-
+                
                <!-- MESSAGE PANE -->
                <div class="container-fluid" id="chatMessageDiv">
                   
@@ -74,7 +74,7 @@
                </div>
 
                <!-- MESSAGE BAR -->
-               <footer class="footer navbar-fixed-bottom col-xs-8 col-sm-8 col-md-8 col-lg-8 col-xs-offset-2 col-sm-offset-2 col-md-offset-2 col-lg-offset-2">
+               <footer class="footer navbar-static-bottom col-xs-13 col-sm-13 col-md-13 col-lg-13">
                <form>
                   <div class="input-group" id="message-bar">
 

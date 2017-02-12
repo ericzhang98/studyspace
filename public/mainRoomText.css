@@ -16,6 +16,10 @@ html, body{
   height: 100%;
 }
 
+#nav-room {
+    margin-bottom: 0;
+}
+
 #message-wrapper{
   background-color: powderblue;
   height: 100%;
@@ -23,8 +27,8 @@ html, body{
 
 #chatMessageDiv {
   background-color: aliceblue;
-  height: 100%;
-  padding-bottom: 40px;
+  height: calc(100% - 85px);
+  padding-bottom: 30px;
   overflow-x: hidden;
   border-style: solid;
   word-wrap: break-word;
