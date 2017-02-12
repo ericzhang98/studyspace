@@ -22,6 +22,11 @@ function storeCookie(key, value) {
     expirationDate.toUTCString() + ";path=/";
 }
 
+/* Removes a cookie with specified key */
+function removeCookie(key) {
+  document.cookie = key + "=" + null + ";expires=Thu, 01 Jan 1970 00:00:00 GMT" + ";path=/";
+}
+
 /* Returns the cookie value for a key, ONLY USE ON SIGNED COOKIES */
 function getSignedCookie(key) {
   var cookieName = key + "=";

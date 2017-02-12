@@ -71,7 +71,6 @@ myApp.controller("SignUpController", ["$scope", "$http",
             //$scope.successMessage = "Account successfully created!";
 
             document.location.href = "main";
-            $scope.successMessage = "Account successfully created!";
           }
           else {
             console.log("Failed!");
