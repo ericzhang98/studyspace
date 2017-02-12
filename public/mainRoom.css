@@ -87,8 +87,6 @@ html, body {
 /* Create Room Modal */
 #create-room {
   position: relative;
-  background: white;
-  color: #333333;
 }
 
 #create-room .close {
@@ -105,7 +103,7 @@ html, body {
   color: #888888;
 }
 
-#create-room .login-container {
+#create-room .create-room-container {
   display: -webkit-box;
   display: -ms-flexbox;
   display: flex;
@@ -119,36 +117,8 @@ html, body {
   width: 100%;
 }
 
-#create-room .login-content {
+#create-room .create-room-content {
   width: 100%;
-}
-
-#create-room .title {
-  font-size: 2.5rem;
-  font-weight: 700;
-  margin-top: 0;
-  margin-bottom: 0;
-}
-
-#create-room .title-container {
-  margin-bottom: 4rem;
-}
-
-#create-room h1::selection,
-#create-room label::selection,
-#create-room input::selection {
-  background: #333333;
-  color: white;
-}
-
-#create-room label {
-  font-size: 1.5rem;
-  font-weight: 700;
-}
-
-#create-room .form-group {
-  margin-top: 2.5rem;
-  margin-bottom: 0;
 }
 
 #create-room .btn-container {
@@ -172,16 +142,6 @@ html, body {
 }
 
 @media screen and (min-width: 768px) {
-  /* Login Modal */
-  .modal-content {
-    width: 45rem;
-    height: auto;
-    padding-top: 8rem;
-    padding-left: 6rem;
-    padding-right: 6rem;
-    padding-bottom: 6rem;
-  }
-
   /* Classes Sidebar */
   #sidebar-classes {
     width: 25rem;
@@ -202,10 +162,5 @@ html, body {
   /* Classmates Sidebar */
   #sidebar-classmates {
     width: 25rem;
-  }
-
-  /* Create Room Modal */
-  #create-room {
-    border-radius: 0.5rem;
   }
 }
