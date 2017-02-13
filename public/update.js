@@ -132,11 +132,14 @@ function autoCompleteController ($timeout, $q, $log, $http) {
           if (xhr.readyState == 4 && xhr.status == 200) {
             var response = JSON.parse(xhr.responseText);
 
-            // set userClasses to equal this list
-            userClasses = response.class_ids;
+            if (response.class_ids != null) {
 
-            // update the UI
-            displayClasses();
+                // set userClasses to equal this list
+                userClasses = response.class_ids;
+                
+                // update the UI
+                displayClasses();
+            }
           }
         }
     }
