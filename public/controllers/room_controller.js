@@ -1,7 +1,6 @@
 // Initialize Firebase
 var databaseRef = firebase.database().ref(); //root
-var roomID = "cse110_asdf";
-var chatDatabase = databaseRef.child("RoomMessages").child(roomID);
+var chatDatabase = databaseRef.child("RoomMessages").child(currRoomID);
 
 //Room app
 var myApp = angular.module("roomApp", []);
@@ -17,7 +16,7 @@ myApp.controller("ChatController", ["$scope", "$http",
       function uploadMessage(chatInput) {
         console.log("Sending chat with: " + chatInput);
         //var newChatMessage = new ChatMessage(name, email, chatInput, roomID, Date.now()/1000);
-        var newChatMessage = {text: chatInput, roomID: roomID, timeSent: Date.now()/1000};
+        var newChatMessage = {text: chatInput, roomID: currRoomID, timeSent: Date.now()/1000};
         //chatDatabase.child(roomID).push().set(newChatMessage);
         $http.post("/send_room_message", newChatMessage);
         chatInputBox.value = "";
