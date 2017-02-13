@@ -7,7 +7,9 @@ var isLecturer = false;
 /**************************************************/
 
 /***** Audio conferencing variables ***************/
-var peer = new Peer(myID, {host: "localhost", port: "9000", path: '/peerjs'});
+//var peer = new Peer(myID, {host: "localhost", port: "9000", path: '/peerjs'});
+var peer = new Peer(me.user_id, 
+    {host: "pacific-lake-64902.herokuapp.com", port: "",  path: '/peerjs'});
 var myStream = null;
 var myCalls = [];
 var myRemoteStreams = {}; // Dictionary from call.id to audio track
