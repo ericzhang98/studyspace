@@ -1,12 +1,4 @@
 // Initialize Firebase
-var config = {
-  apiKey: "AIzaSyB8eBxo5mqiVVskav5dCUQ1Hr_UQeiJAL4",
-  authDomain: "studyspace-490cd.firebaseapp.com",
-  databaseURL: "https://studyspace-490cd.firebaseio.com",
-  storageBucket: "studyspace-490cd.appspot.com",
-  messagingSenderId: "293916419475"
-};
-firebase.initializeApp(config);
 var databaseRef = firebase.database().ref(); //root
 var roomID = "cse110_asdf";
 var chatDatabase = databaseRef.child("RoomMessages").child(roomID);
@@ -74,7 +66,12 @@ myApp.controller("ChatController", ["$scope", "$http",
         else if (hour == 0) {
           hour = 12;
         }
-        var timeString = hour + ":" + timeSentDate.getMinutes() + " " + AMPM;
+
+        var minutes = timeSentDate.getMinutes();
+        if (minutes < 10) {
+          minutes = "0" + minutes;
+        }
+        var timeString = hour + ":" + minutes + " " + AMPM;
 
         var dateString = monthDayString + " " + timeString;
         return dateString;
