@@ -15,7 +15,6 @@
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>
     <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.5.6/angular.min.js"></script>
-    <script src="./controllers/classes_bar_controller.js"></script>
 
     <!-- For mobile scaling -->
     <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -35,7 +34,7 @@
     <title>Main Room</title>
   </head>
 
-  <body>
+  <body id="myBody">
     <div class="container-fluid">
       <!-- Classes Sidebar -->
       <aside id="sidebar-classes" role="complementary">
@@ -69,20 +68,9 @@
             </div>
             <div id="{{id}}" class="panel-collapse collapse">
               <ul class="list-group">
-                <!--<button ng-repeat="room_name in class_id_to_room_list[id]"-->
-                <button ng-repeat="room in class_rooms[id]" 
-                  class="list-group-item" ng-click="joinRoom(room.room_id)">{{room.name}}</button>
-                
-                <!-- <button class="list-group-item">General (3)</button>                
-                <button class="list-group-item">Midterm Review (6)</button>
-                <button class="list-group-item">More...</button> -->
-
-                <!--
-                  <li class="list-group-item">Main</li>
-                  <li class="list-group-item">Room 1</li>
-                  <li class="list-group-item">Public Room 2</li>
-                  <li class="list-group-item">Public Room 3</li>
-                  <li class="list-group-item">DANK</li>-->
+                <li ng-repeat="room_id in class_rooms[id]">
+                  <button class="list-group-item" ng-click="joinRoomNG(room_id)">{{rooms[room_id].name}}</button> 
+                </li>
               </ul>
             </div>
           </div>
@@ -161,8 +149,10 @@
 
   <!-- Other -->
   <script src="firebase_setup.js"></script>  
-  <script src="call.js"></script>
-  <script src="main.js"></script>
   <script src="cookies.js"></script>
+
+  <script src="call.js"></script>
+  <script src="./controllers/classes_bar_controller.js"></script>
+  <script src="main.js"></script>
 
 </html>

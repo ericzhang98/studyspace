@@ -105,8 +105,7 @@ myApp.controller("ChatController", ["$scope", "$http",
         var div = document.getElementById("chatMessageDiv");
         div.scrollTop = div.scrollHeight - div.clientHeight;
       }
-
-
+    
     }]);
 
 /*-----------------------------------------------------*/

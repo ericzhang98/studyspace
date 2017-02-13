@@ -10,10 +10,17 @@ var myApp = angular.module("classesApp", []);
 myApp.controller("classesController", function($scope) {
 
     $scope.class_names = {}; // class_id : class names
-    $scope.class_rooms = {} // class_id : room
+    $scope.class_rooms = {} // class_id : room_id
 
-    //$scope.class_id_to_room_list = {};
+    $scope.rooms = {}       // room_id : room
+
     getClasses();
+
+    
+
+    $scope.joinRoomNG = function(room_id){
+        joinRoom(room_id);
+    };
     
     // - gets all class_ids for user
     // - delegates to getClass
@@ -39,7 +46,6 @@ myApp.controller("classesController", function($scope) {
     // - calls getRoom on all the rooms for specified class
     function getClass(class_id) {
         console.log("Getting class with id " + class_id);
-
 
         // add listener for class rooms
         classRoomsDatabase.child(class_id).on("value", function(snapshot) {
@@ -81,6 +87,8 @@ myApp.controller("classesController", function($scope) {
         for (i = 0; i < updated_rooms.length; i++) {
           getRoom(class_id, updated_rooms[i]);
         }
+
+        $scope.class_rooms[class_id] = updated_rooms;
     }
 
     // finds the room's data and adds it to the list of rooms
@@ -95,26 +103,14 @@ myApp.controller("classesController", function($scope) {
             if (room) {
 
                 // store the room
-                console.log("Got room: " + room.name);
-
-                // if this is the first room for this class create an empty array
-                if (!$scope.class_rooms[class_id]){
-                    $scope.class_rooms[class_id] = [];    
-                }
-
-                // add the room to the list of rooms
-                $scope.class_rooms[class_id].push(new Room(room_id, room.name, room.host_id, room.class_id,
-                    room.is_lecture, room.has_tutor, room.users));
+                $scope.rooms[room_id] = 
+                    new Room(room_id, room.name, room.host_id, room.class_id,
+                    room.is_lecture, room.has_tutor, room.users);
 
                 // update the UI
                 $scope.$apply();
             }
         });
-    }
-
-    $scope.joinRoom = function(room_id){
-      console.log("onclick with " + room_id);
-      joinRoom(room_id);
     }
 });
 

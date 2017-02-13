@@ -2,7 +2,6 @@ var myApp = angular.module("signupApp", []);
 
 myApp.controller("SignUpController", ["$scope", "$http",
     function($scope, $http) {
-      console.log("SWAG");
 
       /* Sign Up Error Checking */
       $scope.signup = function(name, school, email, password, confirmPassword) {
@@ -53,7 +52,7 @@ myApp.controller("SignUpController", ["$scope", "$http",
             }
           }
           else {
-            $scope.passwordMessage = "(Password need >6 characters)";
+            $scope.passwordMessage = "(Password needs >6 characters)";
             $scope.confirmMessage  = "";
           }
         }
@@ -70,7 +69,7 @@ myApp.controller("SignUpController", ["$scope", "$http",
             console.log("Create success!");
             //$scope.successMessage = "Account successfully created!";
 
-            document.location.href = "main";
+            document.location.href = "/";
           }
           else {
             console.log("Failed!");
@@ -96,11 +95,4 @@ myApp.controller("SignUpController", ["$scope", "$http",
       }
 
 
-    }]);
-
-myApp.controller("TestController", ["$scope", "$http",
-    function($scope, $http) {
-      console.log("woot");
-
-      $scope.dank = "WOOT";
     }]);
