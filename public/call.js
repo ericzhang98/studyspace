@@ -216,7 +216,7 @@ function joinRoom(room_id) {
 			currRoomID = room_id;
 
 			// listen to the room
-			listenToRoom();
+			//listenToRoom();
 
 	        // if this is a lecture and I am the host, I am the lecturer
 	        isLecturer = (response.is_lecture && response.host_id == myID);
@@ -229,8 +229,11 @@ function joinRoom(room_id) {
 
 	      	// otherwise, call everyone in the room who isn't me
 	        else {
-		        for (i = 0; i < response.users.length; i++) {
-		        	var other_user_id = response.users[i];
+	        	var usersArray = Object.values(response.users);
+
+		        for (i = 0; i < usersArray.length; i++) {
+		        	var other_user_id =usersArray[i];
+		        	console.log("assessing " + other_user_id);
 		        	if (other_user_id != myID) {
 		        		startCall(other_user_id);
 		    		}

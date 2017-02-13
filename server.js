@@ -338,7 +338,7 @@ app.get('/add_room/:class_id/:room_name/:is_lecture', function(req, res) {
   //needs error checking for class_id's (or just change to POST request)
   if (host_id) {
     addRoom(req.params.class_id, req.params.room_name, 
-      host_id, req.params.is_lecture, function(room_id){res.send(room_id);});
+      host_id, req.params.is_lecture == "true", function(room_id){res.send(room_id);});
   }
   else {
     res.send({});
