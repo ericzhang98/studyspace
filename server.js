@@ -58,7 +58,7 @@ var MAIN_HOST = "mainhost";
 var ADMIN_KEY = "ABCD"
 var PUBLIC_DIR = __dirname + "/public/";
 var VIEW_DIR = __dirname + "/public/";
-var COOKIE_TIME = 7*24*60*60*1000;
+var COOKIE_TIME = 7*24*60*60*1000; //one week
 
 /* HTTP requests ---------------------------------------------------------*/
 
@@ -92,6 +92,10 @@ app.get('/signup', function(req, res) {
 
 app.get('/main', function(req, res) {
   res.sendFile(VIEW_DIR + "mainRoom.html");
+});
+
+app.get('/courses', function (req, res) {
+  res.sendFile(VIEW_DIR + "update.html");
 });
 
 /*************************************************************************************/
@@ -224,6 +228,7 @@ app.delete('/remove_buddy/:id', function(req, res){
 		res.json(doc);
 	});
 });
+
 // forces the name property to be unique in user_classes collection
 //db.user_classes.createIndex({name: 1}, {unique:true});
 app.post('/user_classes', function(req, res) {
@@ -280,69 +285,102 @@ app.get('/scrape_classes', function(req, res) {
 /******************************** GET CLASSES & ROOMS ********************************/
 
 // return the class_ids of classes this user is enrolled in
-app.get('/get_classes/', function(req, res) {
+app.get('/get_my_classes/', function(req, res) {
 	var user_id = req.signedCookies.user_id;
-	db.users.findOne({user_id: user_id}, function (err, doc) {
-	    if (doc) {
-	    	res.send({class_ids: doc.class_ids});
-	    }
-	    else {
-	      res.send({class_ids: []});
-	    }
-  	});
+  if (user_id) {
+    db.users.findOne({user_id: user_id}, function (err, doc) {
+      if (doc) {
+        res.send({class_ids: doc.class_ids});
+      }
+      else {
+        res.send({class_ids: []});
+      }
+    });
+  }
+  else {
+    res.send({class_ids: []});
+  }
 });
 
-// return name of the class with specified id
+// return the class objects for all classes
+app.get('/get_all_classes', function (req, res) {
+  db.classes.find({}, function (err, doc) {
+    res.send(doc);
+  });
+});
+
+// return the class object with this id
 app.get('/get_class/:class_id', function(req, res) {
 	var class_id = req.params.class_id;
 
 	// look up name in mongoDB
 	db.classes.findOne({class_id: class_id}, function (err, doc) {
-    if (doc) {
-      res.send({name: doc.name});
-    }
-    else {
-      res.send({name: null});
-    }
+    res.send(doc);
 	});
 });
+
+// sets the class_ids for this user to the class_ids array passed in
+app.post('/enroll', function (req, res) {
+  var user_id = req.signedCookies.user_id;
+  var class_ids = req.body.class_ids;
+  console.log("enrolling user with id " + user_id + " in " + class_ids);
+  db.users.update({user_id: user_id},
+    {$set: {class_ids: class_ids}}, function (err, doc) {
+      res.send({success: doc != null});
+    });
+})
 /*************************************************************************************/
 
 /*************************************** ROOMS ***************************************/
 
 app.get('/add_room/:class_id/:room_name/:is_lecture', function(req, res) {
   var host_id = req.signedCookies.user_id;
-	var room_id = addRoom(req.params.class_id, req.params.room_name, 
-		host_id, req.params.is_lecture, function(room_id){res.send(room_id);});
+  //needs error checking for class_id's (or just change to POST request)
+  if (host_id) {
+    addRoom(req.params.class_id, req.params.room_name, 
+      host_id, req.params.is_lecture == "true", function(room_id){res.send(room_id);});
+  }
+  else {
+    res.send({});
+  }
 });
 
 // - adds user_id to room with id room_id
 // - returns list of user_id's in that room
 app.get('/join_room/:room_id/', function(req, res) {
-
-	var room_id = req.params.room_id;
 	var user_id = req.signedCookies.user_id;
-  joinRoom(user_id, room_id, function(roomInfo){res.send(roomInfo);});
+  if (user_id) {
+	  var room_id = req.params.room_id;
+    joinRoom(user_id, room_id, function(roomInfo){res.send(roomInfo);});
+  }
+  else {
+    res.send({});
+  }
 });
 
 // - removes user_id from room with id room_id
 app.get('/leave_room/:room_id/', function(req, res) {
-	
-	var room_id = req.params.room_id;
 	var user_id = req.signedCookies.user_id;
-
-  leaveRoom(user_id, room_id, function(success){res.send(success);});
+  if (user_id) {
+	  var room_id = req.params.room_id;
+    leaveRoom(user_id, room_id, function(success){res.send(success);});
+  }
+  else {
+    res.send({});
+  }
 });
 
 /* POST data: {chatMessage} - post chat message to firebase in respective room
  * Returns: nothing */
 app.post("/send_room_message", function(req, res) {
   var roomID = req.body.roomID;
+  var timeSent = req.body.timeSent;
+  var text = req.body.text;
   
   //roomMessagesDatabase.child(roomID).push().set(req.body);
   if (req.signedCookies.user_id && req.signedCookies.email && req.signedCookies.name) {
     var newChatMessage = new ChatMessage(req.signedCookies.name, 
-      req.signedCookies.email, req.body.text, roomID, req.body.timeSent);
+      req.signedCookies.email, text, roomID, timeSent);
     roomMessagesDatabase.child(roomID).push().set(newChatMessage);
   }
 
@@ -674,14 +712,17 @@ function checkToDelete(room_id) {
   console.log("FIREBASE: Checking delete conditions");
   roomInfoDatabase.child(room_id).child("users").once("value").then(function(snapshot) {
     if (!snapshot.val()) {
-      console.log("FIREBASE: Attempting to delete room");
+      console.log("FIREBASE: No more users left in room, checking host id");
       snapshot.ref.parent.once("value").then(function(snapshot) {
         if (snapshot.val()) {
-          var class_id = snapshot.val().class_id;
-          var firebase_push_id = snapshot.val().firebase_push_id;
-          classRoomsDatabase.child(class_id).child(firebase_push_id).remove();
-          snapshot.ref.remove();
-          console.log("FIREBASE: Succesfully deleted room " + room_id);
+          if (snapshot.val().host_id != MAIN_HOST) {
+            console.log("FIREBASE: Not main room, attempting to delete room");
+            var class_id = snapshot.val().class_id;
+            var firebase_push_id = snapshot.val().firebase_push_id;
+            classRoomsDatabase.child(class_id).child(firebase_push_id).remove();
+            snapshot.ref.remove();
+            console.log("FIREBASE: Succesfully deleted room " + room_id);
+          }
         }
         else {
           console.log("FIREBASE: Couldn't find room to delete");

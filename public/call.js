@@ -1,12 +1,15 @@
 /***** General variables **************************/
 var me = {user_id: "id2", block_list: ["block1"]};
+var myID = getSignedCookie("user_id");
 var currRoomID = null;
 var currRoomUsers = [];
 var isLecturer = false;
 /**************************************************/
 
 /***** Audio conferencing variables ***************/
-var peer = new Peer(me.user_id, {host: "localhost", port: "9000", path: '/peerjs'});
+//var peer = new Peer(myID, {host: "localhost", port: "9000", path: '/peerjs'});
+var peer = new Peer(myID, 
+    {host: "pacific-lake-64902.herokuapp.com", port: "",  path: '/peerjs'});
 var myStream = null;
 var myCalls = [];
 var myRemoteStreams = {}; // Dictionary from call.id to audio track
@@ -215,10 +218,10 @@ function joinRoom(room_id) {
 			currRoomID = room_id;
 
 			// listen to the room
-			listenToRoom();
+			//listenToRoom();
 
 	        // if this is a lecture and I am the host, I am the lecturer
-	        isLecturer = (response.is_lecture && response.host_id == me.user_id);
+	        isLecturer = (response.is_lecture && response.host_id == myID);
 	        
 	        // if this is a lecture-style room and I am not the lecturer,
 	        // then call only the lecturer
@@ -228,9 +231,12 @@ function joinRoom(room_id) {
 
 	      	// otherwise, call everyone in the room who isn't me
 	        else {
-		        for (i = 0; i < response.users.length; i++) {
-		        	var other_user_id = response.users[i];
-		        	if (other_user_id != me.user_id) {
+	        	var usersArray = Object.values(response.users);
+
+		        for (i = 0; i < usersArray.length; i++) {
+		        	var other_user_id =usersArray[i];
+		        	console.log("assessing " + other_user_id);
+		        	if (other_user_id != myID) {
 		        		startCall(other_user_id);
 		    		}
 		        }
@@ -306,10 +312,10 @@ function leaveCalls() {
 function listenToRoom() {
 
 	// detach any old listeners
-	roomUsersDatabase.child(currRoomID).off();
+	classRoomsDatabase.child(currRoomID).off();
 
 	// attach listener to the current room
-	roomUsersDatabase.child(currRoomID).on("value", function(snapshot) {
+	classRoomsDatabase.child(currRoomID).on("value", function(snapshot) {
 
         var snapshotValueObject = snapshot.val();
 

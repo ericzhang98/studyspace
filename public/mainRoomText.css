@@ -16,6 +16,10 @@ html, body{
   height: 100%;
 }
 
+#nav-room {
+    margin-bottom: 0;
+}
+
 #message-wrapper{
   background-color: powderblue;
   height: 100%;

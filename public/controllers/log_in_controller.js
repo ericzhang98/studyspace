@@ -7,9 +7,12 @@ var LOG = "log_in_controller: "
 // defining the controller
 angular.module('logInApp', []).controller('LogInCtrl', ['$scope', '$http', function($scope, $http) {
   console.log(LOG + "started");
+  console.log(getSignedCookie("name"));
+  console.log(getSignedCookie("user_id"));
+  console.log(getSignedCookie("email"));
 
   // - verifyLogin looks for a user with specified info and
-  // - calls onResponseReceived when it gets a response
+  // - calls onResponseReceived when it gets and response
   var verifyLogin = function(loginAttempt, onResponseReceived) {
     console.log(LOG + "verifyLogin");
     $http.post('/accountlogin', loginAttempt).then(function onSuccess(response) {
@@ -34,7 +37,7 @@ angular.module('logInApp', []).controller('LogInCtrl', ['$scope', '$http', funct
           if (user.active) {
             console.log(LOG + "login succeeded");
             console.log(document.location.href);
-            document.location.href = "main";
+            document.location.href = "/";
           }
           else {
             console.log(LOG + "need to verify account, verify email");
