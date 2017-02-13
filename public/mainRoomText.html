@@ -24,6 +24,7 @@
 
       <!-- Stylesheets -->
       <link rel="stylesheet" type="text/css" href="mainRoomText.css">
+      <link rel="sytlesheet" type="text/css" href="general.css">
 
       <!-- Additional Typefaces -->
       <link href="https://fonts.googleapis.com/css?family=Raleway:300,400,700,800" rel="stylesheet">
@@ -68,7 +69,9 @@
                <div class="container-fluid" id="chatMessageDiv">
                   
                   <ul style="list-style-type:none" ng-repeat="chatMessage in chatMessageList">
-                     <li>{{chatMessage.name}} ({{chatMessage.email}}): {{chatMessage.text}} -- {{timeAgo(chatMessage)}}</li>
+                     <li id="username">{{chatMessage.name}}</li>
+                     <li id="dateTime">{{timeAgo(chatMessage)}}</li>
+                     <li id="message">{{chatMessage.text}}</li>
                   </ul>
                    
                </div>
