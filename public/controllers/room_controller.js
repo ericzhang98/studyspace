@@ -1,6 +1,5 @@
 //Room app -- firebase initialized already
-var roomID = "cse110_asdf";
-var chatDatabase = databaseRef.child("RoomMessages").child(roomID);
+var chatDatabase = null;
 var myApp = angular.module("roomApp", []);
 var chatMessageList = [];
 var scrollUpList = [];
@@ -13,22 +12,44 @@ myApp.controller("ChatController", ["$scope", "$http",
       console.log("Hell yeah");
       var chatInputBox = document.getElementById("chatInputBox");
 
-      function uploadMessage(chatInput) {
-        console.log("Sending chat with: " + chatInput);
-        var newChatMessage = {text: chatInput, roomID: roomID, timeSent: Date.now()/1000};
-        //chatDatabase.child(roomID).push().set(newChatMessage);
-        $http.post("/send_room_message", newChatMessage);
-        chatInputBox.value = "";
-        $scope.chatInput = "";
-        chatInputBox.focus();
+/************************* JOINING A CHATROOM ************************/
+      
+      // Listen for broadcast from classesController
+      $scope.$on("room_change", function(event) {
+        console.log("room changed to " + currRoomID);
+        joinRoomChat();
+      });
+
+      // Join a room
+      function joinRoomChat() {
+
+        // turn off any pre-existing listeners
+        if (chatDatabase != null) {
+          chatDatabase.off();
+        }
+
+        // empty our message list in logic
+        chatMessageList = [];
+
+        // empty the message list in UI
+        updateChatView(chatMessageList);
+
+        // set up and start new listener
+        chatDatabase = databaseRef.child("RoomMessages").child(currRoomID);
+        startChatMessages();
       }
 
+/*********************************************************************/
+/*************************** SENDING CHATS ***************************/
+      
+      // Send chat when send button is pressed
       $scope.sendChatMessage = function(chatInput) {
         if (chatInput) {
           uploadMessage(chatInput);
         }
       };
 
+      // Send chat when enter key is pressed
       $scope.keypress = function(e) {
         if (e.keyCode == 13) {
           if (chatInputBox.value) {
@@ -37,23 +58,29 @@ myApp.controller("ChatController", ["$scope", "$http",
         }
       }
 
+      // Upload message to the database
+      function uploadMessage(chatInput) {
 
-      //Firebase chat db value listener
-      /*
-      chatDatabase.on("value", function(snapshot) {
-        var snapshotValue = snapshot.val();
-        if (snapshotValue) {
-          //var chatMessageList = Object.values(snapshotValueObject); apparently
-          //not supported by browser?!?!
-          chatMessageList = Object.keys(snapshotValue).map(function(key) {
-                return snapshotValue[key];
-          });
-          console.log(chatMessageList);
-          updateChatView(chatMessageList);
+        // If we're in a valid room
+        if (currRoomID) {
+
+          console.log("Sending chat with: " + chatInput);
+
+          // Create the message and pass it on to the server
+          var newChatMessage = {text: chatInput, roomID: currRoomID, timeSent: Date.now()/1000};
+          $http.post("/send_room_message", newChatMessage);
         }
-      });
-      */
 
+        // Reset the local chat UI/logic
+        chatInputBox.value = "";
+        $scope.chatInput = "";
+        chatInputBox.focus();
+      }
+
+/*********************************************************************/
+/************************** DISPLAYING CHATS *************************/
+      
+      // Set up listener for chat messages
       function startChatMessages() {
         chatDatabase.limitToLast(30).on("child_added", function(snapshot) {
           var snapshotValue = snapshot.val();
@@ -61,29 +88,40 @@ myApp.controller("ChatController", ["$scope", "$http",
           updateChatView(chatMessageList);
         });
       }
-      startChatMessages();
 
-      //maximum jank
-      $scope.$on("update", function() {
-        console.log("updating chat room to " + roomID);
-        chatDatabase.off();
-        chatMessageList = [];
-        updateChatView(chatMessageList);
-        chatDatabase = databaseRef.child("RoomMessages").child(roomID);
-        startChatMessages();
-      })
+      // Update the chat view display
+      function updateChatView(list) {
+        //console.log("updated chat view");
+        $scope.chatMessageList = list;
+        safeApply();
+        setTimeout(scrollDown, 1);
+      }
 
+      // Safely apply UI changes
+      function safeApply(func) {
+        var phase = $scope.$root.$$phase;
+        if (phase != "$apply" && phase != "$digest") {
+          if (func && (typeof(func) == "function")) {
+            $scope.$apply(func);
+          }
+          $scope.$apply();
+        }
+        else {
+          console.log("Already applying");
+        }
+      }
+
+      // View more messages
       function seeMoreMessages() {
         chatDatabase.limitToLast(40).once("value", function(snapshot) {
           var snapshotValue = snapshot.val();
           console.log(Object.keys(snapshotValue));
           console.log(snapshotValue);
         });
-      } 
+      }
 
-     //seeMoreMessages();
-
-      $scope.timeAgo= function(chatMessage) {
+      // Calculate time since message was sent
+      $scope.timeAgo = function(chatMessage) {
         var timeSentDate = new Date(chatMessage.timeSent * 1000);
         var monthDayString = (timeSentDate.getMonth()+1) + "/" + timeSentDate.getDate();
         var hour = timeSentDate.getHours();
@@ -106,54 +144,43 @@ myApp.controller("ChatController", ["$scope", "$http",
         return dateString;
       };
 
-      function updateChatView(list) {
-        //console.log("updated chat view");
-        $scope.chatMessageList = list;
-        safeApply();
-        setTimeout(scrollDown, 1);
-      }
-
-      function safeApply(func) {
-        var phase = $scope.$root.$$phase;
-        if (phase != "$apply" && phase != "$digest") {
-          if (func && (typeof(func) == "function")) {
-            $scope.$apply(func);
-          }
-          $scope.$apply();
-        }
-        else {
-          console.log("Already applying");
-        }
-      }
-
       function scrollDown() {
         //console.log("scrolling");
         var div = document.getElementById("chatMessageDiv");
         div.scrollTop = div.scrollHeight - div.clientHeight;
       }
-    
     }]);
 
+/*********************************************************************/
 
 /* Side bar  Start */
 myApp.controller("classesController", function($scope, $rootScope) {
 
+/******************************* SETUP ******************************/
+    
+    // Scope variables
     $scope.class_names = {}; // class_id : class names
-    $scope.class_rooms = {} // class_id : room_id
+    $scope.class_rooms = {}  // class_id : room_id
+    $scope.rooms = {}        // room_id : room
 
-    $scope.rooms = {}       // room_id : room
-
+    // Initial call to pull data for user / classes / rooms
     getClasses();
 
-    
+/*********************************************************************/
+/*************************** JOINING A ROOM **************************/
 
-    $scope.joinRoomNG = function(room_id){
-        joinRoom(room_id);
+    // OnClick method that delegates to joinRoomCall and joinRoomChat
+    $scope.joinRoom = function(room_id){
 
-        //update room controller's firebase
-        roomID = room_id;
-        $rootScope.$broadcast("update"); //max jank
+        // delegate to call.js to join the room's call
+        joinRoomCall(room_id);
+
+        // delegate to chat controller to join the room's chat
+        $rootScope.$broadcast("room_change");
     };
+
+/*********************************************************************/
+/**************************** PULLING DATA ***************************/
     
     // - gets all class_ids for user
     // - delegates to getClass
@@ -189,7 +216,7 @@ myApp.controller("classesController", function($scope, $rootScope) {
 
         // get class name
         var xhr = new XMLHttpRequest();
-        xhr.open('GET', "/get_class/" + class_id, true); // responds with the class's name and room_ids
+        xhr.open('GET', "/get_class/" + class_id, true); // res with the class's name and room_ids
         xhr.send();
 
         xhr.onreadystatechange = function(e) {
@@ -208,7 +235,6 @@ myApp.controller("classesController", function($scope, $rootScope) {
             }
         }
     }
-
 
     // - respond to change in a class's rooms
     // - calls removeRoom/getRoom accordingly
@@ -245,24 +271,6 @@ myApp.controller("classesController", function($scope, $rootScope) {
             }
         });
     }
+
+/*********************************************************************/
 });
-
-
-
-
-/*-----------------------------------------------------*/
-
-
-/* Model ----------------------------------------------*/
-
-/*
-function ChatMessage(name, email, text, roomID, timeSent) {
-  this.name = name;
-  this.email = email;
-  this.text = text;
-  this.roomID = roomID;
-  this.timeSent = timeSent;
-}
-*/
-
-/*-----------------------------------------------------*/

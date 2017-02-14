@@ -31,15 +31,15 @@ function create_room_button_on_click() {
 }
 
 function join_room1_button_on_click() {
-	joinRoom("ucsd_cse_110_1_r0");
+	//joinRoom("ucsd_cse_110_1_r0");
 }
 
 function join_room2_button_on_click() {
-	joinRoom("ucsd_cse_105_1_r0");
+	//joinRoom("ucsd_cse_105_1_r0");
 }
 
 function join_room3_button_on_click() {
-	joinRoom("ucsd_cse_110_1_r1");
+	//joinRoom("ucsd_cse_110_1_r1");
 }
 
 function leave_room_button_on_click() {
@@ -209,12 +209,11 @@ function answerCallHelper(call) {
 	});
 }
 /*********************************************************************/
-
 /********************* LEAVING AND JOINING ROOMS *********************/
 
 // - updates server and returns list of user_id's
 // - calls all user_id's
-function joinRoom(room_id) {
+function joinRoomCall(room_id) {
 
 	// we're already in this room!
 	if (currRoomID == room_id) {
@@ -225,6 +224,9 @@ function joinRoom(room_id) {
 	if (currRoomID != null) {
 		leaveRoom();
 	}
+
+	// set currRoomID
+	currRoomID = room_id;
 
 	console.log("joining room with id " + room_id);
 
@@ -245,9 +247,6 @@ function joinRoom(room_id) {
 	        	console.log("room does not exist");
 	        	return;
 	        }
-
-			// set currRoomID
-			currRoomID = room_id;
 
 			// listen to the room
 			//listenToRoom();
@@ -338,7 +337,6 @@ function leaveCalls() {
 	myCalls = [];
 }
 /*********************************************************************/
-
 /************************* LISTENING TO ROOMS ************************/
 
 function listenToRoom() {
@@ -365,7 +363,6 @@ function listenToRoom() {
 }
 
 /*********************************************************************/
-
 /********************** MUTING / UNMUTING AUDIO **********************/
 // - toggle my own audio
 function toggleMyStreamAudioEnabled() {
@@ -378,7 +375,6 @@ function toggleRemoteStreamAudioEnabled(call_id) {
 	myRemoteStreams[call_id].muted = !(myRemoteStreams[call_id].muted);
 }
 /*********************************************************************/
-
 /******************************* MISC ********************************/
 // when the window is about to close
 window.onbeforeunload = function(event) {
