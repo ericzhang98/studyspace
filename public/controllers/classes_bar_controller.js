@@ -1,3 +1,5 @@
+/* DEPRECATED */
+
 //***** General variables **************************/
 //var me = {user_id: "id1"};
 //var class_rooms = {} 	// class_id : class rooms
