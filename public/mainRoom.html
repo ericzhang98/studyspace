@@ -41,42 +41,50 @@
         <!-- User Quick Info -->
         <div id="info-user">
           <div class="container-user-icon">
-            <img class="user-icon" src="assets/images/user_icon.png" />
+            <!--<img class="user-icon" src="assets/images/user_icon.png" />-->
           </div>
           <span class="user-name">FirstName L.</span>
         </div>
-        <button onclick="logOut()">Log Out</button>
-        <div class="btn-container text-center">
-          <a class="btn-info" href="courses">Courses</a>
+
+        <!-- Log Out -->
+        <button class="btn btn-primary" onclick="logOut()">Log Out</button>
+
+        <!-- User Preference -->
+        <div class="btn-container">
+          <a class="btn btn-primary" href="courses">Courses</a>
         </div>
 
         <!-- Create Room -->
-        <button id="btn-create-room" class="btn btn-primary">Create Room</button>
+        <!--<button id="btn-create-room" class="btn btn-primary">Create Room</button>-->
 
         <!-- Classes -->
-        <div ng-app="classesApp" ng-controller="classesController" 
-          class="panel-group" id="accordion">
-
-          <!--first class in drop down-->
-          <div ng-repeat="(id, name) in class_names" class="panel" 
-            data-toggle="collapse" data-parent="#accordion" href="#{{id}}">
-            <div class="panel-heading">
-              <h4 class="panel-title">
-                <span>{{name}}</span>
-                <!--<span class="glyphicon glyphicon-triangle-bottom" aria-hidden="true"></span>-->
-              </h4>
+        <div id="container-menu-classes">
+          <button id="btn-create-room" class="btn container-title">
+            <h5 class="title">Classes</h5>
+            <div id="btn-add">
+              <span class="glyphicon glyphicon-plus"></span>
             </div>
-            <div id="{{id}}" class="panel-collapse collapse">
-              <ul class="list-group">
-                <li ng-repeat="room_id in class_rooms[id]">
-                  <button class="list-group-item" ng-click="joinRoomNG(room_id)">{{rooms[room_id].name}}</button> 
-                </li>
-              </ul>
+          </button>
+          <div ng-app="classesApp" ng-controller="classesController" 
+            class="panel-group" id="menu-classes">
+            <!--first class in drop down-->
+            <div ng-repeat="(id, name) in class_names" class="panel" 
+              data-toggle="collapse" data-parent="#menu-classes" href="#{{id}}">
+              <div class="panel-heading">
+                <h4 class="panel-title">
+                  <span>{{name}}</span>
+                </h4>
+              </div>
+              <div id="{{id}}" class="panel-collapse collapse">
+                <ul class="list-group">
+                  <li class="list-group-item" ng-repeat="room_id in class_rooms[id]" ng-click="joinRoomNG(room_id)">
+                    <span class="room-name">{{rooms[room_id].name}}</span> 
+                  </li>
+                </ul>
+              </div>
             </div>
-          </div>
-
-
-        </div> <!--end panel group-->
+          </div> <!--end panel group-->
+        </div>
       </aside> <!--end left column-->
 
       <!-- Main Content -->
@@ -111,14 +119,11 @@
                       <label for="class">Class</label><br/>
                       <div id="class_id" class="btn-group" data-toggle="buttons">
                         <label class="btn btn-primary btn-xs" style="margin-right:5px">
-                          <input type="radio" name="class_id_radio" autocomplete="off" value="class_id_1"> Class Name 1
-                        </label>
+                          <input type="radio" name="class_id_radio" autocomplete="off" value="class_id_1"> Class Name 1</label>
                         <label class="btn btn-primary btn-xs" style="margin-right:5px">
-                          <input type="radio" name="class_id_radio" autocomplete="off" value="class_id_2"> Class Name 2
-                        </label>
+                          <input type="radio" name="class_id_radio" autocomplete="off" value="class_id_2"> Class Name 2</label>
                         <label class="btn btn-primary btn-xs" style="margin-right:5px">
-                          <input type="radio" name="class_id_radio" autocomplete="off" value="class_id_3"> Class Name 3
-                        </label>
+                          <input type="radio" name="class_id_radio" autocomplete="off" value="class_id_3"> Class Name 3</label>
                       </div>
                     </div>
                     <div class="form-group">

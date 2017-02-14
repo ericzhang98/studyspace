@@ -150,27 +150,51 @@ a:hover {
 
 .panel-group .panel+.panel {
   margin-top: 0;
-  border-top: solid 1px #000000;
 }
 
 .panel-heading {
-  padding: 1.5rem 2rem;
+  padding: 1rem 2rem;
+  border-top-left-radius: 0;
+  border-top-right-radius: 0;
+}
+
+.panel-heading-selection {
+  border-left: solid 0.5rem black;
+  padding-left: 1.5rem;
+  background-color: #eeeeee;
+}
+
+.panel-heading-selection:hover {
+  background-color: #dddddd;
 }
 
 .panel-title {
   font-weight: 700;
 }
 
-.panel .list-group .list-group-item {
-  padding-left: 2rem;
-  padding-right: 2rem;
+.panel-group .panel-heading+.panel-collapse>.list-group,
+.panel-group .panel-heading+.panel-collapse>.panel-body {
+  border-top: none;
+}
+
+.panel>.list-group .list-group-item,
+.panel>.panel-collapse>.list-group .list-group-item {
+  border-top: none;
+  padding: 0.7rem 2rem;
+  font-weight: 600;
+}
+
+.panel>.list-group:last-child .list-group-item:last-child,
+.panel>.panel-collapse>.list-group:last-child .list-group-item:last-child {
+  border-bottom-right-radius: 0;
+  border-bottom-left-radius: 0;
 }
 
 @media screen and (min-width: 768px) {
   .modal-content {
     width: 45rem;
     height: auto;
-    padding-top: 8rem;
+    padding-top: 7rem;
     padding-left: 6rem;
     padding-right: 6rem;
     padding-bottom: 6rem;

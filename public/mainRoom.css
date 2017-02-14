@@ -21,17 +21,11 @@ html, body {
 
 .panel {
   cursor: pointer;
-  -webkit-transition: background 0.15s, color 0.15s;
-  transition: background 0.15s, color 0.15s;
-}
-
-.panel:hover {
-  background-color: #f5f5f5;
 }
 
 /* Classes Sidebar */
 #sidebar-classes {
-  background: SteelBlue;
+  background: #8caacd;
   float: left;
   width: 120px;
 }
@@ -70,6 +64,61 @@ html, body {
 #info-user .user-name {
   font-weight: 600;
   font-size: 2rem;
+}
+
+/* Classes Menu */
+#container-menu-classes {
+  margin-top: 2rem;
+}
+
+#container-menu-classes .container-title {
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-align: center;
+  -ms-flex-align: center;
+  align-items: center;
+  -webkit-box-pack: justify;
+  -ms-flex-pack: justify;
+  justify-content: space-between;
+  padding: 1rem 2rem;
+  font-size: 1rem;
+  background-color: transparent;
+  width: 100%;
+}
+
+#container-menu-classes .container-title:hover {
+  color: white;
+}
+
+#container-menu-classes .container-title .title {
+  font-weight: 600;
+  margin-top: 0;
+  margin-bottom: 0;
+}
+
+#menu-classes .panel {
+  background-color: inherit;
+}
+
+#menu-classes .panel .panel-heading {
+  -webkit-transition: background 0.15s, color 0.15s;
+  transition: background 0.15s, color 0.15s;
+}
+
+#menu-classes .panel:hover .panel-heading {
+  background-color: #7a9dc5;
+  color: white;
+}
+
+#menu-classes .panel>.panel-collapse>.list-group .list-group-item {
+  background-color: #6890be;
+  -webkit-transition: background 0.15s, color 0.15s;
+  transition: background 0.15s, color 0.15s;
+}
+
+#menu-classes .panel>.panel-collapse>.list-group .list-group-item:hover {
+  background-color: #5783b6;
 }
 
 /* Chat Room */
@@ -146,13 +195,6 @@ html, body {
   #sidebar-classes {
     width: 25rem;
   }
-
-  /*
-  #info-user .container-user-icon {
-    width: 4rem;
-    height: 4rem;
-  }
-  */
 
   /* Chat Room */
   #chat-room {
