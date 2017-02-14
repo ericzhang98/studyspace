@@ -1,20 +1,23 @@
 <!--
-   _____     ______     __   __     __  __
-  /\  __-.  /\  __ \   /\ "-.\ \   /\ \/ /
-  \ \ \/\ \ \ \  __ \  \ \ \-.  \  \ \  _"-.
-   \ \____-  \ \_\ \_\  \ \_\\"\_\  \ \_\ \_\
-    \/____/   \/_/\/_/   \/_/ \/_/   \/_/\/_/
+_____     ______     __   __     __  __
+/\  __-.  /\  __ \   /\ "-.\ \   /\ \/ /
+\ \ \/\ \ \ \  __ \  \ \ \-.  \  \ \  _"-.
+\ \____-  \ \_\ \_\  \ \_\\"\_\  \ \_\ \_\
+\/____/   \/_/\/_/   \/_/ \/_/   \/_/\/_/
 
 -->
 
 <!DOCTYPE html>
-<html>
+<html ng-app="roomApp" ng-app="classesApp">
   <head>
     <!-- Bootstrap -->
+    <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.6.1/angular.min.js"></script>
+
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>  
+
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>
+
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>
-    <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.5.6/angular.min.js"></script>
 
     <!-- For mobile scaling -->
     <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -65,11 +68,11 @@
               <span class="glyphicon glyphicon-plus"></span>
             </div>
           </button>
-          <div ng-app="classesApp" ng-controller="classesController" 
-            class="panel-group" id="menu-classes">
+          <div ng-controller="classesController" 
+               class="panel-group" id="menu-classes">
             <!--first class in drop down-->
             <div ng-repeat="(id, name) in class_names" class="panel" 
-              data-toggle="collapse" data-parent="#menu-classes" href="#{{id}}">
+                 data-toggle="collapse" data-parent="#menu-classes" href="#{{id}}">
               <div class="panel-heading">
                 <h4 class="panel-title">
                   <span>{{name}}</span>
@@ -89,7 +92,68 @@
 
       <!-- Main Content -->
       <main id="chat-room" role="main" style="background-color:blue">
-      <h3>Column 2</h3>
+
+        <!-- Message Wrapper -->
+        <div class="message-pane" id="message-wrapper"
+               ng-controller="ChatController"> 
+
+          <!--NAVBAR-->
+          <nav id="nav-room" class="navbar navbar-inverse navbar-static-top span-8">
+            <div class="container-fluid">
+              <div class="navbar-header">
+                <a class="navbar-brand">CSE 110</a>
+              </div>
+              <ul class="nav navbar-nav navbar-right">
+                <li class="dropdown">
+                  <a class="dropdown-toggle" data-toggle="dropdown" href="#">Rooms <span class="caret"></span></a>
+                  <ul class="dropdown-menu" id="room-list">
+                    <li><a href="#">Room 1</a></li>
+                    <li><a href="#">Room 2</a></li>
+                    <li><a href="#">Room 3</a></li>
+                  </ul>  
+                </li>
+              </ul>
+            </div>
+          </nav>
+
+          <!-- MESSAGE PANE -->
+          <div class="container-fluid" id="chatMessageDiv">
+
+            <ul style="list-style-type:none" ng-repeat="chatMessage in chatMessageList">
+              <li id="username">{{chatMessage.name}}</li>
+              <li id="dateTime">{{timeAgo(chatMessage)}}</li>
+              <li id="message">{{chatMessage.text}}</li>
+            </ul>
+
+          </div>
+
+          <!-- MESSAGE BAR -->
+          <footer class="footer navbar-static-bottom col-xs-13 col-sm-13 col-md-13 col-lg-13">
+            <form>
+              <div class="input-group" id="message-bar">
+
+                <div class="input-group-btn">
+                  <button class="btn btn-default" type="submit">
+                    <i class="glyphicon glyphicon-volume-up"></i>
+                  </button>
+                </div>
+
+                <input type="text" class="form-control" id="chatInputBox" 
+                       ng-model="chatInput" ng-keydown="keypress($event)" 
+                       placeholder="Type a message..." autocomplete="off">
+
+                <div class="input-group-btn">
+                  <button class="btn btn-primary" ng-click="sendChatMessage(chatInput)">
+                    SEND
+                  </button>
+                </div>
+
+              </div>
+            </form>
+          </footer>
+        </div>
+
+
       </main>   
 
       <!-- Classmates Sidebar -->
@@ -147,17 +211,21 @@
   </body>
 
 
+
   <!-- Peer -->
   <script src="http://cdn.peerjs.com/0.3/peer.js"></script>
+  
   <!-- Firebase -->
   <script src="https://www.gstatic.com/firebasejs/3.6.7/firebase.js"></script>
+  <script src="firebase_setup.js"></script>
 
   <!-- Other -->
-  <script src="firebase_setup.js"></script>  
   <script src="cookies.js"></script>
 
   <script src="call.js"></script>
-  <script src="./controllers/classes_bar_controller.js"></script>
   <script src="main.js"></script>
+
+  <!-- Angular scripts -->
+  <script src="controllers/room_controller.js"></script>
 
 </html>

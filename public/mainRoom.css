@@ -13,6 +13,50 @@ html, body {
   height: 100%;
 }
 
+/*  Main Room Text CSS */
+
+#nav-room {
+    margin-bottom: 0;
+}
+
+#message-wrapper{
+  background-color: white;
+  height: 100%;
+}
+
+#chatMessageDiv {
+  background-color: black;
+  height: calc(100% - 85px);
+  overflow-x: hidden;
+  border-style: hidden;
+  word-wrap: break-word;
+}
+
+#username {
+   display: inline-block;
+   margin-right: 10px;
+   color: white;
+   font-family: , sans-serif;
+   font-size: 1.2em;
+}
+
+#dateTime {
+   display: inline-block;
+   font-size: .8em;
+   color: gainsboro;
+}
+
+#message{
+   color: powderblue;
+}
+
+#chatInputBox {
+  font-family:  sans-serif;
+}
+
+
+/* End Main Room Text CSS */
+
 #sidebar-classes,
 #chat-room,
 #sidebar-classmates {
