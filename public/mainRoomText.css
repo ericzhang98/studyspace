@@ -27,9 +27,9 @@ html, body{
 
 #chatMessageDiv {
   background-color: black;
-  height: 85%;
+  height: calc(100% - 85px);
   overflow-x: hidden;
-  border-style: solid;
+  border-style: hidden;
   word-wrap: break-word;
 }
 
