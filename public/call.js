@@ -1,7 +1,6 @@
 /***** General variables **************************/
 var me = {user_id: "id2", block_list: ["block1"]};
 var myID = getSignedCookie("user_id");
-var currRoomID = null;
 var currRoomUsers = [];
 var isLecturer = false;
 /**************************************************/
@@ -78,6 +77,7 @@ peer.on('call', function(call) {
 	if (me.block_list.indexOf(call.peer) == -1) {
 		answerCall(call);
 	}
+
 });
 
 peer.on("disconnected", function() {
@@ -213,26 +213,13 @@ function answerCallHelper(call) {
 
 // - updates server and returns list of user_id's
 // - calls all user_id's
-function joinRoomCall(room_id) {
+function joinRoomCall() {
 
-	// we're already in this room!
-	if (currRoomID == room_id) {
-		return;
-	}
-
-	// don't want to be in two rooms at once
-	if (currRoomID != null) {
-		leaveRoom();
-	}
-
-	// set currRoomID
-	currRoomID = room_id;
-
-	console.log("joining room with id " + room_id);
+	console.log("joining room with id " + currRoomID);
 
 	// send request to server
 	var xhr = new XMLHttpRequest();
-	xhr.open('GET', "/join_room/" + room_id, true);
+	xhr.open('GET', "/join_room/" + currRoomID, true);
 	xhr.send();
 
 	// on response
@@ -376,14 +363,19 @@ function toggleRemoteStreamAudioEnabled(call_id) {
 }
 /*********************************************************************/
 /******************************* MISC ********************************/
+
 // when the window is about to close
 window.onbeforeunload = function(event) {
 	// send request to server to tell them we left
-	// we don't use leaveRoom because request needs to be async
+	leaveRoomHard();
+};
+
+// makes sure we leave the room
+function leaveRoomHard() {
 	if (currRoomID != null) {
 		var xhr = new XMLHttpRequest();
 		xhr.open('GET', "/leave_room/" + currRoomID, false);
 		xhr.send();
 	}
-};
+}
 /*********************************************************************/
