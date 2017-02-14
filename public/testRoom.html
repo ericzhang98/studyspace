@@ -3,7 +3,6 @@
   <head>
     <!-- Latest compiled and minified CSS -->
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
-    <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.6.1/angular.min.js"></script>
     <title>StudySpace - CSE 110 Room</title>
   </head>
 
@@ -17,7 +16,7 @@
 
       <br>
 
-      <div id="chatMessageDiv" class="container" style="height:200px; overflow-x:hidden; border-style:solid">
+      <div id="chatMessageDiv" class="container" style="height:500px; overflow-x:hidden; border-style:solid">
         <ul style="list-style-type:none" ng-repeat="chatMessage in chatMessageList">
           <li>{{chatMessage.name}} ({{chatMessage.email}}): {{chatMessage.text}} -- {{timeAgo(chatMessage)}}</li>
         </ul>
@@ -28,10 +27,10 @@
   </body>
 
 
-  <!-- Firebase scripts -->
+  <!-- Firebase and angular scripts -->
+  <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.6.1/angular.min.js"></script>
   <script src="https://www.gstatic.com/firebasejs/3.6.7/firebase.js"></script>
-
-  <!-- Angular scripts -->
+  <script src="firebase_setup.js"></script>
   <script src="controllers/room_controller.js"></script>
   </body>
 </html>

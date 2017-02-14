@@ -601,7 +601,7 @@ function ChatMessage(name, email, text, roomID, timeSent) {
   this.timeSent = timeSent;
 }
 
-//TODO: ERIC - fix callback stuff so res gets sent back
+//TODO: ERIC - fix callback stuff so res gets sent back + make this cleaner
 function addRoom(class_id, room_name, room_host_id, is_lecture, callback) {
   var room_id = class_id + "_" + generateToken();
   console.log("FIREBASE: Attempting to add room with id " + room_id);

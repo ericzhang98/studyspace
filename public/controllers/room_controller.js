@@ -1,10 +1,9 @@
-// Initialize Firebase
-var databaseRef = firebase.database().ref(); //root
+//Room app -- firebase initialized already
 var roomID = "cse110_asdf";
 var chatDatabase = databaseRef.child("RoomMessages").child(roomID);
-
-//Room app
 var myApp = angular.module("roomApp", []);
+var chatMessageList = [];
+var scrollUpList = [];
 
 
 /* Chat controller -------------------------------------*/
@@ -16,7 +15,6 @@ myApp.controller("ChatController", ["$scope", "$http",
 
       function uploadMessage(chatInput) {
         console.log("Sending chat with: " + chatInput);
-        //var newChatMessage = new ChatMessage(name, email, chatInput, roomID, Date.now()/1000);
         var newChatMessage = {text: chatInput, roomID: roomID, timeSent: Date.now()/1000};
         //chatDatabase.child(roomID).push().set(newChatMessage);
         $http.post("/send_room_message", newChatMessage);
@@ -40,19 +38,37 @@ myApp.controller("ChatController", ["$scope", "$http",
       }
 
 
-      //Firebase chat db listener
+      //Firebase chat db value listener
+      /*
       chatDatabase.on("value", function(snapshot) {
-        var snapshotValueObject = snapshot.val();
-        if (snapshotValueObject) {
+        var snapshotValue = snapshot.val();
+        if (snapshotValue) {
           //var chatMessageList = Object.values(snapshotValueObject); apparently
           //not supported by browser?!?!
-          var chatMessageList = Object.keys(snapshotValueObject).map(function(key) {
-                return snapshotValueObject[key];
+          chatMessageList = Object.keys(snapshotValue).map(function(key) {
+                return snapshotValue[key];
           });
           console.log(chatMessageList);
           updateChatView(chatMessageList);
         }
       });
+      */
+
+      chatDatabase.limitToLast(30).on("child_added", function(snapshot) {
+        var snapshotValue = snapshot.val();
+        chatMessageList.push(snapshotValue);
+        updateChatView(chatMessageList);
+      });
+
+     function seeMoreMessages() {
+       chatDatabase.limitToLast(40).once("value", function(snapshot) {
+         var snapshotValue = snapshot.val();
+         console.log(Object.keys(snapshotValue));
+         console.log(snapshotValue);
+       });
+     } 
+
+     seeMoreMessages();
 
       $scope.timeAgo= function(chatMessage) {
         var timeSentDate = new Date(chatMessage.timeSent * 1000);
@@ -77,9 +93,9 @@ myApp.controller("ChatController", ["$scope", "$http",
         return dateString;
       };
 
-      function updateChatView(chatMessageList) {
+      function updateChatView(list) {
         //console.log("updated chat view");
-        $scope.chatMessageList = chatMessageList;
+        $scope.chatMessageList = list;
         safeApply();
         setTimeout(scrollDown, 1);
       }
