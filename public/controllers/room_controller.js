@@ -1,5 +1,4 @@
 //Room app -- firebase initialized already
-var currRoomID = null;
 var chatDatabase = null;
 var myApp = angular.module("roomApp", []);
 var chatMessageList = [];
