@@ -1,6 +1,6 @@
 // server.js will be our website's server that handles communication
 // between the front-end and the database
-
+var deployment = false; //currently just whether or not to use HTTPS
 
 /* SETUP ---------------------------------------------------------------*/
 
@@ -46,6 +46,13 @@ var favicon = require("serve-favicon");
 app.use(favicon(__dirname + "/public/assets/images/favicon.ico"));
 
 // - app configuration
+var forceSsl = function (req, res, next) {
+  if (req.headers['x-forwarded-proto'] !== 'https') {    
+    return res.redirect(['https://', req.get('Host'), req.url].join(''));
+  }       
+  return next();           
+};
+if (deployment) {app.use(forceSsl);}
 app.use(express.static(__dirname + "/public"));
 app.use(bodyParser.json());
 app.use(cookieParser("raindropdroptop")); //secret key
