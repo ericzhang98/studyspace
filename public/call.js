@@ -96,8 +96,6 @@ peer.on("error", function(err) {
 
 //pings peer server, pass in true for constant 30 sec ping
 function pingPeerServer(constant) {
-  console.log("sending ping");
-  console.log(peer.socket);
   peer.socket.send({type:"Ping"});
   if (constant) {
     setTimeout(pingPeerServer, 30000, true);
