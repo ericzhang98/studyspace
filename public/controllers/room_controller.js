@@ -54,21 +54,34 @@ myApp.controller("ChatController", ["$scope", "$http",
       });
       */
 
-      chatDatabase.limitToLast(30).on("child_added", function(snapshot) {
-        var snapshotValue = snapshot.val();
-        chatMessageList.push(snapshotValue);
+      function startChatMessages() {
+        chatDatabase.limitToLast(30).on("child_added", function(snapshot) {
+          var snapshotValue = snapshot.val();
+          chatMessageList.push(snapshotValue);
+          updateChatView(chatMessageList);
+        });
+      }
+      startChatMessages();
+
+      //maximum jank
+      $scope.$on("update", function() {
+        console.log("updating chat room to " + roomID);
+        chatDatabase.off();
+        chatMessageList = [];
         updateChatView(chatMessageList);
-      });
+        chatDatabase = databaseRef.child("RoomMessages").child(roomID);
+        startChatMessages();
+      })
 
-     function seeMoreMessages() {
-       chatDatabase.limitToLast(40).once("value", function(snapshot) {
-         var snapshotValue = snapshot.val();
-         console.log(Object.keys(snapshotValue));
-         console.log(snapshotValue);
-       });
-     } 
+      function seeMoreMessages() {
+        chatDatabase.limitToLast(40).once("value", function(snapshot) {
+          var snapshotValue = snapshot.val();
+          console.log(Object.keys(snapshotValue));
+          console.log(snapshotValue);
+        });
+      } 
 
-     seeMoreMessages();
+     //seeMoreMessages();
 
       $scope.timeAgo= function(chatMessage) {
         var timeSentDate = new Date(chatMessage.timeSent * 1000);
@@ -123,7 +136,7 @@ myApp.controller("ChatController", ["$scope", "$http",
 
 
 /* Side bar  Start */
-myApp.controller("classesController", function($scope) {
+myApp.controller("classesController", function($scope, $rootScope) {
 
     $scope.class_names = {}; // class_id : class names
     $scope.class_rooms = {} // class_id : room_id
@@ -136,6 +149,10 @@ myApp.controller("classesController", function($scope) {
 
     $scope.joinRoomNG = function(room_id){
         joinRoom(room_id);
+
+        //update room controller's firebase
+        roomID = room_id;
+        $rootScope.$broadcast("update"); //max jank
     };
     
     // - gets all class_ids for user
