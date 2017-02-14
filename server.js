@@ -42,6 +42,9 @@ var classRoomsDatabase = firebaseRoot.child("ClassRooms");
 var roomInfoDatabase = firebaseRoot.child("RoomInfo");
 var roomMessagesDatabase = firebaseRoot.child("RoomMessages");
 
+var favicon = require("serve-favicon");
+app.use(favicon(__dirname + "/public/assets/images/favicon.ico"));
+
 // - app configuration
 app.use(express.static(__dirname + "/public"));
 app.use(bodyParser.json());
