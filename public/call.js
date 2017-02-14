@@ -10,6 +10,7 @@ var isLecturer = false;
 //var peer = new Peer(myID, {host: "localhost", port: "9000", path: '/peerjs'});
 var peer = new Peer(myID, 
     {host: "pacific-lake-64902.herokuapp.com", port: "",  path: '/peerjs'});
+peer._lastServerId = myID;
 var myStream = null;
 var myCalls = [];
 var myRemoteStreams = {}; // Dictionary from call.id to audio track
@@ -57,8 +58,17 @@ function mute_other_button_on_click() {
 /*********************** CALLING AND ANSWERING ***********************/
 
 // Respond to open
-peer.on('open', function(id) {
-	console.log('My peer ID is: ' + id);
+peer.on('open', function() {
+	console.log('My peer ID is: ' + peer.id);
+  //setup heartbeat ping after 5 seconds (wait for socket to finish httpr)
+  setTimeout(pingPeerServer, 5000, true);
+
+  /*
+  if (!peer.id) {
+    peer.id = peer._lastServerId;
+    console.log("setting peer id to: " + peer.id);
+  }
+  */
 });
 
 // Respond to call
@@ -69,6 +79,30 @@ peer.on('call', function(call) {
 		answerCall(call);
 	}
 });
+
+peer.on("disconnected", function() {
+  console.log("DISCONNECTED");
+  /*
+  //actually too jank if more than one window, gonna do heartbeat ping
+  console.log("Last server id: " + peer._lastServerId);
+  console.log("Peer id: " + peer.id);
+  peer.reconnect();
+  */
+});
+
+peer.on("error", function(err) {
+  console.log(err);
+});
+
+//pings peer server, pass in true for constant 30 sec ping
+function pingPeerServer(constant) {
+  console.log("sending ping");
+  console.log(peer.socket);
+  peer.socket.send({type:"Ping"});
+  if (constant) {
+    setTimeout(pingPeerServer, 30000, true);
+  }
+}
 
 // - ensures myStream is set, delegates to startCallHelper()
 function startCall(other_user_id) {
