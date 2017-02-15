@@ -1,38 +1,40 @@
 //Room app -- firebase initialized already
 var chatDatabase = null;
 var myApp = angular.module("roomApp", []);
-var chatMessageList = [];
-var scrollUpList = [];
 
+// list of message objects with: email, name, roomID, text, timeSent
+var chatMessageList = [];
+var CONCAT_TIME = 60; // 1 minute
 
 /* Chat controller -------------------------------------*/
 
-myApp.controller("ChatController", ["$scope", "$http", 
+myApp.controller("MainController", ["$scope", "$http", 
     function($scope, $http) {
       console.log("Hell yeah");
+
+/*-------------------------------------------------------------------*/
+/****************************** CHAT ROOM ****************************/
+/*-------------------------------------------------------------------*/
+
+      var div = document.getElementById("chatMessageDiv");
       var chatInputBox = document.getElementById("chatInputBox");
+      var lastKey = null;
+      var scrollLock = false;
 
 /************************* JOINING A CHATROOM ************************/
-      
-      // Listen for broadcast from classesController
-      $scope.$on("room_change", function(event) {
-        console.log("room changed to " + currRoomID);
-        joinRoomChat();
-      });
 
-      // Join a room
+      // Join a room's chat
       function joinRoomChat() {
 
-        
-        // turn off any pre-existing listeners
+        // turn off any pre-existing listeners and control vars
         if (chatDatabase != null) {
           chatDatabase.off();
         }
+        lastKey = null;
+        scrollLock = false;
 
-        // empty our message list in logic
+        // empty our message list in logic and UI
         chatMessageList = [];
-
-        // empty the message list in UI
         updateChatView();
 
         // set up and start new listener
@@ -76,6 +78,7 @@ myApp.controller("ChatController", ["$scope", "$http",
         chatInputBox.value = "";
         $scope.chatInput = "";
         chatInputBox.focus();
+        scrollDown();
       }
 
 /*********************************************************************/
@@ -83,19 +86,49 @@ myApp.controller("ChatController", ["$scope", "$http",
       
       // Set up listener for chat messages
       function startChatMessages() {
-        chatDatabase.limitToLast(30).on("child_added", function(snapshot) {
+        chatDatabase.limitToLast(50).on("child_added", function(snapshot) {
           var snapshotValue = snapshot.val();
+          if (lastKey == null) {
+            lastKey = snapshot.key;
+          }
           chatMessageList.push(snapshotValue);
+          var shouldScroll = false;
+          //only auto-scroll if near bottom
+          if(div.scrollTop + 200 >= (div.scrollHeight - div.clientHeight)) {
+            shouldScroll = true;
+          }
           updateChatView();
+          if (shouldScroll) {
+            setTimeout(scrollDown, 1);
+          }
         });
       }
 
       // Update the chat view display
       function updateChatView() {
-        //console.log("updated chat view");
+        concatenateMessages();
         $scope.chatMessageList = chatMessageList;
         safeApply();
-        setTimeout(scrollDown, 1);
+      }
+
+      // Combine messages sent by the same user within
+      // CONCAT_TIME seconds of one another;
+      function concatenateMessages() {
+        for (var i = 0; i + 1 < chatMessageList.length;) {
+          currMessage = chatMessageList[i];
+          nextMessage = chatMessageList[i+1];
+          // if two messages were sent by the same user within CONCAT_TIME
+          if (currMessage.email == nextMessage.email &&
+            nextMessage.timeSent < currMessage.timeSent + CONCAT_TIME) {
+            // concatenate the messages
+            currMessage.text += "\n" + nextMessage.text;
+            // remove the second message
+            chatMessageList.splice(i+1, 1);
+          }
+          else {
+            i++;
+          }
+        }
       }
 
       // Safely apply UI changes
@@ -112,13 +145,53 @@ myApp.controller("ChatController", ["$scope", "$http",
         }
       }
 
-      // View more messages
+      // Scroll event listener -- see more messages if scroll within 30px of top
+      $scope.scrollevent = function() {
+        //console.log("Scroll top: " + div.scrollTop);
+        if(div.scrollTop <= 30) {
+          //don't call seeMore if still processing past one
+          if (!scrollLock) { 
+            seeMoreMessages();
+          }
+        }
+      }
+
+      // View more messages -- queries last number of msgs from Firebase and
+      // updates chat view, then scrolls to correct place to maintain position
       function seeMoreMessages() {
-        chatDatabase.limitToLast(40).once("value", function(snapshot) {
-          var snapshotValue = snapshot.val();
-          console.log(Object.keys(snapshotValue));
-          console.log(snapshotValue);
-        });
+        //check if a lastKey is ready, signifying that og msgs have finished
+        if (lastKey) {
+          console.log("see more");
+          scrollLock = true; //prevent any more seeMoreMessages calls until current finishes
+          var messagesSoFar = chatMessageList.length;
+          var messagesToAdd = 20;
+          //query db for past number of messages
+          chatDatabase.limitToLast(messagesToAdd+1).orderByKey().endAt(lastKey)
+            .once("value", function(snapshot) {
+            var snapshotValue = snapshot.val();
+            if (snapshotValue) {
+              lastKey = Object.keys(snapshotValue)[0];
+              console.log("pulled more messages + 1: " + (Object.keys(snapshotValue).length));
+              //var messageArray = Object.values(snapshotValueObject)
+              var moreMessagesArray = Object.keys(snapshotValue).map(function(key) {
+                    return snapshotValue[key];
+              });
+              moreMessagesArray.pop(); //remove extra messsage b/c lastKey inclusive
+              chatMessageList = moreMessagesArray.concat(chatMessageList); //combine with og msgs
+
+              //keep track of height diff, update view, and then scroll by diff
+              var previousHeight = div.scrollHeight;
+              var previousPosition = div.scrollTop;
+              console.log("prev height: " + (previousHeight));
+              console.log("prev pos: " + (previousPosition));
+              updateChatView();
+              console.log("curr height: " + (div.scrollHeight));
+              console.log("Scroll down by: " + (div.scrollHeight - previousHeight));
+              div.scrollTop = previousPosition + (div.scrollHeight - previousHeight);
+              scrollLock = false;
+            }
+          });
+        }
       }
 
       // Calculate time since message was sent
@@ -145,22 +218,22 @@ myApp.controller("ChatController", ["$scope", "$http",
         return dateString;
       };
 
+      // Scroll chat view to bottom 
       function scrollDown() {
-        //console.log("scrolling");
-        var div = document.getElementById("chatMessageDiv");
+        console.log("scroll completely down");
         div.scrollTop = div.scrollHeight - div.clientHeight;
       }
-    }]);
 
 /*********************************************************************/
 
-/* Side bar  Start */ 
-myApp.controller("classesController", function($scope, $rootScope) {
+/*-------------------------------------------------------------------*/
+/***************************** CLASSES BAR ***************************/
+/*-------------------------------------------------------------------*/
 
 /******************************* SETUP ******************************/
-    
+
     // Scope variables
-    $scope.my_class_ids = {};
+    $scope.my_class_ids = [];
     $scope.class_names = {}; // class_id : class names
     $scope.class_rooms = {}  // class_id : room_id
     $scope.rooms = {}        // room_id : room
@@ -180,16 +253,23 @@ myApp.controller("classesController", function($scope, $rootScope) {
       var room_name = (document.getElementById('room_name').value).toLowerCase();
       var is_lecture = false;
 
-      // TODO: check input
-
+      // if class_id is null do nothing
       if (class_id == null) {
         console.log("no class selected");
+        // TODO: error message
+        return;
+      }
+      // if room_name is empty do nothing
+      if (room_name.length == 1) {
+        console.log("room name too short")
+        // TODO: error message
         return;
       }
 
       // Close the modal
       closeModal("#modal-create-room", "#create-room");
 
+      // Send out addRoom request
       console.log("adding room with class_id: " + class_id + 
         ", room_name: " + room_name);
       var xhr = new XMLHttpRequest();
@@ -197,6 +277,7 @@ myApp.controller("classesController", function($scope, $rootScope) {
         room_name + "/" + is_lecture, true);
       xhr.send();
 
+      // Once room has been created
       xhr.onreadystatechange = function(e) {
         // room has been created
         if (xhr.readyState == 4 && xhr.status == 200) {
@@ -210,13 +291,13 @@ myApp.controller("classesController", function($scope, $rootScope) {
 
     // OnClick method that delegates to joinRoomCall and joinRoomChat
     // room_name is passed in when we create the room (room info not yet pulled)
-    $scope.joinRoom = function(room_id, class_id, room_name = null){
+    $scope.joinRoom = function(room_id, class_id, room_name = null) {
 
         // if we're already in this room, do nothing
         if (currRoomID == room_id) {
           return;
         }
-        
+
         // leave previous room
         leaveRoom();
 
@@ -226,10 +307,14 @@ myApp.controller("classesController", function($scope, $rootScope) {
         // delegate to call.js to join the room's call
         joinRoomCall(room_id);
 
+        // set scope variables
+        $scope.currRoomName = room_name? room_name : $scope.rooms[currRoomID].name;
+        $scope.currClassName = $scope.class_names[class_id] + " - ";
+        $scope.currClassID = class_id;
+
         // delegate to chat controller to join the room's chat
-        $rootScope.$broadcast("room_change");
-        $rootScope.currRoomName = room_name? room_name : $scope.rooms[currRoomID].name;
-        $rootScope.currClassName = $scope.class_names[class_id] + " - ";
+        //$scope.$broadcast("room_change");
+        joinRoomChat();
     };
 
 /*********************************************************************/
@@ -238,7 +323,7 @@ myApp.controller("classesController", function($scope, $rootScope) {
     // - gets all class_ids for user
     // - delegates to getClass
     function getClasses() {
-        console.log("Getting classes...")
+        console.log("Getting class ids...")
         var xhr = new XMLHttpRequest();
         xhr.open('GET', "/get_my_classes", true); // responds with class_ids
         xhr.send();
@@ -246,14 +331,19 @@ myApp.controller("classesController", function($scope, $rootScope) {
         xhr.onreadystatechange = function(e) {
             if (xhr.readyState == 4 && xhr.status == 200) {
                 var response = JSON.parse(xhr.responseText);
-                console.log(response.class_ids);
 
                 // Set this scope variable (used in create room)
-                $scope.my_class_ids = response.class_ids;
+                if (response.class_ids) {
+                  $scope.my_class_ids = response.class_ids;
+                }
+
+                $scope.my_class_ids.push("lounge_id");
+
+                console.log("Getting classes info...")
 
                 // Get more data
-                for (i = 0; i < response.class_ids.length; i++) {
-                    getClass(response.class_ids[i]);
+                for (i = 0; i < $scope.my_class_ids.length; i++) {
+                    getClass($scope.my_class_ids[i]);
                 }
             }
         }
@@ -263,7 +353,6 @@ myApp.controller("classesController", function($scope, $rootScope) {
     // - adds the class to the UI
     // - calls getRoom on all the rooms for specified class
     function getClass(class_id) {
-        console.log("Getting class with id " + class_id);
 
         // add listener for class rooms
         classRoomsDatabase.child(class_id).on("value", function(snapshot) {
@@ -280,15 +369,11 @@ myApp.controller("classesController", function($scope, $rootScope) {
         xhr.onreadystatechange = function(e) {
             if (xhr.readyState == 4 && xhr.status == 200) {
 
-                // store the class
+                // store the class name
                 var response = JSON.parse(xhr.responseText);
-                //update UI
-                $scope.class_names[class_id] = "# " + response.name.toLowerCase();
-                //class_names[class_id] = response.name;
+                $scope.class_names[class_id] = response.name.toLowerCase();
 
-                console.log("class name is: " + response.name);
-
-                //apply changes (needed)
+                // update UI
                 $scope.$apply();
             }
         }
@@ -297,8 +382,6 @@ myApp.controller("classesController", function($scope, $rootScope) {
     // - respond to change in a class's rooms
     // - calls removeRoom/getRoom accordingly
     function onClassRoomsChange(class_id, updated_rooms) {
-
-        console.log("rooms for class " + class_id + " are now " + updated_rooms);
 
         // get new rooms
         for (i = 0; i < updated_rooms.length; i++) {
@@ -310,7 +393,6 @@ myApp.controller("classesController", function($scope, $rootScope) {
 
     // finds the room's data and adds it to the list of rooms
     function getRoom(class_id, room_id) {
-        console.log("Getting room with id " + room_id);
 
         // add listener for room info
         roomsDatabase.child(room_id).once("value", function(snapshot) {
@@ -331,4 +413,16 @@ myApp.controller("classesController", function($scope, $rootScope) {
     }
 
 /*********************************************************************/
-});
+}]);
+
+//helper directive for scrolling listener
+myApp.directive("scroll", function ($window) {
+   return {
+      scope: {
+         scrollEvent: '&'
+      },
+      link : function(scope, element, attrs) {
+        $("#"+attrs.id).scroll(function($e) { scope.scrollEvent != null ?  scope.scrollEvent()($e) : null })
+      }
+   }
+})

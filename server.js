@@ -11,7 +11,7 @@ var express = require('express');
 var app = express();
 var socsjs = require('socsjs');
 
-// - Mongodb is the database that we will be using
+// - Mongodb is the database that we will be using for persistent data
 // - mongojs is a module that has some useful functions
 var mongojs = require('mongojs');
 var db = mongojs('mongodb://studyspace:raindropdroptop@ds033086.mlab.com:33086/studyspace', []);
@@ -121,6 +121,8 @@ app.post('/get_Id_From_Name', function(req, res) {
 	});	
 });
 
+/************************************** BLOCKING *************************************/
+
 app.post('/add_blocked_user', function(req, res) {
 
   db.blocked_users.find({user_id:req.signedCookies.user_id}, function(req, docs){
@@ -139,6 +141,8 @@ app.get('/get_blocked_users', function(req, res) {
     res.json(docs);
   });
 });
+/*************************************************************************************/
+/************************************** BUDDIES **************************************/
 
 app.post('/buddy_existing_user', function(req, res) {
 
@@ -177,6 +181,7 @@ app.post('/buddies_already', function(req, res) {
     console.log(docs);
 		res.json(docs);
 	});	
+
 });
 
 app.post('/send_buddy_request', function(req, res) {
@@ -233,6 +238,9 @@ app.delete('/remove_buddy/:id', function(req, res){
 	});
 });
 
+/*************************************************************************************/
+/******************************* TO BE REMOVED (MAYBE) *******************************/
+
 // forces the name property to be unique in user_classes collection
 //db.user_classes.createIndex({name: 1}, {unique:true});
 app.post('/user_classes', function(req, res) {
@@ -285,7 +293,7 @@ app.get('/scrape_classes', function(req, res) {
   }
 });
 
-
+/*************************************************************************************/
 /******************************** GET CLASSES & ROOMS ********************************/
 
 // return the class_ids of classes this user is enrolled in
@@ -323,18 +331,7 @@ app.get('/get_class/:class_id', function(req, res) {
 	});
 });
 
-// sets the class_ids for this user to the class_ids array passed in
-app.post('/enroll', function (req, res) {
-  var user_id = req.signedCookies.user_id;
-  var class_ids = req.body.class_ids;
-  console.log("enrolling user with id " + user_id + " in " + class_ids);
-  db.users.update({user_id: user_id},
-    {$set: {class_ids: class_ids}}, function (err, doc) {
-      res.send({success: doc != null});
-    });
-})
 /*************************************************************************************/
-
 /*************************************** ROOMS ***************************************/
 
 app.get('/add_room/:class_id/:room_name/:is_lecture', function(req, res) {
@@ -391,30 +388,8 @@ app.post("/send_room_message", function(req, res) {
   res.send({}); //close the http request
 });
 
-/*------------------------------------------------*/
-
-
-
-
-
-
-/* ACCOUNT LOGIN, SIGNUP, VERIFICATION ----------------------*/
-
-// - returns user with given email / password
-app.post('/accountlogin', function(req, res) {
-
-  var email = req.body.email;
-  var password = req.body.password;
-  console.log("get user with email " + email + " and pass " + password);
-  db.users.findOne({email: email, password: password}, function (err, doc) {
-    if (doc) {
-      res.cookie("user_id", doc.user_id, {signed: true, maxAge: COOKIE_TIME});
-      res.cookie("email", doc.email, {signed: true, maxAge: COOKIE_TIME});
-      res.cookie("name", doc.name, {signed: true, maxAge: COOKIE_TIME});
-    }
-    res.json(doc);
-  });
-});
+/*************************************************************************************/
+/********************************* SIGNUP AND LOGIN **********************************/
 
 /* POST data: New account info with {email, password}
  * Returns: {success} - whether or not it succeeded */
@@ -491,6 +466,37 @@ app.get("/accountverify/:id/:token", function(req, res) {
   }
 });
 
+// - returns user with given email / password
+app.post('/accountlogin', function(req, res) {
+
+  var email = req.body.email;
+  var password = req.body.password;
+  console.log("get user with email " + email + " and pass " + password);
+  db.users.findOne({email: email, password: password}, function (err, doc) {
+    if (doc) {
+      res.cookie("user_id", doc.user_id, {signed: true, maxAge: COOKIE_TIME});
+      res.cookie("email", doc.email, {signed: true, maxAge: COOKIE_TIME});
+      res.cookie("name", doc.name, {signed: true, maxAge: COOKIE_TIME});
+    }
+    res.json(doc);
+  });
+});
+
+
+/*************************************************************************************/
+/******************************** ACCOUNT MANAGEMENT *********************************/
+
+// sets the class_ids for this user to the class_ids array passed in
+app.post('/enroll', function (req, res) {
+  var user_id = req.signedCookies.user_id;
+  var class_ids = req.body.class_ids;
+  console.log("enrolling user with id " + user_id + " in " + class_ids);
+  db.users.update({user_id: user_id},
+    {$set: {class_ids: class_ids}}, function (err, doc) {
+      res.send({success: doc != null});
+    });
+})
+
 /* POST data: {email of account to reset password} - send password reset link to email
  * Returns: {success} - whether or not password reset link was sent */
 app.post("/sendforgotpassword", function(req, res) {
@@ -559,16 +565,7 @@ app.post("/resetpassword/:id/:resetToken", function(req, res) {
     sendVerifyError(res);
   }
 });
-
-/*------------------------------------------------------------------------*/
-
-
-
-
-
-
-
-
+/*************************************************************************************/
 
 /* Model -----------------------------------------------------------------*/
 
@@ -816,13 +813,3 @@ function checkLogin(_id, callback) {
 
 app.listen(process.env.PORT || 3000);
 console.log("Server running!");
-
-//addRoom("cse110", "ucsd_cse_110_1_r0", MAIN_HOST, false);
-/*addRoom("cse110", "CSE110 Trollmao", MAIN_HOST, false);
-addRoom("cse110", "CSE110 Trollmao2", MAIN_HOST, false);
-addRoom("cse110", "test room name", MAIN_HOST, false);*/
-//removeRoom("TEST_fLOXccNn2q");
-//joinRoom("ID1", "TEST_4yGGyVKzaM");
-//joinRoom("ID2", "TEST_bE4iOJGtke");
-//leaveRoom("ID1", "TEST_4yGGyVKzaM");
-//checkToDelete("TEST_bE4iOJGtke");

@@ -89,11 +89,6 @@ function autoCompleteController ($timeout, $q, $log, $http) {
 
     // populates the allClassesNameToID dictionary with all available classes
     function getAllClasses() {
-        /*var nameToID = {};
-        nameToID["Class Name 1"] = "class_id_1";        
-        nameToID["Class Name 2"] = "class_id_2";
-        nameToID["Class Name 3"] = "class_id_3";
-        return nameToID;*/
 
         console.log("Getting all classes...")
         var xhr = new XMLHttpRequest();
@@ -145,7 +140,6 @@ function autoCompleteController ($timeout, $q, $log, $http) {
     }
 
     function querySearch (query) {
-        //return query ? Object.keys(allClassesNameToID).filter(createFilterFor(query)) : Object.keys(allClassesNameToID);
         return query ? Object.keys(allClassesNameToID).filter(createFilterFor(query)) : [];
     }
 

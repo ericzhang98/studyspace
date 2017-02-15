@@ -71,7 +71,7 @@
              class="panel-group" id="menu-classes">
           <!--first class in drop down-->
           <div ng-repeat="(class_id, class_name) in class_names" class="panel" 
-                                                                 data-toggle="collapse" data-parent="#menu-classes" href="#{{class_id}}">
+               data-toggle="collapse" data-parent="#menu-classes" href="#{{class_id}}">
             <div class="panel-heading">
               <h4 class="panel-title">
                 <span>{{class_name}}</span>
@@ -102,10 +102,10 @@
           <li class="dropdown">
             <a class="dropdown-toggle" data-toggle="dropdown" href="#">Rooms <span class="caret"></span></a>
             <ul class="dropdown-menu" id="room-list">
-              <li><a href="#">Room 1</a></li>
-              <li><a href="#">Room 2</a></li>
-              <li><a href="#">Room 3</a></li>
-            </ul>  
+              <li class="list-group-item" ng-repeat="room_id in class_rooms[currClassID]" ng-click="joinRoom(room_id, currClassID, null)">
+                <span>{{rooms[room_id].name}}</span>
+              </li>
+            </ul>
           </li>
         </ul>
       </div>
@@ -114,13 +114,13 @@
     <!-- MESSAGE WRAPPER -->
     <div class="message-pane" id="message-wrapper" ng-controller="ChatController"> 
       <!-- MESSAGE PANE -->
-      <div class="container-fluid" id="chatMessageDiv">
+      <div class="container-fluid" id="chatMessageDiv" scroll scroll-event="scrollevent">
         <div class="message" ng-repeat="chatMessage in chatMessageList">
           <div id="message-header">
             <span id="username">{{chatMessage.name}}</span>
             <span id="dateTime">{{timeAgo(chatMessage)}}</span>
           </div>
-          <p id="message-body">{{chatMessage.text}}</p>
+          <p id="message-body" style="white-space:pre-warp;">{{chatMessage.text}}</p>
         </div>
       </div> <!-- END MESSAGE PANE -->
 
@@ -134,8 +134,8 @@
               </button>
             </span>
             <input type="text" class="form-control" id="chatInputBox" 
-                                                    ng-model="chatInput" ng-keydown="keypress($event)" 
-                                                                         placeholder="Type a message..." autocomplete="off">
+                   ng-model="chatInput" ng-keydown="keypress($event)" 
+                   placeholder="Type a message..." autocomplete="off">
             <span class="input-group-btn">
               <button id="btn-send" class="btn btn-default" ng-click="sendChatMessage(chatInput)">
                 SEND
@@ -172,7 +172,7 @@
                 <label for="class">Class</label><br/>
                 <div id="class_id" class="btn-group" data-toggle="buttons">
                   <div ng-repeat="class_id in my_class_ids" class="panel">
-                    <label class="btn btn-primary btn-xs" style="margin-right:5px">
+                    <label ng-if="class_id != 'lounge_id'" class="btn btn-primary btn-xs" style="margin-right:5px">
                       <input type="radio" name="class_id_radio" autocomplete="off" value="{{class_id}}">{{class_names[class_id]}}
                     </label>
                   </div>
