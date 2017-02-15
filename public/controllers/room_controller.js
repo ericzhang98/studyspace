@@ -180,7 +180,16 @@ myApp.controller("classesController", function($scope, $rootScope) {
       var class_id = $('#class_id input:radio:checked').val();
       var room_name = document.getElementById('room_name').value;
       var is_lecture = false;
+
       // TODO: check input
+
+      if (class_id == null) {
+        console.log("no class selected");
+        return;
+      }
+
+      // Close the modal
+      closeModal("#modal-create-room", "#create-room");
 
       console.log("adding room with class_id: " + class_id + 
         ", room_name: " + room_name);
@@ -218,7 +227,7 @@ myApp.controller("classesController", function($scope, $rootScope) {
         joinRoomCall(room_id);
 
         // delegate to chat controller to join the room's chat
-        $rootScope.$broadcast("room_change", room_name != null ? room_name : $scope.rooms[currRoomID].name);
+        $rootScope.$broadcast("room_change", room_name? room_name : $scope.rooms[currRoomID].name);
     };
 
 /*********************************************************************/

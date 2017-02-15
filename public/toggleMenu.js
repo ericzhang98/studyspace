@@ -11,11 +11,7 @@ $(document).ready(function() {
     }, 100);
   });
   $("#close-login").click(function() {
-    $("#modal-login").fadeOut(100);
-    setTimeout(function() {
-      $("#login").removeClass("fadeInBack");
-      $("#login").addClass("hide");
-    }, 100);
+    closeModal("#modal-login", "#login");
   });
   
   /* Create Class Modal */
@@ -27,11 +23,15 @@ $(document).ready(function() {
     }, 100);
   });
   $("#close-create-room").click(function() {
-    $("#modal-create-room").fadeOut(100);
-    setTimeout(function() {
-      $("#create-room").removeClass("fadeInBack");
-      $("#create-room").addClass("hide");
-    }, 100);
+    closeModal("#modal-create-room", "#create-room");
   });
   
 });
+
+function closeModal(modal_name, content_name) {
+  $(modal_name).fadeOut(100);
+  setTimeout(function() {
+    $(content_name).removeClass("fadeInBack");
+    $(content_name).addClass("hide");
+  }, 100);
+}
