@@ -177,6 +177,7 @@ app.post('/buddies_already', function(req, res) {
     console.log(docs);
 		res.json(docs);
 	});	
+
 });
 
 app.post('/send_buddy_request', function(req, res) {

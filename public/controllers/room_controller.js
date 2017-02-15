@@ -160,7 +160,7 @@ myApp.controller("classesController", function($scope, $rootScope) {
 /******************************* SETUP ******************************/
     
     // Scope variables
-    $scope.my_class_ids = {};
+    $scope.my_class_ids = [];
     $scope.class_names = {}; // class_id : class names
     $scope.class_rooms = {}  // class_id : room_id
     $scope.rooms = {}        // room_id : room
@@ -180,16 +180,23 @@ myApp.controller("classesController", function($scope, $rootScope) {
       var room_name = (document.getElementById('room_name').value).toLowerCase();
       var is_lecture = false;
 
-      // TODO: check input
-
+      // if class_id is null do nothing
       if (class_id == null) {
         console.log("no class selected");
+        // TODO: error message
+        return;
+      }
+      // if room_name is empty do nothing
+      if (room_name.length == 1) {
+        console.log("room name too short")
+        // TODO: error message
         return;
       }
 
       // Close the modal
       closeModal("#modal-create-room", "#create-room");
 
+      // Send out addRoom request
       console.log("adding room with class_id: " + class_id + 
         ", room_name: " + room_name);
       var xhr = new XMLHttpRequest();
@@ -197,6 +204,7 @@ myApp.controller("classesController", function($scope, $rootScope) {
         room_name + "/" + is_lecture, true);
       xhr.send();
 
+      // Once room has been created
       xhr.onreadystatechange = function(e) {
         // room has been created
         if (xhr.readyState == 4 && xhr.status == 200) {
@@ -210,13 +218,13 @@ myApp.controller("classesController", function($scope, $rootScope) {
 
     // OnClick method that delegates to joinRoomCall and joinRoomChat
     // room_name is passed in when we create the room (room info not yet pulled)
-    $scope.joinRoom = function(room_id, class_id, room_name = null){
+    $scope.joinRoom = function(room_id, class_id, room_name = null) {
 
         // if we're already in this room, do nothing
         if (currRoomID == room_id) {
           return;
         }
-        
+
         // leave previous room
         leaveRoom();
 
@@ -249,11 +257,15 @@ myApp.controller("classesController", function($scope, $rootScope) {
                 console.log(response.class_ids);
 
                 // Set this scope variable (used in create room)
-                $scope.my_class_ids = response.class_ids;
+                if (response.class_ids) {
+                  $scope.my_class_ids = response.class_ids;
+                }
+                
+                $scope.my_class_ids.push("lounge_id");
 
                 // Get more data
-                for (i = 0; i < response.class_ids.length; i++) {
-                    getClass(response.class_ids[i]);
+                for (i = 0; i < $scope.my_class_ids.length; i++) {
+                    getClass($scope.my_class_ids[i]);
                 }
             }
         }
