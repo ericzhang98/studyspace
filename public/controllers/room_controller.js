@@ -114,25 +114,20 @@ myApp.controller("RoomController", ["$scope", "$http",
       // Combine messages sent by the same user within
       // CONCAT_TIME seconds of one another;
       function concatenateMessages() {
-
         for (var i = 0; i + 1 < chatMessageList.length;) {
-
           currMessage = chatMessageList[i];
           nextMessage = chatMessageList[i+1];
-
           // if two messages were sent by the same user within CONCAT_TIME
           if (currMessage.email == nextMessage.email &&
             nextMessage.timeSent < currMessage.timeSent + CONCAT_TIME) {
-
             // concatenate the messages
             currMessage.text += "\n" + nextMessage.text;
-
             // remove the second message
             chatMessageList.splice(i+1, 1);
           }
-
-          // otherwise, increment i
-          i++;
+          else {
+            i++;
+          }
         }
       }
 
@@ -177,12 +172,10 @@ myApp.controller("RoomController", ["$scope", "$http",
             if (snapshotValue) {
               lastKey = Object.keys(snapshotValue)[0];
               console.log("pulled more messages + 1: " + (Object.keys(snapshotValue).length));
-              //var messageArray = Object.values(snapshotValueObject); apparently
-              //not supported by browser?!?!
+              //var messageArray = Object.values(snapshotValueObject)
               var moreMessagesArray = Object.keys(snapshotValue).map(function(key) {
                     return snapshotValue[key];
               });
-              //var firstPart = messageArray.splice(0, messagesToAdd);
               moreMessagesArray.pop(); //remove extra messsage b/c lastKey inclusive
               chatMessageList = moreMessagesArray.concat(chatMessageList); //combine with og msgs
 
