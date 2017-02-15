@@ -37,7 +37,7 @@
     <title>Main Room</title>
   </head>
 
-  <body>
+  <body ng-controller="MainController">
     <!-- Classes Sidebar -->
     <aside id="sidebar-classes" role="complementary">
       <!-- User Quick Info -->
@@ -67,8 +67,7 @@
             <span class="glyphicon glyphicon-plus"></span>
           </div>
         </button>
-        <div ng-controller="classesController" 
-             class="panel-group" id="menu-classes">
+        <div class="panel-group" id="menu-classes">
           <!--first class in drop down-->
           <div ng-repeat="(class_id, class_name) in class_names" class="panel" 
                data-toggle="collapse" data-parent="#menu-classes" href="#{{class_id}}">
@@ -112,7 +111,7 @@
     </nav>
 
     <!-- MESSAGE WRAPPER -->
-    <div class="message-pane" id="message-wrapper" ng-controller="ChatController"> 
+    <div class="message-pane" id="message-wrapper"> 
       <!-- MESSAGE PANE -->
       <div class="container-fluid" id="chatMessageDiv" scroll scroll-event="scrollevent">
         <div class="message" ng-repeat="chatMessage in chatMessageList">
@@ -164,7 +163,7 @@
             </button>
             <h1 class="title">Create a room</h1>
           </div>
-          <div class="main form-container" ng-controller="classesController">
+          <div class="main form-container">
 
             <!-- Class selection -->
             <form>
@@ -201,7 +200,7 @@
   <script src="firebase_setup.js"></script>
 
   <!-- Angular scripts -->
-  <script src="controllers/room_controller.js"></script>
+  <script src="controllers/main_controller.js"></script>
 
   <!-- Other -->
   <script src="cookies.js"></script>
