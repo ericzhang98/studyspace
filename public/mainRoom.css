@@ -4,6 +4,7 @@
 html, body {
   margin: 0;
   height: 100%;
+  overflow: hidden;
 }
 
 .container-fluid {
@@ -13,36 +14,52 @@ html, body {
   height: 100%;
 }
 
-/*  Main Room Text CSS */
+/* Chat Room */
+#chat-room {
+  display: inline-block;
+  width: calc(100% - 240px);
+  height: 100%;
+}
 
-#nav-room {
-    margin-bottom: 0;
+#navbar-room {
+  margin-bottom: 0;
+  border: none;
+  border-radius: 0;
+  height: 5rem;
 }
 
 #message-wrapper{
-  background-color: white;
-  height: 100%;
+  position: relative;
+  height: calc(100% - 5rem);
 }
 
 #chatMessageDiv {
   background-color: black;
-  height: calc(100% - 85px);
+  height: 100%;
   overflow-x: hidden;
   border-style: hidden;
   word-wrap: break-word;
+  padding-top: 3rem;
+  padding-bottom: 7.5rem;
+  padding-left: 4.5rem;
+  padding-right: 4.5rem;
+}
+
+#chatMessageDiv .message {
+  padding-left: 0;
+  list-style: none;
 }
 
 #username {
    display: inline-block;
    margin-right: 10px;
    color: white;
-   font-family: , sans-serif;
    font-size: 1.2em;
 }
 
 #dateTime {
    display: inline-block;
-   font-size: .8em;
+   font-size: 0.8em;
    color: gainsboro;
 }
 
@@ -50,10 +67,55 @@ html, body {
    color: powderblue;
 }
 
-#chatInputBox {
-  font-family:  sans-serif;
+#wrapper-message-bar {
+  position: absolute;
+  background: white;
+  bottom: 2rem;
+  left: 3rem;
+  right: 3rem;
+  height: 5rem;
+  border-radius: 0.5rem;
 }
 
+#wrapper-message-bar .form-message {
+  height: inherit;
+}
+
+#message-bar {
+  height: inherit;
+}
+
+#message-bar .btn {
+  height: 5rem;
+  border: solid 2px #eeeeee;
+}
+
+#btn-mute {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 2rem;
+  width: 5rem;
+}
+
+#btn-send {
+  font-size: 1.5rem;
+  font-weight: 500;
+}
+
+#btn-mute .glyphicon {
+  margin-right: -0.4rem;
+}
+
+#message-bar .form-control {
+  font-size: 1.5rem;
+  border-bottom: none;
+  height: 100%;
+  padding-left: 1.5rem;
+  padding-right: 1.5rem;
+  border-top: solid 2px #eeeeee;
+  border-bottom: solid 2px #eeeeee;
+}
 
 /* End Main Room Text CSS */
 
@@ -163,12 +225,6 @@ html, body {
 
 #menu-classes .panel>.panel-collapse>.list-group .list-group-item:hover {
   background-color: #5783b6;
-}
-
-/* Chat Room */
-#chat-room {
-  display: inline-block;
-  width: calc(100% - 240px);
 }
 
 /* Classmates Sidebar */

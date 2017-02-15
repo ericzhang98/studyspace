@@ -1,9 +1,9 @@
 <!--
-_____     ______     __   __     __  __
+ _____     ______     __   __     __  __
 /\  __-.  /\  __ \   /\ "-.\ \   /\ \/ /
 \ \ \/\ \ \ \  __ \  \ \ \-.  \  \ \  _"-.
-\ \____-  \ \_\ \_\  \ \_\\"\_\  \ \_\ \_\
-\/____/   \/_/\/_/   \/_/ \/_/   \/_/\/_/
+ \ \____-  \ \_\ \_\  \ \_\\"\_\  \ \_\ \_\
+  \/____/   \/_/\/_/   \/_/ \/_/   \/_/\/_/
 
 -->
 
@@ -63,7 +63,7 @@ _____     ______     __   __     __  __
         <!-- Classes -->
         <div id="container-menu-classes">
           <button id="btn-create-room" class="btn container-title">
-            <h5 class="title">Classes</h5>
+            <h5 class="title">Rooms</h5>
             <div id="btn-add">
               <span class="glyphicon glyphicon-plus"></span>
             </div>
@@ -91,69 +91,60 @@ _____     ______     __   __     __  __
       </aside> <!--end left column-->
 
       <!-- Main Content -->
-      <main id="chat-room" role="main" style="background-color:blue">
+      <main id="chat-room" role="main">
 
-        <!-- Message Wrapper -->
-        <div class="message-pane" id="message-wrapper"
-               ng-controller="ChatController"> 
-
-          <!--NAVBAR-->
-          <nav id="nav-room" class="navbar navbar-inverse navbar-static-top span-8">
-            <div class="container-fluid">
-              <div class="navbar-header">
-                <a class="navbar-brand">CSE 110</a>
-              </div>
-              <ul class="nav navbar-nav navbar-right">
-                <li class="dropdown">
-                  <a class="dropdown-toggle" data-toggle="dropdown" href="#">Rooms <span class="caret"></span></a>
-                  <ul class="dropdown-menu" id="room-list">
-                    <li><a href="#">Room 1</a></li>
-                    <li><a href="#">Room 2</a></li>
-                    <li><a href="#">Room 3</a></li>
-                  </ul>  
-                </li>
-              </ul>
+        <!--NAVBAR-->
+        <nav id="navbar-room" class="navbar">
+          <div class="container-fluid">
+            <div class="navbar-header">
+              <a class="navbar-brand">CSE 110</a>
             </div>
-          </nav>
+            <ul class="nav navbar-nav navbar-right">
+              <li class="dropdown">
+                <a class="dropdown-toggle" data-toggle="dropdown" href="#">Rooms <span class="caret"></span></a>
+                <ul class="dropdown-menu" id="room-list">
+                  <li><a href="#">Room 1</a></li>
+                  <li><a href="#">Room 2</a></li>
+                  <li><a href="#">Room 3</a></li>
+                </ul>  
+              </li>
+            </ul>
+          </div>
+        </nav>
+
+        <!-- MESSAGE WRAPPER -->
+        <div class="message-pane" id="message-wrapper" ng-controller="ChatController"> 
 
           <!-- MESSAGE PANE -->
           <div class="container-fluid" id="chatMessageDiv">
-
-            <ul style="list-style-type:none" ng-repeat="chatMessage in chatMessageList">
+            <ul class="message" ng-repeat="chatMessage in chatMessageList">
               <li id="username">{{chatMessage.name}}</li>
               <li id="dateTime">{{timeAgo(chatMessage)}}</li>
               <li id="message">{{chatMessage.text}}</li>
             </ul>
+          </div> <!-- END MESSAGE PANE -->
 
-          </div>
-
-          <!-- MESSAGE BAR -->
-          <footer class="footer navbar-static-bottom col-xs-13 col-sm-13 col-md-13 col-lg-13">
-            <form>
+          <!-- MESSAGE INPUT -->
+          <footer id="wrapper-message-bar">
+            <form class="form-message">
               <div class="input-group" id="message-bar">
-
-                <div class="input-group-btn">
-                  <button class="btn btn-default" type="submit">
-                    <i class="glyphicon glyphicon-volume-up"></i>
+                <span class="input-group-btn">
+                  <button id="btn-mute" class="btn btn-default" type="submit">
+                    <span class="glyphicon glyphicon-volume-up"></span>
                   </button>
-                </div>
-
+                </span>
                 <input type="text" class="form-control" id="chatInputBox" 
                        ng-model="chatInput" ng-keydown="keypress($event)" 
                        placeholder="Type a message..." autocomplete="off">
-
-                <div class="input-group-btn">
-                  <button class="btn btn-primary" ng-click="sendChatMessage(chatInput)">
+                <span class="input-group-btn">
+                  <button id="btn-send" class="btn btn-default" ng-click="sendChatMessage(chatInput)">
                     SEND
                   </button>
-                </div>
-
+                </span>
               </div>
             </form>
-          </footer>
+          </footer> <!-- END MESSAGE INPUT -->
         </div>
-
-
       </main>   
 
       <!-- Classmates Sidebar -->
