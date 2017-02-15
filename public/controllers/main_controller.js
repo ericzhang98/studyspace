@@ -8,7 +8,7 @@ var CONCAT_TIME = 60; // 1 minute
 
 /* Chat controller -------------------------------------*/
 
-myApp.controller("RoomController", ["$scope", "$http", 
+myApp.controller("MainController", ["$scope", "$http", 
     function($scope, $http) {
       console.log("Hell yeah");
 
