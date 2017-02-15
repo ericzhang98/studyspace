@@ -117,7 +117,8 @@ _____     ______     __   __     __  __
           </nav>
 
           <!-- MESSAGE PANE -->
-          <div class="container-fluid" id="chatMessageDiv">
+          <div class="container-fluid" id="chatMessageDiv" scroll
+            scroll-event="scrollevent">
 
             <ul style="list-style-type:none" ng-repeat="chatMessage in chatMessageList">
               <li id="username">{{chatMessage.name}}</li>
