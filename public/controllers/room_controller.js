@@ -1,7 +1,10 @@
 //Room app -- firebase initialized already
 var chatDatabase = null;
 var myApp = angular.module("roomApp", []);
+
+// list of message objects with: email, name, roomID, text, timeSent
 var chatMessageList = [];
+var CONCAT_TIME = 60; // 1 minute
 
 /* Chat controller -------------------------------------*/
 
@@ -84,7 +87,7 @@ myApp.controller("ChatController", ["$scope", "$http",
       
       // Set up listener for chat messages
       function startChatMessages() {
-        chatDatabase.limitToLast(20).on("child_added", function(snapshot) {
+        chatDatabase.limitToLast(50).on("child_added", function(snapshot) {
           var snapshotValue = snapshot.val();
           if (lastKey == null) {
             lastKey = snapshot.key;
@@ -104,8 +107,34 @@ myApp.controller("ChatController", ["$scope", "$http",
 
       // Update the chat view display
       function updateChatView() {
+        concatenateMessages();
         $scope.chatMessageList = chatMessageList;
         safeApply();
+      }
+
+      // Combine messages sent by the same user within
+      // CONCAT_TIME seconds of one another;
+      function concatenateMessages() {
+
+        for (var i = 0; i + 1 < chatMessageList.length;) {
+
+          currMessage = chatMessageList[i];
+          nextMessage = chatMessageList[i+1];
+
+          // if two messages were sent by the same user within CONCAT_TIME
+          if (currMessage.email == nextMessage.email &&
+            nextMessage.timeSent < currMessage.timeSent + CONCAT_TIME) {
+
+            // concatenate the messages
+            currMessage.text += "\n" + nextMessage.text;
+
+            // remove the second message
+            chatMessageList.splice(i+1, 1);
+          }
+
+          // otherwise, increment i
+          i++;
+        }
       }
 
       // Safely apply UI changes
@@ -161,7 +190,10 @@ myApp.controller("ChatController", ["$scope", "$http",
               //keep track of height diff, update view, and then scroll by diff
               var previousHeight = div.scrollHeight;
               var previousPosition = div.scrollTop;
+              console.log("prev height: " + (previousHeight));
+              console.log("prev pos: " + (previousPosition));
               updateChatView();
+              console.log("curr height: " + (div.scrollHeight));
               console.log("Scroll down by: " + (div.scrollHeight - previousHeight));
               div.scrollTop = previousPosition + (div.scrollHeight - previousHeight);
               scrollLock = false;
@@ -203,12 +235,13 @@ myApp.controller("ChatController", ["$scope", "$http",
 
 /*********************************************************************/
 
-/* Side bar  Start */
+/* Side bar  Start */ 
 myApp.controller("classesController", function($scope, $rootScope) {
 
 /******************************* SETUP ******************************/
     
     // Scope variables
+    $scope.my_class_ids = [];
     $scope.class_names = {}; // class_id : class names
     $scope.class_rooms = {}  // class_id : room_id
     $scope.rooms = {}        // room_id : room
@@ -217,15 +250,62 @@ myApp.controller("classesController", function($scope, $rootScope) {
     getClasses();
 
 /*********************************************************************/
-/*************************** JOINING A ROOM **************************/
+/********************** CREATING AND JOINING ROOMS *******************/
+
+    // Reads input from create-room-modal, creates room, and joins room
+    $scope.addRoom = function() {
+
+      // Grab modal values
+      var class_id = $('#class_id input:radio:checked').val();
+      // style choice: all room names be lower case only
+      var room_name = (document.getElementById('room_name').value).toLowerCase();
+      var is_lecture = false;
+
+      // if class_id is null do nothing
+      if (class_id == null) {
+        console.log("no class selected");
+        // TODO: error message
+        return;
+      }
+      // if room_name is empty do nothing
+      if (room_name.length == 1) {
+        console.log("room name too short")
+        // TODO: error message
+        return;
+      }
+
+      // Close the modal
+      closeModal("#modal-create-room", "#create-room");
+
+      // Send out addRoom request
+      console.log("adding room with class_id: " + class_id + 
+        ", room_name: " + room_name);
+      var xhr = new XMLHttpRequest();
+      xhr.open('GET', "/add_room/" + class_id + "/" + 
+        room_name + "/" + is_lecture, true);
+      xhr.send();
+
+      // Once room has been created
+      xhr.onreadystatechange = function(e) {
+        // room has been created
+        if (xhr.readyState == 4 && xhr.status == 200) {
+          var response = JSON.parse(xhr.responseText);
+
+          // join the room
+          $scope.joinRoom(response.room_id, class_id, room_name);
+        }
+      }
+    }
 
     // OnClick method that delegates to joinRoomCall and joinRoomChat
-    $scope.joinRoom = function(room_id){
+    // room_name is passed in when we create the room (room info not yet pulled)
+    $scope.joinRoom = function(room_id, class_id, room_name = null) {
 
         // if we're already in this room, do nothing
         if (currRoomID == room_id) {
           return;
         }
+
         // leave previous room
         leaveRoom();
 
@@ -235,6 +315,11 @@ myApp.controller("classesController", function($scope, $rootScope) {
         // delegate to call.js to join the room's call
         joinRoomCall(room_id);
 
+        // set scope variables
+        $rootScope.currRoomName = room_name? room_name : $scope.rooms[currRoomID].name;
+        $rootScope.currClassName = $scope.class_names[class_id] + " - ";
+        $rootScope.currClassID = class_id;
+        
         // delegate to chat controller to join the room's chat
         $rootScope.$broadcast("room_change");
     };
@@ -253,9 +338,17 @@ myApp.controller("classesController", function($scope, $rootScope) {
         xhr.onreadystatechange = function(e) {
             if (xhr.readyState == 4 && xhr.status == 200) {
                 var response = JSON.parse(xhr.responseText);
-                console.log(response.class_ids);
-                for (i = 0; i < response.class_ids.length; i++) {
-                    getClass(response.class_ids[i]);
+
+                // Set this scope variable (used in create room)
+                if (response.class_ids) {
+                  $scope.my_class_ids = response.class_ids;
+                }
+
+                $scope.my_class_ids.push("lounge_id");
+
+                // Get more data
+                for (i = 0; i < $scope.my_class_ids.length; i++) {
+                    getClass($scope.my_class_ids[i]);
                 }
             }
         }
@@ -265,7 +358,6 @@ myApp.controller("classesController", function($scope, $rootScope) {
     // - adds the class to the UI
     // - calls getRoom on all the rooms for specified class
     function getClass(class_id) {
-        console.log("Getting class with id " + class_id);
 
         // add listener for class rooms
         classRoomsDatabase.child(class_id).on("value", function(snapshot) {
@@ -285,10 +377,8 @@ myApp.controller("classesController", function($scope, $rootScope) {
                 // store the class
                 var response = JSON.parse(xhr.responseText);
                 //update UI
-                $scope.class_names[class_id] = response.name;
+                $scope.class_names[class_id] = "# " + response.name.toLowerCase();
                 //class_names[class_id] = response.name;
-
-                console.log("class name is: " + response.name);
 
                 //apply changes (needed)
                 $scope.$apply();
@@ -300,7 +390,6 @@ myApp.controller("classesController", function($scope, $rootScope) {
     // - calls removeRoom/getRoom accordingly
     function onClassRoomsChange(class_id, updated_rooms) {
 
-        console.log("rooms for class " + class_id + " are now " + updated_rooms);
 
         // get new rooms
         for (i = 0; i < updated_rooms.length; i++) {
@@ -312,7 +401,6 @@ myApp.controller("classesController", function($scope, $rootScope) {
 
     // finds the room's data and adds it to the list of rooms
     function getRoom(class_id, room_id) {
-        console.log("Getting room with id " + room_id);
 
         // add listener for room info
         roomsDatabase.child(room_id).once("value", function(snapshot) {

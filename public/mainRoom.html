@@ -1,9 +1,9 @@
 <!--
-_____     ______     __   __     __  __
+ _____     ______     __   __     __  __
 /\  __-.  /\  __ \   /\ "-.\ \   /\ \/ /
 \ \ \/\ \ \ \  __ \  \ \ \-.  \  \ \  _"-.
-\ \____-  \ \_\ \_\  \ \_\\"\_\  \ \_\ \_\
-\/____/   \/_/\/_/   \/_/ \/_/   \/_/\/_/
+ \ \____-  \ \_\ \_\  \ \_\\"\_\  \ \_\ \_\
+  \/____/   \/_/\/_/   \/_/ \/_/   \/_/\/_/
 
 -->
 
@@ -63,7 +63,7 @@ _____     ______     __   __     __  __
         <!-- Classes -->
         <div id="container-menu-classes">
           <button id="btn-create-room" class="btn container-title">
-            <h5 class="title">Classes</h5>
+            <h5 class="title">Rooms</h5>
             <div id="btn-add">
               <span class="glyphicon glyphicon-plus"></span>
             </div>
@@ -71,16 +71,16 @@ _____     ______     __   __     __  __
           <div ng-controller="classesController" 
                class="panel-group" id="menu-classes">
             <!--first class in drop down-->
-            <div ng-repeat="(id, name) in class_names" class="panel" 
-                 data-toggle="collapse" data-parent="#menu-classes" href="#{{id}}">
+            <div ng-repeat="(class_id, class_name) in class_names" class="panel" 
+                 data-toggle="collapse" data-parent="#menu-classes" href="#{{class_id}}">
               <div class="panel-heading">
                 <h4 class="panel-title">
-                  <span>{{name}}</span>
+                  <span>{{class_name}}</span>
                 </h4>
               </div>
-              <div id="{{id}}" class="panel-collapse collapse">
+              <div id="{{class_id}}" class="panel-collapse collapse">
                 <ul class="list-group">
-                  <li class="list-group-item" ng-repeat="room_id in class_rooms[id]" ng-click="joinRoom(room_id)">
+                  <li class="list-group-item" ng-repeat="room_id in class_rooms[class_id]" ng-click="joinRoom(room_id, class_id, null)">
                     <span class="room-name">{{rooms[room_id].name}}</span> 
                   </li>
                 </ul>
@@ -91,70 +91,60 @@ _____     ______     __   __     __  __
       </aside> <!--end left column-->
 
       <!-- Main Content -->
-      <main id="chat-room" role="main" style="background-color:blue">
+      <main id="chat-room" role="main">
 
-        <!-- Message Wrapper -->
-        <div class="message-pane" id="message-wrapper"
-               ng-controller="ChatController"> 
-
-          <!--NAVBAR-->
-          <nav id="nav-room" class="navbar navbar-inverse navbar-static-top span-8">
-            <div class="container-fluid">
-              <div class="navbar-header">
-                <a class="navbar-brand">CSE 110</a>
-              </div>
-              <ul class="nav navbar-nav navbar-right">
-                <li class="dropdown">
-                  <a class="dropdown-toggle" data-toggle="dropdown" href="#">Rooms <span class="caret"></span></a>
-                  <ul class="dropdown-menu" id="room-list">
-                    <li><a href="#">Room 1</a></li>
-                    <li><a href="#">Room 2</a></li>
-                    <li><a href="#">Room 3</a></li>
-                  </ul>  
-                </li>
-              </ul>
+        <!--NAVBAR-->
+        <nav id="navbar-room" class="navbar" ng-controller="classesController">
+          <div class="container-fluid">
+            <div class="navbar-header">
+              <a class="navbar-brand">{{currClassName}}{{currRoomName}}</a>
             </div>
-          </nav>
+            <ul class="nav navbar-nav navbar-right">
+              <li class="dropdown">
+                <a class="dropdown-toggle" data-toggle="dropdown" href="#">Rooms <span class="caret"></span></a>
+                <ul class="dropdown-menu" id="room-list">
+                  <li class="list-group-item" ng-repeat="room_id in class_rooms[currClassID]" ng-click="joinRoom(room_id, currClassID, null)">
+                    <span>{{rooms[room_id].name}}</span>
+                  </li>
+                </ul>
+              </li>
+            </ul>
+          </div>
+        </nav>
 
+        <!-- MESSAGE WRAPPER -->
+        <div class="message-pane" id="message-wrapper" ng-controller="ChatController"> 
           <!-- MESSAGE PANE -->
           <div class="container-fluid" id="chatMessageDiv" scroll
             scroll-event="scrollevent">
-
-            <ul style="list-style-type:none" ng-repeat="chatMessage in chatMessageList">
+            <ul class="message" ng-repeat="chatMessage in chatMessageList">
               <li id="username">{{chatMessage.name}}</li>
               <li id="dateTime">{{timeAgo(chatMessage)}}</li>
-              <li id="message">{{chatMessage.text}}</li>
+              <li id="message" style="white-space:pre-wrap;">{{chatMessage.text}}</li>
             </ul>
+          </div> <!-- END MESSAGE PANE -->
 
-          </div>
-
-          <!-- MESSAGE BAR -->
-          <footer class="footer navbar-static-bottom col-xs-13 col-sm-13 col-md-13 col-lg-13">
-            <form>
+          <!-- MESSAGE INPUT -->
+          <footer id="wrapper-message-bar">
+            <form class="form-message">
               <div class="input-group" id="message-bar">
-
-                <div class="input-group-btn">
-                  <button class="btn btn-default" type="submit">
-                    <i class="glyphicon glyphicon-volume-up"></i>
+                <span class="input-group-btn">
+                  <button id="btn-mute" class="btn btn-default" type="submit">
+                    <span class="glyphicon glyphicon-volume-up"></span>
                   </button>
-                </div>
-
+                </span>
                 <input type="text" class="form-control" id="chatInputBox" 
                        ng-model="chatInput" ng-keydown="keypress($event)" 
                        placeholder="Type a message..." autocomplete="off">
-
-                <div class="input-group-btn">
-                  <button class="btn btn-primary" ng-click="sendChatMessage(chatInput)">
+                <span class="input-group-btn">
+                  <button id="btn-send" class="btn btn-default" ng-click="sendChatMessage(chatInput)">
                     SEND
                   </button>
-                </div>
-
+                </span>
               </div>
             </form>
-          </footer>
+          </footer> <!-- END MESSAGE INPUT -->
         </div>
-
-
       </main>   
 
       <!-- Classmates Sidebar -->
@@ -176,19 +166,18 @@ _____     ______     __   __     __  __
                 <div class="title-container text-center"> 
                   <h1 class="title">Create a room</h1>
                 </div>
-                <div class="form-container">
+                <div class="form-container" ng-controller="classesController">
 
                   <!-- Class selection -->
                   <form>
                     <div class="form-group">
                       <label for="class">Class</label><br/>
                       <div id="class_id" class="btn-group" data-toggle="buttons">
-                        <label class="btn btn-primary btn-xs" style="margin-right:5px">
-                          <input type="radio" name="class_id_radio" autocomplete="off" value="class_id_1"> Class Name 1</label>
-                        <label class="btn btn-primary btn-xs" style="margin-right:5px">
-                          <input type="radio" name="class_id_radio" autocomplete="off" value="class_id_2"> Class Name 2</label>
-                        <label class="btn btn-primary btn-xs" style="margin-right:5px">
-                          <input type="radio" name="class_id_radio" autocomplete="off" value="class_id_3"> Class Name 3</label>
+                        <div ng-repeat="class_id in my_class_ids" class="panel">
+                          <label ng-if="class_id != 'lounge_id'" class="btn btn-primary btn-xs" style="margin-right:5px">
+                            <input type="radio" name="class_id_radio" autocomplete="off" value="{{class_id}}">{{class_names[class_id]}}
+                          </label>
+                        </div>
                       </div>
                     </div>
                     <div class="form-group">
@@ -196,7 +185,7 @@ _____     ______     __   __     __  __
                       <input type="text" class="form-control" placeholder="e.g. Midterm Review" id="room_name">
                     </div>
                     <div class="btn-container text-center">
-                      <button id="btn-create" class="btn btn-primary" onclick="addRoomOnClick()">Create</button>
+                      <button id="btn-create" class="btn btn-primary" ng-click="addRoom()">Create</button>
                     </div>
                   </form>
 
@@ -220,13 +209,13 @@ _____     ______     __   __     __  __
   <script src="https://www.gstatic.com/firebasejs/3.6.7/firebase.js"></script>
   <script src="firebase_setup.js"></script>
 
+  <!-- Angular scripts -->
+  <script src="controllers/room_controller.js"></script>
   
   <!-- Other -->
   <script src="cookies.js"></script>
   <script src="main.js"></script>
   <script src="call.js"></script>
   
-  <!-- Angular scripts -->
-  <script src="controllers/room_controller.js"></script>
 
 </html>

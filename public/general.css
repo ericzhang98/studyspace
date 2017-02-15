@@ -11,6 +11,11 @@ a:hover {
   text-decoration: none;
 }
 
+/* General: navbar */
+.navbar {
+  min-height: 0;
+}
+
 /* General: modals */
 .modal {
   background: rgba(0,0,0,0.5);
