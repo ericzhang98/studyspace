@@ -1,6 +1,6 @@
 // server.js will be our website's server that handles communication
 // between the front-end and the database
-
+var deployment = false; //currently just whether or not to use HTTPS
 
 /* SETUP ---------------------------------------------------------------*/
 
@@ -30,12 +30,6 @@ var mailTransporter = nodemailer.createTransport({
   auth: {user: "studyspacehelper@gmail.com", pass: "raindropdroptop"} 
 });
 
-// - Peer server stuff
-var ExpressPeerServer = require('peer').ExpressPeerServer;
-var server = require('http').createServer(app);
-app.use('/peerjs', ExpressPeerServer(server, {debug: true}));
-server.listen(9000);
-
 // - Firebase admin setup
 var firebaseAdmin = require("firebase-admin");
 var serviceAccount = require("./dontlookhere/porn/topsecret.json"); //shhhh
@@ -48,7 +42,17 @@ var classRoomsDatabase = firebaseRoot.child("ClassRooms");
 var roomInfoDatabase = firebaseRoot.child("RoomInfo");
 var roomMessagesDatabase = firebaseRoot.child("RoomMessages");
 
+var favicon = require("serve-favicon");
+app.use(favicon(__dirname + "/public/assets/images/favicon.ico"));
+
 // - app configuration
+var forceSsl = function (req, res, next) {
+  if (req.headers['x-forwarded-proto'] !== 'https') {    
+    return res.redirect(['https://', req.get('Host'), req.url].join(''));
+  }       
+  return next();           
+};
+if (deployment) {app.use(forceSsl);}
 app.use(express.static(__dirname + "/public"));
 app.use(bodyParser.json());
 app.use(cookieParser("raindropdroptop")); //secret key
@@ -810,8 +814,8 @@ function checkLogin(_id, callback) {
 /*------------------------------------------------------------------------*/
 
 
-app.listen(3000);
-console.log("Server running on port 3000");
+app.listen(process.env.PORT || 3000);
+console.log("Server running!");
 
 //addRoom("cse110", "ucsd_cse_110_1_r0", MAIN_HOST, false);
 /*addRoom("cse110", "CSE110 Trollmao", MAIN_HOST, false);
