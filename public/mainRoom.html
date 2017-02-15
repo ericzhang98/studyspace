@@ -94,7 +94,7 @@
       <main id="chat-room" role="main">
 
         <!--NAVBAR-->
-        <nav id="navbar-room" class="navbar">
+        <nav id="navbar-room" class="navbar" ng-controller="classesController">
           <div class="container-fluid">
             <div class="navbar-header">
               <a class="navbar-brand">{{currClassName}}{{currRoomName}}</a>
@@ -103,10 +103,10 @@
               <li class="dropdown">
                 <a class="dropdown-toggle" data-toggle="dropdown" href="#">Rooms <span class="caret"></span></a>
                 <ul class="dropdown-menu" id="room-list">
-                  <li><a href="#">Room 1</a></li>
-                  <li><a href="#">Room 2</a></li>
-                  <li><a href="#">Room 3</a></li>
-                </ul>  
+                  <li class="list-group-item" ng-repeat="room_id in class_rooms[currClassID]" ng-click="joinRoom(room_id, currClassID, null)">
+                    <span>{{rooms[room_id].name}}</span>
+                  </li>
+                </ul>
               </li>
             </ul>
           </div>

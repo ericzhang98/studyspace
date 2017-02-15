@@ -105,7 +105,7 @@ myApp.controller("ChatController", ["$scope", "$http",
       }
 
       // Combine messages sent by the same user within
-      // CONCAT_TIME milliseconds of one another;
+      // CONCAT_TIME seconds of one another;
       function concatenateMessages() {
 
         for (var i = 0; i + 1 < chatMessageList.length;) {
@@ -267,10 +267,13 @@ myApp.controller("classesController", function($scope, $rootScope) {
         // delegate to call.js to join the room's call
         joinRoomCall(room_id);
 
-        // delegate to chat controller to join the room's chat
-        $rootScope.$broadcast("room_change");
+        // set scope variables
         $rootScope.currRoomName = room_name? room_name : $scope.rooms[currRoomID].name;
         $rootScope.currClassName = $scope.class_names[class_id] + " - ";
+        $rootScope.currClassID = class_id;
+        
+        // delegate to chat controller to join the room's chat
+        $rootScope.$broadcast("room_change");
     };
 
 /*********************************************************************/
