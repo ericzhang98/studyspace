@@ -43,8 +43,6 @@ a:hover {
   box-shadow: none;
   width: 100%;
   height: 100%;
-  padding-left: 3rem;
-  padding-right: 3rem;
   margin: 0;
   border-radius: 0;
 }
@@ -57,7 +55,25 @@ a:hover {
 }
 
 .modal-content .title-container {
-  margin-bottom: 4rem;
+  position: relative;
+}
+
+.modal-content .title-container .close {
+  position: absolute;
+  top: 2rem;
+  right: 2rem;
+  font-size: 2rem;
+  text-shadow: none;
+  opacity: 1;
+  color: #333333;
+}
+
+.modal-content .title-container .close:hover {
+  color: #888888;
+}
+
+.modal-content .main {
+  padding: 3rem;
 }
 
 .modal-content h1::selection,
@@ -73,8 +89,12 @@ a:hover {
 }
 
 .modal-content .form-group {
-  margin-top: 2.5rem;
+  margin-top: 3rem;
   margin-bottom: 0;
+}
+
+.modal-content .form-group:first-child {
+  margin-top: 0;
 }
 
 /* General: forms */
@@ -199,10 +219,19 @@ a:hover {
   .modal-content {
     width: 45rem;
     height: auto;
-    padding-top: 7rem;
-    padding-left: 6rem;
-    padding-right: 6rem;
-    padding-bottom: 6rem;
     border-radius: 0.5rem;
+  }
+  .modal-content .title-container {
+    padding-top: 5rem;
+    padding-left: 4.5rem;
+    padding-right: 4.5rem;
+    padding-bottom: 0;
+  }
+
+  .modal-content .main {
+    padding-top: 4rem;
+    padding-left: 4.5rem;
+    padding-right: 4.5rem;
+    padding-bottom: 4.5rem;
   }
 }
