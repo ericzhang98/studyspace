@@ -97,7 +97,7 @@
         <nav id="navbar-room" class="navbar">
           <div class="container-fluid">
             <div class="navbar-header">
-              <a class="navbar-brand">CSE 110</a>
+              <a class="navbar-brand">{{currRoomName}}</a>
             </div>
             <ul class="nav navbar-nav navbar-right">
               <li class="dropdown">
@@ -114,7 +114,6 @@
 
         <!-- MESSAGE WRAPPER -->
         <div class="message-pane" id="message-wrapper" ng-controller="ChatController"> 
-
           <!-- MESSAGE PANE -->
           <div class="container-fluid" id="chatMessageDiv">
             <ul class="message" ng-repeat="chatMessage in chatMessageList">
@@ -166,19 +165,18 @@
                 <div class="title-container text-center"> 
                   <h1 class="title">Create a room</h1>
                 </div>
-                <div class="form-container">
+                <div class="form-container" ng-controller="classesController">
 
                   <!-- Class selection -->
                   <form>
                     <div class="form-group">
                       <label for="class">Class</label><br/>
                       <div id="class_id" class="btn-group" data-toggle="buttons">
-                        <label class="btn btn-primary btn-xs" style="margin-right:5px">
-                          <input type="radio" name="class_id_radio" autocomplete="off" value="class_id_1"> Class Name 1</label>
-                        <label class="btn btn-primary btn-xs" style="margin-right:5px">
-                          <input type="radio" name="class_id_radio" autocomplete="off" value="class_id_2"> Class Name 2</label>
-                        <label class="btn btn-primary btn-xs" style="margin-right:5px">
-                          <input type="radio" name="class_id_radio" autocomplete="off" value="class_id_3"> Class Name 3</label>
+                        <div ng-repeat="class_id in my_class_ids" class="panel">
+                          <label class="btn btn-primary btn-xs" style="margin-right:5px">
+                            <input type="radio" name="class_id_radio" autocomplete="off" value="{{class_id}}">{{class_names[class_id]}}
+                          </label>
+                        </div>
                       </div>
                     </div>
                     <div class="form-group">
@@ -186,7 +184,7 @@
                       <input type="text" class="form-control" placeholder="e.g. Midterm Review" id="room_name">
                     </div>
                     <div class="btn-container text-center">
-                      <button id="btn-create" class="btn btn-primary" onclick="addRoomOnClick()">Create</button>
+                      <button id="btn-create" class="btn btn-primary" ng-click="addRoom()">Create</button>
                     </div>
                   </form>
 
@@ -210,13 +208,13 @@
   <script src="https://www.gstatic.com/firebasejs/3.6.7/firebase.js"></script>
   <script src="firebase_setup.js"></script>
 
+  <!-- Angular scripts -->
+  <script src="controllers/room_controller.js"></script>
   
   <!-- Other -->
   <script src="cookies.js"></script>
   <script src="main.js"></script>
   <script src="call.js"></script>
   
-  <!-- Angular scripts -->
-  <script src="controllers/room_controller.js"></script>
 
 </html>

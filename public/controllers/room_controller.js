@@ -15,14 +15,15 @@ myApp.controller("ChatController", ["$scope", "$http",
 /************************* JOINING A CHATROOM ************************/
       
       // Listen for broadcast from classesController
-      $scope.$on("room_change", function(event) {
+      $scope.$on("room_change", function(event, currRoomName) {
         console.log("room changed to " + currRoomID);
-        joinRoomChat();
+        joinRoomChat(currRoomName);
       });
 
       // Join a room
-      function joinRoomChat() {
+      function joinRoomChat(currRoomName) {
 
+        
         // turn off any pre-existing listeners
         if (chatDatabase != null) {
           chatDatabase.off();
@@ -33,6 +34,9 @@ myApp.controller("ChatController", ["$scope", "$http",
 
         // empty the message list in UI
         updateChatView();
+
+        // change the name of the room
+        $scope.currRoomName = currRoomName;
 
         // set up and start new listener
         chatDatabase = databaseRef.child("RoomMessages").child(currRoomID);
@@ -153,12 +157,13 @@ myApp.controller("ChatController", ["$scope", "$http",
 
 /*********************************************************************/
 
-/* Side bar  Start */
+/* Side bar  Start */ 
 myApp.controller("classesController", function($scope, $rootScope) {
 
 /******************************* SETUP ******************************/
     
     // Scope variables
+    $scope.my_class_ids = {};
     $scope.class_names = {}; // class_id : class names
     $scope.class_rooms = {}  // class_id : room_id
     $scope.rooms = {}        // room_id : room
@@ -167,10 +172,46 @@ myApp.controller("classesController", function($scope, $rootScope) {
     getClasses();
 
 /*********************************************************************/
-/*************************** JOINING A ROOM **************************/
+/********************** CREATING AND JOINING ROOMS *******************/
+
+    // Reads input from create-room-modal, creates room, and joins room
+    $scope.addRoom = function() {
+
+      var class_id = $('#class_id input:radio:checked').val();
+      var room_name = document.getElementById('room_name').value;
+      var is_lecture = false;
+
+      // TODO: check input
+
+      if (class_id == null) {
+        console.log("no class selected");
+        return;
+      }
+
+      // Close the modal
+      closeModal("#modal-create-room", "#create-room");
+
+      console.log("adding room with class_id: " + class_id + 
+        ", room_name: " + room_name);
+      var xhr = new XMLHttpRequest();
+      xhr.open('GET', "/add_room/" + class_id + "/" + 
+        room_name + "/" + is_lecture, true);
+      xhr.send();
+
+      xhr.onreadystatechange = function(e) {
+        // room has been created
+        if (xhr.readyState == 4 && xhr.status == 200) {
+          var response = JSON.parse(xhr.responseText);
+
+          // join the room
+          $scope.joinRoom(response.room_id, room_name);
+        }
+      }
+    }
 
     // OnClick method that delegates to joinRoomCall and joinRoomChat
-    $scope.joinRoom = function(room_id){
+    // room_name is passed in when we create the room (room info not yet pulled)
+    $scope.joinRoom = function(room_id, room_name = null){
 
         // if we're already in this room, do nothing
         if (currRoomID == room_id) {
@@ -186,7 +227,7 @@ myApp.controller("classesController", function($scope, $rootScope) {
         joinRoomCall(room_id);
 
         // delegate to chat controller to join the room's chat
-        $rootScope.$broadcast("room_change");
+        $rootScope.$broadcast("room_change", room_name? room_name : $scope.rooms[currRoomID].name);
     };
 
 /*********************************************************************/
@@ -204,6 +245,11 @@ myApp.controller("classesController", function($scope, $rootScope) {
             if (xhr.readyState == 4 && xhr.status == 200) {
                 var response = JSON.parse(xhr.responseText);
                 console.log(response.class_ids);
+
+                // Set this scope variable (used in create room)
+                $scope.my_class_ids = response.class_ids;
+
+                // Get more data
                 for (i = 0; i < response.class_ids.length; i++) {
                     getClass(response.class_ids[i]);
                 }
