@@ -96,12 +96,11 @@ _____     ______     __   __     __  __
         <!-- Message Wrapper -->
         <div class="message-pane" id="message-wrapper"
                ng-controller="ChatController"> 
-
           <!--NAVBAR-->
           <nav id="nav-room" class="navbar navbar-inverse navbar-static-top span-8">
             <div class="container-fluid">
               <div class="navbar-header">
-                <a class="navbar-brand">CSE 110</a>
+                <a class="navbar-brand">{{currRoomName}}</a>
               </div>
               <ul class="nav navbar-nav navbar-right">
                 <li class="dropdown">
@@ -115,7 +114,6 @@ _____     ______     __   __     __  __
               </ul>
             </div>
           </nav>
-
           <!-- MESSAGE PANE -->
           <div class="container-fluid" id="chatMessageDiv">
 
