@@ -1,9 +1,12 @@
 //Room app -- firebase initialized already
 var chatDatabase = null;
 var myApp = angular.module("roomApp", []);
+
+// list of message objects with: email, name, roomID, text, timeSent
 var chatMessageList = [];
 var scrollUpList = [];
 
+var CONCAT_TIME = 60; // 1 minute
 
 /* Chat controller -------------------------------------*/
 
@@ -92,10 +95,40 @@ myApp.controller("ChatController", ["$scope", "$http",
 
       // Update the chat view display
       function updateChatView() {
+
+        concatenateMessages();
+
         //console.log("updated chat view");
         $scope.chatMessageList = chatMessageList;
         safeApply();
         setTimeout(scrollDown, 1);
+      }
+
+      // Combine messages sent by the same user within
+      // CONCAT_TIME milliseconds of one another;
+      function concatenateMessages() {
+
+        for (var i = 0; i + 1 < chatMessageList.length;) {
+
+          currMessage = chatMessageList[i];
+          nextMessage = chatMessageList[i+1];
+
+          // if two messages were sent by the same user within CONCAT_TIME
+          if (currMessage.email == nextMessage.email &&
+            nextMessage.timeSent < currMessage.timeSent + CONCAT_TIME) {
+
+            // concatenate the messages
+            currMessage.text += "\n" + nextMessage.text;
+
+            // remove the second message
+            chatMessageList.splice(i+1, 1);
+          }
+
+          // otherwise, increment i
+          i++;
+        }
+
+        console.log(chatMessageList);
       }
 
       // Safely apply UI changes
@@ -260,7 +293,7 @@ myApp.controller("classesController", function($scope, $rootScope) {
                 if (response.class_ids) {
                   $scope.my_class_ids = response.class_ids;
                 }
-                
+
                 $scope.my_class_ids.push("lounge_id");
 
                 // Get more data

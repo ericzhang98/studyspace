@@ -119,7 +119,7 @@
             <ul class="message" ng-repeat="chatMessage in chatMessageList">
               <li id="username">{{chatMessage.name}}</li>
               <li id="dateTime">{{timeAgo(chatMessage)}}</li>
-              <li id="message">{{chatMessage.text}}</li>
+              <li id="message" style="white-space:pre-wrap;">{{chatMessage.text}}</li>
             </ul>
           </div> <!-- END MESSAGE PANE -->
 
