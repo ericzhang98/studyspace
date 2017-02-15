@@ -168,7 +168,33 @@ myApp.controller("classesController", function($scope, $rootScope) {
     getClasses();
 
 /*********************************************************************/
-/*************************** JOINING A ROOM **************************/
+/********************** CREATING AND JOINING ROOMS *******************/
+
+    // Reads input from create-room-modal, creates room, and joins room
+    $scope.addRoom = function() {
+
+      var class_id = $('#class_id input:radio:checked').val();
+      var room_name = document.getElementById('room_name').value;
+      var is_lecture = false;
+      // TODO: check input
+
+      console.log("adding room with class_id: " + class_id + 
+        ", room_name: " + room_name);
+      var xhr = new XMLHttpRequest();
+      xhr.open('GET', "/add_room/" + class_id + "/" + 
+        room_name + "/" + is_lecture, true);
+      xhr.send();
+
+      xhr.onreadystatechange = function(e) {
+        // room has been created
+        if (xhr.readyState == 4 && xhr.status == 200) {
+          var response = JSON.parse(xhr.responseText);
+
+          // join the room
+          $scope.joinRoom(response.room_id);
+        }
+      }
+    }
 
     // OnClick method that delegates to joinRoomCall and joinRoomChat
     $scope.joinRoom = function(room_id){
@@ -206,7 +232,7 @@ myApp.controller("classesController", function($scope, $rootScope) {
                 var response = JSON.parse(xhr.responseText);
                 console.log(response.class_ids);
 
-                // Set this scope variable (used in create room modal)
+                // Set this scope variable (used in create room)
                 $scope.my_class_ids = response.class_ids;
 
                 // Get more data
