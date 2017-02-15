@@ -4,8 +4,6 @@ var myApp = angular.module("roomApp", []);
 
 // list of message objects with: email, name, roomID, text, timeSent
 var chatMessageList = [];
-var scrollUpList = [];
-
 var CONCAT_TIME = 60; // 1 minute
 
 /* Chat controller -------------------------------------*/
@@ -13,25 +11,30 @@ var CONCAT_TIME = 60; // 1 minute
 myApp.controller("RoomController", ["$scope", "$http", 
     function($scope, $http) {
       console.log("Hell yeah");
-      var chatInputBox = document.getElementById("chatInputBox");
+
 /*-------------------------------------------------------------------*/
 /****************************** CHAT ROOM ****************************/
 /*-------------------------------------------------------------------*/
+
+      var div = document.getElementById("chatMessageDiv");
+      var chatInputBox = document.getElementById("chatInputBox");
+      var lastKey = null;
+      var scrollLock = false;
 
 /************************* JOINING A CHATROOM ************************/
 
       // Join a room's chat
       function joinRoomChat() {
-        
-        // turn off any pre-existing listeners
+
+        // turn off any pre-existing listeners and control vars
         if (chatDatabase != null) {
           chatDatabase.off();
         }
+        lastKey = null;
+        scrollLock = false;
 
-        // empty our message list in logic
+        // empty our message list in logic and UI
         chatMessageList = [];
-
-        // empty the message list in UI
         updateChatView();
 
         // set up and start new listener
@@ -75,6 +78,7 @@ myApp.controller("RoomController", ["$scope", "$http",
         chatInputBox.value = "";
         $scope.chatInput = "";
         chatInputBox.focus();
+        scrollDown();
       }
 
 /*********************************************************************/
@@ -82,22 +86,29 @@ myApp.controller("RoomController", ["$scope", "$http",
       
       // Set up listener for chat messages
       function startChatMessages() {
-        chatDatabase.limitToLast(30).on("child_added", function(snapshot) {
+        chatDatabase.limitToLast(50).on("child_added", function(snapshot) {
           var snapshotValue = snapshot.val();
+          if (lastKey == null) {
+            lastKey = snapshot.key;
+          }
           chatMessageList.push(snapshotValue);
+          var shouldScroll = false;
+          //only auto-scroll if near bottom
+          if(div.scrollTop + 200 >= (div.scrollHeight - div.clientHeight)) {
+            shouldScroll = true;
+          }
           updateChatView();
+          if (shouldScroll) {
+            setTimeout(scrollDown, 1);
+          }
         });
       }
 
       // Update the chat view display
       function updateChatView() {
-
         concatenateMessages();
-
-        //console.log("updated chat view");
         $scope.chatMessageList = chatMessageList;
         safeApply();
-        setTimeout(scrollDown, 1);
       }
 
       // Combine messages sent by the same user within
@@ -139,13 +150,55 @@ myApp.controller("RoomController", ["$scope", "$http",
         }
       }
 
-      // View more messages
+      // Scroll event listener -- see more messages if scroll within 30px of top
+      $scope.scrollevent = function() {
+        //console.log("Scroll top: " + div.scrollTop);
+        if(div.scrollTop <= 30) {
+          //don't call seeMore if still processing past one
+          if (!scrollLock) { 
+            seeMoreMessages();
+          }
+        }
+      }
+
+      // View more messages -- queries last number of msgs from Firebase and
+      // updates chat view, then scrolls to correct place to maintain position
       function seeMoreMessages() {
-        chatDatabase.limitToLast(40).once("value", function(snapshot) {
-          var snapshotValue = snapshot.val();
-          console.log(Object.keys(snapshotValue));
-          console.log(snapshotValue);
-        });
+        //check if a lastKey is ready, signifying that og msgs have finished
+        if (lastKey) {
+          console.log("see more");
+          scrollLock = true; //prevent any more seeMoreMessages calls until current finishes
+          var messagesSoFar = chatMessageList.length;
+          var messagesToAdd = 20;
+          //query db for past number of messages
+          chatDatabase.limitToLast(messagesToAdd+1).orderByKey().endAt(lastKey)
+            .once("value", function(snapshot) {
+            var snapshotValue = snapshot.val();
+            if (snapshotValue) {
+              lastKey = Object.keys(snapshotValue)[0];
+              console.log("pulled more messages + 1: " + (Object.keys(snapshotValue).length));
+              //var messageArray = Object.values(snapshotValueObject); apparently
+              //not supported by browser?!?!
+              var moreMessagesArray = Object.keys(snapshotValue).map(function(key) {
+                    return snapshotValue[key];
+              });
+              //var firstPart = messageArray.splice(0, messagesToAdd);
+              moreMessagesArray.pop(); //remove extra messsage b/c lastKey inclusive
+              chatMessageList = moreMessagesArray.concat(chatMessageList); //combine with og msgs
+
+              //keep track of height diff, update view, and then scroll by diff
+              var previousHeight = div.scrollHeight;
+              var previousPosition = div.scrollTop;
+              console.log("prev height: " + (previousHeight));
+              console.log("prev pos: " + (previousPosition));
+              updateChatView();
+              console.log("curr height: " + (div.scrollHeight));
+              console.log("Scroll down by: " + (div.scrollHeight - previousHeight));
+              div.scrollTop = previousPosition + (div.scrollHeight - previousHeight);
+              scrollLock = false;
+            }
+          });
+        }
       }
 
       // Calculate time since message was sent
@@ -172,9 +225,9 @@ myApp.controller("RoomController", ["$scope", "$http",
         return dateString;
       };
 
+      // Scroll chat view to bottom 
       function scrollDown() {
-        //console.log("scrolling");
-        var div = document.getElementById("chatMessageDiv");
+        console.log("scroll completely down");
         div.scrollTop = div.scrollHeight - div.clientHeight;
       }
 
@@ -285,7 +338,6 @@ myApp.controller("RoomController", ["$scope", "$http",
         xhr.onreadystatechange = function(e) {
             if (xhr.readyState == 4 && xhr.status == 200) {
                 var response = JSON.parse(xhr.responseText);
-                console.log(response.class_ids);
 
                 // Set this scope variable (used in create room)
                 if (response.class_ids) {
@@ -369,3 +421,15 @@ myApp.controller("RoomController", ["$scope", "$http",
 
 /*********************************************************************/
 }]);
+
+//helper directive for scrolling listener
+myApp.directive("scroll", function ($window) {
+   return {
+      scope: {
+         scrollEvent: '&'
+      },
+      link : function(scope, element, attrs) {
+        $("#"+attrs.id).scroll(function($e) { scope.scrollEvent != null ?  scope.scrollEvent()($e) : null })
+      }
+   }
+})

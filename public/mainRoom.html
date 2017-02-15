@@ -114,7 +114,8 @@
         <!-- MESSAGE WRAPPER -->
         <div class="message-pane" id="message-wrapper"> 
           <!-- MESSAGE PANE -->
-          <div class="container-fluid" id="chatMessageDiv">
+          <div class="container-fluid" id="chatMessageDiv" scroll
+            scroll-event="scrollevent">
             <ul class="message" ng-repeat="chatMessage in chatMessageList">
               <li id="username">{{chatMessage.name}}</li>
               <li id="dateTime">{{timeAgo(chatMessage)}}</li>
