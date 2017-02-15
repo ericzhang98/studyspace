@@ -10,22 +10,18 @@ var CONCAT_TIME = 60; // 1 minute
 
 /* Chat controller -------------------------------------*/
 
-myApp.controller("ChatController", ["$scope", "$http", 
+myApp.controller("RoomController", ["$scope", "$http", 
     function($scope, $http) {
       console.log("Hell yeah");
       var chatInputBox = document.getElementById("chatInputBox");
+/*-------------------------------------------------------------------*/
+/****************************** CHAT ROOM ****************************/
+/*-------------------------------------------------------------------*/
 
 /************************* JOINING A CHATROOM ************************/
-      
-      // Listen for broadcast from classesController
-      $scope.$on("room_change", function(event) {
-        console.log("room changed to " + currRoomID);
-        joinRoomChat();
-      });
 
-      // Join a room
+      // Join a room's chat
       function joinRoomChat() {
-
         
         // turn off any pre-existing listeners
         if (chatDatabase != null) {
@@ -127,8 +123,6 @@ myApp.controller("ChatController", ["$scope", "$http",
           // otherwise, increment i
           i++;
         }
-
-        console.log(chatMessageList);
       }
 
       // Safely apply UI changes
@@ -183,15 +177,15 @@ myApp.controller("ChatController", ["$scope", "$http",
         var div = document.getElementById("chatMessageDiv");
         div.scrollTop = div.scrollHeight - div.clientHeight;
       }
-    }]);
 
 /*********************************************************************/
 
-/* Side bar  Start */ 
-myApp.controller("classesController", function($scope, $rootScope) {
+/*-------------------------------------------------------------------*/
+/***************************** CLASSES BAR ***************************/
+/*-------------------------------------------------------------------*/
 
 /******************************* SETUP ******************************/
-    
+
     // Scope variables
     $scope.my_class_ids = [];
     $scope.class_names = {}; // class_id : class names
@@ -268,12 +262,13 @@ myApp.controller("classesController", function($scope, $rootScope) {
         joinRoomCall(room_id);
 
         // set scope variables
-        $rootScope.currRoomName = room_name? room_name : $scope.rooms[currRoomID].name;
-        $rootScope.currClassName = $scope.class_names[class_id] + " - ";
-        $rootScope.currClassID = class_id;
-        
+        $scope.currRoomName = room_name? room_name : $scope.rooms[currRoomID].name;
+        $scope.currClassName = $scope.class_names[class_id] + " - ";
+        $scope.currClassID = class_id;
+
         // delegate to chat controller to join the room's chat
-        $rootScope.$broadcast("room_change");
+        //$scope.$broadcast("room_change");
+        joinRoomChat();
     };
 
 /*********************************************************************/
@@ -282,7 +277,7 @@ myApp.controller("classesController", function($scope, $rootScope) {
     // - gets all class_ids for user
     // - delegates to getClass
     function getClasses() {
-        console.log("Getting classes...")
+        console.log("Getting class ids...")
         var xhr = new XMLHttpRequest();
         xhr.open('GET', "/get_my_classes", true); // responds with class_ids
         xhr.send();
@@ -299,6 +294,8 @@ myApp.controller("classesController", function($scope, $rootScope) {
 
                 $scope.my_class_ids.push("lounge_id");
 
+                console.log("Getting classes info...")
+
                 // Get more data
                 for (i = 0; i < $scope.my_class_ids.length; i++) {
                     getClass($scope.my_class_ids[i]);
@@ -311,7 +308,6 @@ myApp.controller("classesController", function($scope, $rootScope) {
     // - adds the class to the UI
     // - calls getRoom on all the rooms for specified class
     function getClass(class_id) {
-        console.log("Getting class with id " + class_id);
 
         // add listener for class rooms
         classRoomsDatabase.child(class_id).on("value", function(snapshot) {
@@ -328,15 +324,11 @@ myApp.controller("classesController", function($scope, $rootScope) {
         xhr.onreadystatechange = function(e) {
             if (xhr.readyState == 4 && xhr.status == 200) {
 
-                // store the class
+                // store the class name
                 var response = JSON.parse(xhr.responseText);
-                //update UI
-                $scope.class_names[class_id] = "# " + response.name.toLowerCase();
-                //class_names[class_id] = response.name;
+                $scope.class_names[class_id] = response.name.toLowerCase();
 
-                console.log("class name is: " + response.name);
-
-                //apply changes (needed)
+                // update UI
                 $scope.$apply();
             }
         }
@@ -345,8 +337,6 @@ myApp.controller("classesController", function($scope, $rootScope) {
     // - respond to change in a class's rooms
     // - calls removeRoom/getRoom accordingly
     function onClassRoomsChange(class_id, updated_rooms) {
-
-        console.log("rooms for class " + class_id + " are now " + updated_rooms);
 
         // get new rooms
         for (i = 0; i < updated_rooms.length; i++) {
@@ -358,7 +348,6 @@ myApp.controller("classesController", function($scope, $rootScope) {
 
     // finds the room's data and adds it to the list of rooms
     function getRoom(class_id, room_id) {
-        console.log("Getting room with id " + room_id);
 
         // add listener for room info
         roomsDatabase.child(room_id).once("value", function(snapshot) {
@@ -379,4 +368,4 @@ myApp.controller("classesController", function($scope, $rootScope) {
     }
 
 /*********************************************************************/
-});
+}]);

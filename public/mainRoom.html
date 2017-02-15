@@ -37,7 +37,7 @@
     <title>Main Room</title>
   </head>
 
-  <body id="myBody">
+  <body id="myBody" ng-controller="RoomController">
     <div class="container-fluid">
       <!-- Classes Sidebar -->
       <aside id="sidebar-classes" role="complementary">
@@ -68,8 +68,7 @@
               <span class="glyphicon glyphicon-plus"></span>
             </div>
           </button>
-          <div ng-controller="classesController" 
-               class="panel-group" id="menu-classes">
+          <div class="panel-group" id="menu-classes">
             <!--first class in drop down-->
             <div ng-repeat="(class_id, class_name) in class_names" class="panel" 
                  data-toggle="collapse" data-parent="#menu-classes" href="#{{class_id}}">
@@ -94,7 +93,7 @@
       <main id="chat-room" role="main">
 
         <!--NAVBAR-->
-        <nav id="navbar-room" class="navbar" ng-controller="classesController">
+        <nav id="navbar-room" class="navbar">
           <div class="container-fluid">
             <div class="navbar-header">
               <a class="navbar-brand">{{currClassName}}{{currRoomName}}</a>
@@ -113,7 +112,7 @@
         </nav>
 
         <!-- MESSAGE WRAPPER -->
-        <div class="message-pane" id="message-wrapper" ng-controller="ChatController"> 
+        <div class="message-pane" id="message-wrapper"> 
           <!-- MESSAGE PANE -->
           <div class="container-fluid" id="chatMessageDiv">
             <ul class="message" ng-repeat="chatMessage in chatMessageList">
@@ -165,7 +164,7 @@
                 <div class="title-container text-center"> 
                   <h1 class="title">Create a room</h1>
                 </div>
-                <div class="form-container" ng-controller="classesController">
+                <div class="form-container">
 
                   <!-- Class selection -->
                   <form>
