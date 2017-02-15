@@ -15,13 +15,13 @@ myApp.controller("ChatController", ["$scope", "$http",
 /************************* JOINING A CHATROOM ************************/
       
       // Listen for broadcast from classesController
-      $scope.$on("room_change", function(event, currRoomName) {
+      $scope.$on("room_change", function(event) {
         console.log("room changed to " + currRoomID);
-        joinRoomChat(currRoomName);
+        joinRoomChat();
       });
 
       // Join a room
-      function joinRoomChat(currRoomName) {
+      function joinRoomChat() {
 
         
         // turn off any pre-existing listeners
@@ -34,9 +34,6 @@ myApp.controller("ChatController", ["$scope", "$http",
 
         // empty the message list in UI
         updateChatView();
-
-        // change the name of the room
-        $scope.currRoomName = currRoomName;
 
         // set up and start new listener
         chatDatabase = databaseRef.child("RoomMessages").child(currRoomID);
@@ -177,8 +174,10 @@ myApp.controller("classesController", function($scope, $rootScope) {
     // Reads input from create-room-modal, creates room, and joins room
     $scope.addRoom = function() {
 
+      // Grab modal values
       var class_id = $('#class_id input:radio:checked').val();
-      var room_name = document.getElementById('room_name').value;
+      // style choice: all room names be lower case only
+      var room_name = (document.getElementById('room_name').value).toLowerCase();
       var is_lecture = false;
 
       // TODO: check input
@@ -204,19 +203,20 @@ myApp.controller("classesController", function($scope, $rootScope) {
           var response = JSON.parse(xhr.responseText);
 
           // join the room
-          $scope.joinRoom(response.room_id, room_name);
+          $scope.joinRoom(response.room_id, class_id, room_name);
         }
       }
     }
 
     // OnClick method that delegates to joinRoomCall and joinRoomChat
     // room_name is passed in when we create the room (room info not yet pulled)
-    $scope.joinRoom = function(room_id, room_name = null){
+    $scope.joinRoom = function(room_id, class_id, room_name = null){
 
         // if we're already in this room, do nothing
         if (currRoomID == room_id) {
           return;
         }
+        
         // leave previous room
         leaveRoom();
 
@@ -227,7 +227,9 @@ myApp.controller("classesController", function($scope, $rootScope) {
         joinRoomCall(room_id);
 
         // delegate to chat controller to join the room's chat
-        $rootScope.$broadcast("room_change", room_name? room_name : $scope.rooms[currRoomID].name);
+        $rootScope.$broadcast("room_change");
+        $rootScope.currRoomName = room_name? room_name : $scope.rooms[currRoomID].name;
+        $rootScope.currClassName = $scope.class_names[class_id] + " - ";
     };
 
 /*********************************************************************/
@@ -281,7 +283,7 @@ myApp.controller("classesController", function($scope, $rootScope) {
                 // store the class
                 var response = JSON.parse(xhr.responseText);
                 //update UI
-                $scope.class_names[class_id] = response.name;
+                $scope.class_names[class_id] = "# " + response.name.toLowerCase();
                 //class_names[class_id] = response.name;
 
                 console.log("class name is: " + response.name);
