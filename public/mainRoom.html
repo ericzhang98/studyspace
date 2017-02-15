@@ -181,13 +181,18 @@ _____     ______     __   __     __  __
                   <form>
                     <div class="form-group">
                       <label for="class">Class</label><br/>
-                      <div id="class_id" class="btn-group" data-toggle="buttons">
-                        <label class="btn btn-primary btn-xs" style="margin-right:5px">
+                      <div id="class_id" class="btn-group" data-toggle="buttons" ng-controller="classesController">
+                        <div ng-repeat="class_id in my_class_ids" class="panel">
+                          <label class="btn btn-primary btn-xs" style="margin-right:5px">
+                            <input type="radio" name="class_id_radio" autocomplete="off" value="{{class_id}}">{{class_names[class_id]}}
+                          </label>
+                        </div>
+                        <!--<label class="btn btn-primary btn-xs" style="margin-right:5px">
                           <input type="radio" name="class_id_radio" autocomplete="off" value="class_id_1"> Class Name 1</label>
                         <label class="btn btn-primary btn-xs" style="margin-right:5px">
                           <input type="radio" name="class_id_radio" autocomplete="off" value="class_id_2"> Class Name 2</label>
                         <label class="btn btn-primary btn-xs" style="margin-right:5px">
-                          <input type="radio" name="class_id_radio" autocomplete="off" value="class_id_3"> Class Name 3</label>
+                          <input type="radio" name="class_id_radio" autocomplete="off" value="class_id_3"> Class Name 3</label>-->
                       </div>
                     </div>
                     <div class="form-group">

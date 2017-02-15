@@ -153,12 +153,13 @@ myApp.controller("ChatController", ["$scope", "$http",
 
 /*********************************************************************/
 
-/* Side bar  Start */
+/* Side bar  Start */ 
 myApp.controller("classesController", function($scope, $rootScope) {
 
 /******************************* SETUP ******************************/
     
     // Scope variables
+    $scope.my_class_ids = {};
     $scope.class_names = {}; // class_id : class names
     $scope.class_rooms = {}  // class_id : room_id
     $scope.rooms = {}        // room_id : room
@@ -204,6 +205,11 @@ myApp.controller("classesController", function($scope, $rootScope) {
             if (xhr.readyState == 4 && xhr.status == 200) {
                 var response = JSON.parse(xhr.responseText);
                 console.log(response.class_ids);
+
+                // Set this scope variable (used in create room modal)
+                $scope.my_class_ids = response.class_ids;
+
+                // Get more data
                 for (i = 0; i < response.class_ids.length; i++) {
                     getClass(response.class_ids[i]);
                 }
