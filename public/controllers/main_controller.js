@@ -4,7 +4,7 @@ var myApp = angular.module("mainApp", []);
 
 // list of message objects with: email, name, roomID, text, timeSent
 var chatMessageList = [];
-var CONCAT_TIME = 60; // 1 minute
+var CONCAT_TIME = 60*1000; // 1 minute
 
 /* Chat controller -------------------------------------*/
 
@@ -70,7 +70,7 @@ myApp.controller("MainController", ["$scope", "$http",
           console.log("Sending chat with: " + chatInput);
 
           // Create the message and pass it on to the server
-          var newChatMessage = {text: chatInput, roomID: currRoomID, timeSent: Date.now()/1000};
+          var newChatMessage = {text: chatInput, roomID: currRoomID, timeSent: Date.now()};
           $http.post("/send_room_message", newChatMessage);
         }
 
@@ -196,7 +196,7 @@ myApp.controller("MainController", ["$scope", "$http",
 
       // Calculate time since message was sent
       $scope.timeAgo = function(chatMessage) {
-        var timeSentDate = new Date(chatMessage.timeSent * 1000);
+        var timeSentDate = new Date(chatMessage.timeSent);
         var monthDayString = (timeSentDate.getMonth()+1) + "/" + timeSentDate.getDate();
         var hour = timeSentDate.getHours();
         var AMPM = "AM";
@@ -254,6 +254,7 @@ myApp.controller("MainController", ["$scope", "$http",
 
       // TODO: actually set this (waiting on Andy's UI change)
       var is_lecture = false;
+      var time_created = Date.now();
 
       // if class_id is null do nothing
       if (class_id == null) {
@@ -276,7 +277,7 @@ myApp.controller("MainController", ["$scope", "$http",
         ", room_name: " + room_name);
       var xhr = new XMLHttpRequest();
       xhr.open('GET', "/add_room/" + class_id + "/" + 
-        room_name + "/" + is_lecture, true);
+        room_name + "/" + is_lecture + "/" + time_created, true);
       xhr.send();
 
       // Once room has been created
