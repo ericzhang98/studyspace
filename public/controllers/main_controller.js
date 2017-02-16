@@ -234,8 +234,8 @@ myApp.controller("MainController", ["$scope", "$http",
 
     // Scope variables
     $scope.my_class_ids = [];
-    $scope.class_names = {}; // class_id : class names
-    $scope.class_rooms = {}  // class_id : room_id
+    $scope.classes = {}      // class_id : class
+    $scope.class_rooms = {}  // class_id : list of room_ids
     $scope.rooms = {}        // room_id : room
 
     // Initial call to pull data for user / classes / rooms
@@ -251,7 +251,7 @@ myApp.controller("MainController", ["$scope", "$http",
       var class_id = $('#class_id input:radio:checked').val();
       // style choice: all room names be lower case only
       var room_name = (document.getElementById('room_name').value).toLowerCase();
-      var is_lecture = false;
+      var is_lecture = true;
 
       // if class_id is null do nothing
       if (class_id == null) {
@@ -261,7 +261,7 @@ myApp.controller("MainController", ["$scope", "$http",
       }
       // if room_name is empty do nothing
       if (room_name.length == 1) {
-        console.log("room name too short")
+        console.log("room name too short");
         // TODO: error message
         return;
       }
@@ -283,8 +283,16 @@ myApp.controller("MainController", ["$scope", "$http",
         if (xhr.readyState == 4 && xhr.status == 200) {
           var response = JSON.parse(xhr.responseText);
 
-          // join the room
-          $scope.joinRoom(response.room_id, class_id, room_name);
+          if (response.error) {
+            console.log(response.error);
+            return;
+          }
+
+          if (response.room_id) {
+
+            // join the room
+            $scope.joinRoom(response.room_id, class_id, room_name);
+          }
         }
       }
     }
@@ -309,7 +317,7 @@ myApp.controller("MainController", ["$scope", "$http",
 
         // set scope variables
         $scope.currRoomName = room_name? room_name : $scope.rooms[currRoomID].name;
-        $scope.currClassName = $scope.class_names[class_id] + " - ";
+        $scope.currClassName = $scope.classes[class_id].name + " - ";
         $scope.currClassID = class_id;
 
         // delegate to chat controller to join the room's chat
@@ -371,7 +379,10 @@ myApp.controller("MainController", ["$scope", "$http",
 
                 // store the class name
                 var response = JSON.parse(xhr.responseText);
-                $scope.class_names[class_id] = response.name.toLowerCase();
+                response.name = response.name.toLowerCase();
+
+                $scope.classes[class_id] = response;
+                console.log(response);
 
                 // update UI
                 $scope.$apply();
