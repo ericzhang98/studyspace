@@ -408,7 +408,7 @@ myApp.controller("MainController", ["$scope", "$http",
     function getRoom(room_id) {
 
         // add listener for room info
-        roomsDatabase.child(room_id).once("value", function(snapshot) {
+        roomsDatabase.child(room_id).on("value", function(snapshot) {
 
             var room = snapshot.val();
 
@@ -440,16 +440,17 @@ myApp.controller("MainController", ["$scope", "$http",
         console.log(room.users);
 
         for (var i = 0; i < room.users.length; i++) {
-
+          var has_tutor = false;
           // if there is a tutor in this room
           if (tutor_ids.indexOf(room.users[i]) != -1) {
             console.log("found tutor in class " + room.class_id);
-            room.has_tutor = true;
-            $scope.classes[room.class_id].has_tutor = true;
-          } else {
-            console.log("did not match " + room.users[i] + " in " + tutor_ids);
+            has_tutor = true;
+            break;
           }
         }
+
+        room.has_tutor = has_tutor;
+        $scope.classes[room.class_id].has_tutor = has_tutor;
       }
     }
 
