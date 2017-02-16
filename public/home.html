@@ -70,33 +70,28 @@
     <!-- Login Modal -->
     <div id="modal-login" class="modal" ng-app="logInApp" role="dialog">
       <div class="modal-dialog">
-
         <!-- Login Modal Content -->
         <div id="login" class="modal-content hide" ng-controller="LogInCtrl">
-          <button id="close-login" class="btn close" aria-label="Close">
-            <span class="glyphicon glyphicon-remove" aria-hidden="true"></span>
-          </button>
-          <div class="login-container">
-            <div class="login-content">
-              <div class="title-container text-center"> 
-                <h1 class="title">Welcome Back!</h1>
+          <div class="title-container text-center"> 
+            <button id="close-login" class="btn close" aria-label="Close">
+              <span class="glyphicon glyphicon-remove" aria-hidden="true"></span>
+            </button>
+            <h1 class="title">Welcome Back!</h1>
+          </div>
+          <div class="main form-container">
+            <form>
+              <div class="form-group">
+                <label for="input-name">Email</label>
+                <input type="text" class="form-control" id="input-name" placeholder="Email" ng-model="email">
               </div>
-              <div class="form-container">
-                <form>
-                  <div class="form-group">
-                    <label for="input-name">Email</label>
-                    <input type="text" class="form-control" id="input-name" placeholder="Email" ng-model="email">
-                  </div>
-                  <div class="form-group">
-                    <label for="input-name">Password</label>
-                    <input type="password" class="form-control" id="input-name" placeholder="Password" ng-model="password">
-                  </div>
-                  <div class="btn-container text-center">
-                    <button id="btn-submit" class="btn btn-primary" ng-click="attemptLogin(email, password)">Submit</button>
-                  </div>
-                </form>
+              <div class="form-group">
+                <label for="input-name">Password</label>
+                <input type="password" class="form-control" id="input-name" placeholder="Password" ng-model="password">
               </div>
-            </div>
+              <div class="btn-container text-center">
+                <button id="btn-submit" class="btn btn-primary" ng-click="attemptLogin(email, password)">Submit</button>
+              </div>
+            </form>
           </div>
         </div>
       </div>

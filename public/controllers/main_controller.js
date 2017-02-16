@@ -1,6 +1,6 @@
 //Room app -- firebase initialized already
 var chatDatabase = null;
-var myApp = angular.module("roomApp", []);
+var myApp = angular.module("mainApp", []);
 
 // list of message objects with: email, name, roomID, text, timeSent
 var chatMessageList = [];
@@ -182,10 +182,10 @@ myApp.controller("MainController", ["$scope", "$http",
               //keep track of height diff, update view, and then scroll by diff
               var previousHeight = div.scrollHeight;
               var previousPosition = div.scrollTop;
-              console.log("prev height: " + (previousHeight));
-              console.log("prev pos: " + (previousPosition));
+              //console.log("prev height: " + (previousHeight));
+              //console.log("prev pos: " + (previousPosition));
               updateChatView();
-              console.log("curr height: " + (div.scrollHeight));
+              //console.log("curr height: " + (div.scrollHeight));
               console.log("Scroll down by: " + (div.scrollHeight - previousHeight));
               div.scrollTop = previousPosition + (div.scrollHeight - previousHeight);
               scrollLock = false;

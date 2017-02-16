@@ -1,14 +1,14 @@
 <!--
- _____     ______     __   __     __  __
-/\  __-.  /\  __ \   /\ "-.\ \   /\ \/ /
-\ \ \/\ \ \ \  __ \  \ \ \-.  \  \ \  _"-.
- \ \____-  \ \_\ \_\  \ \_\\"\_\  \ \_\ \_\
-  \/____/   \/_/\/_/   \/_/ \/_/   \/_/\/_/
+   _____     ______     __   __     __  __
+  /\  __-.  /\  __ \   /\ "-.\ \   /\ \/ /
+  \ \ \/\ \ \ \  __ \  \ \ \-.  \  \ \  _"-.
+   \ \____-  \ \_\ \_\  \ \_\\"\_\  \ \_\ \_\
+    \/____/   \/_/\/_/   \/_/ \/_/   \/_/\/_/
 
 -->
 
 <!DOCTYPE html>
-<html ng-app="roomApp" ng-app="classesApp">
+<html ng-app="mainApp" ng-app="classesApp">
   <head>
     <!-- Bootstrap -->
     <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.6.1/angular.min.js"></script>
@@ -38,36 +38,36 @@
   </head>
 
   <body id="myBody" ng-controller="MainController">
-    <div class="container-fluid">
-      <!-- Classes Sidebar -->
-      <aside id="sidebar-classes" role="complementary">
-        <!-- User Quick Info -->
-        <div id="info-user">
-          <div class="container-user-icon">
-            <!--<img class="user-icon" src="assets/images/user_icon.png" />-->
+    <!-- Classes Sidebar -->
+    <aside id="sidebar-classes" role="complementary">
+      <!-- User Quick Info -->
+      <div id="info-user">
+        <div class="container-user-icon">
+          <!--<img class="user-icon" src="assets/images/user_icon.png" />-->
+        </div>
+        <span class="user-name">FirstName L.</span>
+      </div>
+
+      <!-- Log Out -->
+      <button class="btn btn-primary" onclick="logOut()">Log Out</button>
+
+      <!-- User Preference -->
+      <div class="btn-container">
+        <a class="btn btn-primary" href="courses">Courses</a>
+      </div>
+
+      <!-- Create Room -->
+      <!--<button id="btn-create-room" class="btn btn-primary">Create Room</button>-->
+
+      <!-- Classes -->
+      <div id="container-menu-classes">
+        <button id="btn-create-room" class="btn container-title">
+          <h5 class="title">Rooms</h5>
+          <div id="btn-add">
+            <span class="glyphicon glyphicon-plus"></span>
           </div>
-          <span class="user-name">FirstName L.</span>
-        </div>
-
-        <!-- Log Out -->
-        <button class="btn btn-primary" onclick="logOut()">Log Out</button>
-
-        <!-- User Preference -->
-        <div class="btn-container">
-          <a class="btn btn-primary" href="courses">Courses</a>
-        </div>
-
-        <!-- Create Room -->
-        <!--<button id="btn-create-room" class="btn btn-primary">Create Room</button>-->
-
-        <!-- Classes -->
-        <div id="container-menu-classes">
-          <button id="btn-create-room" class="btn container-title">
-            <h5 class="title">Rooms</h5>
-            <div id="btn-add">
-              <span class="glyphicon glyphicon-plus"></span>
-            </div>
-          </button>
+        </button>
+        <div class="panel-group" id="menu-classes">
           <div class="panel-group" id="menu-classes">
             <!--first class in drop down-->
             <div ng-repeat="(class_id, class_obj) in classes" class="panel" 
@@ -85,78 +85,81 @@
                 </ul>
               </div>
             </div>
-          </div> <!--end panel group-->
+          </div>
+        </div> <!--end panel group-->
+      </div>
+    </aside> <!--end left column-->
+
+    <!-- Main Content -->
+    <main id="chat-room" role="main">
+
+    <!--NAVBAR-->
+    <nav id="navbar-room" class="navbar">
+      <div class="container-fluid">
+        <div class="navbar-header">
+          <span class="navbar-brand">{{currClassName}}{{currRoomName}}</span>
         </div>
-      </aside> <!--end left column-->
-
-      <!-- Main Content -->
-      <main id="chat-room" role="main">
-
-        <!--NAVBAR-->
-        <nav id="navbar-room" class="navbar">
-          <div class="container-fluid">
-            <div class="navbar-header">
-              <a class="navbar-brand">{{currClassName}}{{currRoomName}}</a>
-            </div>
-            <ul class="nav navbar-nav navbar-right">
-              <li class="dropdown">
-                <a class="dropdown-toggle" data-toggle="dropdown" href="#">Rooms <span class="caret"></span></a>
-                <ul class="dropdown-menu" id="room-list">
-                  <li class="list-group-item" ng-repeat="room_id in class_rooms[currClassID]" ng-click="joinRoom(room_id, currClassID, null)">
-                    <span>{{rooms[room_id].name}}</span>
-                  </li>
-                </ul>
+        <ul class="nav navbar-nav navbar-right">
+          <li class="dropdown">
+            <a class="dropdown-toggle" data-toggle="dropdown" href="#">Rooms <span class="caret"></span></a>
+            <ul class="dropdown-menu" id="room-list">
+              <li class="list-group-item" ng-repeat="room_id in class_rooms[currClassID]" ng-click="joinRoom(room_id, currClassID, null)">
+                <span>{{rooms[room_id].name}}</span>
               </li>
             </ul>
+          </li>
+        </ul>
+      </div>
+    </nav>
+
+    <!-- MESSAGE WRAPPER -->
+    <div class="message-pane" id="message-wrapper"> 
+      <!-- MESSAGE PANE -->
+      <div class="container-fluid" id="chatMessageDiv" scroll scroll-event="scrollevent">
+        <div class="message" ng-repeat="chatMessage in chatMessageList">
+          <div id="message-header">
+            <span id="username">{{chatMessage.name}}</span>
+            <span id="dateTime">{{timeAgo(chatMessage)}}</span>
           </div>
-        </nav>
-
-        <!-- MESSAGE WRAPPER -->
-        <div class="message-pane" id="message-wrapper"> 
-          <!-- MESSAGE PANE -->
-          <div class="container-fluid" id="chatMessageDiv" scroll
-            scroll-event="scrollevent">
-            <ul class="message" ng-repeat="chatMessage in chatMessageList">
-              <li id="username">{{chatMessage.name}}</li>
-              <li id="dateTime">{{timeAgo(chatMessage)}}</li>
-              <li id="message" style="white-space:pre-wrap;">{{chatMessage.text}}</li>
-            </ul>
-          </div> <!-- END MESSAGE PANE -->
-
-          <!-- MESSAGE INPUT -->
-          <footer id="wrapper-message-bar">
-            <form class="form-message">
-              <div class="input-group" id="message-bar">
-                <span class="input-group-btn">
-                  <button id="btn-mute" class="btn btn-default" type="submit">
-                    <span class="glyphicon glyphicon-volume-up"></span>
-                  </button>
-                </span>
-                <input type="text" class="form-control" id="chatInputBox" 
-                       ng-model="chatInput" ng-keydown="keypress($event)" 
-                       placeholder="Type a message..." autocomplete="off">
-                <span class="input-group-btn">
-                  <button id="btn-send" class="btn btn-default" ng-click="sendChatMessage(chatInput)">
-                    SEND
-                  </button>
-                </span>
-              </div>
-            </form>
-          </footer> <!-- END MESSAGE INPUT -->
+          <p id="message-body" style="white-space:pre-wrap;">{{chatMessage.text}}</p>
         </div>
-      </main>   
+      </div> <!-- END MESSAGE PANE -->
 
-      <!-- Classmates Sidebar -->
-      <aside id="sidebar-classmates" role="complementary" style="background-color:green">
-        <h3>Buddies</h3>        
-      </aside>
+      <!-- MESSAGE INPUT -->
+      <footer id="wrapper-message-bar">
+        <form class="form-message">
+          <div class="input-group" id="message-bar">
+            <span class="input-group-btn">
+              <button id="btn-mute" class="btn btn-default" type="submit">
+                <span class="glyphicon glyphicon-volume-up"></span>
+              </button>
+            </span>
+            <input type="text" class="form-control" id="chatInputBox" 
+                   ng-model="chatInput" ng-keydown="keypress($event)" 
+                   placeholder="Type a message..." autocomplete="off">
+            <span class="input-group-btn">
+              <button id="btn-send" class="btn btn-default" ng-click="sendChatMessage(chatInput)">
+                SEND
+              </button>
+            </span>
+          </div>
+        </form>
+      </footer> <!-- END MESSAGE INPUT -->
+    </div>
+    </main>   
 
-      <!-- Create Room Modal -->
-      <div id="modal-create-room" class="modal" role="dialog">
-        <div class="modal-dialog">
+    <!-- Classmates Sidebar -->
+    <aside id="sidebar-classmates" role="complementary" style="background-color:green">
+      <h3>Buddies</h3>        
+    </aside>
 
-          <!-- Content -->
-          <div id="create-room" class="modal-content hide">
+    <!-- Create Room Modal -->
+    <div id="modal-create-room" class="modal" role="dialog">
+      <div class="modal-dialog">
+
+        <!-- Content -->
+        <div id="create-room" class="modal-content hide">
+          <div class="title-container text-center"> 
             <button id="close-create-room" class="btn close" data-dismiss="modal" aria-label="Close">
               <span class="glyphicon glyphicon-remove" aria-hidden="true"></span>
             </button>
@@ -165,7 +168,7 @@
                 <div class="title-container text-center"> 
                   <h1 class="title">Create a room</h1>
                 </div>
-                <div class="form-container">
+                <div class="main form-container">
 
                   <!-- Class selection -->
                   <form>
@@ -187,34 +190,29 @@
                       <button id="btn-create" class="btn btn-primary" ng-click="addRoom()">Create</button>
                     </div>
                   </form>
-
                 </div>
               </div>
-            </div>
+            </form>
+
           </div>
         </div>
       </div>
-
-      <!-- Application Info -->
     </div>
   </body>
 
-
-
   <!-- Peer -->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/peerjs/0.3.14/peer.js"></script>
-  
+
   <!-- Firebase -->
   <script src="https://www.gstatic.com/firebasejs/3.6.7/firebase.js"></script>
   <script src="firebase_setup.js"></script>
 
   <!-- Angular scripts -->
   <script src="controllers/main_controller.js"></script>
-  
+
   <!-- Other -->
   <script src="cookies.js"></script>
   <script src="main.js"></script>
   <script src="call.js"></script>
-  
 
 </html>
