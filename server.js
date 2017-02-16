@@ -63,6 +63,7 @@ var ADMIN_KEY = "ABCD"
 var PUBLIC_DIR = __dirname + "/public/";
 var VIEW_DIR = __dirname + "/public/";
 var COOKIE_TIME = 7*24*60*60*1000; //one week
+var MAX_IDLE = 10*1000;
 
 /* HTTP requests ---------------------------------------------------------*/
 
@@ -631,13 +632,12 @@ function ChatMessage(name, email, text, roomID, timeSent) {
 //TODO: ERIC - fix callback stuff so res gets sent back + make this cleaner
 function addRoom(class_id, room_name, room_host_id, is_lecture, time_created, callback) {
   var room_id = class_id + "_" + generateToken();
-  console.log("FIREBASE: Attempting to add room with id " + room_id);
-
+  //console.log("FIREBASE: Attempting to add room with id " + room_id);
   var newRoom = new Room(room_id, room_name, room_host_id, class_id, is_lecture, time_created);
-  var classRoomRef = classRoomsDatabase.child(class_id).push(); //push new room id into class list of rooms
+  //push new room id into class list of rooms
+  var classRoomRef = classRoomsDatabase.child(class_id).push();
   classRoomRef.set(room_id);
   console.log("FIREBASE: Successfully added roomid " + room_id + " to class " + class_id);
-
   //push new room info into room info database under room id
   roomInfoDatabase.child(room_id).set(newRoom, function(err) {
     if (!err) {
@@ -654,17 +654,15 @@ function addRoom(class_id, room_name, room_host_id, is_lecture, time_created, ca
       }
     }
   });
-
 }
 
 function removeRoom(room_id) {
-
 	console.log("FIREBASE: Attempting to remove room with id " + room_id);
-  
   roomInfoDatabase.child(room_id).once("value").then(function(snapshot) {
-    if (snapshot.val()) {
-      var push_id = snapshot.val().firebase_push_id;
-      var class_id = snapshot.val().class_id;
+    var room = snapshot.val();
+    if (room) {
+      var push_id = room.firebase_push_id;
+      var class_id = room.class_id;
       classRoomsDatabase.child(class_id).child(push_id).remove(function(err) {
         roomInfoDatabase.child(room_id).remove(function(err) {
           console.log("FIREBASE: Room " + room_id  + " succesfully deleted from RoomInfo and ClassRooms");
@@ -678,17 +676,17 @@ function removeRoom(room_id) {
 }
 
 function joinRoom(user_id, room_id, callback) {
-	console.log("FIREBASE: Attempting to add user " + user_id + " to room " + room_id);
-
+	//console.log("FIREBASE: Attempting to add user " + user_id + " to room " + room_id);
   roomInfoDatabase.child(room_id).once("value").then(function(snapshot) {
-    if (snapshot.val()) {
+    var room = snapshot.val();
+    if (room) {
       roomInfoDatabase.child(room_id).child("users").push().set(user_id, function(err) {
         if (!err) {
           console.log("FIREBASE: Successfully added user " + user_id + " to room" + room_id);
           if (callback) { //have to grab all of room info for callback TODO: change this?
             roomInfoDatabase.child(room_id).once("value").then(function(snapshot) {
               if (callback) {
-                callback(snapshot.val());
+                callback(room);
               }
             });
           }
@@ -708,7 +706,6 @@ function joinRoom(user_id, room_id, callback) {
       }
     }
   });
-
 }
 
 function leaveRoom(user_id, room_id, callback) {
@@ -717,15 +714,28 @@ function leaveRoom(user_id, room_id, callback) {
     callback({success: true}); //assume user succesfully leaves the room
   }
 
+  //query room's users list
   roomInfoDatabase.child(room_id).child("users").once("value").then(function(snapshot) {
+    var room = snapshot.val();
     if (snapshot.val()) {
+
+      var users = [];
+      snapshot.forEach(function(childSnapshot) {
+        users.push(childSnapshot.val());
+      });
+
       snapshot.forEach(function(childSnapshot) {
         var key = childSnapshot.key;
         var value = childSnapshot.val();
         if (value == user_id) {
+          //rm the user
           childSnapshot.ref.remove(function(err) {
-            //checkToDelete(room_id);
-            setTimeout(checkToDelete, 10*1000, room_id);
+            if (users.length == 1) {
+              //if last user left, check for delete conditions
+              setTimeout(checkToDelete, MAX_IDLE, room_id);
+              snapshot.ref.parent.child("last_active_time").set(Date.now());
+              //checkToDelete(room_id);
+            }
           });
         }
       });
@@ -738,17 +748,24 @@ function leaveRoom(user_id, room_id, callback) {
 
 function checkToDelete(room_id) {
   console.log("FIREBASE: Checking delete conditions");
+  //query room data to check delete conditions
   roomInfoDatabase.child(room_id).once("value").then(function(snapshot) {
     var room = snapshot.val();
     if (room) {
-      if (!room.users) {
-        console.log("FIREBASE: No more users left in room");
-        if (room.host_id != MAIN_HOST) {
-          console.log("FIREBASE: Not main room, attempting to delete room");
-          var class_id = room.class_id;
-          var firebase_push_id = room.firebase_push_id;
-          deleteRoom(room_id, class_id, firebase_push_id);
-          console.log("FIREBASE: Succesfully deleted room " + room_id);
+      if (!room.users) { //no users left
+        console.log("FIREBASE: No more users left in room " + room_id);
+        console.log("FIREBASE: Last active: " + room.last_active_time);
+        var now = Date.now();
+        if (now - room.last_active_time > MAX_IDLE) {
+          console.log(now);
+          console.log("would be deleting");
+          if (room.host_id != MAIN_HOST) { //not a main room
+            console.log("FIREBASE: Attempting to delete room");
+            var class_id = room.class_id;
+            var firebase_push_id = room.firebase_push_id;
+            deleteRoom(room_id, class_id, firebase_push_id);
+            console.log("FIREBASE: Succesfully deleted room " + room_id);
+          }
         }
       }
     }
