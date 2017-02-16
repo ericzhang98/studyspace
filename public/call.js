@@ -111,15 +111,10 @@ function startCall(other_user_id, receiving_only = false) {
 		return;
 	}
 
-	if (receiving_only) {
-		startCallHelper(other_user_id, receiving_only);
-		return;
-	}
-
 	// myStream already set
 	if (myStream != null) {
 		console.log("myStream already set");
-		startCallHelper(other_user_id);
+		startCallHelper(other_user_id, receiving_only);
 	}		
 
 	// myStream not yet set
@@ -127,7 +122,7 @@ function startCall(other_user_id, receiving_only = false) {
 		console.log("myStream not yet set");
 		navigator.getUserMedia({video: false, audio: true}, function(stream) {
 			myStream = stream;
-			startCallHelper(other_user_id);
+			startCallHelper(other_user_id, receiving_only);
 		}, function(err) {
 			console.log('Failed to get local stream' ,err);
 		});
@@ -135,7 +130,7 @@ function startCall(other_user_id, receiving_only = false) {
 }
 
 // - with myStream set, starts the call
-function startCallHelper(other_user_id, receiving_only = false) {
+function startCallHelper(other_user_id, receiving_only) {
 	
 	var call = peer.call(other_user_id, myStream);
 
@@ -153,8 +148,7 @@ function startCallHelper(other_user_id, receiving_only = false) {
 	call.on('stream', function(remoteStream) {
 		console.log("incoming stream id: " + remoteStream.id)
 
-		addRemoteStream(remoteStream, call.id);
-
+		addRemoteStream(remoteStream, call.id);	
 	});
 
 	// used for onClose
