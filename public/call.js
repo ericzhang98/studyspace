@@ -137,14 +137,10 @@ function startCall(other_user_id, receiving_only = false) {
 // - with myStream set, starts the call
 function startCallHelper(other_user_id, receiving_only = false) {
 	
-	var call;
+	var call = peer.call(other_user_id, myStream);
 
 	if (receiving_only) {
-		call = peer.call(other_user_id, new MediaStream());
-	} 
-
-	else {
-		call = peer.call(other_user_id, myStream);
+		setMyStreamAudioEnabled(false);
 	}
 
 	console.log("sent call to user with id: " + call.peer)
@@ -369,6 +365,10 @@ function listenToRoom() {
 // - toggle my own audio
 function toggleMyStreamAudioEnabled() {
 	myStream.getAudioTracks()[0].enabled = !(myStream.getAudioTracks()[0].enabled);
+}
+
+function setMyStreamAudioEnabled(enabled) {
+	myStream.getAudioTracks()[0].enabled = enabled;
 }
 
 // - toggle audio from another person
