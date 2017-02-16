@@ -64,6 +64,7 @@ var PUBLIC_DIR = __dirname + "/public/";
 var VIEW_DIR = __dirname + "/public/";
 var COOKIE_TIME = 7*24*60*60*1000; //one week
 var MAX_IDLE = 10*1000;
+var BUFFER_TIME = 20*1000;
 
 /* HTTP requests ---------------------------------------------------------*/
 
@@ -637,40 +638,21 @@ function addRoom(class_id, room_name, room_host_id, is_lecture, time_created, ca
   //push new room id into class list of rooms
   var classRoomRef = classRoomsDatabase.child(class_id).push();
   classRoomRef.set(room_id);
-  console.log("FIREBASE: Successfully added roomid " + room_id + " to class " + class_id);
+  console.log("FIREBASE: addRoom - Added roomid " + room_id + " to class " + class_id);
   //push new room info into room info database under room id
   roomInfoDatabase.child(room_id).set(newRoom, function(err) {
     if (!err) {
-      console.log("FIREBASE: Room " + room_id  + " successfully inserted into RoomInfo database");
+      console.log("FIREBASE: addRoom - Room " + room_id  + " inserted into RoomInfo database");
       roomInfoDatabase.child(room_id).update({firebase_push_id: classRoomRef.key}) 
       if (callback) {
         callback({room_id: room_id});
       }
     }
     else {
-      console.log("FIREBASE: Error - failed to add room " + room_id + " to RoomInfo database");
+      console.log("FIREBASE: ERROR - failed to add room " + room_id + " to RoomInfo database");
       if (callback) {
         callback({error: "failed_to_add_room"});
       }
-    }
-  });
-}
-
-function removeRoom(room_id) {
-	console.log("FIREBASE: Attempting to remove room with id " + room_id);
-  roomInfoDatabase.child(room_id).once("value").then(function(snapshot) {
-    var room = snapshot.val();
-    if (room) {
-      var push_id = room.firebase_push_id;
-      var class_id = room.class_id;
-      classRoomsDatabase.child(class_id).child(push_id).remove(function(err) {
-        roomInfoDatabase.child(room_id).remove(function(err) {
-          console.log("FIREBASE: Room " + room_id  + " succesfully deleted from RoomInfo and ClassRooms");
-        });
-      });
-          }
-    else {
-      console.log("FIREBASE: Failed - Didn't delete room " + room_id);
     }
   });
 }
@@ -682,25 +664,26 @@ function joinRoom(user_id, room_id, callback) {
     if (room) {
       roomInfoDatabase.child(room_id).child("users").push().set(user_id, function(err) {
         if (!err) {
-          console.log("FIREBASE: Successfully added user " + user_id + " to room" + room_id);
+          console.log("FIREBASE: joinRoom - Added user " + user_id + " to room" + room_id);
           if (callback) { //have to grab all of room info for callback TODO: change this?
             roomInfoDatabase.child(room_id).once("value").then(function(snapshot) {
+              var updatedRoom = snapshot.val();
               if (callback) {
-                callback(room);
+                callback(updatedRoom);
               }
             });
           }
         }
         else {
           if (callback) {
-            console.log("FIREBASE: Failed - User wasn't added for some reason");
+            console.log("FIREBASE: ERROR - User wasn't added for some reason");
             callback(null);
           }
         }
       });
     }
     else {
-      console.log("FIREBASE: Failed - Room doesn't exist anymore, user failed to join");
+      console.log("FIREBASE: ERROR - Room doesn't exist anymore, user failed to join");
       if (callback) {
         callback(null);
       }
@@ -709,21 +692,19 @@ function joinRoom(user_id, room_id, callback) {
 }
 
 function leaveRoom(user_id, room_id, callback) {
-	console.log("FIREBASE: Attempting to remove user " + user_id + " from room " + room_id);
+	//console.log("FIREBASE: Attempting to remove user " + user_id + " from room " + room_id);
   if (callback) {
     callback({success: true}); //assume user succesfully leaves the room
   }
-
+  console.log("FIREBASE: leaveRoom - Removed user " + user_id + " from room" + room_id);
   //query room's users list
   roomInfoDatabase.child(room_id).child("users").once("value").then(function(snapshot) {
     var room = snapshot.val();
     if (snapshot.val()) {
-
       var users = [];
       snapshot.forEach(function(childSnapshot) {
         users.push(childSnapshot.val());
       });
-
       snapshot.forEach(function(childSnapshot) {
         var key = childSnapshot.key;
         var value = childSnapshot.val();
@@ -732,45 +713,58 @@ function leaveRoom(user_id, room_id, callback) {
           childSnapshot.ref.remove(function(err) {
             if (users.length == 1) {
               //if last user left, check for delete conditions
-              setTimeout(checkToDelete, MAX_IDLE, room_id);
+              setTimeout(bufferTimer, MAX_IDLE, room_id);
               snapshot.ref.parent.child("last_active_time").set(Date.now());
-              //checkToDelete(room_id);
             }
           });
         }
       });
     }
     else {
-      console.log("FIREBASE: Error - room no longer exists");
+      console.log("FIREBASE: ERROR - room no longer exists");
+    }
+  });
+}
+
+function bufferTimer(room_id) {
+  roomInfoDatabase.child(room_id).once("value").then(function(snapshot) {
+    var room = snapshot.val();
+    if (room) {
+      var timeDiff = Date.now() - room.time_created;
+      if (timeDiff > BUFFER_TIME) {
+        checkToDelete(room_id);
+      }
+      else {
+        setTimeout(checkToDelete, BUFFER_TIME - timeDiff, room_id);
+      }
     }
   });
 }
 
 function checkToDelete(room_id) {
-  console.log("FIREBASE: Checking delete conditions");
+  console.log("FIREBASE: checkToDelete - Checking delete conditions for " + room_id);
   //query room data to check delete conditions
   roomInfoDatabase.child(room_id).once("value").then(function(snapshot) {
     var room = snapshot.val();
     if (room) {
       if (!room.users) { //no users left
-        console.log("FIREBASE: No more users left in room " + room_id);
-        console.log("FIREBASE: Last active: " + room.last_active_time);
+        console.log("FIREBASE: checkToDelete - No more users left in room " + room_id);
+        console.log("FIREBASE: checkToDelete - Last active: " + room.last_active_time);
         var now = Date.now();
         if (now - room.last_active_time > MAX_IDLE) {
-          console.log(now);
-          console.log("would be deleting");
+          console.log("FIREBASE: checkToDelete - Would be deleting");
           if (room.host_id != MAIN_HOST) { //not a main room
-            console.log("FIREBASE: Attempting to delete room");
+            console.log("FIREBASE: checkToDelete - Attempting to delete room");
             var class_id = room.class_id;
             var firebase_push_id = room.firebase_push_id;
             deleteRoom(room_id, class_id, firebase_push_id);
-            console.log("FIREBASE: Succesfully deleted room " + room_id);
+            console.log("FIREBASE: checkToDelete - Succesfully deleted room " + room_id);
           }
         }
       }
     }
     else {
-      console.log("FIREBASE: Couldn't find room to delete");
+      console.log("FIREBASE: ERROR - Couldn't find room to delete");
     }
   });
 }
