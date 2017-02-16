@@ -615,7 +615,6 @@ function Room(room_id, room_name, room_host_id, class_id, is_lecture) {
 	this.host_id = room_host_id;
 	this.class_id = class_id;
 	this.is_lecture = is_lecture;
-	this.has_tutor = false;
 }
 
 function ChatMessage(name, email, text, roomID, timeSent) {

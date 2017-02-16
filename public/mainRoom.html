@@ -80,7 +80,8 @@
               <div id="{{class_id}}" class="panel-collapse collapse">
                 <ul class="list-group">
                   <li class="list-group-item" ng-repeat="room_id in class_rooms[class_id]" ng-click="joinRoom(room_id, class_id, null)">
-                    <span class="room-name">{{rooms[room_id].name}}</span> 
+                    <span ng-if="!rooms[room_id].has_tutor" class="room-name">{{rooms[room_id].name}}</span> 
+                    <span ng-if="rooms[room_id].has_tutor" class="room-name">tutorino {{rooms[room_id].name}}</span> 
                   </li>
                 </ul>
               </div>
