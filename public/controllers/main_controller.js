@@ -252,6 +252,7 @@ myApp.controller("MainController", ["$scope", "$http",
       // style choice: all room names be lower case only
       var room_name = (document.getElementById('room_name').value).toLowerCase();
       var is_lecture = false;
+      var time_created = Date.now()/1000;
 
       // if class_id is null do nothing
       if (class_id == null) {
@@ -274,7 +275,7 @@ myApp.controller("MainController", ["$scope", "$http",
         ", room_name: " + room_name);
       var xhr = new XMLHttpRequest();
       xhr.open('GET', "/add_room/" + class_id + "/" + 
-        room_name + "/" + is_lecture, true);
+        room_name + "/" + is_lecture + "/" + time_created, true);
       xhr.send();
 
       // Once room has been created

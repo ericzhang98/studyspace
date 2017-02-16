@@ -334,12 +334,13 @@ app.get('/get_class/:class_id', function(req, res) {
 /*************************************************************************************/
 /*************************************** ROOMS ***************************************/
 
-app.get('/add_room/:class_id/:room_name/:is_lecture', function(req, res) {
+app.get('/add_room/:class_id/:room_name/:is_lecture/:time_created', function(req, res) {
   var host_id = req.signedCookies.user_id;
   //needs error checking for class_id's (or just change to POST request)
   if (host_id) {
     addRoom(req.params.class_id, req.params.room_name, 
-      host_id, req.params.is_lecture == "true", function(room_id){res.send(room_id);});
+      host_id, req.params.is_lecture == "true", parseFloat(req.params.time_created),
+      function(room_id){res.send(room_id);});
   }
   else {
     res.send({});
@@ -585,13 +586,14 @@ function Class(class_id, class_name) {
 	this.name = class_name; // "CSE 110 Gillespie"
 }
 
-function Room(room_id, room_name, room_host_id, class_id, is_lecture) {
+function Room(room_id, room_name, room_host_id, class_id, is_lecture, time_created) {
 	this.room_id = room_id;
 	this.name = room_name;
 	this.host_id = room_host_id;
 	this.class_id = class_id;
 	this.is_lecture = is_lecture;
 	this.has_tutor = false;
+  this.time_created = time_created;
 }
 
 function ChatMessage(name, email, text, roomID, timeSent) {
@@ -603,11 +605,11 @@ function ChatMessage(name, email, text, roomID, timeSent) {
 }
 
 //TODO: ERIC - fix callback stuff so res gets sent back + make this cleaner
-function addRoom(class_id, room_name, room_host_id, is_lecture, callback) {
+function addRoom(class_id, room_name, room_host_id, is_lecture, time_created, callback) {
   var room_id = class_id + "_" + generateToken();
   console.log("FIREBASE: Attempting to add room with id " + room_id);
 
-  var newRoom = new Room(room_id, room_name, room_host_id, class_id, is_lecture);
+  var newRoom = new Room(room_id, room_name, room_host_id, class_id, is_lecture, time_created);
   var classRoomRef = classRoomsDatabase.child(class_id).push(); //push new room id into class list of rooms
   classRoomRef.set(room_id);
   console.log("FIREBASE: Successfully added roomid " + room_id + " to class " + class_id);
@@ -698,7 +700,8 @@ function leaveRoom(user_id, room_id, callback) {
         var value = childSnapshot.val();
         if (value == user_id) {
           childSnapshot.ref.remove(function(err) {
-            checkToDelete(room_id);
+            //checkToDelete(room_id);
+            setTimeout(checkToDelete, 10*1000, room_id);
           });
         }
       });
@@ -711,26 +714,29 @@ function leaveRoom(user_id, room_id, callback) {
 
 function checkToDelete(room_id) {
   console.log("FIREBASE: Checking delete conditions");
-  roomInfoDatabase.child(room_id).child("users").once("value").then(function(snapshot) {
-    if (!snapshot.val()) {
-      console.log("FIREBASE: No more users left in room, checking host id");
-      snapshot.ref.parent.once("value").then(function(snapshot) {
-        if (snapshot.val()) {
-          if (snapshot.val().host_id != MAIN_HOST) {
-            console.log("FIREBASE: Not main room, attempting to delete room");
-            var class_id = snapshot.val().class_id;
-            var firebase_push_id = snapshot.val().firebase_push_id;
-            classRoomsDatabase.child(class_id).child(firebase_push_id).remove();
-            snapshot.ref.remove();
-            console.log("FIREBASE: Succesfully deleted room " + room_id);
-          }
+  roomInfoDatabase.child(room_id).once("value").then(function(snapshot) {
+    var room = snapshot.val();
+    if (room) {
+      if (!room.users) {
+        console.log("FIREBASE: No more users left in room");
+        if (room.host_id != MAIN_HOST) {
+          console.log("FIREBASE: Not main room, attempting to delete room");
+          var class_id = room.class_id;
+          var firebase_push_id = room.firebase_push_id;
+          deleteRoom(room_id, class_id, firebase_push_id);
+          console.log("FIREBASE: Succesfully deleted room " + room_id);
         }
-        else {
-          console.log("FIREBASE: Couldn't find room to delete");
-        }
-      });
+      }
+    }
+    else {
+      console.log("FIREBASE: Couldn't find room to delete");
     }
   });
+}
+
+function deleteRoom(room_id, class_id, firebase_push_id) {
+  roomInfoDatabase.child(room_id).remove();
+  classRoomsDatabase.child(class_id).child(firebase_push_id).remove();
 }
 
 function tutorInRoom(room) {
