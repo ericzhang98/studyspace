@@ -20,6 +20,11 @@ html, body {
   border-radius: 0;
   height: 5rem;
   font-weight: 600;
+  color: #337ab7;
+}
+
+#navbar-room .navbar-brand {
+  cursor: default;
 }
 
 #message-wrapper{
@@ -45,6 +50,7 @@ html, body {
   padding-top: 1.5rem;
   padding-bottom: 1.5rem;
   border-bottom: solid 1px #333333;
+  cursor: default;
 }
 
 #chatMessageDiv .message:last-child {
@@ -79,6 +85,7 @@ html, body {
    color: powderblue;
    font-size: 1.5rem;
    margin-bottom: 0;
+   padding-top: 0.5rem;
 }
 
 #username:selection,
@@ -274,6 +281,10 @@ p:selection {
 #btn-create:visited {
   background: #337ab7;
 }
+
+#create-room .panel:last-child {
+  margin-bottom: 0;
+} 
 
 @media screen and (min-width: 768px) {
   /* Classes Sidebar */
