@@ -397,12 +397,13 @@ myApp.controller("MainController", ["$scope", "$http",
     // - calls removeRoom/getRoom accordingly
     function onClassRoomsChange(class_id, updated_rooms) {
 
+        // update our rooms
+        $scope.class_rooms[class_id] = updated_rooms;
+
         // get new rooms
         for (i = 0; i < updated_rooms.length; i++) {
           getRoom(updated_rooms[i]);
         }
-
-        $scope.class_rooms[class_id] = updated_rooms;
     }
 
     // finds the room's data and adds it to the list of rooms

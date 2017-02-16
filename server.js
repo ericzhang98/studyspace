@@ -382,7 +382,7 @@ app.get('/join_room/:room_id/', function(req, res) {
     joinRoom(user_id, room_id, function(roomInfo){res.send(roomInfo);});
   }
   else {
-    res.send({});
+    res.send({error: "invalid_user_id"});
   }
 });
 
@@ -394,7 +394,7 @@ app.get('/leave_room/:room_id/', function(req, res) {
     leaveRoom(user_id, room_id, function(success){res.send(success);});
   }
   else {
-    res.send({});
+    res.send({error: "invalid_user_id"});
   }
 });
 
