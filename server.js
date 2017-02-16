@@ -345,7 +345,7 @@ app.get('/add_room/:class_id/:room_name/:is_lecture/:time_created', function(req
   var class_id = req.params.class_id;
   var room_name = req.params.room_name;
   var is_lecture = req.params.is_lecture == "true";
-  var time_created = parseFloat(req.params.time_created);
+  var time_created = parseInt(req.params.time_created);
 
   // error checking
   db.classes.findOne({class_id: class_id}, function (err, doc) {
