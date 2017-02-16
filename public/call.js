@@ -103,11 +103,16 @@ function pingPeerServer(constant) {
 }
 
 // - ensures myStream is set, delegates to startCallHelper()
-function startCall(other_user_id) {
+function startCall(other_user_id, receiving_only = false) {
 	console.log("calling " + other_user_id);
 
 	// do not send out calls to users that we've blocked
 	if (me.block_list.indexOf(other_user_id) != -1) {
+		return;
+	}
+
+	if (receiving_only) {
+		startCallHelper(other_user_id, receiving_only);
 		return;
 	}
 
@@ -130,9 +135,17 @@ function startCall(other_user_id) {
 }
 
 // - with myStream set, starts the call
-function startCallHelper(other_user_id) {
+function startCallHelper(other_user_id, receiving_only = false) {
+	
+	var call;
 
-	var call = peer.call(other_user_id, myStream);
+	if (receiving_only) {
+		call = peer.call(other_user_id, new MediaStream());
+	} 
+
+	else {
+		call = peer.call(other_user_id, myStream);
+	}
 
 	console.log("sent call to user with id: " + call.peer)
 
@@ -244,7 +257,9 @@ function joinRoomCall() {
 	        // if this is a lecture-style room and I am not the lecturer,
 	        // then call only the lecturer
 	        if (response.is_lecture && !isLecturer) {
-	        	startCall(response.host_id);
+
+	        	// true indicates that we only want to receive audio, not send
+	        	startCall(response.host_id, true);
 	        }
 
 	      	// otherwise, call everyone in the room who isn't me
@@ -298,7 +313,7 @@ function addRemoteStream(remoteStream, call_id) {
 
     // if I am the lecturer, I want everyone else muted by default
 	if (isLecturer) {
-		toggleRemoteStreamAudioEnabled(call_id);
+		// toggleRemoteStreamAudioEnabled(call_id);
 	}
 
     // add audio stream to the page
