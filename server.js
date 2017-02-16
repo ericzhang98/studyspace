@@ -336,15 +336,39 @@ app.get('/get_class/:class_id', function(req, res) {
 
 app.get('/add_room/:class_id/:room_name/:is_lecture/:time_created', function(req, res) {
   var host_id = req.signedCookies.user_id;
-  //needs error checking for class_id's (or just change to POST request)
-  if (host_id) {
-    addRoom(req.params.class_id, req.params.room_name, 
-      host_id, req.params.is_lecture == "true", parseFloat(req.params.time_created),
-      function(room_id){res.send(room_id);});
+  if (!host_id) {
+    res.send({error: "invalid_user_id"});
+    return;
   }
-  else {
-    res.send({});
-  }
+
+  var class_id = req.params.class_id;
+  var room_name = req.params.room_name;
+  var is_lecture = req.params.is_lecture == "true";
+  var time_created = parseFloat(req.params.time_created);
+
+  // error checking
+  db.classes.findOne({class_id: class_id}, function (err, doc) {
+    
+    // if class with class_id exists
+    if (doc) {
+
+      // if host is a non-tutor attempting to host a lecture
+      if (is_lecture && (!doc.tutor_ids || doc.tutor_ids.indexOf(host_id) == -1)) {
+        res.send({error: "not_a_tutor"});
+        return;
+      }
+
+      // add the room
+      addRoom(class_id, room_name, 
+        host_id, is_lecture, time_created, function(room_id){res.send(room_id);});
+    }
+
+    // class with class_id does not exist
+    else {
+      res.send({error: "invalid_class_id"});
+      return;
+    }
+  });
 });
 
 // - adds user_id to room with id room_id
@@ -626,7 +650,7 @@ function addRoom(class_id, room_name, room_host_id, is_lecture, time_created, ca
     else {
       console.log("FIREBASE: Error - failed to add room " + room_id + " to RoomInfo database");
       if (callback) {
-        callback({room_id: null});
+        callback({error: "failed_to_add_room"});
       }
     }
   });
