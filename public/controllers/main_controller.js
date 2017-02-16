@@ -251,7 +251,9 @@ myApp.controller("MainController", ["$scope", "$http",
       var class_id = $('#class_id input:radio:checked').val();
       // style choice: all room names be lower case only
       var room_name = (document.getElementById('room_name').value).toLowerCase();
-      var is_lecture = true;
+
+      // TODO: actually set this (waiting on Andy's UI change)
+      var is_lecture = false;
 
       // if class_id is null do nothing
       if (class_id == null) {
