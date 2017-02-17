@@ -1,8 +1,13 @@
 /***** General variables **************************/
 var currRoomID = null;
 var songCommands = ["/raindrop", "/destress"];
-var otherCommands = ["/gary", "/stop"]
+var otherCommands = ["/gary", "/ord", "/stop"]
 var secretCommands = songCommands.concat(otherCommands);
+
+var garyisms = ["That's a professionalism deduction.", "Don't touch the bananas, please.",
+"Only handle it once!", "This isn't worth my time.", "What does 'DTF' mean?"];
+var ordisms = ["Keep it simple, stupid.", "Start early, start often!", 
+"If a simple boy from the midwest can do it, so can you.", "Think like a compiler."];
 
 var currSongAudio = null;
 /**************************************************/
@@ -72,7 +77,25 @@ function doCommand(command) {
 	}
 
 	else if (command == "/gary") {
-		return "That's a professionalism deduction.";
+		if (garyisms.length == 0) {
+			return "Gary says: I'm all out of things to say. Come back later.";
+		}
+
+		var index = Math.floor(Math.random()*garyisms.length);
+		var msg = "Gary says: " + garyisms[index];
+		garyisms.splice(index, 1);
+		return msg;
+	}
+
+	else if (command == "/ord") {
+		if (ordisms.length == 0) {
+			return "Ord says: I'm all out of things to say. Come back later.";
+		}
+		
+		var index = Math.floor(Math.random()*ordisms.length);
+		var msg = "Ord says: " + ordisms[index];
+		ordisms.splice(index, 1);
+		return msg;
 	}
 
 	return null;
