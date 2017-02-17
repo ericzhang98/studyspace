@@ -118,6 +118,9 @@
     <div class="message-pane" id="message-wrapper"> 
       <!-- MESSAGE PANE -->
       <div class="container-fluid" id="chatMessageDiv" scroll scroll-event="scrollevent">
+        <div class="message" id="chatLoadingDiv"> 
+          <p style="white-space:pre-wrap;">loading..</p>
+        </div>
         <div class="message" ng-repeat="chatMessage in chatMessageList">
           <div id="message-header">
             <span id="username">{{chatMessage.name}}</span>
