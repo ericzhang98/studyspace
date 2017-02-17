@@ -12,6 +12,8 @@ myApp.controller("MainController", ["$scope", "$http",
     function($scope, $http) {
       console.log("Hell yeah");
 
+      $scope.myName = getSignedCookie("name");
+
 /*-------------------------------------------------------------------*/
 /****************************** CHAT ROOM ****************************/
 /*-------------------------------------------------------------------*/
@@ -263,8 +265,8 @@ myApp.controller("MainController", ["$scope", "$http",
         return;
       }
       // if room_name is empty do nothing
-      if (room_name.length == 1) {
-        console.log("room name too short");
+      if (room_name.length == 0 || room_name.length > 25) {
+        console.log("room name must be between 1 and 25 characters");
         // TODO: error message
         return;
       }
@@ -432,20 +434,15 @@ myApp.controller("MainController", ["$scope", "$http",
     // update rooms and classes accordingly
     function detectTutors(room) {
 
-      console.log("detecting tutor for room with name " + room.name);
       var tutor_ids = $scope.classes[room.class_id].tutor_ids;
 
       // if this class has tutors
       if (tutor_ids && room.users) {
-        console.log("looking at users");
-        console.log(tutor_ids);
-        console.log(room.users);
 
         for (var i = 0; i < room.users.length; i++) {
           var has_tutor = false;
           // if there is a tutor in this room
           if (tutor_ids.indexOf(room.users[i]) != -1) {
-            console.log("found tutor in class " + room.class_id);
             has_tutor = true;
             break;
           }
