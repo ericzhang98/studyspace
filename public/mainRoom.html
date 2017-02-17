@@ -129,18 +129,18 @@
 
       <!-- MESSAGE INPUT -->
       <footer id="wrapper-message-bar">
-        <form class="form-message">
+        <form class="form-message" ng-submit="sendChatMessage(chatInput)">
           <div class="input-group" id="message-bar">
             <span class="input-group-btn">
-              <button id="btn-mute" class="btn btn-default" type="submit">
+              <button id="btn-mute" class="btn btn-default" type="button"
+                onclick="toggleMyStreamAudioEnabled()"> 
                 <span class="glyphicon glyphicon-volume-up"></span>
               </button>
             </span>
             <input type="text" class="form-control" id="chatInputBox" 
-                   ng-model="chatInput" ng-keydown="keypress($event)" 
-                   placeholder="Type a message..." autocomplete="off">
+              ng-model="chatInput" placeholder="Type a message..." autocomplete="off">
             <span class="input-group-btn">
-              <button id="btn-send" class="btn btn-default" ng-click="sendChatMessage(chatInput)">
+              <button id="btn-send" class="btn btn-default" type="submit">
                 SEND
               </button>
             </span>

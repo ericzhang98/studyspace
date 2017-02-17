@@ -21,7 +21,6 @@ navigator.getUserMedia({video: false, audio: true}, function(stream) {
 }, function(err) {
 	console.log('Failed to get local stream' ,err);
 });
-/**************************************************/
 
 /*********************** CALLING AND ANSWERING ***********************/
 
@@ -325,9 +324,10 @@ function toggleMyStreamAudioEnabled() {
 }
 
 function setMyStreamAudioEnabled(enabled) {
-	console.log("setting my audio to " + enabled);
+	
 	if (myStream) {
-		myStream.getAudioTracks()[0].enabled = false;
+		console.log("setting my audio to " + enabled);
+		myStream.getAudioTracks()[0].enabled = enabled;
 	}
 }
 
