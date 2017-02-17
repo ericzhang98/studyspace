@@ -67,7 +67,9 @@ myApp.controller("MainController", ["$scope", "$http",
               $scope.chatInput = "";
               chatInputBox.focus();
             }
-          } 
+          }
+
+          // regular message
           else {
             uploadMessage(chatInput);
           }
@@ -273,7 +275,7 @@ myApp.controller("MainController", ["$scope", "$http",
     $scope.addRoom = function() {
 
       // Grab modal values
-      var class_id = $('#class_id input:radio:checked').val();
+      var class_id = $('input:radio[name=class_id_radio]:checked').val();
       // style choice: all room names be lower case only
       var room_name = (document.getElementById('room_name').value).toLowerCase();
 
@@ -287,6 +289,7 @@ myApp.controller("MainController", ["$scope", "$http",
         // TODO: error message
         return;
       }
+
       // if room_name is empty do nothing
       if (room_name.length == 0 || room_name.length > 25) {
         console.log("room name must be between 1 and 25 characters");
