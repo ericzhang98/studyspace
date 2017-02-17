@@ -25,22 +25,6 @@ function hang_up_button_on_click() {
 	leaveCalls();
 }
 
-function create_room_button_on_click() {
-	addRoom("ucsd_cse_110_1", "Gary Appreciation Room", true);
-}
-
-function join_room1_button_on_click() {
-	//joinRoom("ucsd_cse_110_1_r0");
-}
-
-function join_room2_button_on_click() {
-	//joinRoom("ucsd_cse_105_1_r0");
-}
-
-function join_room3_button_on_click() {
-	//joinRoom("ucsd_cse_110_1_r1");
-}
-
 function leave_room_button_on_click() {
 	leaveRoom();
 }
@@ -52,6 +36,7 @@ function mute_button_on_click() {
 function mute_other_button_on_click() {
 	toggleRemoteStreamAudioEnabled(document.getElementById("target_id_input").value);
 }
+
 /**************************************************/
 
 /*********************** CALLING AND ANSWERING ***********************/
