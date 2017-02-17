@@ -70,7 +70,7 @@ function doCommand(command) {
 	}
 
 	else if (command == "/gary") {
-		return "That's a professionalism deduction";
+		return "That's a professionalism deduction.";
 	}
 
 	return null;
