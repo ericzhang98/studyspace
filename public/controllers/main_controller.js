@@ -170,14 +170,17 @@ myApp.controller("MainController", ["$scope", "$http",
       }
 
       // Scroll event listener -- see more messages if scroll within 30px of top
+      var lastScroll = 0;
       $scope.scrollevent = function() {
         //console.log("Scroll top: " + div.scrollTop);
-        if(div.scrollTop <= 30) {
+        var currentScroll = div.scrollTop;
+        if(currentScroll <= 200 && currentScroll < lastScroll) {
           //don't call seeMore if still processing past one
           if (!scrollLock) { 
             seeMoreMessages();
           }
         }
+        lastScroll = currentScroll;
       }
 
       // View more messages -- queries last number of msgs from Firebase and
@@ -190,7 +193,7 @@ myApp.controller("MainController", ["$scope", "$http",
           document.getElementById("loading").removeAttribute("hidden");
           scrollLock = true; //prevent any more seeMoreMessages calls until current finishes
           var messagesSoFar = chatMessageList.length;
-          var messagesToAdd = 20;
+          var messagesToAdd = 50;
           //query db for past number of messages
           chatDatabase.limitToLast(messagesToAdd+1).orderByKey().endAt(lastKey)
             .once("value", function(snapshot) {
