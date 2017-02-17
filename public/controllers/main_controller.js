@@ -164,6 +164,8 @@ myApp.controller("MainController", ["$scope", "$http",
         //check if a lastKey is ready, signifying that og msgs have finished
         if (lastKey) {
           console.log("see more");
+          //show loading UI element
+          document.getElementById("loading").removeAttribute("hidden");
           scrollLock = true; //prevent any more seeMoreMessages calls until current finishes
           var messagesSoFar = chatMessageList.length;
           var messagesToAdd = 20;
@@ -191,6 +193,8 @@ myApp.controller("MainController", ["$scope", "$http",
               console.log("Scroll down by: " + (div.scrollHeight - previousHeight));
               div.scrollTop = previousPosition + (div.scrollHeight - previousHeight);
               scrollLock = false;
+              //hide loading UI element
+              document.getElementById("loading").setAttribute("hidden", null);
             }
           });
         }
@@ -222,7 +226,6 @@ myApp.controller("MainController", ["$scope", "$http",
 
       // Scroll chat view to bottom 
       function scrollDown() {
-        console.log("scroll completely down");
         div.scrollTop = div.scrollHeight - div.clientHeight;
       }
 
