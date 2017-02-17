@@ -260,7 +260,7 @@ function joinRoomCall() {
 		        	var other_user_id =usersArray[i];
 		        	console.log("assessing " + other_user_id);
 		        	if (other_user_id != myID) {
-		        		startCall(other_user_id, true);
+		        		startCall(other_user_id);
 		    		}
 		        }
 	    	}
