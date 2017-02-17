@@ -2,7 +2,7 @@
 var me = {user_id: "id2", block_list: ["block1"]};
 var myID = getSignedCookie("user_id");
 var currRoomUsers = [];
-var isLecturer = false;
+var isLecturer = false;		// am I giving a lecture?
 /**************************************************/
 
 /***** Audio conferencing variables ***************/
@@ -14,30 +14,13 @@ var myStream = null;
 var myCalls = [];
 var myRemoteStreams = {}; // Dictionary from call.id to audio track
 navigator.getUserMedia = navigator.getUserMedia || navigator.webkitGetUserMedia || navigator.mozGetUserMedia;
-/**************************************************/
 
-/***** onClicks for testing ***********************/	
-function call_button_on_click() {
-	startCall(document.getElementById("target_id_input").value);
-}
-
-function hang_up_button_on_click() {
-	leaveCalls();
-}
-
-function leave_room_button_on_click() {
-	leaveRoom();
-}
-
-function mute_button_on_click() {
-	toggleMyStreamAudioEnabled();
-}
-
-function mute_other_button_on_click() {
-	toggleRemoteStreamAudioEnabled(document.getElementById("target_id_input").value);
-}
-
-/**************************************************/
+// Grab user media immediately
+navigator.getUserMedia({video: false, audio: true}, function(stream) {
+	myStream = stream;
+}, function(err) {
+	console.log('Failed to get local stream' ,err);
+});
 
 /*********************** CALLING AND ANSWERING ***********************/
 
@@ -46,13 +29,6 @@ peer.on('open', function() {
 	console.log('My peer ID is: ' + peer.id);
   //setup heartbeat ping after 5 seconds (wait for socket to finish httpr)
   setTimeout(pingPeerServer, 5000, true);
-
-  /*
-  if (!peer.id) {
-    peer.id = peer._lastServerId;
-    console.log("setting peer id to: " + peer.id);
-  }
-  */
 });
 
 // Respond to call
@@ -67,12 +43,6 @@ peer.on('call', function(call) {
 
 peer.on("disconnected", function() {
   console.log("DISCONNECTED");
-  /*
-  //actually too jank if more than one window, gonna do heartbeat ping
-  console.log("Last server id: " + peer._lastServerId);
-  console.log("Peer id: " + peer.id);
-  peer.reconnect();
-  */
 });
 
 peer.on("error", function(err) {
@@ -88,7 +58,7 @@ function pingPeerServer(constant) {
 }
 
 // - ensures myStream is set, delegates to startCallHelper()
-function startCall(other_user_id, send_no_audio = false) {
+function startCall(other_user_id) {
 	console.log("calling " + other_user_id);
 
 	// do not send out calls to users that we've blocked
@@ -99,7 +69,7 @@ function startCall(other_user_id, send_no_audio = false) {
 	// myStream already set
 	if (myStream != null) {
 		console.log("myStream already set");
-		startCallHelper(other_user_id, send_no_audio);
+		startCallHelper(other_user_id);
 	}		
 
 	// myStream not yet set
@@ -107,7 +77,7 @@ function startCall(other_user_id, send_no_audio = false) {
 		console.log("myStream not yet set");
 		navigator.getUserMedia({video: false, audio: true}, function(stream) {
 			myStream = stream;
-			startCallHelper(other_user_id, send_no_audio);
+			startCallHelper(other_user_id);
 		}, function(err) {
 			console.log('Failed to get local stream' ,err);
 		});
@@ -115,13 +85,7 @@ function startCall(other_user_id, send_no_audio = false) {
 }
 
 // - with myStream set, starts the call
-function startCallHelper(other_user_id, send_no_audio) {
-
-	if (send_no_audio) {
-		console.log("tracks are " + myStream.getTracks());
-		console.log("audio are " + myStream.getAudioTracks());
-		setMyStreamAudioEnabled(false);
-	}
+function startCallHelper(other_user_id) {
 	
 	var call = peer.call(other_user_id, myStream);
 
@@ -173,7 +137,7 @@ function answerCall(call) {
 
 // - with myStream set, answers the call
 function answerCallHelper(call) {
-	
+
 	// Answer the call with an A/V stream
 	call.answer(myStream); 
     	
@@ -198,6 +162,7 @@ function answerCallHelper(call) {
 		removeRemoteStream(call_id);
 	});
 }
+
 /*********************************************************************/
 /********************* LEAVING AND JOINING ROOMS *********************/
 
@@ -232,13 +197,23 @@ function joinRoomCall() {
 	        isLecturer = (response.is_lecture && response.host_id == myID);
 	        
 	        // if this is a lecture-style room and I am not the lecturer,
-	        // then call only the lecturer
+	        // then I only call the lecturer
 	        if (response.is_lecture && !isLecturer) {
-	        	startCall(response.host_id, true);
+	        	startCall(response.host_id);
+
+	        	// do not send out my audio
+	        	setMyStreamAudioEnabled(false);
+
+	        	// TODO: disable unmute button
 	        }
 
-	      	// otherwise, call everyone in the room who isn't me
+	      	// if I am a lecturer or this is a normal room
 	        else {
+
+	        	// by default, unmute me
+	        	setMyStreamAudioEnabled(true);
+
+	        	// call everyone
 	        	var usersArray = Object.values(response.users);
 
 		        for (i = 0; i < usersArray.length; i++) {
@@ -288,7 +263,7 @@ function addRemoteStream(remoteStream, call_id) {
 
     // if I am the lecturer, I want everyone else muted by default
 	if (isLecturer) {
-		// toggleRemoteStreamAudioEnabled(call_id);
+		toggleRemoteStreamAudioEnabled(call_id);
 	}
 
     // add audio stream to the page
@@ -344,14 +319,16 @@ function listenToRoom() {
 
 // - toggle my own audio
 function toggleMyStreamAudioEnabled() {
-
 	console.log("toggling my audio to " + !(myStream.getAudioTracks()[0].enabled));
 	myStream.getAudioTracks()[0].enabled = !(myStream.getAudioTracks()[0].enabled);
 }
 
 function setMyStreamAudioEnabled(enabled) {
-	console.log("setting my audio to " + enabled);
-	myStream.getAudioTracks()[0].enabled = false;
+	
+	if (myStream) {
+		console.log("setting my audio to " + enabled);
+		myStream.getAudioTracks()[0].enabled = enabled;
+	}
 }
 
 // - toggle audio from another person
