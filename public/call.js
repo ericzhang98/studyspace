@@ -243,7 +243,7 @@ function joinRoomCall() {
 	        // if this is a lecture-style room and I am not the lecturer,
 	        // then call only the lecturer
 	        if (response.is_lecture && !isLecturer) {
-	        	startCall(response.host_id;
+	        	startCall(response.host_id);
 	        }
 
 	      	// otherwise, call everyone in the room who isn't me
