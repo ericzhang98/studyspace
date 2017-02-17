@@ -105,7 +105,10 @@ app.get('/courses', function (req, res) {
 });
 
 /*************************************************************************************/
-
+app.get('/audio/:song_code', function (req, res) {
+  var song_code = req.params.song_code;
+  res.sendFile('/audio/' + song_code);
+});
 
 
 

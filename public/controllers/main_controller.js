@@ -17,7 +17,7 @@ myApp.controller("MainController", ["$scope", "$http",
 /*-------------------------------------------------------------------*/
 /****************************** CHAT ROOM ****************************/
 /*-------------------------------------------------------------------*/
-
+      
       var div = document.getElementById("chatMessageDiv");
       var chatInputBox = document.getElementById("chatInputBox");
       var lastKey = null;
@@ -50,7 +50,27 @@ myApp.controller("MainController", ["$scope", "$http",
       // Send chat when send button is pressed
       $scope.sendChatMessage = function(chatInput) {
         if (chatInput) {
-          uploadMessage(chatInput);
+
+          // easter eggs
+          if (secretCommands.indexOf(chatInput) != -1) {
+            
+            // do the command, and if it returns a message
+            // then upload it
+            var msg = doCommand(chatInput)
+            if (msg) {
+              uploadMessage(msg);
+            }
+
+            else {
+              // reset fields     
+              chatInputBox.value = "";
+              $scope.chatInput = "";
+              chatInputBox.focus();
+            }
+          } 
+          else {
+            uploadMessage(chatInput);
+          }
         }
       };
 
@@ -96,7 +116,7 @@ myApp.controller("MainController", ["$scope", "$http",
           chatMessageList.push(snapshotValue);
           var shouldScroll = false;
           //only auto-scroll if near bottom
-          if(div.scrollTop + 200 >= (div.scrollHeight - div.clientHeight)) {
+          if (div.scrollTop + 200 >= (div.scrollHeight - div.clientHeight)) {
             shouldScroll = true;
           }
           updateChatView();
@@ -244,7 +264,7 @@ myApp.controller("MainController", ["$scope", "$http",
     getClasses();
 
 /*********************************************************************/
-/********************** CREATING AND JOINING ROOMS *******************/
+/*************************** ROOM INTERACTION ************************/
 
     // Reads input from create-room-modal, creates room, and joins room
     $scope.addRoom = function() {
@@ -325,9 +345,11 @@ myApp.controller("MainController", ["$scope", "$http",
         $scope.currClassName = $scope.classes[class_id].name + " - ";
         $scope.currClassID = class_id;
 
+        joinRoomChat();
+      
+
         // delegate to chat controller to join the room's chat
         //$scope.$broadcast("room_change");
-        joinRoomChat();
     };
 
 /*********************************************************************/

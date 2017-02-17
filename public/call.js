@@ -245,6 +245,9 @@ function leaveRoom() {
 
 		// reset currRoomID
 		currRoomID = null;
+
+		// stop any song playing
+		stopSong();
 	}
 }
 
@@ -255,7 +258,7 @@ function addRemoteStream(remoteStream, call_id) {
 	var audio = document.createElement('audio');
 	audio.autoplay = true;
 
-    // set the source for our new element   
+	// set the source
     audio.src = window.URL.createObjectURL(remoteStream); 
 
     // store the element in myRemoteStreams
@@ -324,7 +327,7 @@ function toggleMyStreamAudioEnabled() {
 }
 
 function setMyStreamAudioEnabled(enabled) {
-	
+
 	if (myStream) {
 		console.log("setting my audio to " + enabled);
 		myStream.getAudioTracks()[0].enabled = enabled;

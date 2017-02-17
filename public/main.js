@@ -1,5 +1,10 @@
 /***** General variables **************************/
 var currRoomID = null;
+var songCommands = ["/raindrop", "/destress"];
+var otherCommands = ["/gary", "/stop"]
+var secretCommands = songCommands.concat(otherCommands);
+
+var currSongAudio = null;
 /**************************************************/
 
 /******************************** MODEL ******************************/
@@ -31,3 +36,49 @@ function logOut() {
 }
 
 /*********************************************************************/
+function doCommand(command) {
+
+	// if it's a song
+	if (songCommands.indexOf(command) != -1) {
+
+		if (!currSongAudio) {
+
+			// create a new audio element and make it play automatically
+			var audio = document.createElement('audio');
+			audio.volume = 0.3;
+			audio.autoplay = true;
+
+			// set the source
+		    audio.src = "/audio/" + command.slice(1);
+
+		   	// set the current song audio element
+		    currSongAudio = audio;
+		    
+		    // add audio stream to the page
+		    document.getElementById("myBody").insertBefore(audio, document.getElementById("myDiv"));
+			
+		}
+
+		else {
+			// change the source
+			currSongAudio.src = "/audio/" + command.slice(1);
+		}
+	}
+
+	else if (command == "/stop") {
+		stopSong();
+	}
+
+	else if (command == "/gary") {
+		return "That's a professionalism deduction";
+	}
+
+	return null;
+}
+
+function stopSong() {
+	if (currSongAudio) {
+		document.getElementById("myBody").removeChild(currSongAudio);
+		currSongAudio = null;
+	}
+}
