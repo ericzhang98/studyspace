@@ -60,8 +60,8 @@ a:hover {
 
 .modal-content .title-container .close {
   position: absolute;
-  top: 2rem;
-  right: 2rem;
+  top: 1.5rem;
+  right: 1.5rem;
   font-size: 2rem;
   text-shadow: none;
   opacity: 1;
@@ -217,7 +217,7 @@ a:hover {
 
 @media screen and (min-width: 768px) {
   .modal-content {
-    width: 45rem;
+    width: 40rem;
     height: auto;
     border-radius: 0.5rem;
   }
