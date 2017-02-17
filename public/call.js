@@ -103,7 +103,7 @@ function pingPeerServer(constant) {
 }
 
 // - ensures myStream is set, delegates to startCallHelper()
-function startCall(other_user_id, receiving_only = false) {
+function startCall(other_user_id) {
 	console.log("calling " + other_user_id);
 
 	// do not send out calls to users that we've blocked
@@ -114,7 +114,7 @@ function startCall(other_user_id, receiving_only = false) {
 	// myStream already set
 	if (myStream != null) {
 		console.log("myStream already set");
-		startCallHelper(other_user_id, receiving_only);
+		startCallHelper(other_user_id);
 	}		
 
 	// myStream not yet set
@@ -122,7 +122,7 @@ function startCall(other_user_id, receiving_only = false) {
 		console.log("myStream not yet set");
 		navigator.getUserMedia({video: false, audio: true}, function(stream) {
 			myStream = stream;
-			startCallHelper(other_user_id, receiving_only);
+			startCallHelper(other_user_id);
 		}, function(err) {
 			console.log('Failed to get local stream' ,err);
 		});
@@ -130,13 +130,9 @@ function startCall(other_user_id, receiving_only = false) {
 }
 
 // - with myStream set, starts the call
-function startCallHelper(other_user_id, receiving_only) {
+function startCallHelper(other_user_id) {
 	
 	var call = peer.call(other_user_id, myStream);
-
-	if (receiving_only) {
-		setMyStreamAudioEnabled(false);
-	}
 
 	console.log("sent call to user with id: " + call.peer)
 
@@ -247,9 +243,7 @@ function joinRoomCall() {
 	        // if this is a lecture-style room and I am not the lecturer,
 	        // then call only the lecturer
 	        if (response.is_lecture && !isLecturer) {
-
-	        	// true indicates that we only want to receive audio, not send
-	        	startCall(response.host_id, true);
+	        	startCall(response.host_id;
 	        }
 
 	      	// otherwise, call everyone in the room who isn't me
@@ -303,7 +297,7 @@ function addRemoteStream(remoteStream, call_id) {
 
     // if I am the lecturer, I want everyone else muted by default
 	if (isLecturer) {
-		// toggleRemoteStreamAudioEnabled(call_id);
+		toggleRemoteStreamAudioEnabled(call_id);
 	}
 
     // add audio stream to the page
@@ -359,10 +353,6 @@ function listenToRoom() {
 // - toggle my own audio
 function toggleMyStreamAudioEnabled() {
 	myStream.getAudioTracks()[0].enabled = !(myStream.getAudioTracks()[0].enabled);
-}
-
-function setMyStreamAudioEnabled(enabled) {
-	myStream.getAudioTracks()[0].enabled = enabled;
 }
 
 // - toggle audio from another person

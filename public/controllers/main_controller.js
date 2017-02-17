@@ -253,7 +253,7 @@ myApp.controller("MainController", ["$scope", "$http",
       var room_name = (document.getElementById('room_name').value).toLowerCase();
 
       // TODO: actually set this (waiting on Andy's UI change)
-      var is_lecture = true;
+      var is_lecture = false;
       var time_created = Date.now();
 
       // if class_id is null do nothing
