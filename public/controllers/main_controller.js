@@ -345,6 +345,7 @@ myApp.controller("MainController", ["$scope", "$http",
 
         // set currRoomID for both joinRoomCall and joinRoomChat
         currRoomID = room_id;
+        $scope.currRoomID = currRoomID;
 
         // delegate to call.js to join the room's call
         joinRoomCall(room_id);
@@ -455,10 +456,29 @@ myApp.controller("MainController", ["$scope", "$http",
 
                 detectTutors($scope.rooms[room_id]);
 
+                setNumUsers($scope.rooms[room_id].class_id);
+
                 // update the UI
                 $scope.$apply();
             }
         });
+    }
+
+
+    // Set the number of total users studying for a class at the moment
+    function setNumUsers(class_id) {
+      console.log("setting num users for " + class_id);
+      $scope.classes[class_id].num_users = 0;
+
+      for (i = 0; i < $scope.class_rooms[class_id].length; i++) {
+        var room = $scope.rooms[$scope.class_rooms[class_id][i]];
+        console.log("users are " + room.users);
+        // if there are users in this room
+        if (room.users) {
+          // add them to the number of users in this class
+          $scope.classes[class_id].num_users += room.users.length;
+        }
+      }
     }
 
     // check if there is a tutor present in a room
