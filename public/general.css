@@ -16,6 +16,81 @@ a:hover {
   min-height: 0;
 }
 
+/* General: navbar-site */
+#navbar-site {
+  font-size: 2rem;
+  font-weight: 500;
+  height: 6rem;
+  border: none;
+  z-index: 100;
+  background-color: #aaaaaa;
+  color: white;
+  margin-bottom: 0;
+}
+
+#navbar-site a {
+  color: white;
+}
+
+#navbar-site .container {
+  padding-left: 2rem;
+  padding-right: 2rem;
+}
+
+#navbar-site .navbar-header,
+#navbar-site .nav-link {
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-align: center;
+  -ms-flex-align: center;
+  align-items: center;
+  height: 6rem;
+  padding-top: 0;
+  padding-bottom: 0; 
+}
+
+#navbar-site .nav-link {
+  padding: 0 1em;
+  cursor: pointer;
+  -webkit-transition: background 0.15s, color 0.15s;
+  transition: background 0.15s, color 0.15s;
+}
+
+#navbar-site .nav-link #log-in path,
+#navbar-site .nav-link #log-in polyline {
+  -webkit-transition: stroke 0.15s;
+ transition: stroke 0.15s; 
+}
+
+#navbar-site .nav-link:hover {
+  background: white;
+  color: #aaaaaa;
+}
+
+#navbar-site .nav-link:hover #log-in path,
+#navbar-site .nav-link:hover #log-in polyline {
+  stroke: #aaaaaa;
+}
+
+#navbar-site .navbar-brand {
+  font-size: 3rem;
+}
+
+#navbar-site .brand-name,
+#navbar-site .text-log-in {
+  display: none;
+}
+
+#navbar-site .icon {
+  height: 2.5rem;
+  width: auto;
+}
+
+#icon-log-in {
+  margin-left: -0.4rem;
+}
+
 /* General: modals */
 .modal {
   background: rgba(0,0,0,0.5);
@@ -216,8 +291,41 @@ a:hover {
 }
 
 @media screen and (min-width: 768px) {
+  /* navbar-site */
+  #navbar-site .container-fluid {
+    padding-left: 4rem;
+    padding-right: 4rem;
+  }
+
+  #navbar-site .brand-name {
+    display: inline;
+  }
+
+  #navbar-site .icon {
+    display: none;
+  }
+
+  #navbar-site .navbar-brand::selection {
+    background: #333333;
+    color: white;
+  }
+
+  #link-login {
+    margin-right: -2rem;
+  }
+
+  #link-login .text-log-in {
+    display: inline;
+  }
+
+  #link-login .text-log-in::selection {
+    background: #333333;
+    color: white;
+  }
+
+  /* modal */
   .modal-content {
-    width: 40rem;
+    width: 45rem;
     height: auto;
     border-radius: 0.5rem;
   }
