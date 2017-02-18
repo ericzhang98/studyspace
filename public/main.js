@@ -6,7 +6,7 @@ var secretCommands = songCommands.concat(otherCommands);
 
 var garyisms = ["That's a professionalism deduction.", "Don't touch the bananas, please.",
 "Only handle it once!", "This isn't worth my time.", "What does 'DTF' mean?"];
-var ordisms = ["Keep it simple, stupid.", "Start early, start often!", 
+var ordisms = ["Keep it simple, students.", "Start early, start often!", 
 "If a simple boy from the midwest can do it, so can you.", "Think like a compiler."];
 
 var currSongAudio = null;
@@ -91,7 +91,7 @@ function doCommand(command) {
 		if (ordisms.length == 0) {
 			return "Ord says: I'm all out of things to say. Come back later.";
 		}
-		
+
 		var index = Math.floor(Math.random()*ordisms.length);
 		var msg = "Ord says: " + ordisms[index];
 		ordisms.splice(index, 1);
