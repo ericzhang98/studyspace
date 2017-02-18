@@ -472,9 +472,9 @@ myApp.controller("MainController", ["$scope", "$http",
 
       for (i = 0; i < $scope.class_rooms[class_id].length; i++) {
         var room = $scope.rooms[$scope.class_rooms[class_id][i]];
-        console.log("users are " + room.users);
+
         // if there are users in this room
-        if (room.users) {
+        if (room && room.users) {
           // add them to the number of users in this class
           $scope.classes[class_id].num_users += room.users.length;
         }
