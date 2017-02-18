@@ -128,7 +128,7 @@ app.post('/get_Id_From_Name', function(req, res) {
 
 /************************************** BLOCKING *************************************/
 
-app.post('/add_blocked_user', function(req, res) {
+app.get('/get_blocked_users', function(req, res) {
 
   db.blocked_users.find({user_id:req.signedCookies.user_id}, function(req, docs){
     console.log(docs);
@@ -136,15 +136,24 @@ app.post('/add_blocked_user', function(req, res) {
   });
 });
 
-app.get('/get_blocked_users', function(req, res) {
-
+app.post('/add_blocked_user', function(req, res) {
+  console.log("XX");
   var blocked_id = req.body.blocked_user_id;
   var blocked_email = req.body.blocked_user_email;
-  db.blocked_users.insert({user_id:req.signedCookies.user_id, blocked_user_id:blocked_id, 
+  db.blocked_users.createIndex({user_id: 1, blocked_user_id: 1}, {unique:true});
+  db.blocked_users.insert({user_id: req.signedCookies.user_id, blocked_user_id:blocked_id, 
                            blocked_user_email:blocked_email}, function(req, docs){
     console.log(docs);
     res.json(docs);
   });
+});
+
+app.delete('/remove_block/:id', function(req, res){
+
+	var id = req.params.id;
+	db.blocked_users.remove({_id: mongojs.ObjectId(id)}, function(err, doc){
+		res.json(doc);
+	});
 });
 /*************************************************************************************/
 /************************************** BUDDIES **************************************/

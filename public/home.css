@@ -5,79 +5,6 @@ main {
   margin-top: 6rem;
 }
 
-/* Navigation Bar */
-#navbar-site {
-  font-size: 2rem;
-  font-weight: 500;
-  height: 6rem;
-  border: none;
-  z-index: 100;
-  background-color: #aaaaaa;
-}
-
-#navbar-site a {
-  color: white;
-}
-
-#navbar-site .container {
-  padding-left: 2rem;
-  padding-right: 2rem;
-}
-
-#navbar-site .navbar-header,
-#navbar-site .nav-link {
-  display: -webkit-box;
-  display: -ms-flexbox;
-  display: flex;
-  -webkit-box-align: center;
-  -ms-flex-align: center;
-  align-items: center;
-  height: 6rem;
-  padding-top: 0;
-  padding-bottom: 0; 
-}
-
-#navbar-site .nav-link {
-  padding: 0 1em;
-  cursor: pointer;
-  -webkit-transition: background 0.15s, color 0.15s;
-  transition: background 0.15s, color 0.15s;
-}
-
-#navbar-site .nav-link:hover {
-  background: white;
-}
-
-#navbar-site .nav-link:hover .text-log-in {
-  color: #aaaaaa;
-}
-
-#navbar-site .nav-link:hover #log-in path,
-#navbar-site .nav-link:hover #log-in polyline {
-  stroke: #aaaaaa;
-}
-
-#navbar-site .navbar-brand {
-  font-size: 3rem;
-}
-
-#navbar-site .brand-name {
-  display: none;
-}
-
-#navbar-site .icon {
-  height: 2.5rem;
-  width: auto;
-}
-
-#navbar-site .text-log-in {
-  display: none;
-}
-
-#icon-log-in {
-  margin-left: -0.4rem;
-}
-
 /* Login Modal */
 #login .btn-container {
   margin-top: 4.5rem;
@@ -136,39 +63,6 @@ main {
 }
 
 @media screen and (min-width: 768px) {
-  /* Navbar */
-  #navbar-site .container-fluid {
-    padding-left: 4rem;
-    padding-right: 4rem;
-  }
-
-  #navbar-site .brand-name {
-    display: inline;
-  }
-
-  #navbar-site .icon {
-    display: none;
-  }
-
-  #navbar-site .navbar-brand::selection {
-    background: #333333;
-    color: white;
-  }
-
-  #link-login {
-    margin-right: -2rem;
-  }
-
-  #link-login .text-log-in {
-    display: inline;
-    color: white;
-  }
-
-  #link-login .text-log-in::selection {
-    background: #333333;
-    color: white;
-  }
-
   /* Splash */
   #splash {
     padding-top: 15rem;

@@ -10,6 +10,7 @@
 <!DOCTYPE html>
 <html ng-app="mainApp" ng-app="classesApp">
   <head>
+
     <!-- Bootstrap -->
     <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.6.1/angular.min.js"></script>
 
@@ -38,8 +39,10 @@
   </head>
 
   <body id="myBody" ng-controller="MainController">
+
     <!-- Classes Sidebar -->
     <aside id="sidebar-classes" role="complementary">
+
       <!-- User Quick Info -->
       <div id="info-user">
         <div class="container-user-icon">
@@ -56,23 +59,22 @@
         <a class="btn btn-primary" href="courses">Courses</a>
       </div>
 
-      <!-- Create Room -->
-      <!--<button id="btn-create-room" class="btn btn-primary">Create Room</button>-->
-
       <!-- Classes -->
       <div id="container-menu-classes">
+
+        <!-- Create Room Button -->
         <button id="btn-create-room" class="btn container-title">
           <h5 class="title">Rooms</h5>
           <div id="btn-add">
             <span class="glyphicon glyphicon-plus"></span>
           </div>
         </button>
-        <!-- Accordion Group -->
+        <!-- Classes/Rooms Dropdown -->
         <div class="panel-group" id="menu-classes">
-          <!--first class in drop down-->
+
           <div ng-repeat="(class_id, class_obj) in classes" id="#{{class_id}}" class="panel" 
                href="#{{class_id}}">
-            <div class="panel-heading" data-toggle="collapse" data-target="#{{class_id}}" data-parent="#menu-classes">
+            <div class="panel-heading" data-toggle="collapse" data-target="#{{class_id}}" data-parent="#menu-classes">        
               <h4 class="panel-title">
                 <span ng-if="!class_obj.has_tutor">{{class_obj.name}} ({{classes[class_id].num_users}})</span>
                 <span ng-if="class_obj.has_tutor">{{class_obj.name}} ({{classes[class_id].num_users}}) *</span>
@@ -87,14 +89,16 @@
               </ul>
             </div>
           </div>
-        </div> <!--end panel group-->
+          
+        </div> <!-- END PANEL-GROUP -->
+
       </div>
-    </aside> <!--end left column-->
+    </aside> <!-- END LEFT SIDEBAR -->
 
     <!-- Main Content -->
     <main id="chat-room" role="main">
 
-      <!--NAVBAR-->
+      <!-- NAVBAR -->
       <nav id="navbar-room" class="navbar">
         <div class="container-fluid">
           <div class="navbar-header">
@@ -113,9 +117,9 @@
         </div>
       </nav>
 
-
       <!-- MESSAGE WRAPPER -->
       <div class="message-pane" id="message-wrapper"> 
+
         <!-- MESSAGE PANE -->
         <div class="container-fluid" id="chatMessageDiv" scroll scroll-event="scrollevent">
           <div id="loading" hidden> 
@@ -152,7 +156,9 @@
             </div>
           </form>
         </footer> <!-- END MESSAGE INPUT -->
+
       </div>
+
     </main>   
 
     <!-- Not in a Room -->
@@ -168,6 +174,7 @@
     <!-- Create Room Modal -->
     <div id="modal-create-room" class="modal" role="dialog">
       <div class="modal-dialog">
+
         <!-- Content -->
         <div id="create-room" class="modal-content hide">
           <div class="title-container text-center"> 
@@ -177,6 +184,7 @@
             <h1 class="title">Create a room</h1>
           </div>
           <div class="main form-container">
+
             <!-- Class selection -->
             <form>
               <div class="form-group">
@@ -197,10 +205,13 @@
                 <button id="btn-create" class="btn btn-primary" ng-click="addRoom()">Create</button>
               </div>
             </form>
+
           </div>
         </div>
+
       </div>
     </div>
+
   </body>
 
   <!-- Peer -->

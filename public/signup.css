@@ -11,8 +11,41 @@ body {
 }
 
 main {
+  padding-left: 2rem;
+  padding-right: 2rem;
   background: white;
-  height: 100%;
+}
+
+/* Navbar */
+#navbar-site {
+  background-color: transparent;
+  color: #333333;
+}
+
+#navbar-site a {
+  color: #333333;
+}
+
+#navbar-site .nav-link #log-in path,
+#navbar-site .nav-link #log-in polyline {
+  stroke: #333333;
+}
+
+#navbar-site .nav-link:hover {
+  background-color: #333333;
+  color: white;
+}
+
+#navbar-site .nav-link:hover #log-in path,
+#navbar-site .nav-link:hover #log-in polyline {
+  stroke: white;
+}
+
+/* Sign Up Title */
+
+/* Sign Up Info */
+#info-signup p {
+  font-size: 1.8rem;
 }
 
 /* Sign Up Form */
@@ -37,7 +70,7 @@ main {
 }
 
 #signup .title-container {
-  margin-bottom: 4rem;
+  margin-bottom: 3.5rem;
 }
 
 #signup label {
@@ -46,12 +79,16 @@ main {
 }
 
 #signup .form-group {
-  margin-top: 2.5rem;
+  margin-top: 3rem;
   margin-bottom: 0;
 }
 
+#signup .form-group:first-child {
+  margin-top: 0;
+}
+
 #signup .btn-container {
-  margin-top: 5.5rem;
+  margin-top: 4.5rem;
 }
 
 #btn-submit {
@@ -72,21 +109,58 @@ main {
 
 @media screen and (min-width: 768px) {
   main {
-    display: -webkit-box;
-    display: -ms-flexbox;
-    display: flex;
-    -webkit-box-align: center;
-    -ms-flex-align: center;
-    align-items: center;
     background: #ecf0f1;
   }
 
+  main .container {
+    padding-left: 2rem;
+    padding-right: 2rem;
+  }
+
+  /* Navbar */
+  #navbar-site {
+    margin-top: 1.5rem;
+    margin-bottom: 1.5rem;
+  }
+
+  /* Sign Up Title */
+  #header-signup {
+    padding-top: 4rem;
+    padding-bottom: 4rem;
+    margin-bottom: 3rem;
+  }
+
+  #header-signup h2 {
+    margin: 0;
+    font-weight: 600;
+    line-height: 1.2em;
+  }
+
+  /* Sign Up Info
+  #info-signup {
+    width: calc(100% - 45rem);
+    padding-right: 2rem;
+    float: left;
+  }
+
+  #info-signup h3 {
+    margin-top: 0;
+    font-weight: 600;
+  }
+
+  #info-signup p {
+    margin-bottom: 3rem;
+  }
+  */
+
+  /* Sign Up */
   #signup {
-    width: 50rem;
+    width: 45rem;
     height: auto;
-    margin: 0 auto;
-    padding: 6rem;
+    padding: 4rem;
     border-radius: 0.5rem;
+    margin: 0 auto;
+    /*float: left;*/
   }
 }
 

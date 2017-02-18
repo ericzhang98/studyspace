@@ -4,14 +4,13 @@
 html, body {
   margin: 0;
   height: 100%;
-  overflow: hidden;
 }
 
 /* Chat Room */
 #chat-room {
   display: inline-block;
   width: calc(100% - 240px);
-  height: 100%;
+  left: 120px;
 }
 
 #navbar-room {
@@ -149,7 +148,9 @@ p:selection {
 #sidebar-classes,
 #chat-room,
 #sidebar-classmates {
-  height: 100%;
+  position: absolute;
+  top: 0;
+  bottom: 0;
 }
 
 .panel {
@@ -159,7 +160,7 @@ p:selection {
 /* Classes Sidebar */
 #sidebar-classes {
   background: #8caacd;
-  float: left;
+  left: 0;
   width: 120px;
 }
 
@@ -256,7 +257,7 @@ p:selection {
 
 /* Classmates Sidebar */
 #sidebar-classmates {
-  float: right;
+  right: 0;
   width: 120px;
 }
 
@@ -293,6 +294,7 @@ p:selection {
 
   /* Chat Room */
   #chat-room {
+    left: 25rem;
     width: calc(100% - 50rem);
   }
 

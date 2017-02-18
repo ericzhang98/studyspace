@@ -31,56 +31,102 @@
   </head>
 
   <body>
+
+    <!-- Navbar -->
+    <nav id="navbar-site" class="navbar" role="banner">
+      <div class="container">
+        <!-- Navbar (Brand) -->
+        <div class="navbar-header pull-left">
+          <!--<a class="navbar-brand brand-logo" href="home.html">
+            
+          </a>-->
+          <a class="navbar-brand brand-name" href="home.html">studyspace</a>
+        </div>
+
+        <!-- Navbar (Right) -->
+        <div class="navbar-header pull-right">
+          <div id="link-login" class="nav-link">
+            <span class="text-log-in">Log In</span>
+            <svg id="icon-log-in" class="icon" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="62" height="46" viewBox="-3 0 62 46" version="1.1">
+              <g id="log-in" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd" transform="translate(0.000000, 3.000000)">
+                <path d="M17.14 11C20.43 4.47 27.19 0 35 0 46.05 0 55 8.95 55 20 55 31.05 46.05 40 35 40 27.2 40 20.43 35.53 17.14 29" id="space" stroke="#FFFFFF" stroke-width="6"/>
+                <path d="M0 20L34 20" id="arrow-shaft" stroke="#FFFFFF" stroke-width="6"/>
+                <polyline id="arrow-head" stroke="#FFFFFF" stroke-width="6" points="28 10 38 20 28 30"/>
+              </g>
+            </svg>
+          </div>
+        </div>
+      </div>
+    </nav>
+
+    <header id="header-signup" class="text-center">
+      <h2>Start Studying Today</h2>
+      <h2>with studyspace</h2>
+    </header>
+
     <main role="main">
-      <div id="signup" class="signup-container fadeInBack" ng-controller="SignUpController">
-        <div class="title-container text-center">
-          <h1 class="title">Sign Up</h1>
+      <div class="container">
+
+        <!-- SIGNUP INFO
+        <div id="info-signup">
+          <h3>Connect with students</h3>
+          <p>Wow what a concept</p>
+          <h3>Connect with instructors</h3>
+          <p>Oh myyyy</p>
+          <h3>Never study alone</h3>
+          <p>I'm a lonely boi</p>
         </div>
-        <div class="form-container">
-          <form>
-            <div id="in-name" class="form-group">
-              <label for="input-name">Name
-                <span>{{nameMessage}}</span>
-              </label>
-              <input type="text" class="form-control" id="input-name"
-              placeholder="first and last name" ng-model="signupName">
-            </div>
-            <div class="form-group">
-              <label for="input-school">School
-                <span>{{schoolMessage}}</span>
-              </label>
-              <input type="text" class="form-control" id="input-school" 
-              placeholder="school name" ng-model="signupSchool">
-            </div>
-            <div class="form-group">
-              <label for="input-email">Email
-                <span>{{emailMessage}}</span>
-              </label>
-              <input type="email" class="form-control" id="input-email" 
-              placeholder="email@example.com" ng-model="signupEmail">
-            </div>
-            <div class="form-group">
-              <label for="input-password">Password
-                <span>{{passwordMessage}}</span>
-              </label>
-              <input type="password" class="form-control" id="input-password" 
-              ng-model="signupPassword">
-            </div>
-            <div class="form-group">
-              <label for="input-confirm-password">Confirm Password
-                <span>{{confirmMessage}}</span>
-              </label>
-              <input type="password" class="form-control" id="input-confirm-password"
-              ng-model="signupConfirmPassword">
-            </div>
-            <div class="btn-container text-center">
-              <button type="submit" id="btn-submit" class="btn btn-primary"
-                ng-click="signup(signupName, signupSchool,
-                signupEmail,signupPassword, signupConfirmPassword)">
-                Submit</button>
-            </div>
-          </form>
+        -->
+
+        <!-- SIGNUP -->
+        <div id="signup" class="signup-container fadeInBack" ng-controller="SignUpController">
+          <div class="form-container">
+            <form>
+              <div id="in-name" class="form-group">
+                <label for="input-name">Name
+                  <span>{{nameMessage}}</span>
+                </label>
+                <input type="text" class="form-control" id="input-name"
+                placeholder="first and last name" ng-model="signupName">
+              </div>
+              <div class="form-group">
+                <label for="input-school">School
+                  <span>{{schoolMessage}}</span>
+                </label>
+                <input type="text" class="form-control" id="input-school" 
+                placeholder="school name" ng-model="signupSchool">
+              </div>
+              <div class="form-group">
+                <label for="input-email">Email
+                  <span>{{emailMessage}}</span>
+                </label>
+                <input type="email" class="form-control" id="input-email" 
+                placeholder="email@example.com" ng-model="signupEmail">
+              </div>
+              <div class="form-group">
+                <label for="input-password">Password
+                  <span>{{passwordMessage}}</span>
+                </label>
+                <input type="password" class="form-control" id="input-password" 
+                ng-model="signupPassword">
+              </div>
+              <div class="form-group">
+                <label for="input-confirm-password">Confirm Password
+                  <span>{{confirmMessage}}</span>
+                </label>
+                <input type="password" class="form-control" id="input-confirm-password"
+                ng-model="signupConfirmPassword">
+              </div>
+              <div class="btn-container text-center">
+                <button type="submit" id="btn-submit" class="btn btn-primary"
+                  ng-click="signup(signupName, signupSchool,
+                  signupEmail,signupPassword, signupConfirmPassword)">
+                  Submit</button>
+              </div>
+            </form>
+          </div>
         </div>
+
       </div>
     </main>
   <!-- Angular scripts -->
