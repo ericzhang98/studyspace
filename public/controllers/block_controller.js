@@ -21,11 +21,18 @@ myApp.controller('blocker',['$scope', '$http', function($scope, $http){
                 "blocked_user_id": String(blocked_user_id),
                 "blocked_user_email": blocked_user_email
                }; 
-               console.log(data);
+               console.log("ADD");
     $http.post('/add_blocked_user', data).then(function(response){
 			onResponseReceived(response.data);
 		});
   };
+  $scope.unblock = function(id){
+    
+    console.log(id);
+    $http.delete('/remove_block/' + id).then(function(response){
+      refresh();
+    });
+  }
   refresh();
   $scope.blockUser = function(){
     getIdFromName($scope.block_user.name, function(response){
@@ -40,36 +47,4 @@ myApp.controller('blocker',['$scope', '$http', function($scope, $http){
       }
     });
   }
-  
-  /*
-	$scope.user_classes_list = null;
-	$scope.user_id = '1';
-
-	$scope.addClass = function(){
-		$scope.user_classes.user_id = '1';
-		$http.post('/user_classes', $scope.user_classes).then(function(response){
-			refresh($scope.user_id);
-		});
-	};
-	
-  var getClassList = function(){
-    $http.get('/scrape_classes').then(function(response){
-			console.log(response.data);
-		});    
-  }
-	var refresh = function(id){
-		$http.get('/user_classes/' + id).then(function(response){
-			$scope.user_classes_list = response.data;
-		});
-	};
-  
-  getClassList();
-	refresh($scope.user_id);
-	
-	$scope.remove = function(id){
-		$http.delete('/user_classes/' + id).then(function(response){
-			refresh($scope.user_id);
-		});
-	};
-  */
 }]);
