@@ -286,7 +286,7 @@ app.delete('/user_classes/:id', function(req, res){
 app.get('/user_classes', function(req, res) {
 
   var get_user_id = req.signedCookies.user_id;
-	db.user_classes.find({user_id: get_user_id}, function(err, docs){
+	db.user_classes.find({user_id: get_user_id}, function(err, docs) {
 		res.json(docs);
 	});
 });
