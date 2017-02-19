@@ -15,7 +15,6 @@ function autoCompleteController ($timeout, $q, $log, $http) {
     // list of states to be displayed
     this.querySearch = querySearch;
 
-    $("#cancel-button").click(cancelChanges)
 
     // If enter is pressed inside the dropdown
     $("#class-dropdown").keypress(function(event) {
@@ -38,7 +37,7 @@ function autoCompleteController ($timeout, $q, $log, $http) {
             }
         }
     });
-
+    $("#cancel-button").click(cancelChanges)
     $("#save-button").click(saveChanges);
 
     // adds classID to list of user's classes and updates the UI to reflect this
@@ -64,7 +63,7 @@ function autoCompleteController ($timeout, $q, $log, $http) {
     // updates UI to display currently enrolled classes
     function displayClasses() {
         userClasses.sort();
-        var htmlString = '<div class="school-class">';
+        var htmlString = '<div class="school-classes">';
         userClasses.forEach(function(class_id, index) {
             htmlString += '<div class="school-class"><button class="btn btn-danger">' 
             + getNameOfClass(class_id) + '<span class="x-button" aria-hidden="true">&times;</span></button></div>';
@@ -72,10 +71,12 @@ function autoCompleteController ($timeout, $q, $log, $http) {
         htmlString += '</div';
         $("#school-classes").html(htmlString);
 
-        /*/ Add a listener to the new html
-        $(".school-class").click(function() {
-            removeClass($(this).innerHTML);
-        });*/
+        // Add a listener to the new html
+        $(".school-class").each(function(index, element) {
+            $(this).click(function() {
+                removeClass(userClasses[index]);
+            })
+        });
     }
 
     // returns name of class given class_id
@@ -144,7 +145,12 @@ function autoCompleteController ($timeout, $q, $log, $http) {
     }
 
     function removeClass(className) {
-        userClasses.splice($.inArray(className, userClasses), 1);
+        var index = $.inArray(className, userClasses);
+        console.log("Removing index " + index);
+        if(index == -1) {
+            console.log("Cannot remove class, className " + className + " not found!")
+        }
+        userClasses.splice(index, 1);
         displayClasses(userClasses);
     }
 

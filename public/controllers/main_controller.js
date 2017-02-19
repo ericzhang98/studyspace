@@ -534,9 +534,9 @@ myApp.controller("MainController", ["$scope", "$http",
   var getBuddies = function(onResponseReceived){
     var data = {"user_one_id":"user_id goes here"};
     $http.post('/get_added_buddies', data).then(function(response){
-        //console.log(response.data);
-        return onResponseReceived(response.data);
-      });
+        console.log(response.data[0]['buddies']);
+        return onResponseReceived(response.data[0]['buddies']);
+    });
   };
   
   var userExists = function(name, onResponseReceived){  
@@ -554,14 +554,16 @@ myApp.controller("MainController", ["$scope", "$http",
 		});   
   };
   
-  var friendshipExists = function(friend_id, onResponseReceived){
+  var friendshipExists = function(friend_id, friend_name, onResponseReceived){
     var data = {"user_id":"user_id inserted",
-    "friend_id":String(friend_id)};
+    "friend_id":String(friend_id),
+    "friend_name":String(friend_name)};
     $http.post('/buddies_already', data).then(function(response){
 			return onResponseReceived(response.data);
 		});   
   }  
   var deleteBuddy = function(id, onResponseReceived){
+    console.log(id);
 		$http.delete('/reject_buddy/' + id).then(function(response){
 			getBuddyRequests(function(response){ 
         $scope.buddies_list = response;
@@ -590,6 +592,7 @@ myApp.controller("MainController", ["$scope", "$http",
       console.log(response);
       if(response){
         var friend_id = response.user_id;
+        var friend_name = response.name;
         console.log(friend_id);
         buddyRequestExists(friend_id, function(requestExists){ 
                                                          
@@ -597,14 +600,14 @@ myApp.controller("MainController", ["$scope", "$http",
           console.log(requestExists);
           if(!requestExists || requestExists.length == 0){ 
              console.log("ARE WE FRIENDS ALREADY");          
-             friendshipExists(friend_id, function(friendship){ 
+             friendshipExists(friend_id, friend_name, function(friendship){ 
                 console.log("FRIENDSHIP? " + friendship);
-                if(!friendship || friendship.length == 0){
+                if(friendship || friendship.length == 0){
                   console.log("Adding friend");
                   var data = {"sent_from_id":"Place user_id here", 
                               "sent_from_name": "user_name",
                               "sent_to_id":String(friend_id),
-                              "sent_to_name": $scope.friend.name};
+                              "sent_to_name": String(friend_name)};
                   $http.post('/send_buddy_request', data).then(function(response){
 			              console.log(response.data);
 		              });  
@@ -624,15 +627,15 @@ myApp.controller("MainController", ["$scope", "$http",
   $scope.acceptBuddy = function(requestInfo){
     //console.log(requestInfo);
     var data = {"user_one_id":String(requestInfo.sent_to_id),
-                "user_one_name":String(requestInfo.sent_from_name),
+                "user_one_name":String(requestInfo.sent_to_name),
                 "user_two_id":String(requestInfo.sent_from_id),
-                "user_two_name":String(requestInfo.sent_to_name)};
+                "user_two_name":String(requestInfo.sent_from_name)};
                 
     acceptBuddy(data, function(response){
       deleteBuddy(requestInfo._id, function(response){});
     });
     
-    getBuddies(function(response){ //TODO:Change this to get buddies for uid
+    getBuddies(function(response){
       $scope.added_buddies_list = response;
     });
     
@@ -640,7 +643,7 @@ myApp.controller("MainController", ["$scope", "$http",
   };
   
   $scope.deleteFriend = function(id){
-    
+    console.log(id);
 		$http.delete('/remove_buddy/' + id).then(function(response){
       getBuddies(function(response){ //TODO:Change this to get buddies for uid
         $scope.added_buddies_list = response;
