@@ -108,7 +108,7 @@ function startCallHelper(other_user_id) {
 		console.log("call closed");
 
 		// when a call closes, remove the corresponding stream
-		removeRemoteStream(call_id);
+		removeRemoteStream(call.peer);
 	});
 }
 
@@ -158,7 +158,7 @@ function answerCallHelper(call) {
 		console.log("call closed");
 
 		// when a call closes, remove the corresponding stream
-		removeRemoteStream(call_id);
+		removeRemoteStream(call.peer);
 	});
 }
 

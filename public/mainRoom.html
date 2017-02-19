@@ -177,7 +177,7 @@
               <tbody>   
                 <tr ng-repeat="buddy_requests in buddies_list">
                   <td></td>
-                  <td>{{buddy_requests.sent_from_id}}</td>
+                  <td>{{buddy_requests.sent_from_name}}</td>
                   <td><button class="btn" ng-click="acceptBuddy(buddy_requests)">Accept Request</button></td>
                   <td><button class="btn btn-danger" ng-click="rejectBuddyRequest(buddy_requests._id)">Reject Request</button></td>
                 </tr>
