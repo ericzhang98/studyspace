@@ -352,7 +352,6 @@ myApp.controller("MainController", ["$scope", "$http",
 
         // set scope variables
         $scope.currRoomName = room_name? room_name : $scope.rooms[currRoomID].name;
-        $scope.currClassName = $scope.classes[class_id].name + " - ";
         $scope.currClassID = class_id;
 
         joinRoomChat();

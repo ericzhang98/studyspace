@@ -18,7 +18,7 @@ a:hover {
 
 /* General: navbar-site */
 #navbar-site {
-  font-size: 2rem;
+  font-size: 1.8rem;
   font-weight: 500;
   height: 6rem;
   border: none;
@@ -57,38 +57,17 @@ a:hover {
   transition: background 0.15s, color 0.15s;
 }
 
-#navbar-site .nav-link #log-in path,
-#navbar-site .nav-link #log-in polyline {
-  -webkit-transition: stroke 0.15s;
- transition: stroke 0.15s; 
-}
-
 #navbar-site .nav-link:hover {
   background: white;
   color: #aaaaaa;
 }
 
-#navbar-site .nav-link:hover #log-in path,
-#navbar-site .nav-link:hover #log-in polyline {
-  stroke: #aaaaaa;
-}
-
 #navbar-site .navbar-brand {
-  font-size: 3rem;
+  font-size: 2.5rem;
 }
 
-#navbar-site .brand-name,
-#navbar-site .text-log-in {
+#navbar-site .brand-name {
   display: none;
-}
-
-#navbar-site .icon {
-  height: 2.5rem;
-  width: auto;
-}
-
-#icon-log-in {
-  margin-left: -0.4rem;
 }
 
 /* General: modals */
@@ -195,6 +174,7 @@ a:hover {
 
 /* General: btn */
 .btn {
+  display: border-box;
   border: none;
   border-radius: 0.5rem;
   letter-spacing: 0.05em;
@@ -306,19 +286,6 @@ a:hover {
   }
 
   #navbar-site .navbar-brand::selection {
-    background: #333333;
-    color: white;
-  }
-
-  #link-login {
-    margin-right: -2rem;
-  }
-
-  #link-login .text-log-in {
-    display: inline;
-  }
-
-  #link-login .text-log-in::selection {
     background: #333333;
     color: white;
   }
