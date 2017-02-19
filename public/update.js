@@ -62,13 +62,16 @@ function autoCompleteController ($timeout, $q, $log, $http) {
 
     // updates UI to display currently enrolled classes
     function displayClasses() {
-        userClasses.sort();
-        var htmlString = '<div class="school-classes">';
+        var htmlString = "";
+        var classNames = new Array();
         userClasses.forEach(function(class_id, index) {
+            classNames.push(getNameOfClass(class_id))
+        })
+        classNames.sort();
+        classNames.forEach(function(className, index) {
             htmlString += '<div class="school-class"><button class="btn btn-danger">' 
-            + getNameOfClass(class_id) + '<span class="x-button" aria-hidden="true">&times;</span></button></div>';
+            + className + '<span class="x-button" aria-hidden="true">&times;</span></button></div>';
         });
-        htmlString += '</div';
         $("#school-classes").html(htmlString);
 
         // Add a listener to the new html
@@ -90,7 +93,6 @@ function autoCompleteController ($timeout, $q, $log, $http) {
 
     // populates the allClassesNameToID dictionary with all available classes
     function getAllClasses() {
-
         console.log("Getting all classes...")
         var xhr = new XMLHttpRequest();
         xhr.open('GET', "/get_all_classes", true); // responds with class_ids
@@ -100,7 +102,6 @@ function autoCompleteController ($timeout, $q, $log, $http) {
         xhr.onreadystatechange = function(e) {
           if (xhr.readyState == 4 && xhr.status == 200) {
             var response = JSON.parse(xhr.responseText);
-            console.log(response);
 
             // populate the classes dictionary
             for (var i = 0; i < response.length; i++) {
@@ -156,7 +157,9 @@ function autoCompleteController ($timeout, $q, $log, $http) {
 
     function saveChanges() {
         // Do whatever server stuff is needed to update the information
-            
+
+
+
         $http.post('/enroll', {class_ids: userClasses}).then(function(response){
             document.location.href = "/";
         });
