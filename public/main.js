@@ -1,5 +1,6 @@
 /***** General variables **************************/
 var currRoomID = null;
+var myID = getSignedCookie("user_id");
 var songCommands = ["/raindrop", "/destress"];
 var otherCommands = ["/gary", "/ord", "/stop"]
 var secretCommands = songCommands.concat(otherCommands);
