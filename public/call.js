@@ -325,6 +325,7 @@ function toggleMyStreamAudioEnabled() {
 	myStream.getAudioTracks()[0].enabled = !(myStream.getAudioTracks()[0].enabled);
 }
 
+// - set my audio
 function setMyStreamAudioEnabled(enabled) {
 	if (myStream) {
 		console.log("setting my audio to " + enabled);
