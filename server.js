@@ -9,7 +9,6 @@ var deployment = false; //currently just whether or not to use HTTPS
 // packed with functions
 var express = require('express');
 var app = express();
-var socsjs = require('socsjs');
 
 // - Mongodb is the database that we will be using for persistent data
 // - mongojs is a module that has some useful functions
@@ -306,29 +305,6 @@ app.get('/user_classes', function(req, res) {
 	});
 });
 
-app.get('/scrape_classes', function(req, res) {
-
-  var depts = ['AIP', 'AAS', 'ANES', 'ANBI', 'ANAR', 'ANTH', 'ANSC', 'AESE', 'AUD', 'BENG', 'BNFO', 'BIEB',
-               'BICD','BIPN','BIBC','BGGN','BGSE','BILD','BIMM','BISP','BIOM','CMM','CENG','CHEM','CHIN','CLIN',
-               'CLRE','COGS','COMM','COGR','CSE','ICAM', 'CONT','CGS','CAT','TDCH','TDHD','TDMV','TDPF','TDTR',
-               'DSE','DERM','DSGN','DOC','ECON','EAP','EDS','ERC','ECE']; // TODO::ADD MORE DEPARTMENTS YOU FUCKS
- 
-  for (var i = 0; i < depts.length; i++) {
-    var dept = depts[i];
-    var quarter = 'WI17';
-    var timeout = 10000;
-    var undergrad = true;   // optional boolean to select only undergrad courses (< 200)
-    socsjs.searchDepartment(quarter, dept, timeout, undergrad).then(function(result) {
-      for (var i = 0; i < result.length; i++){
-        var obj = result[i];
-        console.log(obj['name']);
-      }
-    }).catch(function(err) {
-        console.log(err, 'oops!');
-    });
-  }
-});
-
 /*************************************************************************************/
 /******************************** GET CLASSES & ROOMS ********************************/
 
@@ -442,7 +418,7 @@ app.post("/send_room_message", function(req, res) {
   //roomMessagesDatabase.child(roomID).push().set(req.body);
   if (req.signedCookies.user_id && req.signedCookies.email && req.signedCookies.name) {
     var newChatMessage = new ChatMessage(req.signedCookies.name, 
-      req.signedCookies.email, text, roomID, timeSent);
+      req.signedCookies.email, text, roomID, timeSent, req.signedCookies.user_id);
     roomMessagesDatabase.child(roomID).push().set(newChatMessage);
   }
 
@@ -655,12 +631,13 @@ function Room(room_id, room_name, room_host_id, class_id, is_lecture, time_creat
   this.time_created = time_created;
 }
 
-function ChatMessage(name, email, text, roomID, timeSent) {
+function ChatMessage(name, email, text, roomID, timeSent, user_id) {
   this.name = name;
   this.email = email;
   this.text = text;
   this.roomID = roomID;
   this.timeSent = timeSent;
+  this.user_id = user_id;
 }
 
 //TODO: ERIC - fix callback stuff so res gets sent back + make this cleaner
@@ -803,8 +780,11 @@ function checkToDelete(room_id) {
 }
 
 function deleteRoom(room_id, class_id, firebase_push_id) {
+  //remove room from roominfo, remove id from classroom list, remove room
+  //messages database
   roomInfoDatabase.child(room_id).remove();
   classRoomsDatabase.child(class_id).child(firebase_push_id).remove();
+  roomMessagesDatabase.child(room_id).remove();
 }
 
 function tutorInRoom(room) {

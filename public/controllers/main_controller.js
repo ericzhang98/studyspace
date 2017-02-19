@@ -104,6 +104,21 @@ myApp.controller("MainController", ["$scope", "$http",
         chatInputBox.focus();
         scrollDown();
       }
+      
+      $scope.muteBtnClass = ['glyphicon', 'glyphicon-volume-up'];
+      // Toggle the mute button image
+      $scope.toggleMic = function() {
+        console.log("toggling mute image");
+        if ($scope.muteBtnClass[1] == 'glyphicon-volume-up') {
+          $scope.muteBtnClass.pop();
+          $scope.muteBtnClass.push('glyphicon-volume-off');
+        }
+        else {
+          $scope.muteBtnClass.pop();
+          $scope.muteBtnClass.push('glyphicon-volume-up');        
+        }
+        toggleMyStreamAudioEnabled();
+      }
 
 /*********************************************************************/
 /************************** DISPLAYING CHATS *************************/
@@ -398,14 +413,7 @@ myApp.controller("MainController", ["$scope", "$http",
     // - calls getRoom on all the rooms for specified class
     function getClass(class_id) {
 
-        // add listener for class rooms
-        classRoomsDatabase.child(class_id).on("value", function(snapshot) {
-          if (snapshot.val()) {
-            onClassRoomsChange(class_id, Object.values(snapshot.val()));
-          }
-        });
-
-        // get class name
+        // get class info
         var xhr = new XMLHttpRequest();
         xhr.open('GET', "/get_class/" + class_id, true); // res with the class's name and room_ids
         xhr.send();
@@ -422,6 +430,13 @@ myApp.controller("MainController", ["$scope", "$http",
 
                 // update UI
                 $scope.$apply();
+
+                // add listener for class rooms
+                classRoomsDatabase.child(class_id).on("value", function(snapshot) {
+                  if (snapshot.val()) {
+                    onClassRoomsChange(class_id, Object.values(snapshot.val()));
+                  }
+                });
             }
         }
     }
