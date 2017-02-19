@@ -208,7 +208,7 @@ app.post('/buddies_already', function(req, res) {
         return;
       }
     }
-    res.json(docs);
+    res.json(null);
 	});	
 });
 
