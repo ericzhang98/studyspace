@@ -95,6 +95,10 @@
       </div>
     </aside> <!-- END LEFT SIDEBAR -->
 
+    <main id="chat-room" role="main" ng-hide="currRoomID">
+      <p>Not in a room content goes here</p>
+    </main>
+
     <!-- Main Content -->
     <main id="chat-room" role="main" ng-hide="!currRoomID">
 
@@ -169,11 +173,6 @@
       </div>
 
     </main>   
-
-    <!-- Not in a Room -->
-    <!--<main ng-if="!currRoomID" id="chat-room" role="main">
-      <h1 class="text-center">hello studyspace</h1>
-    </main>-->
 
     <!-- Classmates Sidebar -->
     <aside id="sidebar-classmates" role="complementary" style="background-color:green">
