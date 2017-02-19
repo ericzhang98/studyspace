@@ -602,7 +602,7 @@ myApp.controller("MainController", ["$scope", "$http",
              console.log("ARE WE FRIENDS ALREADY");          
              friendshipExists(friend_id, friend_name, function(friendship){ 
                 console.log("FRIENDSHIP? " + friendship);
-                if(friendship || friendship.length == 0){
+                if(!friendship || friendship.length == 0){
                   console.log("Adding friend");
                   var data = {"sent_from_id":"Place user_id here", 
                               "sent_from_name": "user_name",

@@ -193,13 +193,18 @@ app.post('/buddies_already', function(req, res) {
   var friend_name = req.body.friend_name;
 
   db.user_buddies.find({user_one_id:user_id}, function(err, docs){
-    console.log(docs);
+
+  if(!docs[0]){
+      res.json(null);
+      return;
+  }
     var buddies = docs[0]['buddies'];
+
     for (var i = 0; i < buddies.length; i++){
       var obj = buddies[i];
       if(obj['user_two_id'] == friend_id){
         
-        res.json(null);
+        res.json("Friends");
         return;
       }
     }
