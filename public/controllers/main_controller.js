@@ -104,6 +104,21 @@ myApp.controller("MainController", ["$scope", "$http",
         chatInputBox.focus();
         scrollDown();
       }
+      
+      $scope.muteBtnClass = ['glyphicon', 'glyphicon-volume-up'];
+      // Toggle the mute button image
+      $scope.toggleMic = function() {
+        console.log("toggling mute image");
+        if ($scope.muteBtnClass[1] == 'glyphicon-volume-up') {
+          $scope.muteBtnClass.pop();
+          $scope.muteBtnClass.push('glyphicon-volume-off');
+        }
+        else {
+          $scope.muteBtnClass.pop();
+          $scope.muteBtnClass.push('glyphicon-volume-up');        
+        }
+        toggleMyStreamAudioEnabled();
+      }
 
 /*********************************************************************/
 /************************** DISPLAYING CHATS *************************/
