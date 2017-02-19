@@ -129,7 +129,14 @@
           </div>
           <div class="message" ng-repeat="chatMessage in chatMessageList">
             <div id="message-header">
-              <span id="username">{{chatMessage.name}}</span>
+              <div class="dropdown">
+                <a id="username" class="dropdown-toggle" data-toggle="dropdown" href="#">{{chatMessage.name}} <span class="caret"</span></a>
+                <ul class="dropdown-menu">
+                  <li><a href="#">Mute</a></li>
+                  <li><a href="#">Block</a></li>
+                  <li><a href="#">Friend</a></li>
+                </ul>
+              </div>
               <span id="dateTime">{{timeAgo(chatMessage)}}</span>
             </div>
             <p id="message-body" style="white-space:pre-wrap;">{{chatMessage.text}}</p>
