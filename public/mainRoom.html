@@ -130,7 +130,14 @@
           </div>
           <div class="message" ng-repeat="chatMessage in chatMessageList">
             <div id="message-header">
-              <span id="username">{{chatMessage.name}}</span>
+              <div class="dropdown">
+                <a id="username" class="dropdown-toggle" data-toggle="dropdown" href="#">{{chatMessage.name}} <span class="caret"></span></a>
+                <ul class="dropdown-menu">
+                  <li><a href="#" onclick="toggleRemoteStreamAudioEnabled(chatMessage.user_id)">Mute</a></li>
+                  <li><a href="#">Block</a></li>
+                  <li><a href="#">Friend</a></li>
+                </ul>
+              </div>
               <span id="dateTime">{{timeAgo(chatMessage)}}</span>
             </div>
             <p id="message-body" style="white-space:pre-wrap;">{{chatMessage.text}}</p>
@@ -142,9 +149,10 @@
           <form class="form-message" ng-submit="sendChatMessage(chatInput)">
             <div class="input-group" id="message-bar">
               <span class="input-group-btn">
-                <button id="btn-mute" class="btn btn-default" type="button" 
-                        onclick="toggleMyStreamAudioEnabled()"> 
-                  <span class="glyphicon glyphicon-volume-up"></span>
+                <button id="btn-mute" class="btn btn-default" type="button"
+                        ng-click="toggleMic()"> 
+                  <!--<span class="glyphicon glyphicon-volume-up" id="muteBtn"></span> -->
+                  <span ng-class="muteBtnClass"></span>
                 </button>
               </span>
               <input type="text" class="form-control" id="chatInputBox" 
