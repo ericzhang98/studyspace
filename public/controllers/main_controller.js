@@ -608,9 +608,9 @@ myApp.controller("MainController", ["$scope", "$http",
   
   $scope.acceptBuddy = function(requestInfo){
     //console.log(requestInfo);
-    var data = {"user_one_id":String(requestInfo.sent_from_id),
+    var data = {"user_one_id":String(requestInfo.sent_to_id),
                 "user_one_name":String(requestInfo.sent_from_name),
-                "user_two_id":String(requestInfo.sent_to_id),
+                "user_two_id":String(requestInfo.sent_from_id),
                 "user_two_name":String(requestInfo.sent_to_name)};
                 
     acceptBuddy(data, function(response){
