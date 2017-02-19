@@ -9,7 +9,6 @@ var deployment = false; //currently just whether or not to use HTTPS
 // packed with functions
 var express = require('express');
 var app = express();
-var socsjs = require('socsjs');
 
 // - Mongodb is the database that we will be using for persistent data
 // - mongojs is a module that has some useful functions
@@ -200,8 +199,15 @@ app.post('/buddies_already', function(req, res) {
 
 app.post('/send_buddy_request', function(req, res) {
 
-  req.body.sent_from_id = req.signedCookies.user_id;
-	db.user_buddy_requests.insert(req.body, function(err, docs){
+  var sent_from_id = req.signedCookies.user_id;
+  var sent_from_name = req.signedCookies.name;
+  if(!sent_from_id){
+    return;
+  }
+  var sent_to_id = req.body.sent_to_id;
+  var sent_to_name = req.body.sent_to_name;
+	db.user_buddy_requests.insert({sent_from_id:sent_from_id, sent_from_name:sent_from_name,
+                                 sent_to_id:sent_to_id, sent_to_name:sent_to_name}, function(err, docs){
 		res.json(docs);
 	});	
 });
@@ -282,29 +288,6 @@ app.get('/user_classes', function(req, res) {
 	db.user_classes.find({user_id: get_user_id}, function(err, docs){
 		res.json(docs);
 	});
-});
-
-app.get('/scrape_classes', function(req, res) {
-
-  var depts = ['AIP', 'AAS', 'ANES', 'ANBI', 'ANAR', 'ANTH', 'ANSC', 'AESE', 'AUD', 'BENG', 'BNFO', 'BIEB',
-               'BICD','BIPN','BIBC','BGGN','BGSE','BILD','BIMM','BISP','BIOM','CMM','CENG','CHEM','CHIN','CLIN',
-               'CLRE','COGS','COMM','COGR','CSE','ICAM', 'CONT','CGS','CAT','TDCH','TDHD','TDMV','TDPF','TDTR',
-               'DSE','DERM','DSGN','DOC','ECON','EAP','EDS','ERC','ECE']; // TODO::ADD MORE DEPARTMENTS YOU FUCKS
- 
-  for (var i = 0; i < depts.length; i++) {
-    var dept = depts[i];
-    var quarter = 'WI17';
-    var timeout = 10000;
-    var undergrad = true;   // optional boolean to select only undergrad courses (< 200)
-    socsjs.searchDepartment(quarter, dept, timeout, undergrad).then(function(result) {
-      for (var i = 0; i < result.length; i++){
-        var obj = result[i];
-        console.log(obj['name']);
-      }
-    }).catch(function(err) {
-        console.log(err, 'oops!');
-    });
-  }
 });
 
 /*************************************************************************************/
@@ -782,8 +765,11 @@ function checkToDelete(room_id) {
 }
 
 function deleteRoom(room_id, class_id, firebase_push_id) {
+  //remove room from roominfo, remove id from classroom list, remove room
+  //messages database
   roomInfoDatabase.child(room_id).remove();
   classRoomsDatabase.child(class_id).child(firebase_push_id).remove();
+  roomMessagesDatabase.child(room_id).remove();
 }
 
 function tutorInRoom(room) {
