@@ -199,8 +199,15 @@ app.post('/buddies_already', function(req, res) {
 
 app.post('/send_buddy_request', function(req, res) {
 
-  req.body.sent_from_id = req.signedCookies.user_id;
-	db.user_buddy_requests.insert(req.body, function(err, docs){
+  var sent_from_id = req.signedCookies.user_id;
+  var sent_from_name = req.signedCookies.name;
+  if(!sent_from_id){
+    return;
+  }
+  var sent_to_id = req.body.sent_to_id;
+  var sent_to_name = req.body.sent_to_name;
+	db.user_buddy_requests.insert({sent_from_id:sent_from_id, sent_from_name:sent_from_name,
+                                 sent_to_id:sent_to_id, sent_to_name:sent_to_name}, function(err, docs){
 		res.json(docs);
 	});	
 });

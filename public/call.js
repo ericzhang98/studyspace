@@ -1,6 +1,5 @@
 /***** General variables **************************/
 var me = {user_id: "id2", block_list: ["block1"]};
-var myID = getSignedCookie("user_id");
 var currRoomUsers = [];
 var isLecturer = false;		// am I giving a lecture?
 /**************************************************/
@@ -12,7 +11,7 @@ var peer = new Peer(myID,
 peer._lastServerId = myID;
 var myStream = null;
 var myCalls = [];
-var myRemoteStreams = {}; // Dictionary from call.id to audio track
+var myRemoteStreams = {}; // Dictionary from user.id to audio track
 navigator.getUserMedia = navigator.getUserMedia || navigator.webkitGetUserMedia || navigator.mozGetUserMedia;
 
 // Grab user media immediately
@@ -99,7 +98,7 @@ function startCallHelper(other_user_id) {
 	call.on('stream', function(remoteStream) {
 		console.log("incoming stream id: " + remoteStream.id)
 
-		addRemoteStream(remoteStream, call.id);	
+		addRemoteStream(remoteStream, call.peer);	
 	});
 
 	// used for onClose
@@ -109,7 +108,7 @@ function startCallHelper(other_user_id) {
 		console.log("call closed");
 
 		// when a call closes, remove the corresponding stream
-		removeRemoteStream(call_id);
+		removeRemoteStream(call.peer);
 	});
 }
 
@@ -149,7 +148,7 @@ function answerCallHelper(call) {
 
  		console.log("incoming stream id: " + remoteStream.id)	
 		
-		addRemoteStream(remoteStream, call.id);
+		addRemoteStream(remoteStream, call.peer);
 	});
 
 	// used for onClose
@@ -159,7 +158,7 @@ function answerCallHelper(call) {
 		console.log("call closed");
 
 		// when a call closes, remove the corresponding stream
-		removeRemoteStream(call_id);
+		removeRemoteStream(call.peer);
 	});
 }
 
@@ -252,7 +251,7 @@ function leaveRoom() {
 }
 
 // - creates audio track and stores in myRemoteStreams
-function addRemoteStream(remoteStream, call_id) {
+function addRemoteStream(remoteStream, user_id) {
 
 	// create a new audio element and make it play automatically
 	var audio = document.createElement('audio');
@@ -262,11 +261,11 @@ function addRemoteStream(remoteStream, call_id) {
     audio.src = window.URL.createObjectURL(remoteStream); 
 
     // store the element in myRemoteStreams
-    myRemoteStreams[call_id] = audio;
+    myRemoteStreams[user_id] = audio;
 
     // if I am the lecturer, I want everyone else muted by default
 	if (isLecturer) {
-		toggleRemoteStreamAudioEnabled(call_id);
+		toggleRemoteStreamAudioEnabled(user_id);
 	}
 
     // add audio stream to the page
@@ -274,13 +273,13 @@ function addRemoteStream(remoteStream, call_id) {
 }
 
 // - removes the audio track that streaming the remoteStream from call_id
-function removeRemoteStream(call_id) {
+function removeRemoteStream(user_id) {
 
 	// remove the audio track from the page
-	document.getElementById("myBody").removeChild(myRemoteStreams[call_id]);
+	document.getElementById("myBody").removeChild(myRemoteStreams[user_id]);
 
 	// remove the remoteStream from myRemoteStreams
-	delete myRemoteStreams[call_id];
+	delete myRemoteStreams[user_id];
 }
 
 // - removes all {user_id: call} pairs in myCalls and closes calls
@@ -326,8 +325,8 @@ function toggleMyStreamAudioEnabled() {
 	myStream.getAudioTracks()[0].enabled = !(myStream.getAudioTracks()[0].enabled);
 }
 
+// - set my audio
 function setMyStreamAudioEnabled(enabled) {
-
 	if (myStream) {
 		console.log("setting my audio to " + enabled);
 		myStream.getAudioTracks()[0].enabled = enabled;
@@ -335,9 +334,9 @@ function setMyStreamAudioEnabled(enabled) {
 }
 
 // - toggle audio from another person
-function toggleRemoteStreamAudioEnabled(call_id) {
-	console.log("toggling remote audio to " + !(myRemoteStreams[call_id].muted));
-	myRemoteStreams[call_id].muted = !(myRemoteStreams[call_id].muted);
+function toggleRemoteStreamAudioEnabled(user_id) {
+	console.log("toggling remote audio to " + !(myRemoteStreams[user_id].muted));
+	myRemoteStreams[user_id].muted = !(myRemoteStreams[user_id].muted);
 }
 /*********************************************************************/
 /******************************* MISC ********************************/
