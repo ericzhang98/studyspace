@@ -60,23 +60,22 @@
     </nav>
 
     <header id="header-signup" class="text-center">
-      <h2>Start Studying Today</h2>
-      <h2>with studyspace</h2>
+      <h2>Start Studying with</h2>
+      <h2>studyspace Today</h2>
     </header>
 
     <main role="main">
-      <div class="container">
+      <div class="container-main">
 
-        <!-- SIGNUP INFO
-        <div id="info-signup">
-          <h3>Connect with students</h3>
-          <p>Wow what a concept</p>
-          <h3>Connect with instructors</h3>
-          <p>Oh myyyy</p>
-          <h3>Never study alone</h3>
-          <p>I'm a lonely boi</p>
+        <!-- SIGNUP -->
+        <div id="info-signup" class="signup-info-container fadeInBack">
+          <h4>Connect with other students</h4>
+          <p>thats pretty dope</p>
+          <h4>Connect with tutors</h4>
+          <p>yEET</p>
+          <h4>Never study alone</h4>
+          <p>im a lonely boi</p>
         </div>
-        -->
 
         <!-- SIGNUP -->
         <div id="signup" class="signup-container fadeInBack" ng-controller="SignUpController">
@@ -87,21 +86,21 @@
                   <span>{{nameMessage}}</span>
                 </label>
                 <input type="text" class="form-control" id="input-name"
-                placeholder="first and last name" ng-model="signupName">
+                       placeholder="first and last name" ng-model="signupName">
               </div>
               <div class="form-group">
                 <label for="input-school">School
                   <span>{{schoolMessage}}</span>
                 </label>
                 <input type="text" class="form-control" id="input-school" 
-                placeholder="school name" ng-model="signupSchool">
+                       placeholder="school name" ng-model="signupSchool">
               </div>
               <div class="form-group">
                 <label for="input-email">Email
                   <span>{{emailMessage}}</span>
                 </label>
                 <input type="email" class="form-control" id="input-email" 
-                placeholder="email@example.com" ng-model="signupEmail">
+                       placeholder="email@example.com" ng-model="signupEmail">
               </div>
               <div class="form-group">
                 <label for="input-password">Password
@@ -129,9 +128,10 @@
 
       </div>
     </main>
+  </body>
+
   <!-- Angular scripts -->
   <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.6.1/angular.min.js"></script>
   <script src="sha1.js"></script>
   <script src="controllers/sign_up_controller.js"></script>
-  </body>
 </html>
