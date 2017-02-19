@@ -3,7 +3,7 @@ var mongojs = require('mongojs');
 var db = mongojs('mongodb://studyspace:raindropdroptop@ds033086.mlab.com:33086/studyspace', []);
 
 var firebaseAdmin = require("firebase-admin");
-var serviceAccount = require("./dontlookhere/porn/topsecret.json"); //shhhh
+var serviceAccount = require("../dontlookhere/porn/topsecret.json"); //shhhh
 var firebase = firebaseAdmin.initializeApp({
   credential: firebaseAdmin.credential.cert(serviceAccount),
   databaseURL: "https://studyspace-490cd.firebaseio.com/"
@@ -74,7 +74,7 @@ function removeRoom(className) {
 }
 
 function generateClassID(className) {
-  className = "UCSD " + className;
+  //className = "UCSD " + className;
   return className.replace(/ /g, "_");
 }
 
