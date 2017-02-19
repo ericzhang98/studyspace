@@ -420,7 +420,7 @@ app.post("/send_room_message", function(req, res) {
   //roomMessagesDatabase.child(roomID).push().set(req.body);
   if (req.signedCookies.user_id && req.signedCookies.email && req.signedCookies.name) {
     var newChatMessage = new ChatMessage(req.signedCookies.name, 
-      req.signedCookies.email, text, roomID, timeSent);
+      req.signedCookies.email, text, roomID, timeSent, req.signedCookies.user_id);
     roomMessagesDatabase.child(roomID).push().set(newChatMessage);
   }
 
@@ -633,12 +633,13 @@ function Room(room_id, room_name, room_host_id, class_id, is_lecture, time_creat
   this.time_created = time_created;
 }
 
-function ChatMessage(name, email, text, roomID, timeSent) {
+function ChatMessage(name, email, text, roomID, timeSent, user_id) {
   this.name = name;
   this.email = email;
   this.text = text;
   this.roomID = roomID;
   this.timeSent = timeSent;
+  this.user_id = user_id;
 }
 
 //TODO: ERIC - fix callback stuff so res gets sent back + make this cleaner
