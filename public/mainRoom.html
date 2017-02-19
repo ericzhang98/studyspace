@@ -84,12 +84,12 @@
               <ul class="list-group">
                 <li class="list-group-item" ng-repeat="room_id in class_rooms[class_id]" ng-click="joinRoom(room_id, class_id, null)">
                   <span ng-if="room_id == currRoomID" class="room-name" style="color:#00ff00">{{rooms[room_id].name}} ({{rooms[room_id].users.length}}) {{rooms[room_id].has_tutor? "*":""}}</span> 
-                  <span ng-if="room_id != currRoomID" class="room-name">{{rooms[room_id].name}} ({{rooms[room_id].users.length}}) {{rooms[room_id].has_tutor? "*":""}}</span> 
+                  <span ng-if="room_id != currRoomID" class="room-name">{{rooms[room_id].name}} ({{rooms[room_id].users.length}}) {{rooms[room_id].has_tutor? "*":""}}</span>
                 </li>
               </ul>
             </div>
           </div>
-          
+
         </div> <!-- END PANEL-GROUP -->
 
       </div>
@@ -102,7 +102,7 @@
       <nav id="navbar-room" class="navbar">
         <div class="container-fluid">
           <div class="navbar-header">
-            <span class="navbar-brand">{{currClassName}}{{currRoomName}}</span>
+            <span class="navbar-brand">{{classes[currClassID].name}} - {{rooms[currRoomID].name}}</span>
           </div>
           <ul class="nav navbar-nav navbar-right">
             <li class="dropdown">
@@ -119,6 +119,7 @@
 
       <!-- MESSAGE WRAPPER -->
       <div class="message-pane" id="message-wrapper"> 
+        <!--<h6 style="font-style:italic; padding-left: 2rem; padding-right: 2rem;">{{classes[currClassID].description}}</h6>-->
 
         <!-- MESSAGE PANE -->
         <div class="container-fluid" id="chatMessageDiv" scroll scroll-event="scrollevent">
