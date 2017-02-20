@@ -9,6 +9,7 @@ var isLecturer = false;		// am I giving a lecture?
 var peer = new Peer(myID, 
     {host: "pacific-lake-64902.herokuapp.com", port: "",  path: '/peerjs'});
 peer._lastServerId = myID;
+var PEER_PING_PERIOD = 30000;
 var myStream = null;
 var myCalls = [];
 var myRemoteStreams = {}; // Dictionary from user.id to audio track
@@ -18,7 +19,7 @@ navigator.getUserMedia = navigator.getUserMedia || navigator.webkitGetUserMedia 
 navigator.getUserMedia({video: false, audio: true}, function(stream) {
 	myStream = stream;
 }, function(err) {
-	console.log('Failed to get local stream' ,err);
+	console.log('Failed to get local stream', err);
 });
 
 /*********************** CALLING AND ANSWERING ***********************/
@@ -52,7 +53,7 @@ peer.on("error", function(err) {
 function pingPeerServer(constant) {
   peer.socket.send({type:"Ping"});
   if (constant) {
-    setTimeout(pingPeerServer, 30000, true);
+    setTimeout(pingPeerServer, PEER_PING_PERIOD, true);
   }
 }
 

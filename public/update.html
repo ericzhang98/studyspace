@@ -35,6 +35,7 @@
 
     <!-- Custom JavaScript -->
     <script type="text/javascript" src="./update.js"></script>
+    <script type="text/javascript" src="./sha1.js"></script>
 
     <!-- Title -->
     <title>Study Space - Update</title>
@@ -45,47 +46,40 @@
     </aside>
 
     <main role="main" class="container">
-      <div id="info-account">
-        <h2>Account information</h2>
-        <h3>Change Email</h3>
-        <input class="form-control" placeholder="New Email">
+      <h2 id="page-title">Account information</h2>
 
-        <h3>Change Password</h3>
-        <input class="form-control" type="password" placeholder="New Password">
-        <input class="form-control" type="password" placeholder="Confirm Password">
+      <h3>Classes</h3>
+
+      <div layout="column" ng-cloak>
+        <md-content id="class-dropdown" class="md-padding">
+          <form ng-submit="ctrl.submitForm()">
+            <md-autocomplete
+                md-selected-item="ctrl.selectedItem"
+                md-search-text="ctrl.searchText"
+                md-items="item in ctrl.querySearch(ctrl.searchText)"
+                md-item-text="item"
+                md-min-length="0"
+                placeholder="Enter a Class Code (e.g. 'CSE110')">
+              <md-item-template>
+                <span md-highlight-text="ctrl.searchText" md-highlight-flags="^i">{{item}}</span>
+              </md-item-template>
+            </md-autocomplete>
+          </form>
+        </md-content>
       </div>
 
-      <div id="info-school">
-        <h2>School Information</h2>
-        <h3>School</h3>
-        <input class="form-control half" placeholder="Change School">
+      <div id="school-classes"></div>
 
-        <h3>Classes</h3>
+      <h3>Change Password</h3>
 
-        <div layout="column" class="half middle" ng-cloak>
-          <md-content id="class-dropdown" class="md-padding">
-            <form ng-submit="ctrl.submitForm()">
-              <md-autocomplete
-                  md-selected-item="ctrl.selectedItem"
-                  md-search-text="ctrl.searchText"
-                  md-items="item in ctrl.querySearch(ctrl.searchText)"
-                  md-item-text="item"
-                  md-min-length="0"
-                  placeholder="Enter a Class Code (e.g. 'CSE110')">
-                <md-item-template>
-                  <span md-highlight-text="ctrl.searchText" md-highlight-flags="^i">{{item}}</span>
-                </md-item-template>
-              </md-autocomplete>
-            </form>
-          </md-content>
-        </div>
+      <input id="curr-pass-input" class="form-control password-input" type="password" placeholder="Current Password">
+      <input id="new-pass-input" class="form-control password-input" type="password" placeholder="New Password">
+      <input id="confirm-pass-input" class="form-control password-input" type="password" placeholder="Confirm Password">
 
-        <div id="school-classes"></div>
-      </div>
 
       <div id="buttons">
-        <button id="cancel-button" class="btn btn-warning">Cancel</button>
-        <button id="save-button" class="btn btn-primary">Save Changes</button>
+        <button id="cancel-button" class="btn btn-warning">Exit</button>
+        <button id="save-button" class="btn btn-primary">Apply Changes</button>
       </div>
     </main>
   </body>
