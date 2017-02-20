@@ -108,7 +108,6 @@ myApp.controller("MainController", ["$scope", "$http",
       $scope.muteBtnClass = ['glyphicon', 'glyphicon-volume-up'];
       // Toggle the mute button image
       $scope.toggleMic = function() {
-        console.log("toggling mute image");
         if ($scope.muteBtnClass[1] == 'glyphicon-volume-up') {
           $scope.muteBtnClass.pop();
           $scope.muteBtnClass.push('glyphicon-volume-off');
@@ -375,6 +374,14 @@ myApp.controller("MainController", ["$scope", "$http",
         // delegate to chat controller to join the room's chat
         //$scope.$broadcast("room_change");
     };
+    
+    $scope.muteText = "Mute";
+    // onclick method that will toggles the user audio of the given user_id
+    $scope.toggleUserAudio = function(user_id) {
+      $scope.muteText = ($scope.muteText == 'Mute') ? 'Unmute' : 'Mute';
+      toggleRemoteStreamAudioEnabled(user_id);
+    };
+    
 
 /*********************************************************************/
 /**************************** PULLING DATA ***************************/
