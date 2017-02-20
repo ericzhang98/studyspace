@@ -5,6 +5,7 @@ var myApp = angular.module("mainApp", []);
 // list of message objects with: email, name, roomID, text, timeSent
 var chatMessageList = [];
 var CONCAT_TIME = 60*1000; // 1 minute
+var USER_PING_PERIOD = 15*1000;
 
 /* Chat controller -------------------------------------*/
 
@@ -32,12 +33,13 @@ myApp.controller("MainController", ["$scope", "$http",
         if (chatDatabase != null) {
           chatDatabase.off();
         }
+
         lastKey = null;
         scrollLock = false;
 
         // empty our message list in logic and UI
         chatMessageList = [];
-        updateChatView();
+        //updateChatView();
 
         // set up and start new listener
         chatDatabase = databaseRef.child("RoomMessages").child(currRoomID);
@@ -294,6 +296,7 @@ myApp.controller("MainController", ["$scope", "$http",
 
       // Grab modal values
       var class_id = $('input:radio[name=class_id_radio]:checked').val();
+      
       // style choice: all room names be lower case only
       var room_name = (document.getElementById('room_name').value).toLowerCase();
 
@@ -370,11 +373,23 @@ myApp.controller("MainController", ["$scope", "$http",
         $scope.currClassID = class_id;
 
         joinRoomChat();
+
+        //setup activity ping
+        pingUserActivity(true);
       
 
         // delegate to chat controller to join the room's chat
         //$scope.$broadcast("room_change");
     };
+
+    function pingUserActivity(constant) {
+      var xhr = new XMLHttpRequest();
+      xhr.open("GET", "/ping", true);
+      xhr.send();
+      if (constant) {
+        setTimeout(pingUserActivity, USER_PING_PERIOD, true);
+      }
+    }
 
 /*********************************************************************/
 /**************************** PULLING DATA ***************************/
@@ -650,6 +665,25 @@ myApp.controller("MainController", ["$scope", "$http",
       });
 		});    
   };
+  
+  var DM = function(roomID){
+    
+    currRoomID = roomID;
+    $scope.currRoomID = currRoomID;
+    console.log(roomID);
+    joinRoomChat();
+  };
+  
+  $scope.DM = function(id){
+    if(myID > id){     
+      DM(myID + id);
+    }
+    else{
+      DM(id + myID);
+    }
+    
+  };
+  
 }]);
 
 //helper directive for scrolling listener
