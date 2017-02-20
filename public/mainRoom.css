@@ -2,145 +2,147 @@
 
 /* General */
 html, body {
-  margin: 0;
-  height: 100%;
+   margin: 0;
+   height: 100%;
 }
 
 /* Chat Room */
 #chat-room {
-  display: inline-block;
-  width: calc(100% - 240px);
-  left: 120px;
+   display: inline-block;
+   width: calc(100% - 240px);
+   left: 120px;
 }
 
 #navbar-room {
-  margin-bottom: 0;
-  border: none;
-  border-radius: 0;
-  height: 5rem;
-  font-weight: 600;
-  color: #337ab7;
+   margin-bottom: 0;
+   border: none;
+   border-radius: 0;
+   height: 5rem;
+   font-weight: 600;
+   color: #337ab7;
 }
 
 #navbar-room .navbar-brand {
-  cursor: default;
+   cursor: default;
 }
 
 #message-wrapper{
-  position: relative;
-  height: calc(100% - 5rem);
+   position: relative;
+   height: calc(100% - 5rem);
 }
 
 #chatMessageDiv {
-  background-color: black;
-  height: 100%;
-  overflow-x: hidden;
-  border-style: hidden;
-  word-wrap: break-word;
-  padding-top: 3rem;
-  padding-bottom: 10rem;
-  padding-left: 3rem;
-  padding-right: 3rem;
+   background-color: black;
+   height: 100%;
+   overflow-x: hidden;
+   border-style: hidden;
+   word-wrap: break-word;
+   padding-top: 3rem;
+   padding-bottom: 10rem;
+   padding-left: 3rem;
+   padding-right: 3rem;
 }
 
 #chatMessageDiv .message {
-  padding-left: 0;
-  list-style: none;
-  padding-top: 1.5rem;
-  padding-bottom: 1.5rem;
-  border-bottom: solid 1px #333333;
-  cursor: default;
+   padding-left: 0;
+   list-style: none;
+   padding-top: 1.5rem;
+   padding-bottom: 1.5rem;
+   border-bottom: solid 1px #333333;
+   cursor: default;
 }
 
 #chatMessageDiv .message:last-child {
-  border-bottom: none;
+   border-bottom: none;
 }
 
 #message-header {
-  display: -webkit-box;
-  display: -ms-flexbox;
-  display: flex;
-  -webkit-box-align: center;
-  -ms-flex-align: center;
-  align-items: center;
-  -webkit-box-pack: justify;
-  -ms-flex-pack: justify;
-  justify-content: space-between;
-  text-align: justify;
+   display: -webkit-box;
+   display: -ms-flexbox;
+   display: flex;
+   -webkit-box-align: center;
+   -ms-flex-align: center;
+   align-items: center;
+   -webkit-box-pack: justify;
+   -ms-flex-pack: justify;
+   justify-content: space-between;
+   text-align: justify;
 }
 
 #username {
-  color: white;
-  font-size: 1.6rem;
+   color: white;
+   font-size: 1.6rem;
+   padding-left: 0.5rem;
 }
 
 #dateTime {
-  font-size: 1.2rem;
-  color: gainsboro;
+   font-size: 1.2rem;
+   color: gainsboro;
 }
 
 #message-body {
-  color: powderblue;
-  font-size: 1.5rem;
-  margin-bottom: 0;
-  padding-top: 0.5rem;
+   color: powderblue;
+   font-size: 1.5rem;
+   margin-bottom: 0;
+   padding-top: 0.5rem;
+   padding-left: 5rem;
 }
 
 #username:selection,
 #dateTime:selection,
 p:selection {
-  background-color: white;
-  color: #333333;
+   background-color: white;
+   color: #333333;
 }
 
 #wrapper-message-bar {
-  position: absolute;
-  background: white;
-  bottom: 2rem;
-  left: 3rem;
-  right: 3rem;
-  height: 5rem;
-  border-radius: 0.5rem;
+   position: absolute;
+   background: white;
+   bottom: 2rem;
+   left: 3rem;
+   right: 3rem;
+   height: 5rem;
+   border-radius: 0.5rem;
 }
 
 #wrapper-message-bar .form-message {
-  height: inherit;
+   height: inherit;
 }
 
 #message-bar {
-  height: inherit;
+   height: inherit;
 }
 
 #message-bar .btn {
-  height: 5rem;
-  border: solid 2px #eeeeee;
+   height: 5rem;
+   border: solid 2px #eeeeee;
 }
 
 #btn-mute {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 2rem;
-  width: 5rem;
+   display: flex;
+   align-items: center;
+   justify-content: center;
+   font-size: 2rem;
+   width: 5rem;
 }
 
 #btn-send {
-  font-size: 1.5rem;
-  font-weight: 500;
+   font-size: 1.5rem;
+   font-weight: 500;
 }
 
 #btn-mute .glyphicon {
-  margin-right: -0.4rem;
+   margin-right: -0.4rem;
 }
 
 #message-bar .form-control {
-  font-size: 1.5rem;
-  border-bottom: none;
-  height: 100%;
-  padding-left: 1.5rem;
-  padding-right: 1.5rem;
-  border-top: solid 2px #eeeeee;
-  border-bottom: solid 2px #eeeeee;
+   font-size: 1.5rem;
+   border-bottom: none;
+   height: 100%;
+   padding-left: 1.5rem;
+   padding-right: 1.5rem;
+   border-top: solid 2px #eeeeee;
+   border-bottom: solid 2px #eeeeee;
 }
 
 /* End Main Room Text CSS */
@@ -148,164 +150,178 @@ p:selection {
 #sidebar-classes,
 #chat-room,
 #sidebar-classmates {
-  position: absolute;
-  top: 0;
-  bottom: 0;
+   position: absolute;
+   top: 0;
+   bottom: 0;
 }
 
 .panel {
-  cursor: pointer;
+   cursor: pointer;
 }
 
 /* Classes Sidebar */
 #sidebar-classes {
-  background: #8caacd;
-  left: 0;
-  width: 120px;
+   background: #8caacd;
+   left: 0;
+   width: 120px;
 }
 
 #info-user {
-  display: -webkit-box;
-  display: -ms-flexbox;
-  display: flex;
-  -webkit-box-align: center;
-  -ms-flex-align: center;
-  align-items: center;
-  height: auto;
-  padding-top: 2rem;
-  padding-bottom: 2rem;
-  margin-left: 2rem;
-  margin-right: 2rem;
-  border-bottom: solid 2px #000000;
+   display: -webkit-box;
+   display: -ms-flexbox;
+   display: flex;
+   -webkit-box-align: center;
+   -ms-flex-align: center;
+   align-items: center;
+   height: auto;
+   padding-top: 2rem;
+   padding-bottom: 2rem;
+   margin-left: 2rem;
+   margin-right: 2rem;
+   border-bottom: solid 2px #000000;
+}
+
+.container-message-icon {
+   position: relative;
+   top: 1rem;
+   text-align: center;
+   font-size: 2.5rem;
+   width: 4rem;
+   height: 4rem;
+   border-radius: 50%;
+   border-style: double;
+   background: gainsboro;
+   display: inline-block;
 }
 
 .container-user-icon {
    text-align: center;
    font-size: 2.5rem;
+   width: 4rem;
+   height: 4rem;
+   border-radius: 50%;
+   border-style: double;
+   background: white;
+   overflow: hidden;
+
 }
 
 #info-user .container-user-icon {
-  display: inline-block;
-  width: 4rem;
-  height: 4rem;
-  border-radius: 50%;
-  border-style: double;
-  background: white;
-  overflow: hidden;
-  margin-right: 1rem;
+   display: inline-block;
+   margin-right: 1rem;
 }
 
 #info-user .user-icon {
-  float: left;
-  width: 100%;
-  height: 100%;
+   float: left;
+   width: 100%;
+   height: 100%;
 }
 
 #info-user .user-name {
-  font-weight: 600;
-  font-size: 2rem;
+   font-weight: 600;
+   font-size: 2rem;
 }
 
 /* Classes Menu */
 #container-menu-classes {
-  margin-top: 2rem;
+   margin-top: 2rem;
 }
 
 #container-menu-classes .container-title {
-  display: -webkit-box;
-  display: -ms-flexbox;
-  display: flex;
-  -webkit-box-align: center;
-  -ms-flex-align: center;
-  align-items: center;
-  -webkit-box-pack: justify;
-  -ms-flex-pack: justify;
-  justify-content: space-between;
-  padding: 1rem 2rem;
-  font-size: 1rem;
-  background-color: transparent;
-  width: 100%;
+   display: -webkit-box;
+   display: -ms-flexbox;
+   display: flex;
+   -webkit-box-align: center;
+   -ms-flex-align: center;
+   align-items: center;
+   -webkit-box-pack: justify;
+   -ms-flex-pack: justify;
+   justify-content: space-between;
+   padding: 1rem 2rem;
+   font-size: 1rem;
+   background-color: transparent;
+   width: 100%;
 }
 
 #container-menu-classes .container-title:hover {
-  color: white;
+   color: white;
 }
 
 #container-menu-classes .container-title .title {
-  font-weight: 600;
-  margin-top: 0;
-  margin-bottom: 0;
+   font-weight: 600;
+   margin-top: 0;
+   margin-bottom: 0;
 }
 
 #menu-classes .panel {
-  background-color: inherit;
+   background-color: inherit;
 }
 
 #menu-classes .panel .panel-heading {
-  -webkit-transition: background 0.15s, color 0.15s;
-  transition: background 0.15s, color 0.15s;
+   -webkit-transition: background 0.15s, color 0.15s;
+   transition: background 0.15s, color 0.15s;
 }
 
 #menu-classes .panel:hover .panel-heading {
-  background-color: #7a9dc5;
-  color: white;
+   background-color: #7a9dc5;
+   color: white;
 }
 
 #menu-classes .panel>.panel-collapse>.list-group .list-group-item {
-  background-color: #6890be;
-  -webkit-transition: background 0.15s, color 0.15s;
-  transition: background 0.15s, color 0.15s;
+   background-color: #6890be;
+   -webkit-transition: background 0.15s, color 0.15s;
+   transition: background 0.15s, color 0.15s;
 }
 
 #menu-classes .panel>.panel-collapse>.list-group .list-group-item:hover {
-  background-color: #5783b6;
+   background-color: #5783b6;
 }
 
 /* Classmates Sidebar */
 #sidebar-classmates {
-  right: 0;
-  width: 120px;
+   right: 0;
+   width: 120px;
 }
 
 /* Create Room Modal */
 #create-room .btn-container {
-  margin-top: 4.5rem;
+   margin-top: 4.5rem;
 }
 
 #btn-create {
-  padding: 0.5em 1em;
-  font-size: 2.5rem;
-  font-weight: 500;
-  background: #286090;
-  width: 100%;
+   padding: 0.5em 1em;
+   font-size: 2.5rem;
+   font-weight: 500;
+   background: #286090;
+   width: 100%;
 }
 
 #btn-create:hover {
-  background: #337ab7;
+   background: #337ab7;
 }
 
 #btn-create:visited {
-  background: #337ab7;
+   background: #337ab7;
 }
 
 #create-room .panel:last-child {
-  margin-bottom: 0;
+   margin-bottom: 0;
 } 
 
 @media screen and (min-width: 768px) {
-  /* Classes Sidebar */
-  #sidebar-classes {
-    width: 25rem;
+   /* Classes Sidebar */
+   #sidebar-classes {
+      width: 25rem;
   }
 
   /* Chat Room */
   #chat-room {
-    left: 25rem;
-    width: calc(100% - 50rem);
+     left: 25rem;
+     width: calc(100% - 50rem);
   }
 
   /* Classmates Sidebar */
   #sidebar-classmates {
-    width: 25rem;
+     width: 25rem;
   }
 }
