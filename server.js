@@ -549,18 +549,18 @@ app.post("/sendforgotpassword", function(req, res) {
 /* GET data: {ID, resetToken} - reset password if resetToken matches
  * POST data: {password} - new password
  * Returns: {success} - whether or not password reset was succesful */
-app.post("/resetpassword/:id/:resetToken", function(req, res) {
-  var id = req.params.id;
-  var resetToken = req.params.resetToken;
-  var password = req.body.password;
-  if (id.length == 24) {
-    db.users.findOne({_id: mongojs.ObjectId(id)}, function(err, doc) {
+app.post("/resetpassword", function(req, res) {
+  var user_id = req.signedCookies.user_id;
+  var currPassword = req.body.currPass;
+  var newPassword = req.body.newPass;
+  if(user_id) {
+    db.users.findOne({user_id: user_id}, function(err, doc) {
       //check if user exists
       if (doc) {
         //verify the user if the token matches
-        if (resetToken == doc.resetToken) {
-          db.users.findAndModify({query: {_id: mongojs.ObjectId(id)}, 
-            update: {$set: {password: password}}, new: true}, function(err, doc) {
+        if (currPassword == doc.password) {
+          db.users.findAndModify({query: {user_id: user_id}, 
+            update: {$set: {password: newPassword}}, new: true}, function(err, doc) {
               if (doc) {
                 console.log("Account reset password: password reset");
                 res.json({success:true});
@@ -572,19 +572,19 @@ app.post("/resetpassword/:id/:resetToken", function(req, res) {
           });
         }
         else {
-          console.log("Account reset password: error - wrong token");
-          sendVerifyError(res);
+          console.log("Account reset password: error - incorrect current password or non-matching new/confirm password");
+          res.json({success:false});
         }
       }
       else {
         console.log("Account reset password: error - non-existent account");
-        sendVerifyError(res);
+        res.json({success:false});
       }
     });
   }
   else {
     console.log("Account reset password: error - impossible ID");
-    sendVerifyError(res);
+    res.json({success:false});
   }
 });
 /*************************************************************************************/

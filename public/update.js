@@ -15,18 +15,18 @@ function autoCompleteController ($timeout, $q, $log, $http) {
     // list of states to be displayed
     this.querySearch = querySearch;
 
-
     // If enter is pressed inside the dropdown
     $("#class-dropdown").keypress(function(event) {
         if(event.which == 13) {
 
-            var className = $("#input-0").val();
+            var className = $("#input-0").val().toUpperCase();
 
             if (verifyClass(className)) {
 
                 var class_id = allClassesNameToID[className];
                 // Make sure the user isn't already in the class
                 if($.inArray(class_id, userClasses) == -1) {
+                    console.log("ADD " + class_id)
                     addClass(class_id);
                 } else {
                     console.log("already in class with name " + className + " and id " + class_id);
@@ -155,18 +155,44 @@ function autoCompleteController ($timeout, $q, $log, $http) {
         displayClasses(userClasses);
     }
 
+    // Server stuff
     function saveChanges() {
-        // Do whatever server stuff is needed to update the information
+        var newPass = $("#new-pass-input").val();
+        var hashedCurrPass = Sha1.hash($("#curr-pass-input").val());
+        var hashedNewPass = Sha1.hash(newPass);
+        var hashedConfirmPass = Sha1.hash($("#confirm-pass-input").val());
+        // empty the input boxes after getting the data
+        $(".password-input").val("");
 
+        if (hashedCurrPass && hashedNewPass && hashedConfirmPass) {
+          if (hashedNewPass === hashedConfirmPass) {
+            if (newPass.length >= 6) {
+                var passToServerObject = {
+                    currPass: hashedCurrPass,
+                    newPass: hashedNewPass,
+                };
+                $http.post('/resetpassword', passToServerObject).then(function(res) {
+                    if(res.data.success) {
+                        console.log("Password successfully changed")
+                    }
+                    else {
+                        console.log("Current password inputted incorrectly, password not changed")
+                    }
+                });
+            }
+            else {
+                console.log("Password needs >=6 characters");
+            }
+          }
+          else {
+                console.log("Passwords don't match");
+          }
+        }
 
-
-        $http.post('/enroll', {class_ids: userClasses}).then(function(response){
-            document.location.href = "/";
-        });
+        $http.post('/enroll', {class_ids: userClasses});
     }
 
     function verifyClass(className) {
-        className = className.toUpperCase();
         console.log("verifying " + className);
         var returnVal = $.inArray(className, Object.keys(allClassesNameToID).map(function(x){ return x.toUpperCase() }));
         return returnVal > -1;

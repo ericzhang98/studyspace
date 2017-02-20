@@ -35,6 +35,7 @@
 
     <!-- Custom JavaScript -->
     <script type="text/javascript" src="./update.js"></script>
+    <script type="text/javascript" src="./sha1.js"></script>
 
     <!-- Title -->
     <title>Study Space - Update</title>
@@ -71,14 +72,14 @@
 
       <h3>Change Password</h3>
 
-      <input class="form-control password-input" type="password" placeholder="Verify Current Password">
-      <input class="form-control password-input" type="password" placeholder="New Password">
-      <input class="form-control password-input" type="password" placeholder="Confirm Password">
+      <input id="curr-pass-input" class="form-control password-input" type="password" placeholder="Current Password">
+      <input id="new-pass-input" class="form-control password-input" type="password" placeholder="New Password">
+      <input id="confirm-pass-input" class="form-control password-input" type="password" placeholder="Confirm Password">
 
 
       <div id="buttons">
-        <button id="cancel-button" class="btn btn-warning">Cancel</button>
-        <button id="save-button" class="btn btn-primary">Save Changes</button>
+        <button id="cancel-button" class="btn btn-warning">Exit</button>
+        <button id="save-button" class="btn btn-primary">Apply Changes</button>
       </div>
     </main>
   </body>
