@@ -19,7 +19,7 @@ navigator.getUserMedia = navigator.getUserMedia || navigator.webkitGetUserMedia 
 navigator.getUserMedia({video: false, audio: true}, function(stream) {
 	myStream = stream;
 }, function(err) {
-	console.log('Failed to get local stream' ,err);
+	console.log('Failed to get local stream', err);
 });
 
 /*********************** CALLING AND ANSWERING ***********************/

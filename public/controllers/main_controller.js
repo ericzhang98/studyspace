@@ -33,6 +33,7 @@ myApp.controller("MainController", ["$scope", "$http",
         if (chatDatabase != null) {
           chatDatabase.off();
         }
+
         lastKey = null;
         scrollLock = false;
 
@@ -301,6 +302,7 @@ myApp.controller("MainController", ["$scope", "$http",
 
       // Grab modal values
       var class_id = $('input:radio[name=class_id_radio]:checked').val();
+      
       // style choice: all room names be lower case only
       var room_name = (document.getElementById('room_name').value).toLowerCase();
 

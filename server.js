@@ -196,20 +196,21 @@ app.post('/buddies_already', function(req, res) {
 
   db.user_buddies.find({user_one_id:user_id}, function(err, docs){
 
-  if(!docs[0]){
-      res.json(null);
-      return;
-  }
+    if(!docs[0]) {
+        res.json(null);
+        return;
+    }
+
     var buddies = docs[0]['buddies'];
 
     for (var i = 0; i < buddies.length; i++){
       var obj = buddies[i];
       if(obj['user_two_id'] == friend_id){
-        
         res.json("Friends");
         return;
       }
     }
+    
     res.json(null);
 	});	
 });
@@ -245,7 +246,6 @@ app.post('/accept_buddy', function(req, res) {
   var user_two_name = req.body.user_two_name;
   db.user_buddies.update({user_one_id:user_one_id}, {$push: {buddies:{user_two_id:user_two_id,
                           user_two_name:user_two_name}}},{upsert: true}, function(err,docs){
-                            
                             console.log("Yay");
                           });
   db.user_buddies.update({user_one_id:user_two_id}, {$push: {buddies:{user_two_id:user_one_id,
@@ -307,7 +307,7 @@ app.delete('/user_classes/:id', function(req, res){
 app.get('/user_classes', function(req, res) {
 
   var get_user_id = req.signedCookies.user_id;
-	db.user_classes.find({user_id: get_user_id}, function(err, docs){
+	db.user_classes.find({user_id: get_user_id}, function(err, docs) {
 		res.json(docs);
 	});
 });
@@ -580,18 +580,18 @@ app.post("/sendforgotpassword", function(req, res) {
 /* GET data: {ID, resetToken} - reset password if resetToken matches
  * POST data: {password} - new password
  * Returns: {success} - whether or not password reset was succesful */
-app.post("/resetpassword/:id/:resetToken", function(req, res) {
-  var id = req.params.id;
-  var resetToken = req.params.resetToken;
-  var password = req.body.password;
-  if (id.length == 24) {
-    db.users.findOne({_id: mongojs.ObjectId(id)}, function(err, doc) {
+app.post("/resetpassword", function(req, res) {
+  var user_id = req.signedCookies.user_id;
+  var currPassword = req.body.currPass;
+  var newPassword = req.body.newPass;
+  if(user_id) {
+    db.users.findOne({user_id: user_id}, function(err, doc) {
       //check if user exists
       if (doc) {
         //verify the user if the token matches
-        if (resetToken == doc.resetToken) {
-          db.users.findAndModify({query: {_id: mongojs.ObjectId(id)}, 
-            update: {$set: {password: password}}, new: true}, function(err, doc) {
+        if (currPassword == doc.password) {
+          db.users.findAndModify({query: {user_id: user_id}, 
+            update: {$set: {password: newPassword}}, new: true}, function(err, doc) {
               if (doc) {
                 console.log("Account reset password: password reset");
                 res.json({success:true});
@@ -603,19 +603,19 @@ app.post("/resetpassword/:id/:resetToken", function(req, res) {
           });
         }
         else {
-          console.log("Account reset password: error - wrong token");
-          sendVerifyError(res);
+          console.log("Account reset password: error - incorrect current password or non-matching new/confirm password");
+          res.json({success:false});
         }
       }
       else {
         console.log("Account reset password: error - non-existent account");
-        sendVerifyError(res);
+        res.json({success:false});
       }
     });
   }
   else {
     console.log("Account reset password: error - impossible ID");
-    sendVerifyError(res);
+    res.json({success:false});
   }
 });
 /*************************************************************************************/
