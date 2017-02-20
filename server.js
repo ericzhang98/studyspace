@@ -162,6 +162,9 @@ app.delete('/remove_block/:id', function(req, res){
 app.post('/buddy_existing_user', function(req, res) {
 
   console.log(req.body.name);
+  if(req.body.name == req.signedCookies.email){
+    return null;
+  }
 	db.users.findOne({email:req.body.name}, function(err, docs){
     console.log(docs);
 		res.json(docs);
@@ -189,14 +192,26 @@ app.post('/buddies_already', function(req, res) {
   console.log("Friendship check");
   var user_id = req.signedCookies.user_id;
   var friend_id = req.body.friend_id;
-  db.user_buddies.find(
-  {$or:[ {user_one_id:user_id, user_two_id:friend_id},
-  {user_one_id:friend_id, user_two_id:user_id}]},
-  function(err, docs){
-    console.log(docs);
-		res.json(docs);
-	});	
+  var friend_name = req.body.friend_name;
 
+  db.user_buddies.find({user_one_id:user_id}, function(err, docs){
+
+  if(!docs[0]){
+      res.json(null);
+      return;
+  }
+    var buddies = docs[0]['buddies'];
+
+    for (var i = 0; i < buddies.length; i++){
+      var obj = buddies[i];
+      if(obj['user_two_id'] == friend_id){
+        
+        res.json("Friends");
+        return;
+      }
+    }
+    res.json(null);
+	});	
 });
 
 app.post('/send_buddy_request', function(req, res) {
@@ -228,13 +243,16 @@ app.post('/accept_buddy', function(req, res) {
   var user_one_name = req.body.user_one_name;
   var user_two_id = req.body.user_two_id;
   var user_two_name = req.body.user_two_name;
-	db.user_buddies.insert([{user_one_id:user_one_id, user_one_name:user_one_name, 
-                          user_two_id:user_two_id, user_two_name:user_two_name},
-                          {user_one_id:user_two_id, user_one_name:user_two_name, 
-                          user_two_id:user_one_id, user_two_name:user_one_name}], function(err, docs){
-    console.log(docs);
-		res.json(docs);
-	});	
+  db.user_buddies.update({user_one_id:user_one_id}, {$push: {buddies:{user_two_id:user_two_id,
+                          user_two_name:user_two_name}}},{upsert: true}, function(err,docs){
+                            
+                            console.log("Yay");
+                          });
+  db.user_buddies.update({user_one_id:user_two_id}, {$push: {buddies:{user_two_id:user_one_id,
+                          user_two_name:user_one_name}}},{upsert: true}, function(err,docs){
+                            
+                            res.json(docs);
+                          });
 });
 
 app.post('/get_added_buddies', function(req, res){
@@ -255,7 +273,9 @@ app.delete('/reject_buddy/:id', function(req, res){
 app.delete('/remove_buddy/:id', function(req, res){
 
 	var id = req.params.id;
-	db.user_buddies.remove({_id: mongojs.ObjectId(id)}, function(err, doc){
+  var user_one_id = req.signedCookies.user_id;
+	db.user_buddies.update({user_one_id:user_one_id}, {$pull:{'buddies':{user_two_id:id}}});
+   db.user_buddies.update({user_one_id:id}, {$pull:{'buddies':{user_two_id:user_one_id}}}, function(err, doc){
 		res.json(doc);
 	});
 });
