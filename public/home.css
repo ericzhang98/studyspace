@@ -32,12 +32,12 @@ main {
 
 /* Login Modal */
 #login .btn-container {
-  margin-top: 4.5rem;
+  margin-top: 3rem;
 }
 
 #btn-submit {
   padding: 0.5em 1em;
-  font-size: 2.5rem;
+  font-size: 2rem;
   font-weight: 500;
   background: #286090;
   width: 100%;
@@ -54,12 +54,6 @@ main {
   background: #ecf0f1;
 }
 
-#splash h1::selection,
-#splash p::selection {
-  background: #333333;
-  color: white;
-}
-
 #splash .container {
   text-align: center;
   padding-left: 2rem;
@@ -68,7 +62,7 @@ main {
 
 #splash .title {
   font-weight: 700;
-  font-size: 4rem;
+  font-size: 3rem;
 }
 
 #splash .subtitle {
@@ -97,9 +91,13 @@ main {
     display: inline;
   }
 
-  #link-login .text-log-in::selection {
-    background: #333333;
-    color: white;
+  /* Login Modal */
+  #login .btn-container {
+    margin-top: 4rem;
+  }
+
+  #btn-submit {
+    font-size: 2.5rem;
   }
 
   /* Splash */

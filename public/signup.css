@@ -1,11 +1,6 @@
 /* signup.css */
 
 /* General */
-html, body {
-  margin: 0;
-  height: 100%;
-}
-
 body {
   background: #ecf0f1;
 }
@@ -13,7 +8,11 @@ body {
 main {
   padding-left: 2rem;
   padding-right: 2rem;
-  background: white;
+  background: #ecf0f1;
+}
+
+main.container {
+  margin-bottom: 2rem;
 }
 
 /* Navbar */
@@ -62,63 +61,54 @@ main {
 }
 
 /* Sign Up Title */
+#header-signup {
+  padding-top: 2rem;
+  padding-bottom: 4rem;
+  margin-bottom: 0;
+}
+
+#header-signup h2 {
+  margin: 0;
+  font-size: 2.4rem;
+  font-weight: 600;
+  line-height: 1.2em;
+}
 
 /* Sign Up Info */
+#info-signup {
+  margin-bottom: 2rem;
+}
+
 #info-signup h4 {
+  font-size: 1.5rem;
   margin-top: 0;
 }
 
 #info-signup p {
-  font-size: 1.5rem;
+  font-size: 1.2rem;
   margin-bottom: 3rem;
 }
 
+#info-signup p:last-child {
+  margin-bottom: 0;
+}
+
 /* Sign Up Form */
+#info-signup,
 #signup {
   width: 100%;
   background: white;
-  padding: 5rem 3rem;
-}
-
-#signup h1::selection,
-#signup label::selection,
-#signup input::selection {
-  background: #333333;
-  color: white;
-}
-
-#signup .title {
-  font-size: 3rem;
-  font-weight: 700;
-  margin-top: 0;
-  margin-bottom: 0;
-}
-
-#signup .title-container {
-  margin-bottom: 3.5rem;
-}
-
-#signup label {
-  font-size: 1.5rem;
-  font-weight: 700;
-}
-
-#signup .form-group {
-  margin-top: 3rem;
-  margin-bottom: 0;
-}
-
-#signup .form-group:first-child {
-  margin-top: 0;
+  padding: 3rem;
+  border-radius: 0.5rem;
 }
 
 #signup .btn-container {
-  margin-top: 4.5rem;
+  margin-top: 3rem;
 }
 
 #btn-submit {
   padding: 0.5em 1em;
-  font-size: 2.5rem;
+  font-size: 2rem;
   font-weight: 600;
   background: #286090;
   width: 100%;
@@ -133,19 +123,14 @@ main {
 }
 
 @media screen and (min-width: 768px) {
-  main {
-    background: #ecf0f1;
-  }
-
-  main .container {
-    padding-left: 2rem;
-    padding-right: 2rem;
+  main.container {
+    margin: 0 auto;
+    margin-bottom: 10rem;
   }
 
   /* Navbar */
   #navbar-site {
     margin-top: 1.5rem;
-    margin-bottom: 1.5rem;
   }
 
   #link-login {
@@ -159,43 +144,62 @@ main {
   /* Sign Up Title */
   #header-signup {
     padding-top: 4rem;
-    padding-bottom: 4rem;
-    margin-bottom: 3rem;
+    padding-bottom: 7rem;
   }
 
   #header-signup h2 {
-    margin: 0;
-    font-weight: 600;
-    line-height: 1.2em;
+    font-size: 3rem;
+  }
+
+  /* Sign Up Info */
+  #info-signup h4 {
+    font-size: 2rem;
+  }
+
+  #info-signup p {
+    font-size: 1.5rem;
   }
 
   /* Sign Up */
-  .container-main {
-    width: 95rem;
-    margin: 0 auto;
-  }
-
   #info-signup,
   #signup {
     background-color: white;
-    width: 45rem;
-    height: 58.5rem;
+    width: 100%;
     padding: 4rem;
-    border-radius: 0.5rem;
-    margin-bottom: 10rem;
+  }
+
+  #info-signup {
+    margin-bottom: 3rem;
+    height: auto;
+  }
+
+  #signup .btn-container {
+    margin-top: 4rem;
+  }
+
+  #btn-submit {
+    font-size: 2.5rem;
+  }
+}
+
+@media (min-width: 992px) {
+  main.container {
+    width: 970px;
+  }
+
+  /* Sign Up */
+  #info-signup,
+  #signup {
+    width: 45rem;
   }
 
   #info-signup {
     float: left;
+    margin-bottom: 0;
+    height: 58rem;
   }
 
   #signup {
     float: right;
-  }
-}
-
-@media screen and (max-height: 688px) {
-  main {
-    display: block;
   }
 }

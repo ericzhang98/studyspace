@@ -86,13 +86,6 @@ html, body {
   padding-top: 0.5rem;
 }
 
-#username:selection,
-#dateTime:selection,
-p:selection {
-  background-color: white;
-  color: #333333;
-}
-
 #wrapper-message-bar {
   position: absolute;
   background: white;
@@ -124,11 +117,6 @@ p:selection {
   width: 5rem;
 }
 
-#btn-send {
-  font-size: 1.5rem;
-  font-weight: 500;
-}
-
 #btn-mute .glyphicon {
   margin-right: -0.4rem;
 }
@@ -141,10 +129,12 @@ p:selection {
   padding-right: 1.5rem;
   border-top: solid 2px #eeeeee;
   border-bottom: solid 2px #eeeeee;
+  border-right: solid 2px #eeeeee;
+  border-top-right-radius: 0.5rem;
+  border-bottom-right-radius: 0.5rem;
 }
 
 /* End Main Room Text CSS */
-
 #sidebar-classes,
 #chat-room,
 #sidebar-classmates {
