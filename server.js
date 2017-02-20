@@ -40,6 +40,7 @@ var firebaseRoot = firebase.database().ref();
 var classRoomsDatabase = firebaseRoot.child("ClassRooms");
 var roomInfoDatabase = firebaseRoot.child("RoomInfo");
 var roomMessagesDatabase = firebaseRoot.child("RoomMessages");
+var userActivityDatabase = firebaseRoot.child("UserActivity");
 
 var favicon = require("serve-favicon");
 app.use(favicon(__dirname + "/public/assets/images/favicon.ico"));
@@ -64,6 +65,7 @@ var VIEW_DIR = __dirname + "/public/";
 var COOKIE_TIME = 7*24*60*60*1000; //one week
 var MAX_IDLE = 10*1000;
 var BUFFER_TIME = 20*1000;
+var USER_IDLE = 30*1000;
 
 /* HTTP requests ---------------------------------------------------------*/
 
@@ -160,6 +162,9 @@ app.delete('/remove_block/:id', function(req, res){
 app.post('/buddy_existing_user', function(req, res) {
 
   console.log(req.body.name);
+  if(req.body.name == req.signedCookies.email){
+    return null;
+  }
 	db.users.findOne({email:req.body.name}, function(err, docs){
     console.log(docs);
 		res.json(docs);
@@ -187,14 +192,26 @@ app.post('/buddies_already', function(req, res) {
   console.log("Friendship check");
   var user_id = req.signedCookies.user_id;
   var friend_id = req.body.friend_id;
-  db.user_buddies.find(
-  {$or:[ {user_one_id:user_id, user_two_id:friend_id},
-  {user_one_id:friend_id, user_two_id:user_id}]},
-  function(err, docs){
-    console.log(docs);
-		res.json(docs);
-	});	
+  var friend_name = req.body.friend_name;
 
+  db.user_buddies.find({user_one_id:user_id}, function(err, docs){
+
+  if(!docs[0]){
+      res.json(null);
+      return;
+  }
+    var buddies = docs[0]['buddies'];
+
+    for (var i = 0; i < buddies.length; i++){
+      var obj = buddies[i];
+      if(obj['user_two_id'] == friend_id){
+        
+        res.json("Friends");
+        return;
+      }
+    }
+    res.json(null);
+	});	
 });
 
 app.post('/send_buddy_request', function(req, res) {
@@ -226,13 +243,16 @@ app.post('/accept_buddy', function(req, res) {
   var user_one_name = req.body.user_one_name;
   var user_two_id = req.body.user_two_id;
   var user_two_name = req.body.user_two_name;
-	db.user_buddies.insert([{user_one_id:user_one_id, user_one_name:user_one_name, 
-                          user_two_id:user_two_id, user_two_name:user_two_name},
-                          {user_one_id:user_two_id, user_one_name:user_two_name, 
-                          user_two_id:user_one_id, user_two_name:user_one_name}], function(err, docs){
-    console.log(docs);
-		res.json(docs);
-	});	
+  db.user_buddies.update({user_one_id:user_one_id}, {$push: {buddies:{user_two_id:user_two_id,
+                          user_two_name:user_two_name}}},{upsert: true}, function(err,docs){
+                            
+                            console.log("Yay");
+                          });
+  db.user_buddies.update({user_one_id:user_two_id}, {$push: {buddies:{user_two_id:user_one_id,
+                          user_two_name:user_one_name}}},{upsert: true}, function(err,docs){
+                            
+                            res.json(docs);
+                          });
 });
 
 app.post('/get_added_buddies', function(req, res){
@@ -253,7 +273,9 @@ app.delete('/reject_buddy/:id', function(req, res){
 app.delete('/remove_buddy/:id', function(req, res){
 
 	var id = req.params.id;
-	db.user_buddies.remove({_id: mongojs.ObjectId(id)}, function(err, doc){
+  var user_one_id = req.signedCookies.user_id;
+	db.user_buddies.update({user_one_id:user_one_id}, {$pull:{'buddies':{user_two_id:id}}});
+   db.user_buddies.update({user_one_id:id}, {$pull:{'buddies':{user_two_id:user_one_id}}}, function(err, doc){
 		res.json(doc);
 	});
 });
@@ -408,6 +430,15 @@ app.post("/send_room_message", function(req, res) {
   }
 
   res.send({}); //close the http request
+});
+
+app.get("/ping", function(req, res) {
+  res.send({});
+  var user_id = req.signedCookies.user_id;
+  if (user_id) {
+    console.log("updating last active");
+    userActivityDatabase.child(user_id).child("lastActive").set(Date.now()); 
+  }
 });
 
 /*************************************************************************************/
@@ -668,6 +699,9 @@ function joinRoom(user_id, room_id, callback) {
               }
             });
           }
+          userActivityDatabase.child(user_id).child("lastRoom").set(room_id);
+          userActivityDatabase.child(user_id).child("lastActive").set(Date.now());
+          setTimeout(userActivityChecker, USER_IDLE, user_id);
         }
         else {
           if (callback) {
@@ -681,6 +715,27 @@ function joinRoom(user_id, room_id, callback) {
       console.log("FIREBASE: ERROR - Room doesn't exist anymore, user failed to join");
       if (callback) {
         callback(null);
+      }
+    }
+  });
+}
+
+function userActivityChecker(user_id) {
+  console.log("checking activity of " + user_id);
+  userActivityDatabase.child(user_id).once("value").then(function(snapshot) {
+    var activityLog = snapshot.val();
+    if (activityLog) {
+      //if the user hasn't pinged within the last minute, rm them from room
+      console.log("got activity log");
+      if (Date.now() - activityLog.lastActive > USER_IDLE) {
+        console.log("removing user");
+        if (activityLog.lastRoom) {
+          leaveRoom(user_id, activityLog.lastRoom);
+          userActivityDatabase.child(user_id).child("lastRoom").set(null);
+        }
+      }
+      else {
+        setTimeout(userActivityChecker, USER_IDLE, user_id);
       }
     }
   });

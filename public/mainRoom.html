@@ -47,6 +47,7 @@
       <div id="info-user">
         <div class="container-user-icon">
           <!--<img class="user-icon" src="assets/images/user_icon.png" />-->
+          <p>{{myName | limitTo:1}}</p>
         </div>
         <span class="user-name">{{myName}}</span>
       </div>
@@ -196,7 +197,8 @@
                 <tr ng-repeat="buddies in added_buddies_list">
                   <td></td>
                   <td>{{buddies.user_two_name}}</td>
-                  <td><button class="btn btn-danger" ng-click="deleteFriend(buddies._id)">Remove Friend</button></td>
+                  <td><button class="btn btn-danger" ng-click="deleteFriend(buddies.user_two_id)">Remove Friend</button></td>
+                  <td><button class="btn btn-danger" ng-click="DM(buddies.user_two_id)">DM</button></td>
                 </tr>
               </tbody>
           </table>
