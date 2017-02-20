@@ -32,6 +32,7 @@ myApp.controller("MainController", ["$scope", "$http",
         if (chatDatabase != null) {
           chatDatabase.off();
         }
+
         lastKey = null;
         scrollLock = false;
 

@@ -194,21 +194,22 @@ app.post('/buddies_already', function(req, res) {
 
   db.user_buddies.find({user_one_id:user_id}, function(err, docs){
 
-  if(!docs[0]){
-      res.json(null);
-      return;
-  }
+    if(!docs[0]) {
+        res.json(null);
+        return;
+    }
+
     var buddies = docs[0]['buddies'];
 
     for (var i = 0; i < buddies.length; i++){
       var obj = buddies[i];
       if(obj['user_two_id'] == friend_id){
-        
         res.json("Friends");
         return;
       }
     }
-    res.json(docs);
+
+    res.json(null);
 	});	
 });
 
@@ -243,7 +244,6 @@ app.post('/accept_buddy', function(req, res) {
   var user_two_name = req.body.user_two_name;
   db.user_buddies.update({user_one_id:user_one_id}, {$push: {buddies:{user_two_id:user_two_id,
                           user_two_name:user_two_name}}},{upsert: true}, function(err,docs){
-                            
                             console.log("Yay");
                           });
   db.user_buddies.update({user_one_id:user_two_id}, {$push: {buddies:{user_two_id:user_one_id,
