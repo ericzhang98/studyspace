@@ -173,7 +173,7 @@ html, body {
 
 .container-message-icon {
    position: relative;
-   top: 1rem;
+   top: 1.5rem;
    text-align: center;
    font-size: 2.5rem;
    width: 4rem;
@@ -261,6 +261,7 @@ html, body {
    background-color: #6890be;
    -webkit-transition: background 0.15s, color 0.15s;
    transition: background 0.15s, color 0.15s;
+   padding-left: 32px;
 }
 
 #menu-classes .panel>.panel-collapse>.list-group .list-group-item:hover {
