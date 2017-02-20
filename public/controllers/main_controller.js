@@ -222,7 +222,13 @@ myApp.controller("MainController", ["$scope", "$http",
                     return snapshotValue[key];
               });
               moreMessagesArray.pop(); //remove extra messsage b/c lastKey inclusive
-              chatMessageList = moreMessagesArray.concat(chatMessageList); //combine with og msgs
+              
+              if (moreMessagesArray.length > 0) {
+                chatMessageList = moreMessagesArray.concat(chatMessageList); //combine with og msgs
+              }
+              else {
+                lastKey = null; //otherwise don't pull anymore
+              }
 
               //keep track of height diff, update view, and then scroll by diff
               var previousHeight = div.scrollHeight;
