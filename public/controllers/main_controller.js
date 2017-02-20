@@ -37,7 +37,7 @@ myApp.controller("MainController", ["$scope", "$http",
 
         // empty our message list in logic and UI
         chatMessageList = [];
-        updateChatView();
+        //updateChatView();
 
         // set up and start new listener
         chatDatabase = databaseRef.child("RoomMessages").child(currRoomID);
@@ -650,6 +650,25 @@ myApp.controller("MainController", ["$scope", "$http",
       });
 		});    
   };
+  
+  var DM = function(roomID){
+    
+    currRoomID = roomID;
+    $scope.currRoomID = currRoomID;
+    console.log(roomID);
+    joinRoomChat();
+  };
+  
+  $scope.DM = function(id){
+    if(myID > id){     
+      DM(myID + id);
+    }
+    else{
+      DM(id + myID);
+    }
+    
+  };
+  
 }]);
 
 //helper directive for scrolling listener
