@@ -22,7 +22,7 @@ a:hover {
 }
 
 /* General: navbar-site */
-#navbar-site {
+.navbar-site {
   font-size: 1.8rem;
   font-weight: 500;
   height: 6rem;
@@ -33,17 +33,17 @@ a:hover {
   margin-bottom: 0;
 }
 
-#navbar-site a {
+.navbar-site a {
   color: white;
 }
 
-#navbar-site .container {
+.navbar-site .container {
   padding-left: 2rem;
   padding-right: 2rem;
 }
 
-#navbar-site .navbar-header,
-#navbar-site .nav-link {
+.navbar-site .navbar-header,
+.navbar-site .nav-link {
   display: -webkit-box;
   display: -ms-flexbox;
   display: flex;
@@ -55,23 +55,23 @@ a:hover {
   padding-bottom: 0; 
 }
 
-#navbar-site .nav-link {
+.navbar-site .nav-link {
   padding: 0 1em;
   cursor: pointer;
   -webkit-transition: background 0.15s, color 0.15s;
   transition: background 0.15s, color 0.15s;
 }
 
-#navbar-site .nav-link:hover {
+.navbar-site .nav-link:hover {
   background: white;
   color: #aaaaaa;
 }
 
-#navbar-site .navbar-brand {
+.navbar-site .navbar-brand {
   font-size: 2.5rem;
 }
 
-#navbar-site .brand-name {
+.navbar-site .brand-name {
   display: none;
 }
 
@@ -113,15 +113,16 @@ a:hover {
   margin-bottom: 0;
 }
 
-.modal-content .title-container {
+.modal-header {
   position: relative;
   padding-top: 4.5rem;
   padding-left: 3rem;
   padding-right: 3rem;
   padding-bottom: 0;
+  border-bottom: none;
 }
 
-.modal-content .title-container .close {
+.modal-header .close {
   position: absolute;
   top: 1.5rem;
   right: 1.5rem;
@@ -131,7 +132,7 @@ a:hover {
   color: #333333;
 }
 
-.modal-content .title-container .close:hover {
+.modal-header .close:hover {
   color: #888888;
 }
 
@@ -172,6 +173,10 @@ a:hover {
   box-shadow: none;
   border-bottom: 3px solid #333333;
   color: #333333;
+}
+
+.form-container .btn-submit:hover {
+  background: #337ab7;
 }
 
 /* General: btn */
@@ -217,6 +222,14 @@ a:hover {
 .open>.dropdown-toggle.btn-primary:focus,
 .open>.dropdown-toggle.btn-primary:hover {
   border: none;
+}
+
+.btn-submit:hover {
+  background: #337ab7;
+}
+
+.btn-submit:visited {
+  background: #337ab7;
 }
 
 /* General: panel */
@@ -274,17 +287,13 @@ a:hover {
 
 @media screen and (min-width: 768px) {
   /* navbar-site */
-  #navbar-site .container-fluid {
+  .navbar-site .container-fluid {
     padding-left: 4rem;
     padding-right: 4rem;
   }
 
-  #navbar-site .brand-name {
+  .navbar-site .brand-name {
     display: inline;
-  }
-
-  #navbar-site .icon {
-    display: none;
   }
 
   /* modal */
@@ -293,13 +302,13 @@ a:hover {
     height: auto;
   }
 
-  .modal-content .title-container {
+  .modal-header {
     padding-top: 5rem;
     padding-left: 4rem;
     padding-right: 4rem;
   }
 
-  .modal-content .title {
+  .modal-header .title {
     font-size: 2.5rem;
   }
 

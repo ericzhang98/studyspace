@@ -19,7 +19,7 @@ myApp.controller("MainController", ["$scope", "$http",
 /****************************** CHAT ROOM ****************************/
 /*-------------------------------------------------------------------*/
       
-      var div = document.getElementById("chatMessageDiv");
+      var div = document.getElementById("chat-message-pane");
       var chatInputBox = document.getElementById("chatInputBox");
       var lastKey = null;
       var scrollLock = false;

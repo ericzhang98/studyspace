@@ -5,37 +5,12 @@ main {
   margin-top: 6rem;
 }
 
-/* Navbar */
-#navbar-site .nav-link #log-in path,
-#navbar-site .nav-link #log-in polyline {
-  -webkit-transition: stroke 0.15s;
-  transition: stroke 0.15s; 
-}
-
-#navbar-site .nav-link:hover #log-in path,
-#navbar-site .nav-link:hover #log-in polyline {
-  stroke: #aaaaaa;
-}
-
-#navbar-site .text-log-in {
-  display: none;
-}
-
-#navbar-site .icon {
-  height: 2.5rem;
-  width: auto;
-}
-
-#icon-log-in {
-  margin-left: -0.4rem;
-}
-
 /* Login Modal */
-#login .btn-container {
+.modal-login-content .btn-container {
   margin-top: 3rem;
 }
 
-#btn-submit {
+.modal-login-content .btn-submit {
   padding: 0.5em 1em;
   font-size: 2rem;
   font-weight: 500;
@@ -43,39 +18,35 @@ main {
   width: 100%;
 }
 
-#btn-submit:hover {
-  background: #337ab7;
-}
-
 /* Splash Art */
-#splash {
+.splash {
   padding-top: 5rem;
   padding-bottom: 5rem;
   background: #ecf0f1;
 }
 
-#splash .container {
+.splash .container {
   text-align: center;
   padding-left: 2rem;
   padding-right: 2rem;
 }
 
-#splash .title {
+.splash .title {
   font-weight: 700;
   font-size: 3rem;
 }
 
-#splash .subtitle {
+.splash .subtitle {
   margin-top: 1.5rem;
   font-size: 1.5rem;
   font-weight: 400;
 }
 
-#splash .btn-container {
+.splash .btn-container {
   margin-top: 4rem;
 }
 
-#btn-signup {
+.splash .btn-container .btn-signup {
   padding: 0.5em 2em;
   font-size: 2rem;
   font-weight: 600;
@@ -83,55 +54,51 @@ main {
 
 @media screen and (min-width: 768px) {
   /* Navbar */
-  #link-login {
+  .navbar-site .nav-link-login {
     margin-right: -2rem;
   }
 
-  #link-login .text-log-in {
-    display: inline;
-  }
-
   /* Login Modal */
-  #login .btn-container {
+  .modal-login-content .btn-container {
     margin-top: 4rem;
   }
 
-  #btn-submit {
+  .modal-login-content .btn-submit {
     font-size: 2.5rem;
   }
 
   /* Splash */
-  #splash {
+  .splash {
     padding-top: 15rem;
     padding-bottom: 15rem;
   }
 
-  #splash .container {
+  .splash .container {
     text-align: left;
   }
 
-  #splash .title {
+  .splash .title {
     font-size: 5rem;
     width: 80%;
   }
 
-  #splash .subtitle {
+  .splash .subtitle {
     margin-top: 2.5rem;
     font-size: 2.5rem;
   }
 
-  #splash .btn-container {
+  .splash .btn-container {
     margin-top: 8rem;
   }
 
-  #btn-signup {
+  .splash .btn-container .btn-signup {
     font-size: 2.5rem;
   }
 }
 
 @media screen and (min-width: 992px) {
   /* Splash */
-  #splash .title {
+  .splash .title {
     width: 60%;
   }
 }

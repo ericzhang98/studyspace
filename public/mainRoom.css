@@ -2,128 +2,135 @@
 
 /* General */
 html, body {
-   margin: 0;
-   height: 100%;
+  margin: 0;
+  height: 100%;
 }
 
 /* Chat Room */
-#chat-room {
-   display: inline-block;
-   width: calc(100% - 240px);
-   left: 120px;
+.chat-room {
+  display: inline-block;
+  width: calc(100% - 240px);
+  left: 120px;
 }
 
-#navbar-room {
-   margin-bottom: 0;
-   border: none;
-   border-radius: 0;
-   height: 5rem;
-   font-weight: 600;
-   color: #337ab7;
+.navbar-room {
+  margin-bottom: 0;
+  border: none;
+  border-radius: 0;
+  height: 5rem;
+  font-weight: 600;
+  color: #337ab7;
 }
 
-#navbar-room .navbar-brand {
-   cursor: default;
+.navbar-room .navbar-brand {
+  cursor: default;
 }
 
-#message-wrapper{
-   position: relative;
-   height: calc(100% - 5rem);
+.message-pane-wrapper {
+  position: relative;
+  height: calc(100% - 5rem);
 }
 
-#chatMessageDiv {
-   background-color: black;
-   height: 100%;
-   overflow-x: hidden;
-   border-style: hidden;
-   word-wrap: break-word;
-   padding-top: 3rem;
-   padding-bottom: 10rem;
-   padding-left: 3rem;
-   padding-right: 3rem;
+.message-pane {
+  background-color: black;
+  height: 100%;
+  overflow-x: hidden;
+  border-style: hidden;
+  word-wrap: break-word;
+  padding-top: 3rem;
+  padding-bottom: 10rem;
+  padding-left: 3rem;
+  padding-right: 3rem;
 }
 
-#chatMessageDiv .message {
-   padding-left: 0;
-   list-style: none;
-   padding-top: 1.5rem;
-   padding-bottom: 1.5rem;
-   border-bottom: solid 1px #333333;
-   cursor: default;
+.message-pane .message {
+  padding-left: 0;
+  list-style: none;
+  padding-top: 1.5rem;
+  padding-bottom: 1.5rem;
+  border-bottom: solid 1px #333333;
+  cursor: default;
 }
 
-#chatMessageDiv .message:last-child {
-   border-bottom: none;
+.message-pane .message:last-child {
+  border-bottom: none;
 }
 
-#message-header {
-   display: -webkit-box;
-   display: -ms-flexbox;
-   display: flex;
-   -webkit-box-align: center;
-   -ms-flex-align: center;
-   align-items: center;
-   -webkit-box-pack: justify;
-   -ms-flex-pack: justify;
-   justify-content: space-between;
-   text-align: justify;
+.message .message-header {
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-align: center;
+  -ms-flex-align: center;
+  align-items: center;
+  -webkit-box-pack: justify;
+  -ms-flex-pack: justify;
+  justify-content: space-between;
+  text-align: justify;
 }
 
-#username {
-   color: white;
-   font-size: 1.6rem;
-   padding-left: 0.5rem;
+.message-header .user-name {
+  color: white;
+  font-size: 1.6rem;
+  padding-left: 0.5rem;
 }
 
-#dateTime {
-   font-size: 1.2rem;
-   color: gainsboro;
+.message-header .dateTime {
+  font-size: 1.2rem;
+  color: gainsboro;
 }
 
-#message-body {
-   color: powderblue;
-   font-size: 1.5rem;
-   margin-bottom: 0;
-   padding-top: 0.5rem;
-   padding-left: 5rem;
+.message .message-body {
+  white-space: pre-wrap;
+  color: powderblue;
+  font-size: 1.5rem;
+  margin-bottom: 0;
+  padding-top: 0.5rem;
+  padding-left: 5rem;
 }
 
-#wrapper-message-bar {
-   position: absolute;
-   background: white;
-   bottom: 2rem;
-   left: 3rem;
-   right: 3rem;
-   height: 5rem;
-   border-radius: 0.5rem;
+.form-message-container {
+  position: absolute;
+  background: white;
+  bottom: 2rem;
+  left: 3rem;
+  right: 3rem;
+  height: 5rem;
+  border-radius: 0.5rem;
 }
 
-#wrapper-message-bar .form-message {
-   height: inherit;
+.form-message-container .form-message {
+  height: inherit;
 }
 
-#message-bar {
-   height: inherit;
+.form-message .input-message-group {
+  height: inherit;
 }
 
-#message-bar .btn {
-   height: 5rem;
-   border: solid 2px #eeeeee;
+.input-message-group .btn {
+  height: 5rem;
+  border: solid 2px #eeeeee;
 }
 
-#btn-mute {
-   display: flex;
-   align-items: center;
-   justify-content: center;
-   font-size: 2rem;
-   width: 5rem;
+.input-message-group .btn-toggle {
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-align: center;
+  -ms-flex-align: center;
+  align-items: center;
+  -webkit-box-pack: center;
+  -ms-flex-pack: center;
+  justify-content: center;
+  font-size: 2rem;
+  width: 5rem;
 }
 
-#btn-mute .glyphicon {
-   margin-right: -0.4rem;
+.input-message-group .btn-toggle .glyphicon {
+  margin-right: -0.4rem;
 }
 
-#message-bar .form-control {
+.input-message-group .input-message {
   font-size: 1.5rem;
   border-bottom: none;
   height: 100%;
@@ -137,182 +144,167 @@ html, body {
 }
 
 /* End Main Room Text CSS */
-#sidebar-classes,
-#chat-room,
-#sidebar-classmates {
-   position: absolute;
-   top: 0;
-   bottom: 0;
+.sidebar,
+.chat-room {
+  position: absolute;
+  top: 0;
+  bottom: 0;
 }
 
 .panel {
-   cursor: pointer;
+  cursor: pointer;
 }
 
 /* Classes Sidebar */
-#sidebar-classes {
-   background: #8caacd;
-   left: 0;
-   width: 120px;
+.sidebar-classes {
+  background: #8caacd;
+  left: 0;
+  width: 120px;
 }
 
-#info-user {
-   display: -webkit-box;
-   display: -ms-flexbox;
-   display: flex;
-   -webkit-box-align: center;
-   -ms-flex-align: center;
-   align-items: center;
-   height: auto;
-   padding-top: 2rem;
-   padding-bottom: 2rem;
-   margin-left: 2rem;
-   margin-right: 2rem;
-   border-bottom: solid 2px #000000;
+.container-info-user {
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-align: center;
+  -ms-flex-align: center;
+  align-items: center;
+  height: auto;
+  padding-top: 2rem;
+  padding-bottom: 2rem;
+  margin-left: 2rem;
+  margin-right: 2rem;
+  border-bottom: solid 2px #000000;
 }
 
 .container-message-icon {
-   position: relative;
-   top: 1.5rem;
-   text-align: center;
-   font-size: 2.5rem;
-   width: 4rem;
-   height: 4rem;
-   border-radius: 50%;
-   border-style: double;
-   background: gainsboro;
-   display: inline-block;
+  position: relative;
+  top: 1.5rem;
+  text-align: center;
+  font-size: 2.5rem;
+  width: 4rem;
+  height: 4rem;
+  border-radius: 50%;
+  border-style: double;
+  background: gainsboro;
+  display: inline-block;
 }
 
 .container-user-icon {
-   text-align: center;
-   font-size: 2.5rem;
-   width: 4rem;
-   height: 4rem;
-   border-radius: 50%;
-   border-style: double;
-   background: white;
-   overflow: hidden;
-
+  text-align: center;
+  font-size: 2.5rem;
+  width: 4rem;
+  height: 4rem;
+  border-radius: 50%;
+  border-style: double;
+  background: white;
+  overflow: hidden;
 }
 
-#info-user .container-user-icon {
-   display: inline-block;
-   margin-right: 1rem;
+.container-info-user .container-user-icon {
+  display: inline-block;
+  margin-right: 1rem;
 }
 
-#info-user .user-icon {
-   float: left;
-   width: 100%;
-   height: 100%;
+.container-info-user .user-icon {
+  float: left;
+  width: 100%;
+  height: 100%;
 }
 
-#info-user .user-name {
-   font-weight: 600;
-   font-size: 2rem;
+.container-info-user .user-name {
+  font-weight: 600;
+  font-size: 2rem;
 }
 
 /* Classes Menu */
-#container-menu-classes {
-   margin-top: 2rem;
+.container-menu-classes {
+  margin-top: 2rem;
 }
 
-#container-menu-classes .container-title {
-   display: -webkit-box;
-   display: -ms-flexbox;
-   display: flex;
-   -webkit-box-align: center;
-   -ms-flex-align: center;
-   align-items: center;
-   -webkit-box-pack: justify;
-   -ms-flex-pack: justify;
-   justify-content: space-between;
-   padding: 1rem 2rem;
-   font-size: 1rem;
-   background-color: transparent;
-   width: 100%;
+.container-menu-classes .container-title {
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-align: center;
+  -ms-flex-align: center;
+  align-items: center;
+  -webkit-box-pack: justify;
+  -ms-flex-pack: justify;
+  justify-content: space-between;
+  padding: 1rem 2rem;
+  font-size: 1rem;
+  background-color: transparent;
+  width: 100%;
 }
 
-#container-menu-classes .container-title:hover {
-   color: white;
+.container-menu-classes .container-title:hover {
+  color: white;
 }
 
-#container-menu-classes .container-title .title {
-   font-weight: 600;
-   margin-top: 0;
-   margin-bottom: 0;
+.container-menu-classes .container-title .title {
+  font-weight: 600;
+  margin-top: 0;
+  margin-bottom: 0;
 }
 
-#menu-classes .panel {
-   background-color: inherit;
+.menu-classes .panel {
+  background-color: inherit;
 }
 
-#menu-classes .panel .panel-heading {
-   -webkit-transition: background 0.15s, color 0.15s;
-   transition: background 0.15s, color 0.15s;
+.menu-classes .panel .panel-heading {
+  -webkit-transition: background 0.15s, color 0.15s;
+  transition: background 0.15s, color 0.15s;
 }
 
-#menu-classes .panel:hover .panel-heading {
-   background-color: #7a9dc5;
-   color: white;
+.menu-classes .panel:hover .panel-heading {
+  background-color: #7a9dc5;
+  color: white;
 }
 
-#menu-classes .panel>.panel-collapse>.list-group .list-group-item {
-   background-color: #6890be;
-   -webkit-transition: background 0.15s, color 0.15s;
-   transition: background 0.15s, color 0.15s;
-   padding-left: 32px;
+.menu-classes .panel>.panel-collapse>.list-group .list-group-item {
+  background-color: #6890be;
+  -webkit-transition: background 0.15s, color 0.15s;
+  transition: background 0.15s, color 0.15s;
+  padding-left: 32px;
 }
 
-#menu-classes .panel>.panel-collapse>.list-group .list-group-item:hover {
-   background-color: #5783b6;
+.menu-classes .panel>.panel-collapse>.list-group .list-group-item:hover {
+  background-color: #5783b6;
 }
 
 /* Classmates Sidebar */
-#sidebar-classmates {
-   right: 0;
-   width: 120px;
+.sidebar-classmates {
+  right: 0;
+  width: 120px;
 }
 
 /* Create Room Modal */
-#create-room .btn-container {
-   margin-top: 4.5rem;
+.modal-create-room-content .btn-container {
+  margin-top: 4.5rem;
 }
 
-#btn-create {
-   padding: 0.5em 1em;
-   font-size: 2.5rem;
-   font-weight: 500;
-   background: #286090;
-   width: 100%;
+.modal-create-room-content .btn-submit {
+  padding: 0.5em 1em;
+  font-size: 2.5rem;
+  font-weight: 500;
+  background: #286090;
+  width: 100%;
 }
 
-#btn-create:hover {
-   background: #337ab7;
-}
-
-#btn-create:visited {
-   background: #337ab7;
-}
-
-#create-room .panel:last-child {
-   margin-bottom: 0;
+.modal-create-room-content .panel:last-child {
+  margin-bottom: 0;
 } 
 
 @media screen and (min-width: 768px) {
-   /* Classes Sidebar */
-   #sidebar-classes {
-      width: 25rem;
+  /* Sidebars */
+  .sidebar {
+    width: 25rem;
   }
 
   /* Chat Room */
-  #chat-room {
-     left: 25rem;
-     width: calc(100% - 50rem);
-  }
-
-  /* Classmates Sidebar */
-  #sidebar-classmates {
-     width: 25rem;
+  .chat-room {
+    left: 25rem;
+    width: calc(100% - 50rem);
   }
 }

@@ -41,7 +41,7 @@
 
   <body>
     <!-- Navbar -->
-    <nav id="navbar-site" class="navbar navbar-fixed-top" role="banner">
+    <nav class="navbar navbar-site navbar-fixed-top" role="banner">
       <div class="container">
         <!-- Navbar (Brand) -->
         <div class="navbar-header pull-left">
@@ -53,33 +53,26 @@
 
         <!-- Navbar (Right) -->
         <div class="navbar-header pull-right">
-          <div id="link-login" class="nav-link">
+          <div id="link-login" class="nav-link nav-link-login">
             <span class="text-log-in">Log In</span>
-            <svg id="icon-log-in" class="icon" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="62" height="46" viewBox="-3 0 62 46" version="1.1">
-              <g id="log-in" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd" transform="translate(0.000000, 3.000000)">
-                <path d="M17.14 11C20.43 4.47 27.19 0 35 0 46.05 0 55 8.95 55 20 55 31.05 46.05 40 35 40 27.2 40 20.43 35.53 17.14 29" id="space" stroke="#FFFFFF" stroke-width="6"/>
-                <path d="M0 20L34 20" id="arrow-shaft" stroke="#FFFFFF" stroke-width="6"/>
-                <polyline id="arrow-head" stroke="#FFFFFF" stroke-width="6" points="28 10 38 20 28 30"/>
-              </g>
-            </svg>
           </div>
         </div>
       </div>
     </nav>
 
     <!-- Login Modal -->
-    <div id="modal-login" class="modal" ng-app="logInApp" role="dialog">
+    <div id="modal-login" class="modal modal-login-container" ng-app="logInApp" role="dialog">
       <div class="modal-dialog">
         <!-- Login Modal Content -->
-        <div id="login" class="modal-content hide" ng-controller="LogInCtrl">
-          <div class="title-container text-center"> 
+        <div id="login" class="modal-content modal-login-content hide" ng-controller="LogInCtrl">
+          <header class="modal-header text-center"> 
             <button id="close-login" class="btn close" aria-label="Close">
               <span class="glyphicon glyphicon-remove" aria-hidden="true"></span>
             </button>
             <h1 class="title">Welcome Back!</h1>
-          </div>
+          </header>
           <div class="main form-container">
-            <form>
+            <form accept-charset="UTF-8" autocomplete="off">
               <div class="form-group">
                 <label for="input-name">Email</label>
                 <input type="text" class="form-control" id="input-name" placeholder="Email" ng-model="email">
@@ -89,7 +82,7 @@
                 <input type="password" class="form-control" id="input-name" placeholder="Password" ng-model="password">
               </div>
               <div class="btn-container text-center">
-                <button id="btn-submit" class="btn btn-primary" ng-click="attemptLogin(email, password)">Submit</button>
+                <button type="submit" class="btn btn-primary btn-submit" ng-click="attemptLogin(email, password)">Submit</button>
               </div>
             </form>
           </div>
@@ -100,14 +93,14 @@
     <!-- Main Content -->
     <main role="main">
       <!-- Application Info -->
-      <div id="splash" class="jumbotron">
+      <div class="jumbotron splash">
         <div class="container">
           <h1 class="title fadeInUp">Your study group is bigger than ever.</h1>
           <p class="subtitle fadeInUp">
             Studyspace connects you with classmates and instructors to tackle assignments and prepare for exams.
           </p>
           <div class="btn-container text-center">
-            <a id="btn-signup" class="btn btn-primary btn-lg" href="signup">Sign Up</a>
+            <a class="btn btn-primary btn-lg btn-signup" href="signup">Sign Up</a>
           </div>
         </div>
       </div>
