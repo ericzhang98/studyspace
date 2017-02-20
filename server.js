@@ -40,6 +40,7 @@ var firebaseRoot = firebase.database().ref();
 var classRoomsDatabase = firebaseRoot.child("ClassRooms");
 var roomInfoDatabase = firebaseRoot.child("RoomInfo");
 var roomMessagesDatabase = firebaseRoot.child("RoomMessages");
+var userActivityDatabase = firebaseRoot.child("UserActivity");
 
 var favicon = require("serve-favicon");
 app.use(favicon(__dirname + "/public/assets/images/favicon.ico"));
@@ -64,6 +65,7 @@ var VIEW_DIR = __dirname + "/public/";
 var COOKIE_TIME = 7*24*60*60*1000; //one week
 var MAX_IDLE = 10*1000;
 var BUFFER_TIME = 20*1000;
+var USER_IDLE = 30*1000;
 
 /* HTTP requests ---------------------------------------------------------*/
 
@@ -410,6 +412,15 @@ app.post("/send_room_message", function(req, res) {
   res.send({}); //close the http request
 });
 
+app.get("/ping", function(req, res) {
+  res.send({});
+  var user_id = req.signedCookies.user_id;
+  if (user_id) {
+    console.log("updating last active");
+    userActivityDatabase.child(user_id).child("lastActive").set(Date.now()); 
+  }
+});
+
 /*************************************************************************************/
 /********************************* SIGNUP AND LOGIN **********************************/
 
@@ -668,6 +679,9 @@ function joinRoom(user_id, room_id, callback) {
               }
             });
           }
+          userActivityDatabase.child(user_id).child("lastRoom").set(room_id);
+          userActivityDatabase.child(user_id).child("lastActive").set(Date.now());
+          setTimeout(userActivityChecker, USER_IDLE, user_id);
         }
         else {
           if (callback) {
@@ -681,6 +695,27 @@ function joinRoom(user_id, room_id, callback) {
       console.log("FIREBASE: ERROR - Room doesn't exist anymore, user failed to join");
       if (callback) {
         callback(null);
+      }
+    }
+  });
+}
+
+function userActivityChecker(user_id) {
+  console.log("checking activity of " + user_id);
+  userActivityDatabase.child(user_id).once("value").then(function(snapshot) {
+    var activityLog = snapshot.val();
+    if (activityLog) {
+      //if the user hasn't pinged within the last minute, rm them from room
+      console.log("got activity log");
+      if (Date.now() - activityLog.lastActive > USER_IDLE) {
+        console.log("removing user");
+        if (activityLog.lastRoom) {
+          leaveRoom(user_id, activityLog.lastRoom);
+          userActivityDatabase.child(user_id).child("lastRoom").set(null);
+        }
+      }
+      else {
+        setTimeout(userActivityChecker, USER_IDLE, user_id);
       }
     }
   });

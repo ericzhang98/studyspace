@@ -5,6 +5,7 @@ var myApp = angular.module("mainApp", []);
 // list of message objects with: email, name, roomID, text, timeSent
 var chatMessageList = [];
 var CONCAT_TIME = 60*1000; // 1 minute
+var USER_PING_PERIOD = 15*1000;
 
 /* Chat controller -------------------------------------*/
 
@@ -370,11 +371,23 @@ myApp.controller("MainController", ["$scope", "$http",
         $scope.currClassID = class_id;
 
         joinRoomChat();
+
+        //setup activity ping
+        pingUserActivity(true);
       
 
         // delegate to chat controller to join the room's chat
         //$scope.$broadcast("room_change");
     };
+
+    function pingUserActivity(constant) {
+      var xhr = new XMLHttpRequest();
+      xhr.open("GET", "/ping", true);
+      xhr.send();
+      if (constant) {
+        setTimeout(pingUserActivity, USER_PING_PERIOD, true);
+      }
+    }
 
 /*********************************************************************/
 /**************************** PULLING DATA ***************************/
