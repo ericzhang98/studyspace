@@ -41,14 +41,14 @@
 
   <body>
     <!-- Navbar -->
-    <nav class="navbar navbar-site navbar-fixed-top" role="banner">
+    <nav id="site-navigation" class="navbar navbar-site navbar-fixed-top" role="navigation">
       <div class="container">
         <!-- Navbar (Brand) -->
         <div class="navbar-header pull-left">
-          <!--<a class="navbar-brand brand-logo" href="home.html">
+          <!--<a id="studyspace-logo" class="navbar-brand brand-logo" href="home.html">
             
           </a>-->
-          <a class="navbar-brand brand-name" href="home.html">studyspace</a>
+          <a id="studyspace-name" class="navbar-brand brand-name" href="home.html">studyspace</a>
         </div>
 
         <!-- Navbar (Right) -->
@@ -72,7 +72,7 @@
             <h1 class="title">Welcome Back!</h1>
           </header>
           <div class="main form-container">
-            <form accept-charset="UTF-8" autocomplete="off">
+            <form role="form" accept-charset="UTF-8" autocomplete="off">
               <div class="form-group">
                 <label for="input-name">Email</label>
                 <input type="text" class="form-control" id="input-name" placeholder="Email" ng-model="email">
@@ -82,7 +82,7 @@
                 <input type="password" class="form-control" id="input-name" placeholder="Password" ng-model="password">
               </div>
               <div class="btn-container text-center">
-                <button type="submit" class="btn btn-primary btn-submit" ng-click="attemptLogin(email, password)">Submit</button>
+                <button type="submit" class="btn btn-primary btn-block btn-submit-form" ng-click="attemptLogin(email, password)">Submit</button>
               </div>
             </form>
           </div>
@@ -91,16 +91,16 @@
     </div>
 
     <!-- Main Content -->
-    <main role="main">
+    <main id="main" role="main">
       <!-- Application Info -->
-      <div class="jumbotron splash">
+      <div id="splash" class="jumbotron jumbotron-splash">
         <div class="container">
           <h1 class="title fadeInUp">Your study group is bigger than ever.</h1>
           <p class="subtitle fadeInUp">
             Studyspace connects you with classmates and instructors to tackle assignments and prepare for exams.
           </p>
           <div class="btn-container text-center">
-            <a class="btn btn-primary btn-lg btn-signup" href="signup">Sign Up</a>
+            <a class="btn btn-primary btn-signup" href="signup">Sign Up</a>
           </div>
         </div>
       </div>

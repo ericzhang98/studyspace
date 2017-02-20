@@ -175,13 +175,9 @@ a:hover {
   color: #333333;
 }
 
-.form-container .btn-submit:hover {
-  background: #337ab7;
-}
-
 /* General: btn */
 .btn {
-  display: border-box;
+  box-sizing: border-box;
   border: none;
   border-radius: 0.5rem;
   letter-spacing: 0.05em;
@@ -224,11 +220,14 @@ a:hover {
   border: none;
 }
 
-.btn-submit:hover {
-  background: #337ab7;
+.btn-submit-form {
+  padding: 0.5em 1em;
+  font-size: 2rem;
+  font-weight: 500;
+  background: #286090;
 }
 
-.btn-submit:visited {
+.btn-submit-form:hover {
   background: #337ab7;
 }
 
@@ -330,5 +329,10 @@ a:hover {
 
   .form-control {
     font-size: 2rem;
+  }
+  
+  /* Buttons */
+  .btn-submit-form {
+    font-size: 2.5rem;
   }
 }

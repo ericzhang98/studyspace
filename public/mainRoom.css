@@ -6,11 +6,26 @@ html, body {
   height: 100%;
 }
 
+.sidebar,
+.chat-room {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+}
+
+.sidebar {
+  width: 25rem;
+}
+
+.panel {
+  cursor: pointer;
+}
+
 /* Chat Room */
 .chat-room {
   display: inline-block;
-  width: calc(100% - 240px);
-  left: 120px;
+  left: 25rem;
+  width: calc(100% - 50rem);
 }
 
 .navbar-room {
@@ -26,14 +41,10 @@ html, body {
   cursor: default;
 }
 
-.message-pane-wrapper {
+.message-pane {
   position: relative;
   height: calc(100% - 5rem);
-}
-
-.message-pane {
   background-color: black;
-  height: 100%;
   overflow-x: hidden;
   border-style: hidden;
   word-wrap: break-word;
@@ -103,34 +114,23 @@ html, body {
   height: inherit;
 }
 
-.form-message .input-message-group {
+.form-message .input-group {
   height: inherit;
 }
 
-.input-message-group .btn {
+.input-group .btn-mute {
+  width: 5rem;
   height: 5rem;
   border: solid 2px #eeeeee;
+  background-color: white;
 }
 
-.input-message-group .btn-toggle {
-  display: -webkit-box;
-  display: -ms-flexbox;
-  display: flex;
-  -webkit-box-align: center;
-  -ms-flex-align: center;
-  align-items: center;
-  -webkit-box-pack: center;
-  -ms-flex-pack: center;
-  justify-content: center;
-  font-size: 2rem;
-  width: 5rem;
-}
-
-.input-message-group .btn-toggle .glyphicon {
+.input-group .btn-mute .glyphicon {
   margin-right: -0.4rem;
+  font-size: 2rem;
 }
 
-.input-message-group .input-message {
+.input-group .input-message {
   font-size: 1.5rem;
   border-bottom: none;
   height: 100%;
@@ -143,23 +143,10 @@ html, body {
   border-bottom-right-radius: 0.5rem;
 }
 
-/* End Main Room Text CSS */
-.sidebar,
-.chat-room {
-  position: absolute;
-  top: 0;
-  bottom: 0;
-}
-
-.panel {
-  cursor: pointer;
-}
-
 /* Classes Sidebar */
-.sidebar-classes {
+.sidebar-left {
   background: #8caacd;
   left: 0;
-  width: 120px;
 }
 
 .container-info-user {
@@ -274,22 +261,13 @@ html, body {
 }
 
 /* Classmates Sidebar */
-.sidebar-classmates {
+.sidebar-right {
   right: 0;
-  width: 120px;
 }
 
 /* Create Room Modal */
 .modal-create-room-content .btn-container {
-  margin-top: 4.5rem;
-}
-
-.modal-create-room-content .btn-submit {
-  padding: 0.5em 1em;
-  font-size: 2.5rem;
-  font-weight: 500;
-  background: #286090;
-  width: 100%;
+  margin-top: 3rem;
 }
 
 .modal-create-room-content .panel:last-child {
@@ -297,14 +275,7 @@ html, body {
 } 
 
 @media screen and (min-width: 768px) {
-  /* Sidebars */
-  .sidebar {
-    width: 25rem;
-  }
-
-  /* Chat Room */
-  .chat-room {
-    left: 25rem;
-    width: calc(100% - 50rem);
+  .modal-create-room-content .btn-container {
+    margin-top: 4rem;
   }
 }

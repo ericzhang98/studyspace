@@ -5,13 +5,9 @@ body {
   background: #ecf0f1;
 }
 
-main {
+main.container {
   padding-left: 2rem;
   padding-right: 2rem;
-  background: #ecf0f1;
-}
-
-main.container {
   margin-bottom: 2rem;
 }
 
@@ -56,6 +52,7 @@ main.container {
 
 .signup-info-container h4 {
   font-size: 1.5rem;
+  font-weight: 600;
   margin-top: 0;
 }
 
@@ -79,14 +76,6 @@ main.container {
 
 .signup-form-container .btn-container {
   margin-top: 3rem;
-}
-
-.signup-form-container .btn-submit {
-  padding: 0.5em 1em;
-  font-size: 2rem;
-  font-weight: 600;
-  background: #286090;
-  width: 100%;
 }
 
 @media screen and (min-width: 768px) {
@@ -139,17 +128,9 @@ main.container {
   .signup-form-container .btn-container {
     margin-top: 4rem;
   }
-
-  .signup-form-container .btn-submit {
-    font-size: 2.5rem;
-  }
 }
 
 @media (min-width: 992px) {
-  main.container {
-    width: 970px;
-  }
-
   /* Sign Up Info */
   .signup-info-container {
     float: left;
@@ -165,5 +146,12 @@ main.container {
 
   .signup-form-container {
     float: right;
+  }
+}
+
+@media (min-width: 1200px) {
+  /* Sign Up Info */
+  .signup-info-container {
+    width: 65rem;
   }
 }

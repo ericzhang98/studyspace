@@ -10,43 +10,35 @@ main {
   margin-top: 3rem;
 }
 
-.modal-login-content .btn-submit {
-  padding: 0.5em 1em;
-  font-size: 2rem;
-  font-weight: 500;
-  background: #286090;
-  width: 100%;
-}
-
 /* Splash Art */
-.splash {
+.jumbotron-splash {
   padding-top: 5rem;
   padding-bottom: 5rem;
   background: #ecf0f1;
 }
 
-.splash .container {
+.jumbotron-splash .container {
   text-align: center;
   padding-left: 2rem;
   padding-right: 2rem;
 }
 
-.splash .title {
+.jumbotron-splash .title {
   font-weight: 700;
   font-size: 3rem;
 }
 
-.splash .subtitle {
+.jumbotron-splash .subtitle {
   margin-top: 1.5rem;
   font-size: 1.5rem;
   font-weight: 400;
 }
 
-.splash .btn-container {
+.jumbotron-splash .btn-container {
   margin-top: 4rem;
 }
 
-.splash .btn-container .btn-signup {
+.jumbotron-splash .btn-container .btn-signup {
   padding: 0.5em 2em;
   font-size: 2rem;
   font-weight: 600;
@@ -63,42 +55,38 @@ main {
     margin-top: 4rem;
   }
 
-  .modal-login-content .btn-submit {
-    font-size: 2.5rem;
-  }
-
   /* Splash */
-  .splash {
+  .jumbotron-splash {
     padding-top: 15rem;
     padding-bottom: 15rem;
   }
 
-  .splash .container {
+  .jumbotron-splash .container {
     text-align: left;
   }
 
-  .splash .title {
+  .jumbotron-splash .title {
     font-size: 5rem;
     width: 80%;
   }
 
-  .splash .subtitle {
+  .jumbotron-splash .subtitle {
     margin-top: 2.5rem;
     font-size: 2.5rem;
   }
 
-  .splash .btn-container {
+  .jumbotron-splash .btn-container {
     margin-top: 8rem;
   }
 
-  .splash .btn-container .btn-signup {
+  .jumbotron-splash .btn-container .btn-signup {
     font-size: 2.5rem;
   }
 }
 
 @media screen and (min-width: 992px) {
   /* Splash */
-  .splash .title {
+  .jumbotron-splash .title {
     width: 60%;
   }
 }
