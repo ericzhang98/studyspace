@@ -72,7 +72,7 @@
         <!-- Classes/Rooms Dropdown -->
         <div id="classes" class="panel-group menu-classes">
 
-          <div ng-repeat="(class_id, class_obj) in classes" id="#{{class_id}}" class="panel" 
+          <div ng-repeat="(class_id, class_obj) in classes" ng-if="class_id != 'dm_class_id'" id="#{{class_id}}" class="panel" 
                href="#{{class_id}}">
             <div class="panel-heading" data-toggle="collapse" data-target="#{{class_id}}" data-parent="#classes">
               <h4 class="panel-title">

@@ -193,8 +193,7 @@ function joinRoomCall(currRoomCallID) {
 	        // set the onload function to use the new room id
 	        setOnBeforeUnload(currRoomCallID);
 
-			/*var audio = document.getElementById('join_room_audio');
-			audio.play();*/
+			document.getElementById('join_room_audio').play();
 
 	        // if this is a lecture and I am the host, I am the lecturer
 	        isLecturer = (response.is_lecture && response.host_id == myID);
