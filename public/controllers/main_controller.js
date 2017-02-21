@@ -403,7 +403,7 @@ myApp.controller("MainController", ["$scope", "$http",
         currPing = setTimeout(pingUserActivity, USER_PING_PERIOD, true);
       }
     }
-    
+
     function adjustSidebarToggle(class_id) {
 			$scope.my_class_ids.forEach(function(my_class_id) {
 
@@ -716,9 +716,6 @@ myApp.controller("MainController", ["$scope", "$http",
 		});    
 	};
 	
-	var DM = function(roomID){
-	};
-	
 	$scope.openDM = function(other_user_id){
 
 		// the room_id of DM's between id's "aaa" and "bbb"
@@ -737,6 +734,13 @@ myApp.controller("MainController", ["$scope", "$http",
 
 		// set the current room id to the dm room id
 		$scope.currRoomChatID = dm_room_id;
+		$scope.classes["dm_class_id"] = {
+			"name" : "Messages"
+		}
+		$scope.rooms[dm_room_id] = {
+			"name" : "other user name here (will use Gates's method, let's go Gates)",
+			"class_id" : "dm_class_id"
+		}
 		joinRoomChat();
 	};
 	
