@@ -436,7 +436,7 @@ app.get("/ping", function(req, res) {
   res.send({});
   var user_id = req.signedCookies.user_id;
   if (user_id) {
-    console.log("updating last active");
+    console.log("PING: " + user_id);
     userActivityDatabase.child(user_id).child("lastActive").set(Date.now()); 
   }
 });
@@ -701,7 +701,6 @@ function joinRoom(user_id, room_id, callback) {
           }
           userActivityDatabase.child(user_id).child("lastRoom").set(room_id);
           userActivityDatabase.child(user_id).child("lastActive").set(Date.now());
-          setTimeout(userActivityChecker, USER_IDLE, user_id);
         }
         else {
           if (callback) {
@@ -720,27 +719,6 @@ function joinRoom(user_id, room_id, callback) {
   });
 }
 
-function userActivityChecker(user_id) {
-  console.log("checking activity of " + user_id);
-  userActivityDatabase.child(user_id).once("value").then(function(snapshot) {
-    var activityLog = snapshot.val();
-    if (activityLog) {
-      //if the user hasn't pinged within the last minute, rm them from room
-      console.log("got activity log");
-      if (Date.now() - activityLog.lastActive > USER_IDLE) {
-        console.log("removing user");
-        if (activityLog.lastRoom) {
-          leaveRoom(user_id, activityLog.lastRoom);
-          userActivityDatabase.child(user_id).child("lastRoom").set(null);
-        }
-      }
-      else {
-        setTimeout(userActivityChecker, USER_IDLE, user_id);
-      }
-    }
-  });
-}
-
 function leaveRoom(user_id, room_id, callback) {
 	//console.log("FIREBASE: Attempting to remove user " + user_id + " from room " + room_id);
   if (callback) {
@@ -749,7 +727,6 @@ function leaveRoom(user_id, room_id, callback) {
   console.log("FIREBASE: leaveRoom - Removed user " + user_id + " from room" + room_id);
   //query room's users list
   roomInfoDatabase.child(room_id).child("users").once("value").then(function(snapshot) {
-    var room = snapshot.val();
     if (snapshot.val()) {
       var users = [];
       snapshot.forEach(function(childSnapshot) {
@@ -902,8 +879,33 @@ function checkLogin(_id, callback) {
 
 }
 
+function userActivityChecker() {
+  userActivityDatabase.once("value").then(function(snapshot) {
+    console.log("USER ACTIVITY CHECKER: checking activity of all users");
+    snapshot.forEach(function(childSnapshot) {
+      var user_id = childSnapshot.key;
+      var activityLog = childSnapshot.val();
+      processActivity(user_id, activityLog);
+    });
+  });
+  setTimeout(userActivityChecker, USER_IDLE);
+}
+
+function processActivity(user_id, activityLog) {
+  if (activityLog) {
+    //if the user is in a room and hasn't pinged within the last minute, rm them from room
+    if (activityLog.lastRoom && Date.now() - activityLog.lastActive > USER_IDLE) {
+      console.log("USER ACTIVITY CHECKER: removing user " + user_id);
+      leaveRoom(user_id, activityLog.lastRoom);
+      userActivityDatabase.child(user_id).child("lastRoom").set(null);
+    }
+  }
+}
+
+
 /*------------------------------------------------------------------------*/
 
 
 app.listen(process.env.PORT || 3000);
+userActivityChecker();
 console.log("Server running!");

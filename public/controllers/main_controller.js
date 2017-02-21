@@ -5,6 +5,7 @@ var myApp = angular.module("mainApp", []);
 // list of message objects with: email, name, roomID, text, timeSent
 var chatMessageList = [];
 var CONCAT_TIME = 60*1000; // 1 minute
+var currPing = null;
 var USER_PING_PERIOD = 15*1000;
 
 /* Chat controller -------------------------------------*/
@@ -43,6 +44,7 @@ myApp.controller("MainController", ["$scope", "$http",
 
 				// empty our message list in logic and UI
 				chatMessageList = [];
+				updateChatView();
 
 				// set up and start new listener
 				chatDatabase = databaseRef.child("RoomMessages").child($scope.currRoomChatID);
@@ -375,8 +377,13 @@ myApp.controller("MainController", ["$scope", "$http",
 				joinRoomCall($scope.currRoomCallID);
 
 				//setup activity ping
-				pingUserActivity(true);
-			}
+      	//the client can mess around with this, we need to handle kicking the
+      	//client somehow if they stop pinging, it's fine if they can still
+      	//listen in on data, but other users must always be aware of prescence
+      	if (!currPing) {
+     	   pingUserActivity(true);
+        }
+		}
 
 			// if we're not already in this room's chat
 			if ($scope.currRoomChatID != room_id) {
@@ -385,14 +392,14 @@ myApp.controller("MainController", ["$scope", "$http",
 			}
 		};
 
-		function pingUserActivity(constant) {
-			var xhr = new XMLHttpRequest();
-			xhr.open("GET", "/ping", true);
-			xhr.send();
-			if (constant) {
-				setTimeout(pingUserActivity, USER_PING_PERIOD, true);
-			}
-		}
+    function pingUserActivity(constant) {
+      var xhr = new XMLHttpRequest();
+      xhr.open("GET", "/ping", true);
+      xhr.send();
+      if (constant) {
+        currPing = setTimeout(pingUserActivity, USER_PING_PERIOD, true);
+      }
+    }
 
 /*********************************************************************/
 /**************************** PULLING DATA ***************************/
