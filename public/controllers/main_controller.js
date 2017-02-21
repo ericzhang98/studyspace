@@ -496,9 +496,6 @@ myApp.controller("MainController", ["$scope", "$http",
 		// finds the room's data and adds it to the list of rooms
 		function getRoom(room_id) {
 
-				// turn off the old listener for this room
-				//roomsDatabase.child(room_id).off();
-
 				// add listener for room info
 				roomsDatabase.child(room_id).on("value", function(snapshot) {
 
