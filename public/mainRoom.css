@@ -14,7 +14,7 @@ html, body {
 }
 
 .sidebar {
-  width: 25rem;
+  width: 24rem;
 }
 
 .panel {
@@ -24,8 +24,8 @@ html, body {
 /* Chat Room */
 .chat-room {
   display: inline-block;
-  left: 25rem;
-  width: calc(100% - 50rem);
+  left: 24rem;
+  width: calc(100% - 48rem);
 }
 
 .navbar-room {
@@ -104,8 +104,8 @@ html, body {
   position: absolute;
   background: white;
   bottom: 2rem;
-  left: 3rem;
-  right: 3rem;
+  left: 2rem;
+  right: 2rem;
   height: 5rem;
   border-radius: 0.5rem;
 }
@@ -159,8 +159,8 @@ html, body {
   height: auto;
   padding-top: 2rem;
   padding-bottom: 2rem;
-  margin-left: 2rem;
-  margin-right: 2rem;
+  margin-left: 1.5rem;
+  margin-right: 1.5rem;
   border-bottom: solid 2px #000000;
 }
 
@@ -201,7 +201,7 @@ html, body {
 
 .container-info-user .user-name {
   font-weight: 600;
-  font-size: 2rem;
+  font-size: 1.8rem;
 }
 
 /* Classes Menu */
@@ -219,8 +219,8 @@ html, body {
   -webkit-box-pack: justify;
   -ms-flex-pack: justify;
   justify-content: space-between;
-  padding: 1rem 2rem;
   font-size: 1rem;
+  padding: 1rem 1.5rem;
   background-color: transparent;
   width: 100%;
 }
@@ -230,6 +230,7 @@ html, body {
 }
 
 .container-menu-classes .container-title .title {
+  font-size: 1.2rem;
   font-weight: 600;
   margin-top: 0;
   margin-bottom: 0;
@@ -244,6 +245,11 @@ html, body {
   transition: background 0.15s, color 0.15s;
 }
 
+.menu-classes .panel .panel-title {
+  font-size: 1.5rem;
+  font-weight: 600;
+}
+
 .menu-classes .panel:hover .panel-heading {
   background-color: #7a9dc5;
   color: white;
@@ -253,7 +259,8 @@ html, body {
   background-color: #6890be;
   -webkit-transition: background 0.15s, color 0.15s;
   transition: background 0.15s, color 0.15s;
-  padding-left: 32px;
+  padding-left: 3rem;
+  font-weight: 500;
 }
 
 .menu-classes .panel>.panel-collapse>.list-group .list-group-item:hover {
@@ -263,6 +270,11 @@ html, body {
 /* Classmates Sidebar */
 .sidebar-right {
   right: 0;
+}
+
+.sidebar-right .container-search {
+  padding-left: 1.5rem;
+  padding-right: 1.5rem;
 }
 
 /* Create Room Modal */
