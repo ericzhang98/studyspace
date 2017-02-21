@@ -354,7 +354,7 @@ myApp.controller("MainController", ["$scope", "$http",
 					if (response.room_id) {
 
 						// join the room
-						$scope.joinRoom(response.room_id);
+						$scope.joinRoom(response.room_id, response.class_id);
 					}
 				}
 			}
@@ -362,7 +362,7 @@ myApp.controller("MainController", ["$scope", "$http",
 
 		// OnClick method that delegates to joinRoomCall and joinRoomChat
 		// room_name is passed in when we create the room (room info not yet pulled)
-		$scope.joinRoom = function(room_id) {
+		$scope.joinRoom = function(room_id, class_id) {
 
 			// if we're not already in this room's call
 			if ($scope.currRoomCallID != room_id) {
@@ -375,6 +375,9 @@ myApp.controller("MainController", ["$scope", "$http",
 
 				// join the call
 				joinRoomCall($scope.currRoomCallID);
+
+				// open up the sidebar panel with this new room
+				adjustSidebarToggle(class_id);
 
 				//setup activity ping
       	//the client can mess around with this, we need to handle kicking the
@@ -400,6 +403,19 @@ myApp.controller("MainController", ["$scope", "$http",
         currPing = setTimeout(pingUserActivity, USER_PING_PERIOD, true);
       }
     }
+    
+    function adjustSidebarToggle(class_id) {
+			$scope.my_class_ids.forEach(function(my_class_id) {
+
+				if (my_class_id == class_id && $("#" + my_class_id).is(":hidden")) {
+					$('#' + my_class_id).collapse('toggle');
+				}
+
+				else if (my_class_id != class_id && $("#" + my_class_id).is(":visible")) {
+					$('#' + my_class_id).collapse('toggle');
+				}
+			});
+		}
 
 /*********************************************************************/
 /**************************** PULLING DATA ***************************/

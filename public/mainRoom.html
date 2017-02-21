@@ -82,7 +82,7 @@
             </div>
             <div id="{{class_id}}" class="panel-collapse collapse">
               <ul class="list-group">
-                <li class="list-group-item" ng-repeat="room_id in class_rooms[class_id]" ng-click="joinRoom(room_id)">
+                <li class="list-group-item" ng-repeat="room_id in class_rooms[class_id]" ng-click="joinRoom(room_id, class_id)">
                   <span ng-if="room_id == currRoomCallID" class="room-name" style="color:#00ff00">{{rooms[room_id].name}} ({{rooms[room_id].users.length}}) {{rooms[room_id].has_tutor? "*":""}}</span> 
                   <span ng-if="room_id != currRoomCallID" class="room-name">{{rooms[room_id].name}} ({{rooms[room_id].users.length}}) {{rooms[room_id].has_tutor? "*":""}}</span>
                 </li>
@@ -112,7 +112,7 @@
             <li class="dropdown">
               <a class="dropdown-toggle" data-toggle="dropdown" href="#">Rooms <span class="caret"></span></a>
               <ul class="dropdown-menu" id="room-list">
-                <li ng-repeat="room_id in class_rooms[rooms[currRoomChatID].class_id]" ng-click="joinRoom(room_id)">
+                <li ng-repeat="room_id in class_rooms[rooms[currRoomChatID].class_id]" ng-click="joinRoom(room_id, rooms[room_id].class_id)">
                   <a href="#">{{rooms[room_id].name}}</a>
                 </li>
               </ul>
