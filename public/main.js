@@ -1,5 +1,4 @@
 /***** General variables **************************/
-var currRoomID = null;
 var myID = getSignedCookie("user_id");
 var songCommands = ["/raindrop", "/destress"];
 var otherCommands = ["/gary", "/ord", "/stop"]
@@ -64,7 +63,6 @@ function doCommand(command) {
 		    
 		    // add audio stream to the page
 		    document.getElementById("myBody").insertBefore(audio, document.getElementById("myDiv"));
-			
 		}
 
 		else {

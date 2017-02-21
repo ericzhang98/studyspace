@@ -671,7 +671,7 @@ function addRoom(class_id, room_name, room_host_id, is_lecture, time_created, ca
       console.log("FIREBASE: addRoom - Room " + room_id  + " inserted into RoomInfo database");
       roomInfoDatabase.child(room_id).update({firebase_push_id: classRoomRef.key}) 
       if (callback) {
-        callback({room_id: room_id});
+        callback(newRoom);
       }
     }
     else {
