@@ -63,7 +63,7 @@
 
         <!-- Create Room Button -->
         <button id="btn-create-room" class="btn container-title">
-          <h5 class="title">Rooms</h5>
+          <span class="title">Rooms</span>
           <div>
             <span class="glyphicon glyphicon-plus"></span>
           </div>
@@ -95,9 +95,9 @@
       </div>
     </aside> <!-- END LEFT SIDEBAR -->
 
-    <main id="main-initial" class="chat-room" role="main" ng-hide="currRoomID">
+    <div id="main-initial" class="chat-room" role="main" ng-hide="currRoomID">
       <p>Not in a room content goes here</p>
-    </main>
+    </div>
 
     <!-- Main Content -->
     <main id="main" class="chat-room" role="main" ng-hide="!currRoomID">
@@ -168,7 +168,7 @@
     <!-- Classmates Sidebar -->
     <aside id="classmates-sidebar" class="sidebar sidebar-right" role="complementary" style="background-color:green">
       <h3>Buddies</h3>   
-      <div class="container">
+      <div class="container-search">
         <input class="form-control" ng-model="friend.name">
         <button class="btn btn-primary" ng-click="sendRequest()">Send Request</button>
         <table class="table">
@@ -191,7 +191,7 @@
             </tr>
           </tbody>
         </table>
-      </div>      
+      </div> 
     </aside>
 
     <!-- Create Room Modal -->

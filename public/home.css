@@ -19,8 +19,6 @@ main {
 
 .jumbotron-splash .container {
   text-align: center;
-  padding-left: 2rem;
-  padding-right: 2rem;
 }
 
 .jumbotron-splash .title {
@@ -35,21 +33,16 @@ main {
 }
 
 .jumbotron-splash .btn-container {
-  margin-top: 4rem;
+  margin-top: 3rem;
 }
 
 .jumbotron-splash .btn-container .btn-signup {
-  padding: 0.5em 2em;
+  padding: 0.5em 3em;
   font-size: 2rem;
-  font-weight: 600;
+  font-weight: 500;
 }
 
 @media screen and (min-width: 768px) {
-  /* Navbar */
-  .navbar-site .nav-link-login {
-    margin-right: -2rem;
-  }
-
   /* Login Modal */
   .modal-login-content .btn-container {
     margin-top: 4rem;
@@ -66,27 +59,27 @@ main {
   }
 
   .jumbotron-splash .title {
-    font-size: 5rem;
+    font-size: 4rem;
     width: 80%;
   }
 
   .jumbotron-splash .subtitle {
     margin-top: 2.5rem;
-    font-size: 2.5rem;
+    font-size: 2rem;
   }
 
   .jumbotron-splash .btn-container {
-    margin-top: 8rem;
-  }
-
-  .jumbotron-splash .btn-container .btn-signup {
-    font-size: 2.5rem;
+    margin-top: 4rem;
   }
 }
 
 @media screen and (min-width: 992px) {
   /* Splash */
   .jumbotron-splash .title {
-    width: 60%;
+    width: 50%;
+  }
+
+  .jumbotron-splash .subtitle {
+    width: 70%;
   }
 }

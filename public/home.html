@@ -54,7 +54,7 @@
         <!-- Navbar (Right) -->
         <div class="navbar-header pull-right">
           <div id="link-login" class="nav-link nav-link-login">
-            <span class="text-log-in">Log In</span>
+            <span class="link-text">Log In</span>
           </div>
         </div>
       </div>
@@ -78,8 +78,8 @@
                 <input type="text" class="form-control" id="input-name" placeholder="Email" ng-model="email">
               </div>
               <div class="form-group">
-                <label for="input-name">Password</label>
-                <input type="password" class="form-control" id="input-name" placeholder="Password" ng-model="password">
+                <label for="input-password">Password</label>
+                <input type="password" class="form-control" id="input-password" placeholder="Password" ng-model="password">
               </div>
               <div class="btn-container text-center">
                 <button type="submit" class="btn btn-primary btn-block btn-submit-form" ng-click="attemptLogin(email, password)">Submit</button>
@@ -100,7 +100,7 @@
             Studyspace connects you with classmates and instructors to tackle assignments and prepare for exams.
           </p>
           <div class="btn-container text-center">
-            <a class="btn btn-primary btn-signup" href="signup">Sign Up</a>
+            <a id="signup-button" class="btn btn-primary btn-signup" href="signup">Sign Up</a>
           </div>
         </div>
       </div>
