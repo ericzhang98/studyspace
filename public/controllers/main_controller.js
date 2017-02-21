@@ -5,6 +5,7 @@ var myApp = angular.module("mainApp", []);
 // list of message objects with: email, name, roomID, text, timeSent
 var chatMessageList = [];
 var CONCAT_TIME = 60*1000; // 1 minute
+var currPing = null;
 var USER_PING_PERIOD = 15*1000;
 
 /* Chat controller -------------------------------------*/
@@ -381,11 +382,13 @@ myApp.controller("MainController", ["$scope", "$http",
         joinRoomChat();
 
         //setup activity ping
-        pingUserActivity(true);
+        //the client can mess around with this, we need to handle kicking the
+        //client somehow if they stop pinging, it's fine if they can still
+        //listen in on data, but other users must always be aware of prescence
+        if (!currPing) {
+          pingUserActivity(true);
+        }
       
-
-        // delegate to chat controller to join the room's chat
-        //$scope.$broadcast("room_change");
     };
 
     function pingUserActivity(constant) {
@@ -393,7 +396,7 @@ myApp.controller("MainController", ["$scope", "$http",
       xhr.open("GET", "/ping", true);
       xhr.send();
       if (constant) {
-        setTimeout(pingUserActivity, USER_PING_PERIOD, true);
+        currPing = setTimeout(pingUserActivity, USER_PING_PERIOD, true);
       }
     }
 
