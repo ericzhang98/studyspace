@@ -815,6 +815,8 @@ myApp.controller("MainController", ["$scope", "$http",
 /*********************************************************************/
 /**************************** BLOCK SYSTEM ***************************/
 
+  var blockedUsers = {};
+  
   var getIdFromName = function(name, onResponseReceived){
     var email = {"email": String(name)};
     console.log(email);
@@ -825,6 +827,19 @@ myApp.controller("MainController", ["$scope", "$http",
   var refresh = function(){
     $http.get('/get_blocked_users').then(function(response){
 			$scope.block_user_list = response.data;
+      console.log(response.data);
+      console.log(response.data.length);
+      console.log(response.data[0]);
+      if(!(response.data[0])){
+          return;
+      }
+      blockedUsers['user_id'] = response.data[0]['blocked_user_id'];
+      blockedUsers['blocked_user_list'] = [];
+      for (var i = 0; i < response.data.length; i++){
+        console.log("1");
+        var obj = response.data[i];
+        blockedUsers['blocked_user_list'].push(obj['blocked_user_id']);
+      }
 		});
   }
   var addBlock = function(blocked_user_id, blocked_user_email, onResponseReceived){
