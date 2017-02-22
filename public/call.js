@@ -193,7 +193,11 @@ function joinRoomCall(currRoomCallID) {
 	        // set the onload function to use the new room id
 	        setOnBeforeUnload(currRoomCallID);
 
+	        // play join room sound
+	        document.getElementById('join_room_audio').volume = 0.4;
 			document.getElementById('join_room_audio').play();
+
+			showAlert("Voice connected", "alert-info");
 
 	        // if this is a lecture and I am the host, I am the lecturer
 	        isLecturer = (response.is_lecture && response.host_id == myID);
@@ -237,9 +241,6 @@ function leaveRoom(currRoomCallID) {
 	if (currRoomCallID != null) {
 		console.log("leaving room with id " + currRoomCallID);
 
-		/*var audio = document.getElementById('leave_room_audio');
-		audio.play();*/
-
 		// leave our calls
 		leaveCalls();
 
@@ -247,9 +248,6 @@ function leaveRoom(currRoomCallID) {
 		var xhr = new XMLHttpRequest();
 		xhr.open('GET', "/leave_room/" + currRoomCallID, true);
 		xhr.send();
-
-		// reset currRoomCallID
-		currRoomCallID = null;
 
 		// stop any song playing
 		stopSong();

@@ -76,18 +76,15 @@
                href="#{{class_id}}">
             <div class="panel-heading" data-toggle="collapse" data-target="#{{class_id}}" data-parent="#classes">
               <h4 class="panel-title">
-                <span ng-if="!class_obj.has_tutor">{{class_obj.name}} ({{classes[class_id].num_users}})</span>
-                <span ng-if="class_obj.has_tutor">{{class_obj.name}} ({{classes[class_id].num_users}}) *</span>
+                <span style="color:{{!currRoomCallID ? '#ffffff' : (class_id == rooms[currRoomCallID].class_id ? '#38c9ff' : '')}}">{{class_obj.name}} ({{classes[class_id].num_users}}){{class_obj.has_tutor ? " *":""}}</span>
               </h4>
             </div>
             <div id="{{class_id}}" class="panel-collapse collapse">
               <ul class="list-group">
                 <li class="list-group-item" ng-repeat="room_id in class_rooms[class_id]" ng-click="joinRoom(room_id, class_id)">
-                  <span id="{{room_id}}" ng-if="room_id == currRoomCallID" class="room-name" style="color:#38c9ff">{{getStringToFit(rooms[room_id].name)}} ({{rooms[room_id].users.length}}) {{rooms[room_id].has_tutor? "*":""}}</span> 
-                  <span id="{{room_id}}" ng-if="room_id != currRoomCallID" class="room-name">{{getStringToFit(rooms[room_id].name)}} ({{rooms[room_id].users.length}}) {{rooms[room_id].has_tutor? "*":""}}</span>
-
-                  <!--<span ng-if="room_id == currRoomCallID" class="room-name" style="color:#38c9ff">{{rooms[room_id].name.length > 20 ? rooms[room_id].name.substring(0, 18) + "..." : rooms[room_id].name}} ({{rooms[room_id].users.length}}) {{rooms[room_id].has_tutor? "*":""}}</span> 
-                  <span ng-if="room_id != currRoomCallID" class="room-name">{{rooms[room_id].name.length > 20 ? rooms[room_id].name.substring(0, 18) + "..." : rooms[room_id].name}} ({{rooms[room_id].users.length}}) {{rooms[room_id].has_tutor? "*":""}}</span>-->
+                  <span style="color:{{room_id == currRoomCallID ? '#38c9ff' : '#ffffff'}}" class="room-name-span">
+                    {{getStringToFit(rooms[room_id].name)}} ({{rooms[room_id].users.length}}) {{rooms[room_id].has_tutor? "*":""}}
+                  </span>
                 </li>
               </ul>
             </div>
@@ -98,18 +95,19 @@
       </div>
     </aside> <!-- END LEFT SIDEBAR -->
 
-    <div id="main-initial" class="chat-room" role="main" ng-hide="currRoomChatID">
-      <p>Not in a room content goes here</p>
+    <div id="main-initial" class="chat-room" role="main" ng-hide="currRoomChatID" style="position:relative; height:100%">
+      <p class="text-center" style="color: #38c9ff; font-size: 4rem; font-weight: 500; 
+      position:absolute; top: 40%; left:40%; width:20%; height: 20%;">studyspace</p>
     </div>
 
     <!-- Main Content -->
     <main id="main" class="chat-room" role="main" ng-hide="!currRoomChatID">
-
       <!-- ROOM NAVBAR -->
       <nav id="class-navigation" class="navbar navbar-room">
         <div class="container-fluid">
           <div class="navbar-header">
-            <span class="navbar-brand">{{classes[rooms[currRoomChatID].class_id].name}} - {{rooms[currRoomChatID].name}}</span>
+            <span class="navbar-brand">{{classes[rooms[currRoomChatID].class_id].name != "" ? 
+              classes[rooms[currRoomChatID].class_id].name + " - ":""}}{{rooms[currRoomChatID].name}}</span>
           </div>
           <ul class="nav navbar-nav navbar-right">
             <li class="dropdown">
@@ -125,6 +123,7 @@
       </nav>
 
       <!-- MESSAGE PANE -->
+      <div id="overlay">
       <div id="chat-message-pane" class="message-pane container-fluid" scroll scroll-event="scrollevent">
         <div id="loading" hidden> 
           <div class="blob blob-0"></div><div class="blob blob-1"></div>
@@ -156,7 +155,14 @@
             <p class="message-body">{{chatMessage.text}}</p>
          </div>
        </div>
-      </div> <!-- END MESSAGE PANE -->
+      </div> 
+
+       <div id="voice-connect-alert" class="alert fade in alert-info text-center">
+        <a class="close" data-dismiss="alert">×</a>
+        <span>Voice connected</span>
+       </div>
+      </div>
+      <!-- END MESSAGE PANE -->
 
       <!-- MESSAGE INPUT -->
       <footer id="message-box" class="form-message-container">
@@ -166,6 +172,7 @@
               <button id="mute-button" class="btn btn-mute text-center" type="button" ng-click="toggleMic()"> 
                 <span ng-class="muteBtnClass"></span>
               </button>
+              <button class="btn text-center" type="button" ng-click="leaveRoom()">LeaveRoom</button>
             </span>
             <input type="text" class="form-control input-message" id="chatInputBox" 
                    ng-model="chatInput" placeholder="Type a message..." autocomplete="off">
@@ -194,11 +201,11 @@
         Friends
         <table class="table">
           <tbody>   
-            <tr ng-repeat="buddies in added_buddies_list">
+            <tr ng-repeat="buddy in added_buddies_list">
               <td></td>
-              <td>{{buddies.user_two_name}}</td>
-              <td><button class="btn btn-danger" ng-click="deleteFriend(buddies.user_two_id)">Remove Friend</button></td>
-              <td><button class="btn btn-danger" ng-click="openDM(buddies.user_two_id)">Open DM</button></td>
+              <td>{{buddy.user_two_name}}</td>
+              <td><button class="btn btn-danger" ng-click="deleteFriend(buddy.user_two_id)">Remove Friend</button></td>
+              <td><button class="btn btn-danger" ng-click="openDM(buddy.user_two_id, buddy.user_two_name)">Open DM</button></td>
             </tr>
           </tbody>
         </table>
@@ -232,7 +239,7 @@
               </div>
               <div class="form-group">
                 <label for="room_name">Room Name</label>
-                <input type="text" class="form-control" maxlength="40" placeholder="e.g. Midterm Review" id="room_name">
+                <input type="text" class="form-control" maxlength="28" placeholder="e.g. Midterm Review" id="room_name">
               </div>
               <div class="btn-container text-center">
                 <button type="submit" class="btn btn-primary btn-block btn-submit-form btn-hi-pri" ng-click="addRoom()">Create</button>
@@ -244,7 +251,8 @@
 
       </div>
     </div>
-    <audio id="join_room_audio" src="/audio/join_room_sfx"></audio>
+    <audio id="join_room_audio" src="/audio/join_room_sfx" volume=0.5></audio>
+    <audio id="leave_room_audio" src="/audio/leave_room_sfx"></audio>
 
   </body>
 
