@@ -129,21 +129,25 @@
           <div class="blob blob-4"></div><div class="blob blob-5"></div>
         </div>
         <div class="message" ng-repeat="chatMessage in chatMessageList">
-          <header class="message-header">
-            <div class="dropdown">
-              <div class="container-message-icon">
-                <p>{{chatMessage.name | limitTo:1}}</p>
+          <div class="container-user-icon">
+            <p>{{chatMessage.name | limitTo:1}}</p>
+          </div>
+          <div class="message-content">
+            <header class="message-header">
+              <div class="dropdown">
+                <a class="user-name dropdown-toggle" data-toggle="dropdown" href="#">
+                  {{chatMessage.name}} <span class="caret"></span>
+                </a>
+                <ul class="dropdown-menu">
+                  <li><a href="#" onclick="toggleRemoteStreamAudioEnabled(chatMessage.user_id)">Mute</a></li>
+                  <li><a href="#">Block</a></li>
+                  <li><a href="#">Friend</a></li>
+                </ul>
               </div>
-              <a class="user-name dropdown-toggle" data-toggle="dropdown" href="#">{{chatMessage.name}} <span class="caret"></span></a>
-              <ul class="dropdown-menu">
-                <li><a href="#" onclick="toggleRemoteStreamAudioEnabled(chatMessage.user_id)">Mute</a></li>
-                <li><a href="#">Block</a></li>
-                <li><a href="#">Friend</a></li>
-              </ul>
-            </div>
-            <span class="dateTime">{{timeAgo(chatMessage)}}</span>
-          </header>
-          <p class="message-body">{{chatMessage.text}}</p>
+              <span class="dateTime">{{timeAgo(chatMessage)}}</span>
+            </header>
+            <p class="message-body">{{chatMessage.text}}</p>
+          </div>
         </div>
       </div> <!-- END MESSAGE PANE -->
 
@@ -152,8 +156,7 @@
         <form class="form-message" ng-submit="sendChatMessage(chatInput)">
           <div class="input-group">
             <span class="input-group-btn">
-              <button id="mute-button" class="btn btn-mute" type="button" ng-click="toggleMic()"> 
-                <!--<span class="glyphicon glyphicon-volume-up" id="muteBtn"></span> -->
+              <button id="mute-button" class="btn btn-mute text-center" type="button" ng-click="toggleMic()"> 
                 <span ng-class="muteBtnClass"></span>
               </button>
             </span>

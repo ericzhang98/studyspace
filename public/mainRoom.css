@@ -50,11 +50,17 @@ html, body {
   word-wrap: break-word;
   padding-top: 3rem;
   padding-bottom: 10rem;
-  padding-left: 3rem;
-  padding-right: 3rem;
+  padding-left: 2rem;
+  padding-right: 2rem;
 }
 
 .message-pane .message {
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-pack: justify;
+  -ms-flex-pack: justify;
+  justify-content: space-between;
   padding-left: 0;
   list-style: none;
   padding-top: 1.5rem;
@@ -67,7 +73,11 @@ html, body {
   border-bottom: none;
 }
 
-.message .message-header {
+.message .message-content {
+  width: calc(100% - 5rem);
+}
+
+.message-content .message-header {
   display: -webkit-box;
   display: -ms-flexbox;
   display: flex;
@@ -80,7 +90,7 @@ html, body {
   text-align: justify;
 }
 
-.message-header .user-name {
+.message-header .drop-down .user-name {
   color: white;
   font-size: 1.6rem;
   padding-left: 0.5rem;
@@ -91,13 +101,12 @@ html, body {
   color: gainsboro;
 }
 
-.message .message-body {
+.message-content .message-body {
   white-space: pre-wrap;
   color: powderblue;
   font-size: 1.5rem;
   margin-bottom: 0;
-  padding-top: 0.5rem;
-  padding-left: 5rem;
+  padding-top: 0.2rem;
 }
 
 .form-message-container {
@@ -106,7 +115,7 @@ html, body {
   bottom: 2rem;
   left: 2rem;
   right: 2rem;
-  height: 5rem;
+  height: 4.5rem;
   border-radius: 0.5rem;
 }
 
@@ -119,14 +128,15 @@ html, body {
 }
 
 .input-group .btn-mute {
-  width: 5rem;
-  height: 5rem;
+  width: 4.5rem;
+  height: 4.5rem;
   border: solid 2px #eeeeee;
   background-color: white;
 }
 
 .input-group .btn-mute .glyphicon {
   margin-right: -0.4rem;
+  margin-top: 0.2rem;
   font-size: 2rem;
 }
 
@@ -157,24 +167,11 @@ html, body {
   -ms-flex-align: center;
   align-items: center;
   height: auto;
-  padding-top: 2rem;
-  padding-bottom: 2rem;
+  padding-top: 1.5rem;
+  padding-bottom: 1.5rem;
   margin-left: 1.5rem;
   margin-right: 1.5rem;
   border-bottom: solid 2px #000000;
-}
-
-.container-message-icon {
-  position: relative;
-  top: 1.5rem;
-  text-align: center;
-  font-size: 2.5rem;
-  width: 4rem;
-  height: 4rem;
-  border-radius: 50%;
-  border-style: double;
-  background: gainsboro;
-  display: inline-block;
 }
 
 .container-user-icon {
@@ -240,11 +237,6 @@ html, body {
   background-color: inherit;
 }
 
-.menu-classes .panel .panel-heading {
-  -webkit-transition: background 0.15s, color 0.15s;
-  transition: background 0.15s, color 0.15s;
-}
-
 .menu-classes .panel .panel-title {
   font-size: 1.5rem;
   font-weight: 600;
@@ -257,9 +249,7 @@ html, body {
 
 .menu-classes .panel>.panel-collapse>.list-group .list-group-item {
   background-color: #6890be;
-  -webkit-transition: background 0.15s, color 0.15s;
-  transition: background 0.15s, color 0.15s;
-  padding-left: 3rem;
+  padding-left: 2rem;
   font-weight: 500;
 }
 
