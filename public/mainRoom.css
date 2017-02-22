@@ -6,6 +6,13 @@ html, body {
   height: 100%;
 }
 
+/* USE THESE WHEN UPDATING COLORS! FIND (curr_color), REPLACE ALL WITH (new_color) */
+/* primary-color: #38c9ff */ /* Main color for the site, used for selected */
+/* primary-color-light: #91e0ff */ /* Light version, used for hover */
+/* primary-color-dark: #00b9ff */ /* Dark version, used when shit needs to be dark */
+/* dark-color-dark: #262626 */ /* Our darker dark color */
+/* dark-color-light: #353535 */ /* Our lighter dark color */
+
 .sidebar,
 .chat-room {
   position: absolute;
@@ -34,7 +41,11 @@ html, body {
   border-radius: 0;
   height: 5rem;
   font-weight: 600;
-  color: #337ab7;
+  color: #00b9ff;
+}
+
+.dropdown-toggle {
+  color: inherit;
 }
 
 .navbar-room .navbar-brand {
@@ -44,7 +55,7 @@ html, body {
 .message-pane {
   position: relative;
   height: calc(100% - 5rem);
-  background-color: black;
+  background-color: #262626;
   overflow-x: hidden;
   border-style: hidden;
   word-wrap: break-word;
@@ -90,10 +101,10 @@ html, body {
   text-align: justify;
 }
 
-.message-header .drop-down .user-name {
-  color: white;
-  font-size: 1.6rem;
-  padding-left: 0.5rem;
+.message-header .dropdown .user-name {
+  color: #38c9ff;
+  font-size: 1.5rem;
+  font-weight: 500;
 }
 
 .message-header .dateTime {
@@ -103,7 +114,7 @@ html, body {
 
 .message-content .message-body {
   white-space: pre-wrap;
-  color: powderblue;
+  color: white;
   font-size: 1.5rem;
   margin-bottom: 0;
   padding-top: 0.2rem;
@@ -156,6 +167,7 @@ html, body {
 /* Classes Sidebar */
 .sidebar-left {
   background: #8caacd;
+  background-color: #353535;
   left: 0;
 }
 
@@ -171,7 +183,7 @@ html, body {
   padding-bottom: 1.5rem;
   margin-left: 1.5rem;
   margin-right: 1.5rem;
-  border-bottom: solid 2px #000000;
+  border-bottom: solid 0px #000000;
 }
 
 .container-user-icon {
@@ -180,9 +192,10 @@ html, body {
   width: 4rem;
   height: 4rem;
   border-radius: 50%;
-  border-style: double;
+  border: solid 2px #00b9ff;
   background: white;
   overflow: hidden;
+  color: #00b9ff;
 }
 
 .container-info-user .container-user-icon {
@@ -197,7 +210,7 @@ html, body {
 }
 
 .container-info-user .user-name {
-  font-weight: 600;
+  font-weight: 500;
   font-size: 1.8rem;
 }
 
@@ -220,10 +233,12 @@ html, body {
   padding: 1rem 1.5rem;
   background-color: transparent;
   width: 100%;
+  color: #38c9ff;
 }
 
 .container-menu-classes .container-title:hover {
   color: white;
+  color: #91e0ff;
 }
 
 .container-menu-classes .container-title .title {
@@ -240,21 +255,29 @@ html, body {
 .menu-classes .panel .panel-title {
   font-size: 1.5rem;
   font-weight: 600;
+  color: white;
+}
+
+.menu-classes .panel .panel-title:hover {
+  color: #91e0ff;
 }
 
 .menu-classes .panel:hover .panel-heading {
   background-color: #7a9dc5;
-  color: white;
+  background-color: #262626;
 }
 
 .menu-classes .panel>.panel-collapse>.list-group .list-group-item {
-  background-color: #6890be;
   padding-left: 2rem;
+  background-color: #353535;
   font-weight: 500;
+  color: white;
 }
 
 .menu-classes .panel>.panel-collapse>.list-group .list-group-item:hover {
   background-color: #5783b6;
+  background-color: #262626;
+  color: #91e0ff;
 }
 
 /* Classmates Sidebar */
@@ -280,4 +303,13 @@ html, body {
   .modal-create-room-content .btn-container {
     margin-top: 4rem;
   }
+}
+
+.btn-low-pri {
+  background-color: #262626;
+  color: gainsboro;
+  margin-left: 1.5rem;
+}
+.btn-low-pri:hover {
+  color: #91e0ff;
 }

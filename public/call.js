@@ -168,13 +168,13 @@ function answerCallHelper(call) {
 
 // - updates server and returns list of user_id's
 // - calls all user_id's
-function joinRoomCall() {
+function joinRoomCall(currRoomCallID) {
 
-	console.log("joining room with id " + currRoomID);
+	console.log("joining room call with id " + currRoomCallID);
 
 	// send request to server
 	var xhr = new XMLHttpRequest();
-	xhr.open('GET', "/join_room/" + currRoomID, true);
+	xhr.open('GET', "/join_room/" + currRoomCallID, true);
 	xhr.send();
 
 	// on response
@@ -190,8 +190,10 @@ function joinRoomCall() {
 	        	return;
 	        }
 
-			// listen to the room
-			//listenToRoom();
+	        // set the onload function to use the new room id
+	        setOnBeforeUnload(currRoomCallID);
+
+			document.getElementById('join_room_audio').play();
 
 	        // if this is a lecture and I am the host, I am the lecturer
 	        isLecturer = (response.is_lecture && response.host_id == myID);
@@ -229,22 +231,25 @@ function joinRoomCall() {
 }
 
 // - updates server and leaves all current calls
-function leaveRoom() {
+function leaveRoom(currRoomCallID) {
 
 	// are we even in a room?
-	if (currRoomID != null) {
-		console.log("leaving room with id " + currRoomID);
+	if (currRoomCallID != null) {
+		console.log("leaving room with id " + currRoomCallID);
+
+		/*var audio = document.getElementById('leave_room_audio');
+		audio.play();*/
 
 		// leave our calls
 		leaveCalls();
 
 		// send request to server to tell them we left
 		var xhr = new XMLHttpRequest();
-		xhr.open('GET', "/leave_room/" + currRoomID, true);
+		xhr.open('GET', "/leave_room/" + currRoomCallID, true);
 		xhr.send();
 
-		// reset currRoomID
-		currRoomID = null;
+		// reset currRoomCallID
+		currRoomCallID = null;
 
 		// stop any song playing
 		stopSong();
@@ -292,67 +297,43 @@ function leaveCalls() {
 	myCalls = [];
 }
 /*********************************************************************/
-/************************* LISTENING TO ROOMS ************************/
-
-function listenToRoom() {
-
-	// detach any old listeners
-	classRoomsDatabase.child(currRoomID).off();
-
-	// attach listener to the current room
-	classRoomsDatabase.child(currRoomID).on("value", function(snapshot) {
-
-        var snapshotValueObject = snapshot.val();
-
-        if (snapshotValueObject) {
-        	// get the updated list of users in the room
-        	var updatedRoomUsers = Object.values(snapshotValueObject);
-
-        	// TODO: update UI with updated users list
-
-        	// set our currRoomUsers to the updated list
-        	currRoomUsers = updatedRoomUsers;
-        }
-
-    });
-}
-
-/*********************************************************************/
 /********************** MUTING / UNMUTING AUDIO **********************/
 
 // - toggle my own audio
 function toggleMyStreamAudioEnabled() {
-	console.log("toggling my audio to " + !(myStream.getAudioTracks()[0].enabled));
+	//console.log("toggling my audio to " + !(myStream.getAudioTracks()[0].enabled));
 	myStream.getAudioTracks()[0].enabled = !(myStream.getAudioTracks()[0].enabled);
 }
 
 // - set my audio
 function setMyStreamAudioEnabled(enabled) {
 	if (myStream) {
-		console.log("setting my audio to " + enabled);
+		//console.log("setting my audio to " + enabled);
 		myStream.getAudioTracks()[0].enabled = enabled;
 	}
 }
 
 // - toggle audio from another person
 function toggleRemoteStreamAudioEnabled(user_id) {
-	console.log("toggling remote audio to " + !(myRemoteStreams[user_id].muted));
+	//console.log("toggling remote audio to " + !(myRemoteStreams[user_id].muted));
 	myRemoteStreams[user_id].muted = !(myRemoteStreams[user_id].muted);
 }
 /*********************************************************************/
 /******************************* MISC ********************************/
 
-// when the window is about to close
-window.onbeforeunload = function(event) {
-	// send request to server to tell them we left
-	leaveRoomHard();
-};
+function setOnBeforeUnload(currRoomCallID) {
+	// when the window is about to close
+	window.onbeforeunload = function(event) {
+		// send request to server to tell them we left
+		leaveRoomHard(currRoomCallID);
+	};
+}
 
 // makes sure we leave the room
-function leaveRoomHard() {
-	if (currRoomID != null) {
+function leaveRoomHard(currRoomCallID) {
+	if (currRoomCallID != null) {
 		var xhr = new XMLHttpRequest();
-		xhr.open('GET', "/leave_room/" + currRoomID, false);
+		xhr.open('GET', "/leave_room/" + currRoomCallID, false);
 		xhr.send();
 	}
 }

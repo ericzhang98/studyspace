@@ -264,6 +264,8 @@ a:hover {
 
 .panel-title {
   font-weight: 700;
+  -webkit-transition: color 0.15s;
+  transition: color 0.15s;
 }
 
 .panel-group .panel-heading+.panel-collapse>.list-group,
