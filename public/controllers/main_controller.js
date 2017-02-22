@@ -32,23 +32,27 @@ myApp.controller("MainController", ["$scope", "$http",
 /************************* JOINING A CHATROOM ************************/
 
 			// Join a room's chat
-			function joinRoomChat() {
+			function joinRoomChat(room_id) {
 
-				// turn off any pre-existing listeners and control vars
-				if (chatDatabase != null) {
-					chatDatabase.off();
+				if ($scope.currRoomChatID != room_id) {
+					$scope.currRoomChatID = room_id;
+
+					// turn off any pre-existing listeners and control vars
+					if (chatDatabase != null) {
+						chatDatabase.off();
+					}
+
+					lastKey = null;
+					scrollLock = false;
+
+					// empty our message list in logic and UI
+					chatMessageList = [];
+					updateChatView();
+
+					// set up and start new listener
+					chatDatabase = databaseRef.child("RoomMessages").child($scope.currRoomChatID);
+					startChatMessages();
 				}
-
-				lastKey = null;
-				scrollLock = false;
-
-				// empty our message list in logic and UI
-				chatMessageList = [];
-				updateChatView();
-
-				// set up and start new listener
-				chatDatabase = databaseRef.child("RoomMessages").child($scope.currRoomChatID);
-				startChatMessages();
 			}
 
 /*********************************************************************/
@@ -386,13 +390,11 @@ myApp.controller("MainController", ["$scope", "$http",
       	if (!currPing) {
      	   pingUserActivity(true);
         }
-		}
+			}
 
 			// if we're not already in this room's chat
-			if ($scope.currRoomChatID != room_id) {
-				$scope.currRoomChatID = room_id;
-				joinRoomChat();
-			}
+			joinRoomChat(room_id);
+			
 		};
 
     function pingUserActivity(constant) {
@@ -404,14 +406,17 @@ myApp.controller("MainController", ["$scope", "$http",
       }
     }
 
+    // Sidebar setup, makes sure that at most one class is open at a time
+    var $myGroup = $('#classes');
+    $myGroup.on('show.bs.collapse','.collapse', function() {
+    	$myGroup.find('.collapse.in').collapse('hide');
+		});
+
     function adjustSidebarToggle(class_id) {
 			$scope.my_class_ids.forEach(function(my_class_id) {
 
 				if (my_class_id == class_id && $("#" + my_class_id).is(":hidden")) {
-					$('#' + my_class_id).collapse('toggle');
-				}
-
-				else if (my_class_id != class_id && $("#" + my_class_id).is(":visible")) {
+					//console.log("class with id " + my_class_id + " being set to visible");
 					$('#' + my_class_id).collapse('toggle');
 				}
 			});
@@ -732,8 +737,7 @@ myApp.controller("MainController", ["$scope", "$http",
 
 		console.log("entering dm room with id: " + dm_room_id);
 
-		// set the current room id to the dm room id
-		$scope.currRoomChatID = dm_room_id;
+		// set up dummy class/room
 		$scope.classes["dm_class_id"] = {
 			"name" : "Messages"
 		}
@@ -741,7 +745,9 @@ myApp.controller("MainController", ["$scope", "$http",
 			"name" : "other user name here (will use Gates's method, let's go Gates)",
 			"class_id" : "dm_class_id"
 		}
-		joinRoomChat();
+
+		// join the chat
+		joinRoomChat(dm_room_id);
 	};
 	
 }]);

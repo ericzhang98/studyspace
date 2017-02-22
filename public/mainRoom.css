@@ -6,6 +6,13 @@ html, body {
   height: 100%;
 }
 
+/* USE THESE WHEN UPDATING COLORS! FIND (curr_color), REPLACE ALL WITH (new_color) */
+/* primary-color: #38c9ff */ /* Main color for the site, used for selected */
+/* primary-color-light: #91e0ff */ /* Light version, used for hover */
+/* primary-color-dark: #00b9ff */ /* Dark version, used when shit needs to be dark */
+/* dark-color-dark: #262626 */ /* Our darker dark color */
+/* dark-color-light: #353535 */ /* Our lighter dark color */
+
 .sidebar,
 .chat-room {
   position: absolute;
@@ -34,7 +41,11 @@ html, body {
   border-radius: 0;
   height: 5rem;
   font-weight: 600;
-  color: #337ab7;
+  color: #00b9ff;
+}
+
+.dropdown-toggle {
+  color: inherit;
 }
 
 .navbar-room .navbar-brand {
@@ -44,7 +55,7 @@ html, body {
 .message-pane {
   position: relative;
   height: calc(100% - 5rem);
-  background-color: black;
+  background-color: #262626;
   overflow-x: hidden;
   border-style: hidden;
   word-wrap: break-word;
@@ -81,7 +92,7 @@ html, body {
 }
 
 .message-header .user-name {
-  color: white;
+  color: #38c9ff;
   font-size: 1.6rem;
   padding-left: 0.5rem;
 }
@@ -93,7 +104,7 @@ html, body {
 
 .message .message-body {
   white-space: pre-wrap;
-  color: powderblue;
+  color: white;
   font-size: 1.5rem;
   margin-bottom: 0;
   padding-top: 0.5rem;
@@ -146,6 +157,7 @@ html, body {
 /* Classes Sidebar */
 .sidebar-left {
   background: #8caacd;
+  background-color: #353535;
   left: 0;
 }
 
@@ -161,7 +173,7 @@ html, body {
   padding-bottom: 2rem;
   margin-left: 1.5rem;
   margin-right: 1.5rem;
-  border-bottom: solid 2px #000000;
+  border-bottom: solid 0px #000000;
 }
 
 .container-message-icon {
@@ -173,8 +185,9 @@ html, body {
   height: 4rem;
   border-radius: 50%;
   border-style: double;
-  background: gainsboro;
+  background: white;
   display: inline-block;
+  color: #00b9ff;
 }
 
 .container-user-icon {
@@ -186,6 +199,7 @@ html, body {
   border-style: double;
   background: white;
   overflow: hidden;
+  color: #00b9ff;
 }
 
 .container-info-user .container-user-icon {
@@ -223,10 +237,12 @@ html, body {
   padding: 1rem 1.5rem;
   background-color: transparent;
   width: 100%;
+  color: #38c9ff;
 }
 
 .container-menu-classes .container-title:hover {
   color: white;
+  color: #91e0ff;
 }
 
 .container-menu-classes .container-title .title {
@@ -248,23 +264,32 @@ html, body {
 .menu-classes .panel .panel-title {
   font-size: 1.5rem;
   font-weight: 600;
+  color: white;
+}
+
+.menu-classes .panel .panel-title:hover {
+  color: #91e0ff;
 }
 
 .menu-classes .panel:hover .panel-heading {
   background-color: #7a9dc5;
-  color: white;
+  background-color: #262626;
 }
 
 .menu-classes .panel>.panel-collapse>.list-group .list-group-item {
   background-color: #6890be;
+  background-color: #353535;
   -webkit-transition: background 0.15s, color 0.15s;
   transition: background 0.15s, color 0.15s;
   padding-left: 3rem;
   font-weight: 500;
+  color: white;
 }
 
 .menu-classes .panel>.panel-collapse>.list-group .list-group-item:hover {
   background-color: #5783b6;
+  background-color: #262626;
+  color: #91e0ff;
 }
 
 /* Classmates Sidebar */
@@ -290,4 +315,13 @@ html, body {
   .modal-create-room-content .btn-container {
     margin-top: 4rem;
   }
+}
+
+.btn-low-pri {
+  background-color: #262626;
+  color: gainsboro;
+  margin-left: 1.5rem;
+}
+.btn-low-pri:hover {
+  color: #91e0ff;
 }

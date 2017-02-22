@@ -49,21 +49,21 @@
           <!--<img class="user-icon" src="assets/images/user_icon.png" />-->
           <p>{{myName | limitTo:1}}</p>
         </div>
-        <span class="user-name">{{myName}}</span>
+        <span class="user-name" style="color:#38c9ff">{{myName}}</span>
       </div>
 
       <!-- Log Out -->
-      <button id="log-out" class="btn btn-primary btn-log-out" onclick="logOut()">Log Out</button>
+      <button id="log-out" class="btn btn-sm btn-low-pri" onclick="logOut()">Log Out</button>
 
       <!-- User Preference -->
-      <a id="preferences" class="btn btn-primary btn-preferences" href="courses">Courses</a>
+      <a id="preferences" class="btn btn-sm btn-low-pri" href="courses">Account</a>
 
       <!-- Classes -->
       <div id="classes-menu" class="container-menu-classes">
 
         <!-- Create Room Button -->
         <button id="btn-create-room" class="btn container-title">
-          <span class="title">Rooms</span>
+          <span class="title">Spaces</span>
           <div>
             <span class="glyphicon glyphicon-plus"></span>
           </div>
@@ -83,7 +83,7 @@
             <div id="{{class_id}}" class="panel-collapse collapse">
               <ul class="list-group">
                 <li class="list-group-item" ng-repeat="room_id in class_rooms[class_id]" ng-click="joinRoom(room_id, class_id)">
-                  <span ng-if="room_id == currRoomCallID" class="room-name" style="color:#00ff00">{{rooms[room_id].name}} ({{rooms[room_id].users.length}}) {{rooms[room_id].has_tutor? "*":""}}</span> 
+                  <span ng-if="room_id == currRoomCallID" class="room-name" style="color:#38c9ff">{{rooms[room_id].name}} ({{rooms[room_id].users.length}}) {{rooms[room_id].has_tutor? "*":""}}</span> 
                   <span ng-if="room_id != currRoomCallID" class="room-name">{{rooms[room_id].name}} ({{rooms[room_id].users.length}}) {{rooms[room_id].has_tutor? "*":""}}</span>
                 </li>
               </ul>
@@ -166,7 +166,7 @@
     </main>   
 
     <!-- Classmates Sidebar -->
-    <aside id="classmates-sidebar" class="sidebar sidebar-right" role="complementary" style="background-color:green">
+    <aside id="classmates-sidebar" class="sidebar sidebar-right" role="complementary">
       <h3>Buddies</h3>   
       <div class="container-search">
         <input class="form-control" ng-model="friend.name">
