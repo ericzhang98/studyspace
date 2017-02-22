@@ -134,12 +134,18 @@
               <div class="container-message-icon">
                 <p>{{chatMessage.name | limitTo:1}}</p>
               </div>
-              <a class="user-name dropdown-toggle" data-toggle="dropdown" href="#">{{chatMessage.name}} <span class="caret"></span></a>
-              <ul class="dropdown-menu">
+
+              <!-- Dropdown for non-me users -->
+              <a ng-if="chatMessage.user_id != myID" class="user-name dropdown-toggle" data-toggle="dropdown" href="#">{{chatMessage.name}} <span class="caret"></span></a>
+              <ul ng-if="chatMessage.user_id != myID" class="dropdown-menu">
                 <li><a href="#" onclick="toggleRemoteStreamAudioEnabled(chatMessage.user_id)">Mute</a></li>
                 <li><a href="#">Block</a></li>
                 <li><a href="#">Friend</a></li>
               </ul>
+
+              <!-- No dropdown if user is me -->
+              <a ng-if="chatMessage.user_id == myID" class="user-name">{{chatMessage.name}}</a>
+
             </div>
             <span class="dateTime">{{timeAgo(chatMessage)}}</span>
           </header>

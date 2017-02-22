@@ -15,6 +15,7 @@ myApp.controller("MainController", ["$scope", "$http",
 			console.log("Hell yeah");
 
 			// general vars
+			$scope.myID = getSignedCookie("user_id");
 			$scope.currRoomCallID = null;
 			$scope.currRoomChatID = null;
 
