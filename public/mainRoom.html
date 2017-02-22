@@ -83,8 +83,11 @@
             <div id="{{class_id}}" class="panel-collapse collapse">
               <ul class="list-group">
                 <li class="list-group-item" ng-repeat="room_id in class_rooms[class_id]" ng-click="joinRoom(room_id, class_id)">
-                  <span ng-if="room_id == currRoomCallID" class="room-name" style="color:#38c9ff">{{rooms[room_id].name}} ({{rooms[room_id].users.length}}) {{rooms[room_id].has_tutor? "*":""}}</span> 
-                  <span ng-if="room_id != currRoomCallID" class="room-name">{{rooms[room_id].name}} ({{rooms[room_id].users.length}}) {{rooms[room_id].has_tutor? "*":""}}</span>
+                  <span id="{{room_id}}" ng-if="room_id == currRoomCallID" class="room-name" style="color:#38c9ff">{{getStringToFit(rooms[room_id].name)}} ({{rooms[room_id].users.length}}) {{rooms[room_id].has_tutor? "*":""}}</span> 
+                  <span id="{{room_id}}" ng-if="room_id != currRoomCallID" class="room-name">{{getStringToFit(rooms[room_id].name)}} ({{rooms[room_id].users.length}}) {{rooms[room_id].has_tutor? "*":""}}</span>
+
+                  <!--<span ng-if="room_id == currRoomCallID" class="room-name" style="color:#38c9ff">{{rooms[room_id].name.length > 20 ? rooms[room_id].name.substring(0, 18) + "..." : rooms[room_id].name}} ({{rooms[room_id].users.length}}) {{rooms[room_id].has_tutor? "*":""}}</span> 
+                  <span ng-if="room_id != currRoomCallID" class="room-name">{{rooms[room_id].name.length > 20 ? rooms[room_id].name.substring(0, 18) + "..." : rooms[room_id].name}} ({{rooms[room_id].users.length}}) {{rooms[room_id].has_tutor? "*":""}}</span>-->
                 </li>
               </ul>
             </div>
@@ -146,7 +149,7 @@
 
                 <!-- No dropdown if user is me -->
                 <a ng-if="chatMessage.user_id == myID" class="user-name">{{chatMessage.name}}</a>
-                
+
               </div>
             <span class="dateTime">{{timeAgo(chatMessage)}}</span>
             </header>
@@ -212,7 +215,7 @@
             <button id="close-create-room" class="btn close" data-dismiss="modal" aria-label="Close">
               <span class="glyphicon glyphicon-remove" aria-hidden="true"></span>
             </button>
-            <h1 class="title">Create a room</h1>
+            <h1 class="title primary-dark-text">Create a room</h1>
           </header>
           <div class="main form-container">
 
@@ -229,10 +232,10 @@
               </div>
               <div class="form-group">
                 <label for="room_name">Room Name</label>
-                <input type="text" class="form-control" placeholder="e.g. Midterm Review" id="room_name">
+                <input type="text" class="form-control" maxlength="40" placeholder="e.g. Midterm Review" id="room_name">
               </div>
               <div class="btn-container text-center">
-                <button type="submit" class="btn btn-primary btn-block btn-submit-form" ng-click="addRoom()">Create</button>
+                <button type="submit" class="btn btn-primary btn-block btn-submit-form btn-hi-pri" ng-click="addRoom()">Create</button>
               </div>
             </form>
 

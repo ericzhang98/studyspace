@@ -328,8 +328,8 @@ myApp.controller("MainController", ["$scope", "$http",
 			}
 
 			// if room_name is empty do nothing
-			if (room_name.length == 0 || room_name.length > 25) {
-				console.log("room name must be between 1 and 25 characters");
+			if (room_name.length == 0) {
+				console.log("room name must be between 1 and 28 characters");
 				// TODO: error message
 				return;
 			}
@@ -544,7 +544,17 @@ myApp.controller("MainController", ["$scope", "$http",
 
 						// update the UI
 						console.log("applying in get room, room name is : " + $scope.rooms[room_id].name);
-						$scope.$apply();
+
+						$scope.$apply(function() {/*
+							var item = (document.getElementById(room_id));
+							if (item.scrollWidth >  item.width) {
+					    	console.log("overflow for " + room_id + ", scroll width: " + item.scrollWidth + 
+					    	", innerWidth: " + item.width);
+							} else {
+								console.log("no overflow for " + room_id + ", scroll width: " + item.scrollWidth + 
+					    	", innerWidth: " + item.width);
+							}*/
+						});
 					}
 				});
 		}
@@ -589,6 +599,46 @@ myApp.controller("MainController", ["$scope", "$http",
 			}
 		}
 
+		// slightly jank
+		$scope.getStringToFit = function(room_name) {
+
+			if (!room_name) {
+				return "";
+			}
+			var space_left = 27;
+			var new_string = "";
+			var long_char = ["m", "w"];
+			var mid_char = ["a", "b", "c", "d", "e", "g", "h", "k", "n", "o", "p", "q", "s", "u", "v", "x", "y", "z"];
+			var short_char = ["f", "i","j", "l", "r", "t"];
+			for (var i = 0; i < room_name.length; i++) {
+
+				var c = room_name[i];
+
+				var len;
+				if (short_char.indexOf(c) != -1) {
+					len = 1;
+				}
+				else if (long_char.indexOf(c) != -1) {
+					len = 2.2;
+				}
+				else {
+					len = 1.5;
+				}
+				if (space_left > len) {
+					space_left -= len;
+					new_string += c;
+				}
+				else {
+					break;
+				}
+			}
+
+			if (new_string == room_name) {
+				return new_string;
+			} else {
+				return new_string + "...";
+			}
+		}
 /*********************************************************************/
 /**************************** BUDDY SYSTEM ***************************/
 
