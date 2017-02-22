@@ -6,7 +6,8 @@ html, body {
   height: 100%;
 }
 
-/* USE THESE WHEN UPDATING COLORS! FIND (curr_color), REPLACE ALL WITH (new_color) */
+/* USE THESE WHEN UPDATING COLORS! FIND (curr_color), REPLACE ALL WITH (new_color)
+   DON'T REPLACE THE COLORS IN THIS SECTION!!! */
 /* primary-color: #38c9ff */ /* Main color for the site, used for selected */
 /* primary-color-light: #91e0ff */ /* Light version, used for hover */
 /* primary-color-dark: #00b9ff */ /* Dark version, used when shit needs to be dark */
@@ -317,4 +318,12 @@ html, body {
 }
 .btn-low-pri:hover {
   color: #91e0ff;
+} 
+
+.btn-hi-pri {
+  background-color: #38c9ff;
+}
+
+.primary-dark-text {
+  color: #00b9ff;
 }
