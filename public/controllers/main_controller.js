@@ -393,10 +393,21 @@ myApp.controller("MainController", ["$scope", "$http",
         }
 			}
 
-			// if we're not already in this room's chat
+			// join this room's chat
 			joinRoomChat(room_id);
-			
+
 		};
+
+		$scope.leaveRoom = function() {
+
+			leaveRoom($scope.currRoomCallID);
+
+			$scope.currRoomCallID = null;
+			$scope.currRoomChatID = null;
+
+			document.getElementById('leave_room_audio').volume = 0.4;
+			document.getElementById('leave_room_audio').play();
+		}
 
     function pingUserActivity(constant) {
       var xhr = new XMLHttpRequest();
@@ -601,7 +612,6 @@ myApp.controller("MainController", ["$scope", "$http",
 
 		// slightly jank
 		$scope.getStringToFit = function(room_name) {
-
 			if (!room_name) {
 				return "";
 			}
@@ -622,7 +632,7 @@ myApp.controller("MainController", ["$scope", "$http",
 					len = 2.2;
 				}
 				else {
-					len = 1.5;
+					len = 1.6;
 				}
 				if (space_left > len) {
 					space_left -= len;
@@ -639,6 +649,7 @@ myApp.controller("MainController", ["$scope", "$http",
 				return new_string + "...";
 			}
 		}
+
 /*********************************************************************/
 /**************************** BUDDY SYSTEM ***************************/
 
@@ -772,7 +783,7 @@ myApp.controller("MainController", ["$scope", "$http",
 		});    
 	};
 	
-	$scope.openDM = function(other_user_id){
+	$scope.openDM = function(other_user_id, other_user_name){
 
 		// the room_id of DM's between id's "aaa" and "bbb"
 		// will be "bbbaaa"
@@ -790,17 +801,78 @@ myApp.controller("MainController", ["$scope", "$http",
 
 		// set up dummy class/room
 		$scope.classes["dm_class_id"] = {
-			"name" : "Messages"
+			"name" : ""
 		}
 		$scope.rooms[dm_room_id] = {
-			"name" : "other user name here (will use Gates's method, let's go Gates)",
+			"name" : other_user_name,
 			"class_id" : "dm_class_id"
 		}
 
 		// join the chat
 		joinRoomChat(dm_room_id);
 	};
-	
+
+/*********************************************************************/
+/**************************** BLOCK SYSTEM ***************************/
+
+  var blockedUsers = {};
+  
+  var getIdFromName = function(name, onResponseReceived){
+    var email = {"email": String(name)};
+    console.log(email);
+    $http.post('/get_Id_From_Name', email).then(function(response){
+			onResponseReceived(response.data);
+		});    
+  }
+  var refresh = function(){
+    $http.get('/get_blocked_users').then(function(response){
+			$scope.block_user_list = response.data;
+      console.log(response.data);
+      console.log(response.data.length);
+      console.log(response.data[0]);
+      if(!(response.data[0])){
+          return;
+      }
+      blockedUsers['user_id'] = response.data[0]['blocked_user_id'];
+      blockedUsers['blocked_user_list'] = [];
+      for (var i = 0; i < response.data.length; i++){
+        console.log("1");
+        var obj = response.data[i];
+        blockedUsers['blocked_user_list'].push(obj['blocked_user_id']);
+      }
+		});
+  }
+  var addBlock = function(blocked_user_id, blocked_user_email, onResponseReceived){
+    var data = {
+                "blocked_user_id": String(blocked_user_id),
+                "blocked_user_email": blocked_user_email
+               }; 
+               console.log("ADD");
+    $http.post('/add_blocked_user', data).then(function(response){
+			onResponseReceived(response.data);
+		});
+  };
+  $scope.unblock = function(id){
+    
+    console.log(id);
+    $http.delete('/remove_block/' + id).then(function(response){
+      refresh();
+    });
+  }
+  refresh();
+  $scope.blockUser = function(){
+    getIdFromName($scope.block_user.name, function(response){
+      console.log(response);
+      if(response){
+        console.log(response.user_id);
+        addBlock(response.user_id, response.email, function(response){
+          console.log("XX");
+          console.log(response);
+          refresh();
+        });
+      }
+    });
+  }
 }]);
 
 //helper directive for scrolling listener
