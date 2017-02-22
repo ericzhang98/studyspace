@@ -814,6 +814,7 @@ myApp.controller("MainController", ["$scope", "$http",
 
 /*********************************************************************/
 /**************************** BLOCK SYSTEM ***************************/
+
   var getIdFromName = function(name, onResponseReceived){
     var email = {"email": String(name)};
     console.log(email);
