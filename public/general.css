@@ -57,6 +57,10 @@ a:hover {
   transition: background 0.15s, color 0.15s;
 }
 
+.nav-link:last-child {
+  margin-right: -15px;
+}
+
 .navbar-site .nav-link:hover {
   background: white;
   color: #aaaaaa;
@@ -143,7 +147,7 @@ a:hover {
 
 .form-group label {
   font-size: 1.2rem;
-  font-weight: 700;
+  font-weight: 600;
 }
 
 .form-group:first-child {
@@ -157,7 +161,6 @@ a:hover {
   box-shadow: none;
   height: 3rem;
   font-size: 1.8rem;
-  font-weight: 500;
   padding: 0;
   margin-top: 0rem;
   background: transparent;
@@ -245,6 +248,8 @@ a:hover {
   padding: 1rem 1.5rem;
   border-top-left-radius: 0;
   border-top-right-radius: 0;
+  -webkit-transition: background 0.15s, color 0.15s;
+  transition: background 0.15s, color 0.15s;
 }
 
 .panel-heading-selection {
@@ -259,6 +264,8 @@ a:hover {
 
 .panel-title {
   font-weight: 700;
+  -webkit-transition: color 0.15s;
+  transition: color 0.15s;
 }
 
 .panel-group .panel-heading+.panel-collapse>.list-group,
@@ -271,6 +278,8 @@ a:hover {
   border-top: none;
   padding: 0.7rem 2rem;
   font-weight: 600;
+  -webkit-transition: background 0.15s, color 0.15s;
+  transition: background 0.15s, color 0.15s;
 }
 
 .panel>.list-group:last-child .list-group-item:last-child,
