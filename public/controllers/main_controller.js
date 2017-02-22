@@ -404,9 +404,6 @@ myApp.controller("MainController", ["$scope", "$http",
 
 			$scope.currRoomCallID = null;
 			$scope.currRoomChatID = null;
-
-			document.getElementById('leave_room_audio').volume = 0.4;
-			document.getElementById('leave_room_audio').play();
 		}
 
     function pingUserActivity(constant) {
@@ -612,10 +609,11 @@ myApp.controller("MainController", ["$scope", "$http",
 
 		// slightly jank
 		$scope.getStringToFit = function(room_name) {
+			return room_name;
 			if (!room_name) {
 				return "";
 			}
-			var space_left = 27;
+			var space_left = 26;
 			var new_string = "";
 			var long_char = ["m", "w"];
 			var mid_char = ["a", "b", "c", "d", "e", "g", "h", "k", "n", "o", "p", "q", "s", "u", "v", "x", "y", "z"];
@@ -632,7 +630,7 @@ myApp.controller("MainController", ["$scope", "$http",
 					len = 2.2;
 				}
 				else {
-					len = 1.6;
+					len = 1.8;
 				}
 				if (space_left > len) {
 					space_left -= len;

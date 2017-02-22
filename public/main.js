@@ -46,7 +46,7 @@ function logOut() {
 /********************************* MISC ******************************/
 
 function showAlert(message, alerttype) {
-	//$('#voice-connect-alert').show();
+	$('#voice-connect-alert').show();
 
 	setTimeout(function() { // this will automatically close the alert and remove this if the users doesnt close it in 5 secs
 

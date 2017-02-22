@@ -16,11 +16,19 @@ var myRemoteStreams = {}; // Dictionary from user.id to audio track
 navigator.getUserMedia = navigator.getUserMedia || navigator.webkitGetUserMedia || navigator.mozGetUserMedia;
 
 // Grab user media immediately
-navigator.getUserMedia({video: false, audio: true}, function(stream) {
-	myStream = stream;
-}, function(err) {
-	console.log('Failed to get local stream', err);
-});
+getVoice();
+
+function getVoice(callback) {
+	navigator.getUserMedia({video: false, audio: true}, function(stream) {
+		myStream = stream;
+		showAlert("Voice connected", "alert-info");
+		if (callback) {
+			callback();
+		}
+	}, function(err) {
+		console.log('Failed to get local stream', err);
+	});
+}
 
 /*********************** CALLING AND ANSWERING ***********************/
 
@@ -75,12 +83,7 @@ function startCall(other_user_id) {
 	// myStream not yet set
 	else {
 		console.log("myStream not yet set");
-		navigator.getUserMedia({video: false, audio: true}, function(stream) {
-			myStream = stream;
-			startCallHelper(other_user_id);
-		}, function(err) {
-			console.log('Failed to get local stream' ,err);
-		});
+		getVoice(startCallHelper(other_user_id));
 	}
 }
 
@@ -99,7 +102,7 @@ function startCallHelper(other_user_id) {
 	call.on('stream', function(remoteStream) {
 		console.log("incoming stream id: " + remoteStream.id)
 
-		addRemoteStream(remoteStream, call.peer);	
+		establishCall(remoteStream, call.peer);
 	});
 
 	// used for onClose
@@ -107,9 +110,7 @@ function startCallHelper(other_user_id) {
 
 	call.on('close', function() {
 		console.log("call closed");
-
-		// when a call closes, remove the corresponding stream
-		removeRemoteStream(call.peer);
+		destablishCall(call.peer);
 	});
 }
 
@@ -126,12 +127,7 @@ function answerCall(call) {
 	// myStream not yet set
 	else {
 		console.log("myStream not yet set");
-		navigator.getUserMedia({video: false, audio: true}, function(stream) {
-	    	myStream = stream;
-	    	answerCallHelper(call);
-		}, function(err) {
-			console.log('Failed to get local stream' ,err);
-		});
+		getVoice(answerCallHelper(call));
 	}
 }
 
@@ -146,10 +142,9 @@ function answerCallHelper(call) {
 
 	console.log("outgoing stream id: " + myStream.id)
 	call.on('stream', function(remoteStream) {
+		console.log("incoming stream id: " + remoteStream.id)	
 
- 		console.log("incoming stream id: " + remoteStream.id)	
-		
-		addRemoteStream(remoteStream, call.peer);
+		establishCall(remoteStream, call.peer);
 	});
 
 	// used for onClose
@@ -157,10 +152,28 @@ function answerCallHelper(call) {
 
 	call.on('close', function() {
 		console.log("call closed");
-
-		// when a call closes, remove the corresponding stream
-		removeRemoteStream(call.peer);
+		destablishCall(call.peer);
 	});
+}
+
+// just calls addRemoteStream and plays the sound effect
+function establishCall(remoteStream, peer_id) {
+		
+	// add their stream
+	addRemoteStream(remoteStream, peer_id);
+
+	// play join room sound
+	document.getElementById('join_room_audio').play();
+}
+
+// just calls removeRemoteStream and plays the sound effect
+function destablishCall(peer_id) {
+
+	// remove their stream
+	removeRemoteStream(peer_id);
+
+	// play leave room sound
+	document.getElementById('leave_room_audio').play();
 }
 
 /*********************************************************************/
@@ -192,12 +205,6 @@ function joinRoomCall(currRoomCallID) {
 
 	        // set the onload function to use the new room id
 	        setOnBeforeUnload(currRoomCallID);
-
-	        // play join room sound
-	        document.getElementById('join_room_audio').volume = 0.4;
-			document.getElementById('join_room_audio').play();
-
-			showAlert("Voice connected", "alert-info");
 
 	        // if this is a lecture and I am the host, I am the lecturer
 	        isLecturer = (response.is_lecture && response.host_id == myID);
