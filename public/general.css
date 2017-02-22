@@ -23,8 +23,8 @@ a:hover {
 
 /* General: navbar-site */
 .navbar-site {
-  font-size: 1.8rem;
-  font-weight: 500;
+  font-size: 1.5rem;
+  font-weight: 600;
   height: 6rem;
   border: none;
   z-index: 100;
@@ -51,7 +51,7 @@ a:hover {
 }
 
 .navbar-site .nav-link {
-  padding: 0 1em;
+  padding: 0 1.5em;
   cursor: pointer;
   -webkit-transition: background 0.15s, color 0.15s;
   transition: background 0.15s, color 0.15s;
