@@ -208,6 +208,28 @@
           </tbody>
         </table>
       </div> 
+      <div class="container" ng-controller="blocker">
+      <!--
+        <input class="form-control" ng-model="user_preferences.school">
+        <button class="btn btn-primary" ng-click="addSchool()">Add School</button></th>
+        -->
+        <table class="table">
+          <thead>
+            <tr>
+              <th>Block User</th>
+              <th><input class="form-control" ng-model="block_user.name"></th>
+              <th><button class="btn btn-primary" ng-click="blockUser()">Block User</button></th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr ng-repeat="block_user in block_user_list">
+              <td></td>
+              <td>{{block_user.blocked_user_email}}</td>
+              <td><button class="btn btn-danger" ng-click="unblock(block_user._id)">Unblock</button></td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
     </aside>
 
     <!-- Create Room Modal -->
