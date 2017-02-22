@@ -184,7 +184,7 @@ html, body {
   width: 4rem;
   height: 4rem;
   border-radius: 50%;
-  border-style: double;
+  border-style: solid;
   background: white;
   display: inline-block;
   color: #00b9ff;
@@ -196,7 +196,7 @@ html, body {
   width: 4rem;
   height: 4rem;
   border-radius: 50%;
-  border-style: double;
+  border-style: solid;
   background: white;
   overflow: hidden;
   color: #00b9ff;
