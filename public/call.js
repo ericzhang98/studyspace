@@ -211,7 +211,7 @@ function joinRoomCall(currRoomCallID) {
 	        isLecturer = (response.is_lecture && response.host_id == myID);
 
 	        if (response.is_lecture) {
-	        	showAlert("lecture-alert", 6000);
+	        	showAlert("lecture-alert", 4000);
 	        }
 	        
 	        // if this is a lecture-style room and I am not the lecturer,

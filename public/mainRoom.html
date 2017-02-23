@@ -56,7 +56,7 @@
           <div id="user-info" class="container-info-user">
             <div class="container-user-icon" style='border: none;
   background-color: #38c9ff; color: #ffffff'>
-              <span>{{myName | limitTo:1}}</span>
+              <span ng-cloak>{{myName | limitTo:1}}</span>
             </div>
             <span class="user-name" style="color:#38c9ff">{{myName}}</span>
           </div>
@@ -111,11 +111,11 @@
         <!-- Main Content -->
         <main id="main" class="chat-room" role="main" ng-hide="!currRoomChatID">
           <!-- ROOM NAVBAR -->
-          <nav id="class-navigation" class="navbar navbar-room">
+          <nav id="class-navigation" class="navbar navbar-room" style="color: #ffffff; background-color: {{!currRoomChatID ? '' : (rooms[currRoomChatID].is_lecture ? '#e01f4f' : '#38c9ff')}}">
             <div class="container-fluid">
               <div class="navbar-header">
-                <span ng-cloak style="color: {{!currRoomChatID ? '' : (rooms[currRoomChatID].is_lecture ? '#e01f4f' : '')}}" class="navbar-brand">{{classes[rooms[currRoomChatID].class_id].name != "" ? 
-                  classes[rooms[currRoomChatID].class_id].name + " - ":""}}{{rooms[currRoomChatID].name}}{{rooms[currRoomChatID].is_lecture ? ' (cast)' : ''}}</span>
+                <span ng-cloak class="navbar-brand" >{{classes[rooms[currRoomChatID].class_id].name != "" ? 
+                  classes[rooms[currRoomChatID].class_id].name + (rooms[currRoomChatID].is_lecture ? ' (cast)' : '') + " - ":""}}{{rooms[currRoomChatID].name}}</span>
               </div>
               <ul class="nav navbar-nav navbar-right">
                 <li class="dropdown">
@@ -130,8 +130,8 @@
             </div>
           </nav>
 
-          <div ng-cloak ng-if="rooms[currRoomChatID].is_lecture">
-            <p>Hosted by {{rooms[currRoomChatID].host_name}}</p>
+          <div ng-cloak ng-if="rooms[currRoomChatID].is_lecture" style="color: #ffffff; background-color: #e01f4f">
+            <p hidden>Hosted by {{rooms[currRoomChatID].host_name}}</p>
           </div>
 
           <!-- MESSAGE PANE -->

@@ -1,5 +1,14 @@
 /* update.css */
 
+/* USE THESE WHEN UPDATING COLORS! FIND (curr_color), REPLACE ALL WITH (new_color)
+   DON'T REPLACE THE COLORS IN THIS SECTION!!! */
+/* primary-color: #38c9ff */ /* Main color for the site, used for selected */
+/* primary-color-light: #91e0ff */ /* Light version, used for hover */
+/* primary-color-dark: #00b9ff */ /* Dark version, used when shit needs to be dark */
+/* dark-color-dark: #262626 */ /* Our darker dark color */
+/* dark-color-light: #353535 */ /* Our lighter dark color */
+/* accent-color: #e01f4f */
+
 #buttons {
   margin: 8px auto;
   text-align: center;

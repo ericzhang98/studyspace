@@ -6,15 +6,6 @@ html, body {
   height: 100%;
 }
 
-/* USE THESE WHEN UPDATING COLORS! FIND (curr_color), REPLACE ALL WITH (new_color)
-   DON'T REPLACE THE COLORS IN THIS SECTION!!! */
-/* primary-color: #38c9ff */ /* Main color for the site, used for selected */
-/* primary-color-light: #91e0ff */ /* Light version, used for hover */
-/* primary-color-dark: #00b9ff */ /* Dark version, used when shit needs to be dark */
-/* dark-color-dark: #262626 */ /* Our darker dark color */
-/* dark-color-light: #353535 */ /* Our lighter dark color */
-/* accent-color: #e01f4f */
-
 .sidebar,
 .chat-room {
   position: absolute;
@@ -318,24 +309,6 @@ html, body {
 .md-autocomplete-suggestions-container {
   z-index: 1051 !important; /* lol xD */
 
-}
-
-/* More main styling */
-.btn-low-pri {
-  background-color: #262626;
-  color: gainsboro;
-  margin-left: 1.5rem;
-}
-.btn-low-pri:hover {
-  color: #91e0ff;
-} 
-
-.btn-hi-pri {
-  background-color: #38c9ff;
-}
-
-.btn-hi-pri:hover {
-  background-color: #00b9ff;
 }
 
 .primary-dark-text {

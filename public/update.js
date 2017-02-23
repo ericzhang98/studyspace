@@ -69,7 +69,7 @@ function autoCompleteController ($timeout, $q, $log, $http) {
         })
         classNames.sort();
         classNames.forEach(function(className, index) {
-            htmlString += '<div class="school-class"><button class="btn btn-danger">' 
+            htmlString += '<div class="school-class"><button class="btn btn-hi-pri">' 
             + className + '<span class="x-button" aria-hidden="true">&times;</span></button></div>';
         });
         $("#school-classes").html(htmlString);
