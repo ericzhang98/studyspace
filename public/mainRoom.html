@@ -148,7 +148,7 @@
                   <div class="dropdown">
 
                     <!-- Dropdown for non-me users -->
-                    <a ng-cloak ng-if="chatMessage.user_id != myID" class="user-name dropdown-toggle" data-toggle="dropdown" href="#" style="color:#e01f4f">{{chatMessage.name}} <span class="caret"></span></a>
+                    <a ng-cloak ng-if="chatMessage.user_id != myID" class="user-name dropdown-toggle" data-toggle="dropdown" href="#" style="color:#e01f4f">{{chatMessage.name.split(" ")[0] + " " + chatMessage.name.split(" ")[1][0]}} <span class="caret"></span></a>
                     <ul ng-if="chatMessage.user_id != myID" class="dropdown-menu">
                       <li><a href="#" onclick="toggleRemoteStreamAudioEnabled(chatMessage.user_id)">Mute</a></li>
                       <li><a href="#">Block</a></li>
@@ -156,7 +156,7 @@
                     </ul>
 
                     <!-- No dropdown if user is me -->
-                    <a ng-cloak ng-if="chatMessage.user_id == myID" class="user-name">{{chatMessage.name}}</a>
+                    <a ng-cloak ng-if="chatMessage.user_id == myID" class="user-name">{{chatMessage.name.split(" ")[0] + " " + chatMessage.name.split(" ")[1][0]}}</a>
 
                   </div>
                 <span ng-cloak  class="dateTime">{{timeAgo(chatMessage)}}</span>
