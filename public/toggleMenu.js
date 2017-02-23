@@ -25,6 +25,19 @@ $(document).ready(function() {
   $("#close-create-room").click(function() {
     closeModal("#modal-create-room", "#create-room");
   });
+
+  /* Add Class Modal */
+  $("#btn-add-class").click(function() {
+    $("#modal-add-class").fadeIn(100);
+    setTimeout(function() {
+      $("#add-class").removeClass("hide");
+      $("#add-class").addClass("fadeInBack");
+    }, 100);
+  });
+
+  $("#close-add-class").click(function() {
+    closeModal("#modal-add-class", "#add-class");
+  });
   
 });
 

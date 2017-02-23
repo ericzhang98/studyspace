@@ -312,6 +312,18 @@ html, body {
   }
 }
 
+/* Add Class Modal */
+.modal-add-class-content {
+  height: 50%;
+  width: 50%;
+}
+
+.md-autocomplete-suggestions-container {
+  z-index: 1051 !important; /* lol xD */
+
+}
+
+/* More main styling */
 .btn-low-pri {
   background-color: #262626;
   color: gainsboro;
