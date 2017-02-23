@@ -168,7 +168,6 @@ html, body {
 
 /* Classes Sidebar */
 .sidebar-left {
-  background: #8caacd;
   background-color: #353535;
   left: 0;
 }
@@ -246,7 +245,6 @@ html, body {
 }
 
 .container-menu-classes .container-title:hover {
-  color: white;
   color: #91e0ff;
 }
 
@@ -271,7 +269,6 @@ html, body {
 }
 
 .menu-classes .panel:hover .panel-heading {
-  background-color: #7a9dc5;
   background-color: #262626;
 }
 
@@ -279,10 +276,10 @@ html, body {
   padding-left: 2rem;
   background-color: #353535;
   color: white;
+  outline: 0 !important;
 }
 
 .menu-classes .panel>.panel-collapse>.list-group .list-group-item:hover {
-  background-color: #5783b6;
   background-color: #262626;
   color: #91e0ff;
 }
