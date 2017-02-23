@@ -809,7 +809,68 @@ myApp.controller("MainController", ["$scope", "$http",
 		// join the chat
 		joinRoomChat(dm_room_id);
 	};
-	
+
+/*********************************************************************/
+/**************************** BLOCK SYSTEM ***************************/
+
+  var blockedUsers = {};
+  
+  var getIdFromName = function(name, onResponseReceived){
+    var email = {"email": String(name)};
+    console.log(email);
+    $http.post('/get_Id_From_Name', email).then(function(response){
+			onResponseReceived(response.data);
+		});    
+  }
+  var refresh = function(){
+    $http.get('/get_blocked_users').then(function(response){
+			$scope.block_user_list = response.data;
+      console.log(response.data);
+      console.log(response.data.length);
+      console.log(response.data[0]);
+      if(!(response.data[0])){
+          return;
+      }
+      blockedUsers['user_id'] = response.data[0]['blocked_user_id'];
+      blockedUsers['blocked_user_list'] = [];
+      for (var i = 0; i < response.data.length; i++){
+        console.log("1");
+        var obj = response.data[i];
+        blockedUsers['blocked_user_list'].push(obj['blocked_user_id']);
+      }
+		});
+  }
+  var addBlock = function(blocked_user_id, blocked_user_email, onResponseReceived){
+    var data = {
+                "blocked_user_id": String(blocked_user_id),
+                "blocked_user_email": blocked_user_email
+               }; 
+               console.log("ADD");
+    $http.post('/add_blocked_user', data).then(function(response){
+			onResponseReceived(response.data);
+		});
+  };
+  $scope.unblock = function(id){
+    
+    console.log(id);
+    $http.delete('/remove_block/' + id).then(function(response){
+      refresh();
+    });
+  }
+  refresh();
+  $scope.blockUser = function(){
+    getIdFromName($scope.block_user.name, function(response){
+      console.log(response);
+      if(response){
+        console.log(response.user_id);
+        addBlock(response.user_id, response.email, function(response){
+          console.log("XX");
+          console.log(response);
+          refresh();
+        });
+      }
+    });
+  }
 }]);
 
 //helper directive for scrolling listener
