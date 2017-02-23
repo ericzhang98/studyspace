@@ -371,4 +371,5 @@ html, body {
   left: 35%;
   background-color: #e01f4f;
   color: #ffffff ;
+  z-index: 2;
 }

@@ -103,7 +103,7 @@
           </div>
         </aside> <!-- END LEFT SIDEBAR -->
 
-        <div id="main-initial" class="chat-room" role="main" ng-hide="currRoomChatID" style="position:relative; height:100%; z-index:10; background-color: #ffffff">
+        <div id="main-initial" class="chat-room" role="main" ng-hide="currRoomChatID" style="position:relative; height:100%; z-index:1; background-color: #ffffff">
           <p class="text-center" style="color: #38c9ff; font-size: 4rem; font-weight: 500; 
           position:absolute; top: 40%; left:38%; width:20%; height: 20%">studyspace</p>
         </div>
@@ -181,7 +181,7 @@
                   </button>
                   <button class="btn text-center" type="button" ng-click="leaveRoom()">LeaveRoom</button>
                 </span>
-                <input type="text" class="form-control input-message" id="chatInputBox" 
+                <input ng-cloak type="text" class="form-control input-message" id="chatInputBox" 
                        ng-model="chatInput" placeholder="Type a message..." autocomplete="off">
               </div>
             </form>
@@ -190,7 +190,7 @@
         </main>   
 
         <!-- Classmates Sidebar -->
-        <aside id="classmates-sidebar" class="sidebar sidebar-right" role="complementary" hidden>
+        <aside id="classmates-sidebar" class="sidebar sidebar-right" role="complementary">
           <h3>Buddies</h3>   
           <div class="container-search">
             <input class="form-control" ng-model="friend.name">
