@@ -24,7 +24,7 @@ getVoice();
 function getVoice(callback) {
 	navigator.getUserMedia({video: false, audio: true}, function(stream) {
 		myStream = stream;
-		showAlert("voice-connect-alert", 4000);
+		showAlert("voice-connect-alert", 3000);
 		if (callback) {
 			callback();
 		}
