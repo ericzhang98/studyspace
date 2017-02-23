@@ -1,14 +1,32 @@
 /* General CSS File Across All Pages */
+:root {
+  --primary-color: #38c9ff;
+  --primary-color-light: #91e0ff;
+  --primary-color-dark: #00b9ff;
+  --dark-color-dark: #262626;
+  --dark-color-light: #353535;
+  --accent-color: #ffbb00;
+}
+/******************************* THEMES ******************************/
 
-/* USE THESE WHEN UPDATING COLORS! FIND (curr_color), REPLACE ALL WITH (new_color)
-   DON'T REPLACE THE COLORS IN THIS SECTION!!! */
-/* primary-color: #38c9ff */ /* Main color for the site, used for selected */
-/* primary-color-light: #91e0ff */ /* Light version, used for hover */
-/* primary-color-dark: #00b9ff */ /* Dark version, used when shit needs to be dark */
-/* dark-color-dark: #262626 */ /* Our darker dark color */
-/* dark-color-light: #353535 */ /* Our lighter dark color */
-/* accent-color: #e01f4f */
-/* accent-color-dark: #d80237; */
+/* PRIMARY */
+
+/************ BLUE THEME ****************/
+/* primary-color: #38c9ff */ 
+/* primary-color-light: #91e0ff */ 
+/* primary-color-dark: var(--primary-color-dark) */
+/****************************************/
+
+/* DARKS */
+/* dark-color-dark: var(--dark-color-dark) */
+/* dark-color-light: var(--dark-color-light) */
+
+/* ACCENTS */
+/* accent-color: #e01f4f pink-red   */
+/* accent-color: #00ed43 green      */
+/* accent-color: #ffbb00 yellow     */
+/*********************************************************************/
+
 
 /* General */
 body {
@@ -344,16 +362,16 @@ a:hover {
 /* More main styling */
 
 .primary-dark-text {
-  color: #00b9ff;
+  color: var(--primary-color-dark);
 }
 
 .btn-low-pri {
-  background-color: #262626;
+  background-color: var(--dark-color-dark);
   color: gainsboro;
   margin-left: 1.5rem;
 }
 .btn-low-pri:hover {
-  color: #91e0ff;
+  color: var(--primary-color-light);
 }
 
 .btn-hi-pri {
@@ -362,14 +380,10 @@ a:hover {
 }
 
 .btn-hi-pri:hover {
-  background-color: #00b9ff;
+  background-color: var(--primary-color-dark);
 }
 
 .btn-cancel {
   background-color: #e01f4f;
   color: #ffffff;
 }
-.btn-cancel:hover {
-  background-color: #d80237
-}
-

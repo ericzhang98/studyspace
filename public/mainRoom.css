@@ -95,7 +95,7 @@ html, body {
 }
 
 .message-header .dropdown .user-name {
-  color: #38c9ff;
+  color: var(--primary-color);
   font-size: 1.5rem;
   font-weight: 500;
 }
@@ -232,7 +232,7 @@ html, body {
   padding: 1rem 1.5rem;
   background-color: transparent;
   width: 100%;
-  color: #38c9ff;
+  color: var(--primary-color);
 }
 
 .container-menu-classes .container-title:hover {
@@ -338,7 +338,7 @@ html, body {
   width: 30%;
   top: 80%;
   left: 35%;
-  background-color: #e01f4f;
+  background-color: var(--accent-color);
   color: #ffffff ;
   z-index: 2;
 }
