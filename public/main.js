@@ -10,6 +10,8 @@ var ordisms = ["Keep it simple, students.", "Start early, start often!",
 "If a simple boy from the midwest can do it, so can you.", "Think like a compiler."];
 
 var currSongAudio = null;
+document.getElementById('join_room_audio').volume = 0.4;
+document.getElementById('leave_room_audio').volume = 0.4;
 /**************************************************/
 
 /******************************** MODEL ******************************/
@@ -40,6 +42,19 @@ function logOut() {
 	document.location.href = "/";
 }
 
+/*********************************************************************/
+/********************************* MISC ******************************/
+
+function showAlert(message, alerttype) {
+	$('#voice-connect-alert').show();
+
+	setTimeout(function() { // this will automatically close the alert and remove this if the users doesnt close it in 5 secs
+
+		$('#voice-connect-alert').alert('close')
+
+	}, 2300);
+	
+}
 /*********************************************************************/
 /***************************** EASTER EGGS ***************************/
 

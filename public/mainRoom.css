@@ -6,6 +6,15 @@ html, body {
   height: 100%;
 }
 
+/* USE THESE WHEN UPDATING COLORS! FIND (curr_color), REPLACE ALL WITH (new_color)
+   DON'T REPLACE THE COLORS IN THIS SECTION!!! */
+/* primary-color: #38c9ff */ /* Main color for the site, used for selected */
+/* primary-color-light: #91e0ff */ /* Light version, used for hover */
+/* primary-color-dark: #00b9ff */ /* Dark version, used when shit needs to be dark */
+/* dark-color-dark: #262626 */ /* Our darker dark color */
+/* dark-color-light: #353535 */ /* Our lighter dark color */
+/* accent-color: #e01f4f */
+
 .sidebar,
 .chat-room {
   position: absolute;
@@ -34,7 +43,11 @@ html, body {
   border-radius: 0;
   height: 5rem;
   font-weight: 600;
-  color: #337ab7;
+  color: #00b9ff;
+}
+
+.dropdown-toggle {
+  color: inherit;
 }
 
 .navbar-room .navbar-brand {
@@ -44,17 +57,23 @@ html, body {
 .message-pane {
   position: relative;
   height: calc(100% - 5rem);
-  background-color: black;
+  background-color: #262626;
   overflow-x: hidden;
   border-style: hidden;
   word-wrap: break-word;
   padding-top: 3rem;
   padding-bottom: 10rem;
-  padding-left: 3rem;
-  padding-right: 3rem;
+  padding-left: 2rem;
+  padding-right: 2rem;
 }
 
 .message-pane .message {
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-pack: justify;
+  -ms-flex-pack: justify;
+  justify-content: space-between;
   padding-left: 0;
   list-style: none;
   padding-top: 1.5rem;
@@ -67,7 +86,11 @@ html, body {
   border-bottom: none;
 }
 
-.message .message-header {
+.message .message-content {
+  width: calc(100% - 6rem);
+}
+
+.message-content .message-header {
   display: -webkit-box;
   display: -ms-flexbox;
   display: flex;
@@ -80,10 +103,10 @@ html, body {
   text-align: justify;
 }
 
-.message-header .user-name {
-  color: white;
-  font-size: 1.6rem;
-  padding-left: 0.5rem;
+.message-header .dropdown .user-name {
+  color: #38c9ff;
+  font-size: 1.5rem;
+  font-weight: 500;
 }
 
 .message-header .dateTime {
@@ -91,13 +114,12 @@ html, body {
   color: gainsboro;
 }
 
-.message .message-body {
+.message-content .message-body {
   white-space: pre-wrap;
-  color: powderblue;
+  color: white;
   font-size: 1.5rem;
   margin-bottom: 0;
-  padding-top: 0.5rem;
-  padding-left: 5rem;
+  padding-top: 0.2rem;
 }
 
 .form-message-container {
@@ -106,7 +128,7 @@ html, body {
   bottom: 2rem;
   left: 2rem;
   right: 2rem;
-  height: 5rem;
+  height: 4.5rem;
   border-radius: 0.5rem;
 }
 
@@ -119,14 +141,15 @@ html, body {
 }
 
 .input-group .btn-mute {
-  width: 5rem;
-  height: 5rem;
+  width: 4.5rem;
+  height: 4.5rem;
   border: solid 2px #eeeeee;
   background-color: white;
 }
 
 .input-group .btn-mute .glyphicon {
   margin-right: -0.4rem;
+  margin-top: 0.2rem;
   font-size: 2rem;
 }
 
@@ -146,6 +169,7 @@ html, body {
 /* Classes Sidebar */
 .sidebar-left {
   background: #8caacd;
+  background-color: #353535;
   left: 0;
 }
 
@@ -157,39 +181,34 @@ html, body {
   -ms-flex-align: center;
   align-items: center;
   height: auto;
-  padding-top: 2rem;
-  padding-bottom: 2rem;
+  padding-top: 1.5rem;
+  padding-bottom: 1.5rem;
   margin-left: 1.5rem;
   margin-right: 1.5rem;
-  border-bottom: solid 2px #000000;
-}
-
-.container-message-icon {
-  position: relative;
-  top: 1.5rem;
-  text-align: center;
-  font-size: 2.5rem;
-  width: 4rem;
-  height: 4rem;
-  border-radius: 50%;
-  border-style: double;
-  background: gainsboro;
-  display: inline-block;
+  border-bottom: solid 0px #000000;
 }
 
 .container-user-icon {
-  text-align: center;
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-align: center;
+  -ms-flex-align: center;
+  align-items: center;
+  -webkit-justify-content: center;
+  -ms-flex-pack: center;
+  justify-content: center;
   font-size: 2.5rem;
   width: 4rem;
   height: 4rem;
   border-radius: 50%;
-  border-style: double;
+  border: solid 2px #00b9ff;
+  color: #00b9ff;
   background: white;
   overflow: hidden;
 }
 
 .container-info-user .container-user-icon {
-  display: inline-block;
   margin-right: 1rem;
 }
 
@@ -200,7 +219,7 @@ html, body {
 }
 
 .container-info-user .user-name {
-  font-weight: 600;
+  font-weight: 500;
   font-size: 1.8rem;
 }
 
@@ -223,10 +242,12 @@ html, body {
   padding: 1rem 1.5rem;
   background-color: transparent;
   width: 100%;
+  color: #38c9ff;
 }
 
 .container-menu-classes .container-title:hover {
   color: white;
+  color: #91e0ff;
 }
 
 .container-menu-classes .container-title .title {
@@ -240,31 +261,30 @@ html, body {
   background-color: inherit;
 }
 
-.menu-classes .panel .panel-heading {
-  -webkit-transition: background 0.15s, color 0.15s;
-  transition: background 0.15s, color 0.15s;
-}
-
 .menu-classes .panel .panel-title {
   font-size: 1.5rem;
-  font-weight: 600;
+  color: white;
+}
+
+.menu-classes .panel .panel-title:hover {
+  color: #91e0ff;
 }
 
 .menu-classes .panel:hover .panel-heading {
   background-color: #7a9dc5;
-  color: white;
+  background-color: #262626;
 }
 
 .menu-classes .panel>.panel-collapse>.list-group .list-group-item {
-  background-color: #6890be;
-  -webkit-transition: background 0.15s, color 0.15s;
-  transition: background 0.15s, color 0.15s;
-  padding-left: 3rem;
-  font-weight: 500;
+  padding-left: 2rem;
+  background-color: #353535;
+  color: white;
 }
 
 .menu-classes .panel>.panel-collapse>.list-group .list-group-item:hover {
   background-color: #5783b6;
+  background-color: #262626;
+  color: #91e0ff;
 }
 
 /* Classmates Sidebar */
@@ -293,12 +313,65 @@ html, body {
 }
 
 /* Add Class Modal */
-
 .modal-add-class-content {
   height: 50%;
   width: 50%;
 }
 
 .md-autocomplete-suggestions-container {
-  z-index: 1051 !important; /* leet hack xD */
+  z-index: 1051 !important; /* lol xD */
+
+}
+
+/* More main styling */
+.btn-low-pri {
+  background-color: #262626;
+  color: gainsboro;
+  margin-left: 1.5rem;
+}
+.btn-low-pri:hover {
+  color: #91e0ff;
+} 
+
+.btn-hi-pri {
+  background-color: #38c9ff;
+}
+
+.btn-hi-pri:hover {
+  background-color: #00b9ff;
+}
+
+.primary-dark-text {
+  color: #00b9ff;
+}
+
+.room-name-span {
+  /*display: block; 
+  width: 200px; 
+  overflow: hidden; 
+  word-wrap: break-word; 
+  white-space: nowrap*/
+}
+
+#overlay {
+  width: 100%;
+  height: 100%;
+  position: relative;
+}
+
+#layer1 {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: inherit;
+  height: inherit;
+}
+
+#voice-connect-alert {
+  position: absolute;
+  width: 30%;
+  top: 80%;
+  left: 35%;
+  background-color: #ffffff;
+  color: #38c9ff ;
 }

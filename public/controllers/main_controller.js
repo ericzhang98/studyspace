@@ -15,6 +15,7 @@ myApp.controller("MainController", ["$scope", "$http",
 			console.log("Hell yeah");
 
 			// general vars
+			$scope.myID = getSignedCookie("user_id");
 			$scope.currRoomCallID = null;
 			$scope.currRoomChatID = null;
 
@@ -32,23 +33,27 @@ myApp.controller("MainController", ["$scope", "$http",
 /************************* JOINING A CHATROOM ************************/
 
 			// Join a room's chat
-			function joinRoomChat() {
+			function joinRoomChat(room_id) {
 
-				// turn off any pre-existing listeners and control vars
-				if (chatDatabase != null) {
-					chatDatabase.off();
+				if ($scope.currRoomChatID != room_id) {
+					$scope.currRoomChatID = room_id;
+
+					// turn off any pre-existing listeners and control vars
+					if (chatDatabase != null) {
+						chatDatabase.off();
+					}
+
+					lastKey = null;
+					scrollLock = false;
+
+					// empty our message list in logic and UI
+					chatMessageList = [];
+					updateChatView();
+
+					// set up and start new listener
+					chatDatabase = databaseRef.child("RoomMessages").child($scope.currRoomChatID);
+					startChatMessages();
 				}
-
-				lastKey = null;
-				scrollLock = false;
-
-				// empty our message list in logic and UI
-				chatMessageList = [];
-				updateChatView();
-
-				// set up and start new listener
-				chatDatabase = databaseRef.child("RoomMessages").child($scope.currRoomChatID);
-				startChatMessages();
 			}
 
 /*********************************************************************/
@@ -323,8 +328,8 @@ myApp.controller("MainController", ["$scope", "$http",
 			}
 
 			// if room_name is empty do nothing
-			if (room_name.length == 0 || room_name.length > 25) {
-				console.log("room name must be between 1 and 25 characters");
+			if (room_name.length == 0) {
+				console.log("room name must be between 1 and 28 characters");
 				// TODO: error message
 				return;
 			}
@@ -386,14 +391,20 @@ myApp.controller("MainController", ["$scope", "$http",
       	if (!currPing) {
      	   pingUserActivity(true);
         }
-		}
-
-			// if we're not already in this room's chat
-			if ($scope.currRoomChatID != room_id) {
-				$scope.currRoomChatID = room_id;
-				joinRoomChat();
 			}
+
+			// join this room's chat
+			joinRoomChat(room_id);
+
 		};
+
+		$scope.leaveRoom = function() {
+
+			leaveRoom($scope.currRoomCallID);
+
+			$scope.currRoomCallID = null;
+			$scope.currRoomChatID = null;
+		}
 
     function pingUserActivity(constant) {
       var xhr = new XMLHttpRequest();
@@ -404,14 +415,17 @@ myApp.controller("MainController", ["$scope", "$http",
       }
     }
 
+    // Sidebar setup, makes sure that at most one class is open at a time
+    var $myGroup = $('#classes');
+    $myGroup.on('show.bs.collapse','.collapse', function() {
+    	$myGroup.find('.collapse.in').collapse('hide');
+		});
+
     function adjustSidebarToggle(class_id) {
 			$scope.my_class_ids.forEach(function(my_class_id) {
 
 				if (my_class_id == class_id && $("#" + my_class_id).is(":hidden")) {
-					$('#' + my_class_id).collapse('toggle');
-				}
-
-				else if (my_class_id != class_id && $("#" + my_class_id).is(":visible")) {
+					//console.log("class with id " + my_class_id + " being set to visible");
 					$('#' + my_class_id).collapse('toggle');
 				}
 			});
@@ -538,7 +552,17 @@ myApp.controller("MainController", ["$scope", "$http",
 
 						// update the UI
 						console.log("applying in get room, room name is : " + $scope.rooms[room_id].name);
-						$scope.$apply();
+
+						$scope.$apply(function() {/*
+							var item = (document.getElementById(room_id));
+							if (item.scrollWidth >  item.width) {
+					    	console.log("overflow for " + room_id + ", scroll width: " + item.scrollWidth + 
+					    	", innerWidth: " + item.width);
+							} else {
+								console.log("no overflow for " + room_id + ", scroll width: " + item.scrollWidth + 
+					    	", innerWidth: " + item.width);
+							}*/
+						});
 					}
 				});
 		}
@@ -580,6 +604,47 @@ myApp.controller("MainController", ["$scope", "$http",
 
 				room.has_tutor = has_tutor;
 				$scope.classes[room.class_id].has_tutor = has_tutor;
+			}
+		}
+
+		// slightly jank
+		$scope.getStringToFit = function(room_name) {
+			return room_name;
+			if (!room_name) {
+				return "";
+			}
+			var space_left = 26;
+			var new_string = "";
+			var long_char = ["m", "w"];
+			var mid_char = ["a", "b", "c", "d", "e", "g", "h", "k", "n", "o", "p", "q", "s", "u", "v", "x", "y", "z"];
+			var short_char = ["f", "i","j", "l", "r", "t"];
+			for (var i = 0; i < room_name.length; i++) {
+
+				var c = room_name[i];
+
+				var len;
+				if (short_char.indexOf(c) != -1) {
+					len = 1;
+				}
+				else if (long_char.indexOf(c) != -1) {
+					len = 2.2;
+				}
+				else {
+					len = 1.8;
+				}
+				if (space_left > len) {
+					space_left -= len;
+					new_string += c;
+				}
+				else {
+					break;
+				}
+			}
+
+			if (new_string == room_name) {
+				return new_string;
+			} else {
+				return new_string + "...";
 			}
 		}
 
@@ -716,7 +781,7 @@ myApp.controller("MainController", ["$scope", "$http",
 		});    
 	};
 	
-	$scope.openDM = function(other_user_id){
+	$scope.openDM = function(other_user_id, other_user_name){
 
 		// the room_id of DM's between id's "aaa" and "bbb"
 		// will be "bbbaaa"
@@ -732,179 +797,244 @@ myApp.controller("MainController", ["$scope", "$http",
 
 		console.log("entering dm room with id: " + dm_room_id);
 
-		// set the current room id to the dm room id
-		$scope.currRoomChatID = dm_room_id;
+		// set up dummy class/room
 		$scope.classes["dm_class_id"] = {
-			"name" : "Messages"
+			"name" : ""
 		}
 		$scope.rooms[dm_room_id] = {
-			"name" : "other user name here (will use Gates's method, let's go Gates)",
+			"name" : other_user_name,
 			"class_id" : "dm_class_id"
 		}
-		joinRoomChat();
+
+		// join the chat
+		joinRoomChat(dm_room_id);
 	};
 
 
 
-  //add classes autocomplete
+  /* Add classes autocomplete modal ---------------------------------------*/
+  var userClasses = []; // list of class_ids of classes user is enrolled in
+  var allClassesNameToID = {}; // name: class_id dictionary for all available classes
 
+  // Send requests to populate the two fields above
+  getAllClasses();
 
+  // list of states to be displayed
+  this.querySearch = querySearch;
 
-    var userClasses = []; // list of class_ids of classes user is enrolled in
-    var allClassesNameToID = {}; // name: class_id dictionary for all available classes
+  // If enter is pressed inside the dropdown
+  $("#class-dropdown").keypress(function(event) {
+      if(event.which == 13) {
 
-    // Send requests to populate the two fields above
-    getAllClasses();
+          var className = $("#input-0").val().toUpperCase();
 
-    // list of states to be displayed
-    this.querySearch = querySearch;
+          if (verifyClass(className)) {
 
-    // If enter is pressed inside the dropdown
-    $("#class-dropdown").keypress(function(event) {
-        if(event.which == 13) {
+              var class_id = allClassesNameToID[className];
+              // Make sure the user isn't already in the class
+              if($.inArray(class_id, userClasses) == -1) {
+                  console.log("ADD " + class_id)
+                  addClass(class_id);
+              } else {
+                  console.log("already in class with name " + className + " and id " + class_id);
+              }
+          }
+          else {
+              console.log("could not verify class with name " + className + " and id " + class_id);
+          }
+      }
+  });
+  $("#cancel-button").click(cancelChanges)
 
-            var className = $("#input-0").val().toUpperCase();
+  // adds classID to list of user's classes and updates the UI to reflect this
+  function addClass(classID) {
+      console.log("adding class with ID " + classID);
+      userClasses.push(classID);
+      displayClasses(userClasses);
+  }
 
-            if (verifyClass(className)) {
+  // return to main
+  function cancelChanges() {
+      document.location.href = "/";
+  }
 
-                var class_id = allClassesNameToID[className];
-                // Make sure the user isn't already in the class
-                if($.inArray(class_id, userClasses) == -1) {
-                    console.log("ADD " + class_id)
-                    addClass(class_id);
-                } else {
-                    console.log("already in class with name " + className + " and id " + class_id);
-                }
-            }
-            else {
-                console.log("could not verify class with name " + className + " and id " + class_id);
-            }
+  // filter function for search query
+  function createFilterFor(query) {
+      var uppercaseQuery = query.toUpperCase();
+      return function filterFn(thisClass) {
+          return (thisClass.toUpperCase().indexOf(uppercaseQuery) === 0);
+      };
+  }
+
+  // updates UI to display currently enrolled classes
+  function displayClasses() {
+      var htmlString = "";
+      var classNames = new Array();
+      userClasses.forEach(function(class_id, index) {
+          classNames.push(getNameOfClass(class_id))
+      })
+      classNames.sort();
+      classNames.forEach(function(className, index) {
+          htmlString += '<div class="school-class"><button class="btn btn-danger">' 
+          + className + '<span class="x-button" aria-hidden="true">&times;</span></button></div>';
+      });
+      $("#school-classes").html(htmlString);
+
+      // Add a listener to the new html
+      $(".school-class").each(function(index, element) {
+          $(this).click(function() {
+              removeClass(userClasses[index]);
+          })
+      });
+  }
+
+  // returns name of class given class_id
+  function getNameOfClass(class_id) {
+      for (var name in allClassesNameToID) {
+          if (allClassesNameToID[name] == class_id) {
+              return name;
+          }
+      }
+  }
+
+  // populates the allClassesNameToID dictionary with all available classes
+  function getAllClasses() {
+      console.log("Getting all classes...")
+      var xhr = new XMLHttpRequest();
+      xhr.open('GET', "/get_all_classes", true); // responds with class_ids
+      xhr.send();
+
+      // once we have the user's classes
+      xhr.onreadystatechange = function(e) {
+        if (xhr.readyState == 4 && xhr.status == 200) {
+          var response = JSON.parse(xhr.responseText);
+
+          // populate the classes dictionary
+          for (var i = 0; i < response.length; i++) {
+              var classObj = response[i];
+              allClassesNameToID[classObj.name] = classObj.class_id;
+          }
+
+          // get my classes
+          getUserClasses();
         }
-    });
-    $("#cancel-button").click(cancelChanges)
+      }
+  }
 
-    // adds classID to list of user's classes and updates the UI to reflect this
-    function addClass(classID) {
-        console.log("adding class with ID " + classID);
-        userClasses.push(classID);
-        displayClasses(userClasses);
-    }
+  // populates userClasses list with ids of all classes they are enrolled in
+  // calls displayClasses afterward to reflect changes
+  function getUserClasses() {
 
-    // return to main
-    function cancelChanges() {
-        document.location.href = "/";
-    }
+      console.log("Getting my classes...")
+      var xhr = new XMLHttpRequest();
+      xhr.open('GET', "/get_my_classes", true); // responds with class_ids
+      xhr.send();
 
-    // filter function for search query
-    function createFilterFor(query) {
-        var uppercaseQuery = query.toUpperCase();
-        return function filterFn(thisClass) {
-            return (thisClass.toUpperCase().indexOf(uppercaseQuery) === 0);
-        };
-    }
+      // once we have the user's classes
+      xhr.onreadystatechange = function(e) {
+        if (xhr.readyState == 4 && xhr.status == 200) {
+          var response = JSON.parse(xhr.responseText);
 
-    // updates UI to display currently enrolled classes
-    function displayClasses() {
-        var htmlString = "";
-        var classNames = new Array();
-        userClasses.forEach(function(class_id, index) {
-            classNames.push(getNameOfClass(class_id))
-        })
-        classNames.sort();
-        classNames.forEach(function(className, index) {
-            htmlString += '<div class="school-class"><button class="btn btn-danger">' 
-            + className + '<span class="x-button" aria-hidden="true">&times;</span></button></div>';
-        });
-        $("#school-classes").html(htmlString);
+          if (response.class_ids != null) {
 
-        // Add a listener to the new html
-        $(".school-class").each(function(index, element) {
-            $(this).click(function() {
-                removeClass(userClasses[index]);
-            })
-        });
-    }
-
-    // returns name of class given class_id
-    function getNameOfClass(class_id) {
-        for (var name in allClassesNameToID) {
-            if (allClassesNameToID[name] == class_id) {
-                return name;
-            }
-        }
-    }
-
-    // populates the allClassesNameToID dictionary with all available classes
-    function getAllClasses() {
-        console.log("Getting all classes...")
-        var xhr = new XMLHttpRequest();
-        xhr.open('GET', "/get_all_classes", true); // responds with class_ids
-        xhr.send();
-
-        // once we have the user's classes
-        xhr.onreadystatechange = function(e) {
-          if (xhr.readyState == 4 && xhr.status == 200) {
-            var response = JSON.parse(xhr.responseText);
-
-            // populate the classes dictionary
-            for (var i = 0; i < response.length; i++) {
-                var classObj = response[i];
-                allClassesNameToID[classObj.name] = classObj.class_id;
-            }
-
-            // get my classes
-            getUserClasses();
+              // set userClasses to equal this list
+              userClasses = response.class_ids;
+              
+              // update the UI
+              displayClasses();
           }
         }
-    }
+      }
+  }
 
-    // populates userClasses list with ids of all classes they are enrolled in
-    // calls displayClasses afterward to reflect changes
-    function getUserClasses() {
+  function querySearch (query) {
+      return query ? Object.keys(allClassesNameToID).filter(createFilterFor(query)) : [];
+  }
 
-        console.log("Getting my classes...")
-        var xhr = new XMLHttpRequest();
-        xhr.open('GET', "/get_my_classes", true); // responds with class_ids
-        xhr.send();
+  function removeClass(className) {
+      var index = $.inArray(className, userClasses);
+      console.log("Removing index " + index);
+      if(index == -1) {
+          console.log("Cannot remove class, className " + className + " not found!")
+      }
+      userClasses.splice(index, 1);
+      displayClasses(userClasses);
+  }
 
-        // once we have the user's classes
-        xhr.onreadystatechange = function(e) {
-          if (xhr.readyState == 4 && xhr.status == 200) {
-            var response = JSON.parse(xhr.responseText);
-
-            if (response.class_ids != null) {
-
-                // set userClasses to equal this list
-                userClasses = response.class_ids;
-                
-                // update the UI
-                displayClasses();
-            }
-          }
-        }
-    }
-
-    function querySearch (query) {
-        return query ? Object.keys(allClassesNameToID).filter(createFilterFor(query)) : [];
-    }
-
-    function removeClass(className) {
-        var index = $.inArray(className, userClasses);
-        console.log("Removing index " + index);
-        if(index == -1) {
-            console.log("Cannot remove class, className " + className + " not found!")
-        }
-        userClasses.splice(index, 1);
-        displayClasses(userClasses);
-    }
-
-    function verifyClass(className) {
-        console.log("verifying " + className);
-        var returnVal = $.inArray(className, Object.keys(allClassesNameToID).map(function(x){ return x.toUpperCase() }));
-        return returnVal > -1;
-    }
+  function verifyClass(className) {
+      console.log("verifying " + className);
+      var returnVal = $.inArray(className, Object.keys(allClassesNameToID).map(function(x){ return x.toUpperCase() }));
+      return returnVal > -1;
+  }
+  /*---------------------------------------------------------------------------*/
 
 	
+
+/*********************************************************************/
+/**************************** BLOCK SYSTEM ***************************/
+
+  var blockedUsers = {};
+  
+  var getIdFromName = function(name, onResponseReceived){
+    var email = {"email": String(name)};
+    console.log(email);
+    $http.post('/get_Id_From_Name', email).then(function(response){
+			onResponseReceived(response.data);
+		});    
+  }
+  var refresh = function(){
+    $http.get('/get_blocked_users').then(function(response){
+			$scope.block_user_list = response.data;
+      console.log(response.data);
+      console.log(response.data.length);
+      console.log(response.data[0]);
+      if(!(response.data[0])){
+          return;
+      }
+      blockedUsers['user_id'] = response.data[0]['blocked_user_id'];
+      blockedUsers['blocked_user_list'] = [];
+      for (var i = 0; i < response.data.length; i++){
+        console.log("1");
+        var obj = response.data[i];
+        blockedUsers['blocked_user_list'].push(obj['blocked_user_id']);
+      }
+		});
+  }
+  var addBlock = function(blocked_user_id, blocked_user_email, onResponseReceived){
+    var data = {
+                "blocked_user_id": String(blocked_user_id),
+                "blocked_user_email": blocked_user_email
+               }; 
+               console.log("ADD");
+    $http.post('/add_blocked_user', data).then(function(response){
+			onResponseReceived(response.data);
+		});
+  };
+  $scope.unblock = function(id){
+    
+    console.log(id);
+    $http.delete('/remove_block/' + id).then(function(response){
+      refresh();
+    });
+  }
+  refresh();
+  $scope.blockUser = function(){
+    getIdFromName($scope.block_user.name, function(response){
+      console.log(response);
+      if(response){
+        console.log(response.user_id);
+        addBlock(response.user_id, response.email, function(response){
+          console.log("XX");
+          console.log(response);
+          refresh();
+        });
+      }
+    });
+  }
+
+
+
+
 }]);
 
 //helper directive for scrolling listener
