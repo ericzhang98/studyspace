@@ -6,6 +6,8 @@ myApp.controller("SignUpController", ["$scope", "$http",
       /* Sign Up Error Checking */
       $scope.signup = function(firstName, lastName, email, password, confirmPassword) {
 
+        console.log("checking input");
+
         // Name Check
         if (firstName) {
           $scope.firstNameMessage = "";
@@ -20,16 +22,6 @@ myApp.controller("SignUpController", ["$scope", "$http",
         else {
           $scope.lastNameMessage = "(Field Required)";
         }
-
-        // School Check
-        /*
-        if (school) {
-          $scope.schoolMessage = "";
-        }
-        else {
-          $scope.schoolMessage = "(Field Required)";
-        }
-        */
 
         // Email Check
         if (email) {
@@ -51,11 +43,12 @@ myApp.controller("SignUpController", ["$scope", "$http",
         // Password Input Check
         if (password && confirmPassword) {
           if (password.length >= 6) {
-            if (password === confirmPassword) {
-              if (name && school && email ) {
+            if (password == confirmPassword) {
+              if (firstName && lastName && email ) {
+                console.log("lul");
                 console.log(Sha1.hash(password));
                 var name = firstName + " " + lastName;
-                var newUser = new User(email, Sha1.hash(password), name, school);
+                var newUser = new User(email, Sha1.hash(password), name);
                 console.log("Attempting signup with:");
                 console.log(newUser);
                 postSignupInfo(newUser);
@@ -71,6 +64,7 @@ myApp.controller("SignUpController", ["$scope", "$http",
             $scope.confirmMessage  = "";
           }
         }
+
         else { // Only one of the fields exists
           $scope.passwordMessage = "(Passwords don't match)";
           $scope.confirmMessage  = "(Passwords don't match)";
@@ -83,10 +77,10 @@ myApp.controller("SignUpController", ["$scope", "$http",
             console.log("Create success!");
             document.location.href = "/";
           }
+
           else {
             console.log("Failed!");
             $scope.emailMessage = "(Account already exists)";
-
             $scope.firstNameMessage = "";
             $scope.lastNameMessage  = "";
             $scope.schoolMessage    = "";
@@ -96,7 +90,7 @@ myApp.controller("SignUpController", ["$scope", "$http",
         });
       }
 
-      function User(email, password, name, school) {
+      function User(email, password, name, school="UCSD") {
         //this._id = whatever mongo gives us
         this.email    = email;
         this.password = password;
@@ -105,6 +99,4 @@ myApp.controller("SignUpController", ["$scope", "$http",
         this.token    = "dank"; //generateToken();
         this.active   = true;   //has verified email
       }
-
-
     }]);

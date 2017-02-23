@@ -673,8 +673,9 @@ myApp.controller("MainController", ["$scope", "$http",
 	var getBuddies = function(onResponseReceived){
 		var data = {"user_one_id":"user_id goes here"};
 		$http.post('/get_added_buddies', data).then(function(response){
-				console.log(response.data[0]['buddies']);
+			if (response.data[0]) {
 				return onResponseReceived(response.data[0]['buddies']);
+			}
 		});
 	};
 	

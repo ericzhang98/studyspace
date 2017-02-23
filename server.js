@@ -353,7 +353,7 @@ app.get('/get_class/:class_id', function(req, res) {
 /*************************************************************************************/
 /*************************************** ROOMS ***************************************/
 
-app.get('/add_room/:class_id/:room_name/:is_lecture/:time_created', function(req, res) {
+app.get('/add_room/:class_id/:room_name/:is_lecture/:time_created/:host_name', function(req, res) {
   var host_id = req.signedCookies.user_id;
   if (!host_id) {
     res.send({error: "invalid_user_id"});
@@ -364,6 +364,7 @@ app.get('/add_room/:class_id/:room_name/:is_lecture/:time_created', function(req
   var room_name = req.params.room_name;
   var is_lecture = req.params.is_lecture == "true";
   var time_created = parseInt(req.params.time_created);
+  var host_name = req.params.host_name;
 
   // error checking
   db.classes.findOne({class_id: class_id}, function (err, doc) {
@@ -379,7 +380,7 @@ app.get('/add_room/:class_id/:room_name/:is_lecture/:time_created', function(req
 
       // add the room
       addRoom(class_id, room_name, 
-        host_id, is_lecture, time_created, function(room_id){res.send(room_id);});
+        host_id, is_lecture, time_created, host_name, function(room_id){res.send(room_id);});
     }
 
     // class with class_id does not exist
@@ -638,13 +639,14 @@ function Class(class_id, class_name) {
 	this.name = class_name; // "CSE 110 Gillespie"
 }
 
-function Room(room_id, room_name, room_host_id, class_id, is_lecture, time_created) {
+function Room(room_id, room_name, room_host_id, class_id, is_lecture, time_created, host_name) {
 	this.room_id = room_id;
 	this.name = room_name;
 	this.host_id = room_host_id;
 	this.class_id = class_id;
 	this.is_lecture = is_lecture;
   this.time_created = time_created;
+  this.host_name = host_name;
 }
 
 function ChatMessage(name, email, text, roomID, timeSent, user_id) {
@@ -657,10 +659,10 @@ function ChatMessage(name, email, text, roomID, timeSent, user_id) {
 }
 
 //TODO: ERIC - fix callback stuff so res gets sent back + make this cleaner
-function addRoom(class_id, room_name, room_host_id, is_lecture, time_created, callback) {
+function addRoom(class_id, room_name, room_host_id, is_lecture, time_created, host_name, callback) {
   var room_id = class_id + "_" + generateToken();
   //console.log("FIREBASE: Attempting to add room with id " + room_id);
-  var newRoom = new Room(room_id, room_name, room_host_id, class_id, is_lecture, time_created);
+  var newRoom = new Room(room_id, room_name, room_host_id, class_id, is_lecture, time_created, host_name);
   //push new room id into class list of rooms
   var classRoomRef = classRoomsDatabase.child(class_id).push();
   classRoomRef.set(room_id);

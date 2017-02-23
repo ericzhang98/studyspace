@@ -77,14 +77,14 @@
               <span>{{firstNameMessage}}</span>
             </label>
             <input type="text" class="form-control" id="input-firstname"
-                   placeholder="first name" ng-model="signupFirstName">
+                   placeholder="first name" ng-model="signupFirstName"  maxlength="25">
           </div>
           <div class="form-group">
             <label for="input-lastname">Last Name
               <span>{{lastNameMessage}}</span>
             </label>
             <input type="text" class="form-control" id="input-name"
-                   placeholder="last name" ng-model="signupLastName">
+                   placeholder="last name" ng-model="signupLastName" maxlength="25">
           </div>
           <!--
           <div class="form-group">
@@ -100,25 +100,25 @@
               <span>{{emailMessage}}</span>
             </label>
             <input type="email" class="form-control" id="input-email" 
-                   placeholder="email@example.com" ng-model="signupEmail">
+                   placeholder="email@example.com" ng-model="signupEmail"  maxlength="35">
           </div>
           <div class="form-group">
             <label for="input-password">Password
               <span>{{passwordMessage}}</span>
             </label>
             <input type="password" class="form-control" id="input-password" 
-            ng-model="signupPassword">
+            ng-model="signupPassword" maxlength="30">
           </div>
           <div class="form-group">
             <label for="input-confirm-password">Confirm Password
               <span>{{confirmMessage}}</span>
             </label>
             <input type="password" class="form-control" id="input-confirm-password"
-            ng-model="signupConfirmPassword">
+            ng-model="signupConfirmPassword" maxlength="30">
           </div>
           <div class="btn-container text-center">
             <button type="submit" class="btn btn-primary btn-block btn-submit-form"
-              ng-click="signup(signupFirstName, signupLastName, signupSchool,
+              ng-click="signup(signupFirstName, signupLastName,
                         signupEmail,signupPassword, signupConfirmPassword)">
               Submit</button>
           </div>
