@@ -34,7 +34,7 @@ html, body {
   border-radius: 0;
   height: 5rem;
   font-weight: 600;
-  color: #00b9ff;
+  color: var(--primary-dark-color);
 }
 
 .dropdown-toggle {
@@ -48,7 +48,7 @@ html, body {
 .message-pane {
   position: relative;
   height: calc(100% - 5rem);
-  background-color: #262626;
+  background-color: var(--base-two-color);
   overflow-x: hidden;
   border-style: hidden;
   word-wrap: break-word;
@@ -69,7 +69,7 @@ html, body {
   list-style: none;
   padding-top: 1.5rem;
   padding-bottom: 1.5rem;
-  border-bottom: solid 1px #333333;
+  border-bottom: solid 0px #333333;
   cursor: default;
 }
 
@@ -102,12 +102,12 @@ html, body {
 
 .message-header .dateTime {
   font-size: 1.2rem;
-  color: gainsboro;
+  color: var(--over-base-color);
 }
 
 .message-content .message-body {
   white-space: pre-wrap;
-  color: white;
+  color: var(--over-base-color);
   font-size: 1.5rem;
   margin-bottom: 0;
   padding-top: 0.2rem;
@@ -159,7 +159,7 @@ html, body {
 
 /* Classes Sidebar */
 .sidebar-left {
-  background-color: #353535;
+  background-color: var(--base-color);
   left: 0;
 }
 
@@ -192,8 +192,8 @@ html, body {
   width: 4rem;
   height: 4rem;
   border-radius: 50%;
-  border: solid 2px #00b9ff;
-  color: #00b9ff;
+  border: solid 2px var(--primary-dark-color);
+  color: var(--primary-dark-color);
   background: white;
   overflow: hidden;
 }
@@ -236,7 +236,7 @@ html, body {
 }
 
 .container-menu-classes .container-title:hover {
-  color: #91e0ff;
+  color: var(--primary-light-color);
 }
 
 .container-menu-classes .container-title .title {
@@ -256,23 +256,23 @@ html, body {
 }
 
 .menu-classes .panel .panel-title:hover {
-  color: #91e0ff;
+  background-color: var(--base-color-focus);
 }
 
 .menu-classes .panel:hover .panel-heading {
-  background-color: #262626;
+  background-color: var(--base-focus-color);
 }
 
 .menu-classes .panel>.panel-collapse>.list-group .list-group-item {
   padding-left: 2rem;
-  background-color: #353535;
-  color: white;
+  background-color: var(--base-color);
+  color: var(--over-base-color);
   outline: 0 !important;
 }
 
 .menu-classes .panel>.panel-collapse>.list-group .list-group-item:hover {
-  background-color: #262626;
-  color: #91e0ff;
+  background-color: var(--base-focus-color);
+  color: var(--over-base-focus-color);
 }
 
 /* Classmates Sidebar */

@@ -1,5 +1,7 @@
 /***** General variables **************************/
 var myID = getSignedCookie("user_id");
+var currTheme = 0;
+var numThemes = 3;
 var songCommands = ["/raindrop", "/destress"];
 var otherCommands = ["/gary", "/ord", "/stop"]
 var secretCommands = songCommands.concat(otherCommands);
@@ -56,6 +58,74 @@ function showAlert(alert_id, duration) {
 	}, duration);
 	
 }
+
+setTheme(1);
+
+function changeTheme() {
+	setTheme(currTheme + 1 <= numThemes ? currTheme + 1 : 1);
+}
+
+function setTheme(theme_num) {
+	console.log("changing theme...");
+	var prim, prim_light, prim_dark, base, base_two, base_focus, over_base, over_base_focus;
+
+	switch (theme_num) {
+		// THEME 1 (blue, dark, yellow)
+		case 1:
+			prim = '#38c9ff';
+			prim_light = '#91e0ff';
+			prim_dark = '#00b9ff';
+			base = '#353535';
+			base_two = '#262626';
+			base_focus = '#262626';
+			over_base = '#ffffff';
+			over_base_focus ='#ffffff';
+			accent = '#ffbb00'; 
+			break;
+
+		// THEME 2 (green, dark, blue)
+		case 2:
+			prim = '#00ed43';
+			prim_light = '#00ed43';
+			prim_dark = '#00ed43';
+			base = '#353535';
+			base_two = '#262626';
+			base_focus = '#262626';
+			over_base = '#ffffff';
+			over_base_focus ='#ffffff';
+			accent = '#00bbff'; 
+			break;
+
+		// THEME 3 (blue, light, pink)
+		case 3:
+			prim = '#00b9ff';
+			prim_light = '#00b9ff';
+			prim_dark = '#00b9ff';
+			base = '#f9f7f7';
+			base_two = '#ffffff';
+			base_focus = '#3a3a3a';
+			over_base = '#353535';
+			over_base_focus ='#ffffff';
+			accent = '#e01f4f'; 
+			break;
+
+		default:
+			return;
+	}
+
+	document.documentElement.style.setProperty('--primary-color', prim);
+	document.documentElement.style.setProperty('--primary-light-color', prim_light);
+	document.documentElement.style.setProperty('--primary-dark-color', prim_dark);
+	document.documentElement.style.setProperty('--base-color', base);
+	document.documentElement.style.setProperty('--base-two-color', base_two);
+	document.documentElement.style.setProperty('--base-focus-color', base_focus);
+	document.documentElement.style.setProperty('--over-base-color', over_base);
+	document.documentElement.style.setProperty('--over-base-focus-color', over_base_focus);
+	document.documentElement.style.setProperty('--accent-color', accent);
+
+	currTheme = theme_num;
+}
+
 /*********************************************************************/
 /***************************** EASTER EGGS ***************************/
 
