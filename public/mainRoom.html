@@ -55,7 +55,7 @@
           <!-- User Quick Info -->
           <div id="user-info" class="container-info-user">
             <div class="container-user-icon" style='border: none;
-  background-color: var(--primary-color); color: var(--over-base-color)'>
+  background-color: var(--primary-color); color: #ffffff'>
               <span ng-cloak>{{myName | limitTo:1}}</span>
             </div>
             <span class="user-name" style="color:var(--primary-color)">{{myName}}</span>
@@ -113,7 +113,7 @@
         <!-- Main Content -->
         <main id="main" class="chat-room" role="main" ng-hide="!currRoomChatID">
           <!-- ROOM NAVBAR -->
-          <nav id="class-navigation" class="navbar navbar-room" style="color: #ffffff; background-color: {{!currRoomChatID ? '' : (rooms[currRoomChatID].is_lecture ? 'var(--accent-color)' : 'var(--primary-color)')}}">
+          <nav id="class-navigation" class="navbar navbar-room" style="color: #ffffff; background-color: {{!currRoomChatID ? '' : (rooms[currRoomChatID].is_lecture ? 'var(--accent-color)' : 'var(--primary-dark-color)')}}">
             <div class="container-fluid">
               <div class="navbar-header">
                 <span ng-cloak class="navbar-brand" >{{classes[rooms[currRoomChatID].class_id].name != "" ? 

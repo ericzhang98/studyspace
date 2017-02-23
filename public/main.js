@@ -87,20 +87,20 @@ function setTheme(theme_num) {
 		case 2:
 			prim = '#00ed43';
 			prim_light = '#00ed43';
-			prim_dark = '#00ed43';
+			prim_dark = '#00c938';
 			base = '#353535';
 			base_two = '#262626';
 			base_focus = '#262626';
 			over_base = '#ffffff';
 			over_base_focus ='#ffffff';
-			accent = '#00bbff'; 
+			accent = '#008de5'; 
 			break;
 
 		// THEME 3 (blue, light, pink)
 		case 3:
-			prim = '#00b9ff';
-			prim_light = '#00b9ff';
-			prim_dark = '#00b9ff';
+			prim = '#0079e5';
+			prim_light = '#0079e5';
+			prim_dark = '#004684';
 			base = '#f9f7f7';
 			base_two = '#ffffff';
 			base_focus = '#3a3a3a';
