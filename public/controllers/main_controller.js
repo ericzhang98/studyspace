@@ -477,6 +477,7 @@ myApp.controller("MainController", ["$scope", "$http",
 								// store the class name
 								var response = JSON.parse(xhr.responseText);
 								response.name = response.name.toLowerCase();
+								response.rooms_with_tutors = [];
 
 								$scope.classes[class_id] = response;
 								console.log(response);
@@ -593,7 +594,7 @@ myApp.controller("MainController", ["$scope", "$http",
 
 				for (var i = 0; i < room.users.length; i++) {
 					var has_tutor = false;
-					// if there is a tutor in this room
+					// if there is a tutor in this room or a tutor hosting this room
 					if (tutor_ids.indexOf(room.users[i]) != -1) {
 						has_tutor = true;
 						break;
@@ -601,7 +602,17 @@ myApp.controller("MainController", ["$scope", "$http",
 				}
 
 				room.has_tutor = has_tutor;
-				$scope.classes[room.class_id].has_tutor = has_tutor;
+				var r_index = $scope.classes[room.class_id].rooms_with_tutors.indexOf(room.room_id);
+
+				// if we weren't a tutor room before and we are now
+				if (r_index == -1 && room.has_tutor) {
+					$scope.classes[room.class_id].rooms_with_tutors.push(room.room_id);
+				}
+
+				// if we used to be a tutor room and we aren't anymore
+				else if (r_index != -1 && !room.has_tutor) {
+					$scope.classes[room.class_id].rooms_with_tutors.splice(r_index, 1);
+				}
 			}
 		}
 
