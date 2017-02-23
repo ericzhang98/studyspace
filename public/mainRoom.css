@@ -291,3 +291,14 @@ html, body {
     margin-top: 4rem;
   }
 }
+
+/* Add Class Modal */
+
+.modal-add-class-content {
+  height: 50%;
+  width: 50%;
+}
+
+.md-autocomplete-suggestions-container {
+  z-index: 1051 !important; /* leet hack xD */
+}
