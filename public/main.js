@@ -16,13 +16,14 @@ document.getElementById('leave_room_audio').volume = 0.4;
 
 /******************************** MODEL ******************************/
 
-function Room(room_id, room_name, room_host_id, class_id, is_lecture, users) {
+function Room(room_id, room_name, room_host_id, class_id, is_lecture, users, host_name) {
 	this.room_id = room_id;
 	this.name = room_name;
 	this.host_id = room_host_id;
 	this.class_id = class_id;
 	this.is_lecture = is_lecture;
 	this.users = users;
+	this.host_name = host_name;
 }
 
 /*********************************************************************/
@@ -45,14 +46,14 @@ function logOut() {
 /*********************************************************************/
 /********************************* MISC ******************************/
 
-function showAlert(message, alerttype) {
-	$('#voice-connect-alert').show();
+function showAlert(alert_id, duration) {
+	$('#' + alert_id).show();
 
 	setTimeout(function() { // this will automatically close the alert and remove this if the users doesnt close it in 5 secs
 
-		$('#voice-connect-alert').alert('close')
+		$('#' + alert_id).alert('close')
 
-	}, 2300);
+	}, duration);
 	
 }
 /*********************************************************************/

@@ -82,7 +82,7 @@
                 <div id="{{class_id}}" class="panel-collapse collapse">
                   <ul class="list-group">
                     <li class="list-group-item" ng-repeat="room_id in class_rooms[class_id]" ng-click="joinRoom(room_id, class_id)">
-                      <span style="color:{{room_id == currRoomCallID ? '#38c9ff' : '#ffffff'}}" class="room-name-span">
+                      <span style="color:{{room_id == currRoomCallID ? (rooms[room_id].is_lecture ? '#e01f4f' : '#38c9ff') : '#ffffff'}}" class="room-name-span">
                         {{getStringToFit(rooms[room_id].name)}} ({{rooms[room_id].users.length}}) {{rooms[room_id].has_tutor? "*":""}}
                       </span>
                     </li>
@@ -106,8 +106,8 @@
           <nav id="class-navigation" class="navbar navbar-room">
             <div class="container-fluid">
               <div class="navbar-header">
-                <span class="navbar-brand">{{classes[rooms[currRoomChatID].class_id].name != "" ? 
-                  classes[rooms[currRoomChatID].class_id].name + " - ":""}}{{rooms[currRoomChatID].name}}</span>
+                <span style="color: {{!currRoomChatID ? '' : (rooms[currRoomChatID].is_lecture ? '#e01f4f' : '')}}" class="navbar-brand">{{classes[rooms[currRoomChatID].class_id].name != "" ? 
+                  classes[rooms[currRoomChatID].class_id].name + " - ":""}}{{rooms[currRoomChatID].name}}{{rooms[currRoomChatID].is_lecture ? ' (cast)' : ''}}</span>
               </div>
               <ul class="nav navbar-nav navbar-right">
                 <li class="dropdown">
@@ -121,6 +121,10 @@
               </ul>
             </div>
           </nav>
+
+          <div ng-if="rooms[currRoomChatID].is_lecture">
+            <p>Hosted by {{rooms[currRoomChatID].host_name}}</p>
+          </div>
 
           <!-- MESSAGE PANE -->
           <div id="chat-message-pane" class="message-pane container-fluid" scroll scroll-event="scrollevent">
@@ -252,6 +256,9 @@
                     <label for="room_name">Room Name</label>
                     <input type="text" class="form-control" maxlength="28" placeholder="e.g. Midterm Review" id="room_name">
                   </div>
+                  <div class="checkbox">
+                      <label style="font-size: 1.2rem"><input id="lecture-checkbox" type="checkbox" value="">Cast (only the host can be heard)</label>
+                  </div>
                   <div class="btn-container text-center">
                     <button type="submit" class="btn btn-primary btn-block btn-submit-form btn-hi-pri" ng-click="addRoom()">Create</button>
                   </div>
@@ -265,9 +272,13 @@
         <audio id="join_room_audio" src="/audio/join_room_sfx" volume=0.5></audio>
         <audio id="leave_room_audio" src="/audio/leave_room_sfx"></audio>
       </div>
-      <div id="voice-connect-alert" class="alert fade in alert-info text-center" hidden>
+      <div id="voice-connect-alert" class="alert fade in text-center" hidden>
         <a class="close" data-dismiss="alert">×</a>
         <span>Voice connected</span>
+      </div>
+      <div id="lecture-alert" class="alert fade in text-center" hidden>
+        <a class="close" data-dismiss="alert">×</a>
+        <span>In casts, only the host can be heard.</span>
       </div>
     </div>
   </body>

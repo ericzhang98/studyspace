@@ -355,11 +355,11 @@ html, body {
   height: inherit;
 }
 
-#voice-connect-alert {
+.alert {
   position: absolute;
   width: 30%;
   top: 80%;
   left: 35%;
-  background-color: #ffffff;
-  color: #38c9ff ;
+  background-color: #e01f4f;
+  color: #ffffff ;
 }

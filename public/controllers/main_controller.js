@@ -315,9 +315,7 @@ myApp.controller("MainController", ["$scope", "$http",
 			
 			// style choice: all room names be lower case only
 			var room_name = (document.getElementById('room_name').value).toLowerCase();
-
-			// TODO: actually set this (waiting on Andy's UI change)
-			var is_lecture = false;
+			var is_lecture = document.getElementById('lecture-checkbox').checked;
 			var time_created = Date.now();
 
 			// if class_id is null do nothing
@@ -342,7 +340,7 @@ myApp.controller("MainController", ["$scope", "$http",
 				", room_name: " + room_name);
 			var xhr = new XMLHttpRequest();
 			xhr.open('GET', "/add_room/" + class_id + "/" + 
-				room_name + "/" + is_lecture + "/" + time_created, true);
+				room_name + "/" + is_lecture + "/" + time_created + "/" + $scope.myName, true);
 			xhr.send();
 
 			// Once room has been created
@@ -542,7 +540,7 @@ myApp.controller("MainController", ["$scope", "$http",
 						
 						// update the room
 						$scope.rooms[room_id] = new Room(room_id, room.name, room.host_id, room.class_id, 
-							room.is_lecture, room.users? Object.values(room.users) : []);
+							room.is_lecture, room.users? Object.values(room.users) : [], room.host_name ? room.host_name : "Unknown host");
 
 						// are there tutors in here?
 						detectTutors($scope.rooms[room_id]);

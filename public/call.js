@@ -18,10 +18,13 @@ navigator.getUserMedia = navigator.getUserMedia || navigator.webkitGetUserMedia 
 // Grab user media immediately
 getVoice();
 
+/*********************** CALLING AND ANSWERING ***********************/
+
+// Grab user media (voice)
 function getVoice(callback) {
 	navigator.getUserMedia({video: false, audio: true}, function(stream) {
 		myStream = stream;
-		showAlert("Voice connected", "alert-info");
+		showAlert("voice-connect-alert", 4000);
 		if (callback) {
 			callback();
 		}
@@ -30,11 +33,9 @@ function getVoice(callback) {
 	});
 }
 
-/*********************** CALLING AND ANSWERING ***********************/
-
 // Respond to open
 peer.on('open', function() {
-	console.log('My peer ID is: ' + peer.id);
+console.log('My peer ID is: ' + peer.id);
   //setup heartbeat ping after 5 seconds (wait for socket to finish httpr)
   setTimeout(pingPeerServer, 5000, true);
 });
@@ -208,6 +209,10 @@ function joinRoomCall(currRoomCallID) {
 
 	        // if this is a lecture and I am the host, I am the lecturer
 	        isLecturer = (response.is_lecture && response.host_id == myID);
+
+	        if (response.is_lecture) {
+	        	showAlert("lecture-alert", 6000);
+	        }
 	        
 	        // if this is a lecture-style room and I am not the lecturer,
 	        // then I only call the lecturer
@@ -215,7 +220,7 @@ function joinRoomCall(currRoomCallID) {
 	        	startCall(response.host_id);
 
 	        	// do not send out my audio
-	        	setMyStreamAudioEnabled(false);
+	        	setMyStreamAudioEnabled(false);	
 
 	        	// TODO: disable unmute button
 	        }
