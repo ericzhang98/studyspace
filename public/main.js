@@ -1,6 +1,7 @@
 /***** General variables **************************/
-var currRoomID = null;
 var myID = getSignedCookie("user_id");
+var currTheme;
+var NUM_THEMES = 4;
 var songCommands = ["/raindrop", "/destress"];
 var otherCommands = ["/gary", "/ord", "/stop"]
 var secretCommands = songCommands.concat(otherCommands);
@@ -11,17 +12,20 @@ var ordisms = ["Keep it simple, students.", "Start early, start often!",
 "If a simple boy from the midwest can do it, so can you.", "Think like a compiler."];
 
 var currSongAudio = null;
+document.getElementById('join_room_audio').volume = 0.4;
+document.getElementById('leave_room_audio').volume = 0.4;
 /**************************************************/
 
 /******************************** MODEL ******************************/
 
-function Room(room_id, room_name, room_host_id, class_id, is_lecture, users) {
+function Room(room_id, room_name, room_host_id, class_id, is_lecture, users, host_name) {
 	this.room_id = room_id;
 	this.name = room_name;
 	this.host_id = room_host_id;
 	this.class_id = class_id;
 	this.is_lecture = is_lecture;
 	this.users = users;
+	this.host_name = host_name;
 }
 
 /*********************************************************************/
@@ -39,6 +43,104 @@ function logOut() {
 
 	// go to home
 	document.location.href = "/";
+}
+
+/*********************************************************************/
+/********************************* MISC ******************************/
+
+function showAlert(alert_id, duration) {
+	$('#' + alert_id).show();
+
+	setTimeout(function() { // this will automatically close the alert and remove this if the users doesnt close it in 5 secs
+
+		$('#' + alert_id).alert('close')
+
+	}, duration);
+	
+}
+
+setTheme(1);
+
+function changeTheme() {
+	setTheme(currTheme + 1 <= NUM_THEMES ? currTheme + 1 : 1);
+}
+
+function setTheme(theme_num) {
+	console.log("changing theme...");
+	var prim, prim_light, prim_dark, base, base_two, base_focus, over_base, over_base_focus;
+
+	switch (theme_num) {
+
+		// THEME NUM BASE-PRIMARY-ACCENT
+
+		// THEME 1 DARK-BLUE-YELLOW
+		case 1:
+			prim = '#38c9ff';
+			prim_light = '#91e0ff';
+			prim_dark = '#00b9ff';
+			base = '#353535';
+			base_two = '#262626';
+			base_focus = '#262626';
+			over_base = '#ffffff';
+			over_base_focus ='#ffffff';
+			accent = '#ffbb00'; 
+			break;
+
+		// THEME 2 DARK-MAROON-RED
+		case 2:
+			prim = '#d80059';
+			prim_light = '#d80059';
+			prim_dark = '#d80059';
+			base = '#353535';
+			base_two = '#262626';
+			base_focus = '#262626';
+			over_base = '#ffffff';
+			over_base_focus ='#ffffff';
+			accent = '#ff1443'; 
+			break;
+
+		// THEME 3 LIGHT-BLUE-PINK
+		case 3:
+			prim = '#0079e5';
+			prim_light = '#0079e5';
+			prim_dark = '#004684';
+			base = '#f9f7f7';
+			base_two = '#ffffff';
+			base_focus = '#3a3a3a';
+			over_base = '#353535';
+			over_base_focus ='#ffffff';
+			accent = '#e01f4f'; 
+			break;
+
+		// THEME 4 LIGHT-GREEN-BLUE
+		case 4:
+
+			prim = '#00d11b';
+			prim_light = '#00d11b';
+			prim_dark = '#00d11b';
+			base = '#f9f7f7';
+			base_two = '#ffffff';
+			base_focus = '#3a3a3a';
+			over_base = '#353535';
+			over_base_focus ='#ffffff';
+			accent = '#42ccff'; 
+			break;
+
+		default:
+			return;
+	}
+
+	document.documentElement.style.setProperty('--primary-color', prim);
+	document.documentElement.style.setProperty('--primary-light-color', prim_light);
+	document.documentElement.style.setProperty('--primary-dark-color', prim_dark);
+	document.documentElement.style.setProperty('--base-color', base);
+	document.documentElement.style.setProperty('--base-two-color', base_two);
+	document.documentElement.style.setProperty('--base-focus-color', base_focus);
+	document.documentElement.style.setProperty('--over-base-color', over_base);
+	document.documentElement.style.setProperty('--over-base-focus-color', over_base_focus);
+	document.documentElement.style.setProperty('--accent-color', accent);
+
+	currTheme = theme_num;
 }
 
 /*********************************************************************/
@@ -64,7 +166,6 @@ function doCommand(command) {
 		    
 		    // add audio stream to the page
 		    document.getElementById("myBody").insertBefore(audio, document.getElementById("myDiv"));
-			
 		}
 
 		else {

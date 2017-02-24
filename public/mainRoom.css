@@ -6,44 +6,106 @@ html, body {
   height: 100%;
 }
 
-/* Chat Room */
-#chat-room {
-  display: inline-block;
-  width: calc(100% - 240px);
-  left: 120px;
+.sidebar,
+.chat-room {
+  position: absolute;
+  top: 0;
+  bottom: 0;
 }
 
-#navbar-room {
+.sidebar {
+  background-color: var(--base-color);
+  width: 24rem;
+}
+
+.panel {
+  cursor: pointer;
+}
+
+/* Chat Room */
+.chat-room {
+  display: inline-block;
+  left: 24rem;
+  width: calc(100% - 48rem);
+}
+
+.chat-room .main-content, .chat-room .main-content-hidden {
+  height: 100%;
+}
+
+.chat-room .main-content-hidden {
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-align: center;
+  -ms-flex-align: center;
+  align-items: center;
+  -webkit-box-pack: center;
+  -ms-flex-pack: center;
+  justify-content: center;
+  background-color: var(--base-two-color);
+}
+
+.main-content-hidden .brand {
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+  font-size: 4rem;
+  font-weight: 600;
+  color: var(--primary-color);
+  cursor: default;
+}
+
+.navbar-room {
   margin-bottom: 0;
   border: none;
   border-radius: 0;
   height: 5rem;
   font-weight: 600;
-  color: #337ab7;
+  color: var(--primary-dark-color);
 }
 
-#navbar-room .navbar-brand {
+.navbar-room .nav-link {
+  margin-right: 0;
+}
+
+.navbar-room .navbar-nav>li>a {
+  color: white;
+}
+
+.navbar-room .nav>li>a:focus, .navbar-room .nav>li>a:hover {
+  background-color: transparent;
+}
+
+.dropdown-toggle {
+  color: inherit;
+}
+
+.navbar-room .navbar-brand {
   cursor: default;
 }
 
-#message-wrapper{
+.message-pane {
   position: relative;
   height: calc(100% - 5rem);
-}
-
-#chatMessageDiv {
-  background-color: black;
-  height: 100%;
+  background-color: var(--base-two-color);
   overflow-x: hidden;
   border-style: hidden;
   word-wrap: break-word;
   padding-top: 3rem;
   padding-bottom: 10rem;
-  padding-left: 3rem;
-  padding-right: 3rem;
+  padding-left: 2rem;
+  padding-right: 2rem;
 }
 
-#chatMessageDiv .message {
+.message-pane .message {
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-pack: justify;
+  -ms-flex-pack: justify;
+  justify-content: space-between;
   padding-left: 0;
   list-style: none;
   padding-top: 1.5rem;
@@ -52,11 +114,15 @@ html, body {
   cursor: default;
 }
 
-#chatMessageDiv .message:last-child {
+.message-pane .message:last-child {
   border-bottom: none;
 }
 
-#message-header {
+.message .message-content {
+  width: calc(100% - 6rem);
+}
+
+.message-content .message-header {
   display: -webkit-box;
   display: -ms-flexbox;
   display: flex;
@@ -69,71 +135,61 @@ html, body {
   text-align: justify;
 }
 
-#username {
-  color: white;
-  font-size: 1.6rem;
-}
-
-#dateTime {
-  font-size: 1.2rem;
-  color: gainsboro;
-}
-
-#message-body {
-  color: powderblue;
-  font-size: 1.5rem;
-  margin-bottom: 0;
-  padding-top: 0.5rem;
-}
-
-#username:selection,
-#dateTime:selection,
-p:selection {
-  background-color: white;
-  color: #333333;
-}
-
-#wrapper-message-bar {
-  position: absolute;
-  background: white;
-  bottom: 2rem;
-  left: 3rem;
-  right: 3rem;
-  height: 5rem;
-  border-radius: 0.5rem;
-}
-
-#wrapper-message-bar .form-message {
-  height: inherit;
-}
-
-#message-bar {
-  height: inherit;
-}
-
-#message-bar .btn {
-  height: 5rem;
-  border: solid 2px #eeeeee;
-}
-
-#btn-mute {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 2rem;
-  width: 5rem;
-}
-
-#btn-send {
+.message-header .dropdown .user-name {
+  color: var(--primary-color);
   font-size: 1.5rem;
   font-weight: 500;
 }
 
-#btn-mute .glyphicon {
-  margin-right: -0.4rem;
+.message-header .dropdown .user-name:hover {
+  text-decoration: underline;
 }
 
-#message-bar .form-control {
+.message-header .dateTime {
+  font-size: 1.2rem;
+  color: var(--over-base-color);
+}
+
+.message-content .message-body {
+  white-space: pre-wrap;
+  color: var(--over-base-color);
+  font-size: 1.5rem;
+  margin-bottom: 0;
+  padding-top: 0.2rem;
+}
+
+.form-message-container {
+  position: absolute;
+  background: white;
+  bottom: 2rem;
+  left: 2rem;
+  right: 2rem;
+  height: 4.5rem;
+  border-radius: 0.5rem;
+}
+
+.form-message-container .form-message {
+  height: inherit;
+}
+
+.form-message .input-group {
+  height: inherit;
+}
+
+.input-group .btn-mute {
+  width: 4.5rem;
+  height: 4.5rem;
+  border: solid 2px #eeeeee;
+  background-color: white;
+}
+
+.input-group .btn-mute .glyphicon {
+  margin-right: -0.4rem;
+  margin-top: 0.2rem;
+  font-size: 2rem;
+}
+
+.input-group .input-message {
   font-size: 1.5rem;
   border-bottom: none;
   height: 100%;
@@ -141,30 +197,17 @@ p:selection {
   padding-right: 1.5rem;
   border-top: solid 2px #eeeeee;
   border-bottom: solid 2px #eeeeee;
-}
-
-/* End Main Room Text CSS */
-
-#sidebar-classes,
-#chat-room,
-#sidebar-classmates {
-  position: absolute;
-  top: 0;
-  bottom: 0;
-}
-
-.panel {
-  cursor: pointer;
+  border-right: solid 2px #eeeeee;
+  border-top-right-radius: 0.5rem;
+  border-bottom-right-radius: 0.5rem;
 }
 
 /* Classes Sidebar */
-#sidebar-classes {
-  background: #8caacd;
+.sidebar-left {
   left: 0;
-  width: 120px;
 }
 
-#info-user {
+.container-info-user {
   display: -webkit-box;
   display: -ms-flexbox;
   display: flex;
@@ -172,40 +215,62 @@ p:selection {
   -ms-flex-align: center;
   align-items: center;
   height: auto;
-  padding-top: 2rem;
-  padding-bottom: 2rem;
-  margin-left: 2rem;
-  margin-right: 2rem;
-  border-bottom: solid 2px #000000;
+  padding-top: 1.5rem;
+  padding-bottom: 1.5rem;
+  margin-left: 1.5rem;
+  margin-right: 1.5rem;
+  border-bottom: solid 0px #000000;
 }
 
-#info-user .container-user-icon {
-  display: inline-block;
+.container-user-icon {
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-align: center;
+  -ms-flex-align: center;
+  align-items: center;
+  -webkit-justify-content: center;
+  -ms-flex-pack: center;
+  justify-content: center;
+  font-size: 2.5rem;
   width: 4rem;
   height: 4rem;
   border-radius: 50%;
+  border: solid 2px var(--primary-dark-color);
+  color: var(--primary-dark-color);
   background: white;
   overflow: hidden;
+  cursor: default;
+}
+
+.container-user-icon>span{
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+}
+
+.container-info-user .container-user-icon {
   margin-right: 1rem;
 }
 
-#info-user .user-icon {
+.container-info-user .user-icon {
   float: left;
   width: 100%;
   height: 100%;
 }
 
-#info-user .user-name {
-  font-weight: 600;
-  font-size: 2rem;
+.container-info-user .user-name {
+  font-weight: 500;
+  font-size: 1.8rem;
 }
 
 /* Classes Menu */
-#container-menu-classes {
+.container-menu-classes {
   margin-top: 2rem;
 }
 
-#container-menu-classes .container-title {
+.container-menu-classes .container-title {
   display: -webkit-box;
   display: -ms-flexbox;
   display: flex;
@@ -215,91 +280,122 @@ p:selection {
   -webkit-box-pack: justify;
   -ms-flex-pack: justify;
   justify-content: space-between;
-  padding: 1rem 2rem;
   font-size: 1rem;
+  padding: 1rem 1.5rem;
   background-color: transparent;
   width: 100%;
+  color: var(--primary-color);
 }
 
-#container-menu-classes .container-title:hover {
-  color: white;
+.container-menu-classes .container-title:hover {
+  color: var(--primary-light-color);
 }
 
-#container-menu-classes .container-title .title {
+.container-menu-classes .container-title .title {
+  font-size: 1.2rem;
   font-weight: 600;
   margin-top: 0;
   margin-bottom: 0;
 }
 
-#menu-classes .panel {
+.menu-classes .panel {
   background-color: inherit;
 }
 
-#menu-classes .panel .panel-heading {
-  -webkit-transition: background 0.15s, color 0.15s;
-  transition: background 0.15s, color 0.15s;
-}
-
-#menu-classes .panel:hover .panel-heading {
-  background-color: #7a9dc5;
+.menu-classes .panel .panel-title {
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-pack: justify;
+  -ms-flex-pack: justify;
+  justify-content: space-between;
+  padding: 1rem;
+  border-radius: 2rem;
+  background-color: #666666;
+  font-size: 1.5rem;
   color: white;
 }
 
-#menu-classes .panel>.panel-collapse>.list-group .list-group-item {
-  background-color: #6890be;
-  -webkit-transition: background 0.15s, color 0.15s;
-  transition: background 0.15s, color 0.15s;
+.menu-classes .panel:hover .panel-heading {
+  background-color: var(--base-focus-color);
 }
 
-#menu-classes .panel>.panel-collapse>.list-group .list-group-item:hover {
-  background-color: #5783b6;
+.menu-classes .panel>.panel-collapse>.list-group .list-group-item {
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-pack: justify;
+  -ms-flex-pack: justify;
+  justify-content: space-between;
+  padding-left: 2.5rem;
+  padding-right: 2.5rem;
+  background-color: var(--base-color);
+  color: var(--over-base-color);
+  outline: 0 !important;
+}
+
+.menu-classes .panel>.panel-collapse>.list-group .list-group-item:hover {
+  background-color: var(--base-focus-color);
+  color: var(--over-base-focus-color);
 }
 
 /* Classmates Sidebar */
-#sidebar-classmates {
+.sidebar-right {
+  color: var(--primary-color);
   right: 0;
-  width: 120px;
+}
+
+.sidebar-right .container-search {
+  padding-left: 1.5rem;
+  padding-right: 1.5rem;
 }
 
 /* Create Room Modal */
-#create-room .btn-container {
-  margin-top: 4.5rem;
+.modal-create-room-content .btn-container {
+  margin-top: 3rem;
 }
 
-#btn-create {
-  padding: 0.5em 1em;
-  font-size: 2.5rem;
-  font-weight: 500;
-  background: #286090;
-  width: 100%;
-}
-
-#btn-create:hover {
-  background: #337ab7;
-}
-
-#btn-create:visited {
-  background: #337ab7;
-}
-
-#create-room .panel:last-child {
+.modal-create-room-content .panel:last-child {
   margin-bottom: 0;
 } 
 
 @media screen and (min-width: 768px) {
-  /* Classes Sidebar */
-  #sidebar-classes {
-    width: 25rem;
+  .modal-create-room-content .btn-container {
+    margin-top: 4rem;
   }
+}
 
-  /* Chat Room */
-  #chat-room {
-    left: 25rem;
-    width: calc(100% - 50rem);
-  }
+/* Add Class Modal */
+.modal-add-class-content {
+  height: 50%;
+  width: 50%;
+}
 
-  /* Classmates Sidebar */
-  #sidebar-classmates {
-    width: 25rem;
-  }
+.md-autocomplete-suggestions-container {
+  z-index: 1051 !important; /* lol xD */
+
+}
+
+#overlay {
+  width: 100%;
+  height: 100%;
+  position: relative;
+}
+
+#layer1 {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: inherit;
+  height: inherit;
+}
+
+.alert {
+  position: absolute;
+  width: 30%;
+  top: 80%;
+  left: 35%;
+  background-color: var(--accent-color);
+  color: #ffffff ;
+  z-index: 2;
 }

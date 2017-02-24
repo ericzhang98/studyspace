@@ -33,100 +33,98 @@
   <body>
 
     <!-- Navbar -->
-    <nav id="navbar-site" class="navbar" role="banner">
+    <nav id="site-navigation" class="navbar navbar-site" role="navigation">
       <div class="container">
         <!-- Navbar (Brand) -->
         <div class="navbar-header pull-left">
-          <!--<a class="navbar-brand brand-logo" href="home.html">
+          <!--<a id="studyspace-logo" class="navbar-brand brand-logo" href="home.html">
             
           </a>-->
-          <a class="navbar-brand brand-name" href="home.html">studyspace</a>
+          <a id="studyspace-name" class="navbar-brand brand-name" href="home.html">studyspace</a>
         </div>
 
         <!-- Navbar (Right) -->
         <div class="navbar-header pull-right">
-          <div id="link-login" class="nav-link">
-            <span class="text-log-in">Log In</span>
-            <svg id="icon-log-in" class="icon" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="62" height="46" viewBox="-3 0 62 46" version="1.1">
-              <g id="log-in" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd" transform="translate(0.000000, 3.000000)">
-                <path d="M17.14 11C20.43 4.47 27.19 0 35 0 46.05 0 55 8.95 55 20 55 31.05 46.05 40 35 40 27.2 40 20.43 35.53 17.14 29" id="space" stroke="#FFFFFF" stroke-width="6"/>
-                <path d="M0 20L34 20" id="arrow-shaft" stroke="#FFFFFF" stroke-width="6"/>
-                <polyline id="arrow-head" stroke="#FFFFFF" stroke-width="6" points="28 10 38 20 28 30"/>
-              </g>
-            </svg>
+          <div id="link-login" class="nav-link nav-link-login">
+            <span class="link-text">Log in</span>
           </div>
         </div>
       </div>
     </nav>
 
-    <header id="header-signup" class="text-center">
-      <h2>Start Studying with</h2>
-      <h2>studyspace Today</h2>
+    <header id="signup-hook" class="header-signup text-center">
+      <h2>Learn together, today.</h2>
+      <h4></h4>
     </header>
 
-    <main role="main">
-      <div class="container-main">
+    <main id="main" role="main" class="container">
 
-        <!-- SIGNUP -->
-        <div id="info-signup" class="signup-info-container fadeInBack">
-          <h4>Connect with other students</h4>
-          <p>thats pretty dope</p>
-          <h4>Connect with tutors</h4>
-          <p>yEET</p>
-          <h4>Never study alone</h4>
-          <p>im a lonely boi</p>
-        </div>
-
-        <!-- SIGNUP -->
-        <div id="signup" class="signup-container fadeInBack" ng-controller="SignUpController">
-          <div class="form-container">
-            <form>
-              <div id="in-name" class="form-group">
-                <label for="input-name">Name
-                  <span>{{nameMessage}}</span>
-                </label>
-                <input type="text" class="form-control" id="input-name"
-                       placeholder="first and last name" ng-model="signupName">
-              </div>
-              <div class="form-group">
-                <label for="input-school">School
-                  <span>{{schoolMessage}}</span>
-                </label>
-                <input type="text" class="form-control" id="input-school" 
-                       placeholder="school name" ng-model="signupSchool">
-              </div>
-              <div class="form-group">
-                <label for="input-email">Email
-                  <span>{{emailMessage}}</span>
-                </label>
-                <input type="email" class="form-control" id="input-email" 
-                       placeholder="email@example.com" ng-model="signupEmail">
-              </div>
-              <div class="form-group">
-                <label for="input-password">Password
-                  <span>{{passwordMessage}}</span>
-                </label>
-                <input type="password" class="form-control" id="input-password" 
-                ng-model="signupPassword">
-              </div>
-              <div class="form-group">
-                <label for="input-confirm-password">Confirm Password
-                  <span>{{confirmMessage}}</span>
-                </label>
-                <input type="password" class="form-control" id="input-confirm-password"
-                ng-model="signupConfirmPassword">
-              </div>
-              <div class="btn-container text-center">
-                <button type="submit" id="btn-submit" class="btn btn-primary"
-                  ng-click="signup(signupName, signupSchool,
-                  signupEmail,signupPassword, signupConfirmPassword)">
-                  Submit</button>
-              </div>
-            </form>
-          </div>
-        </div>
-
+      <!-- SIGNUP -->
+      <div id="signup-info" class="signup-info-container fadeInBack">
+        <h4>Collaborate with other students</h4>
+        <p>Our course-specific channels make it easy to find classmates to work with.</p>
+        <h4>Connect with your instructors</h4>
+        <p>With online office hours and review sessions, help is just a click away.</p>
+        <h4>Find your own space</h4>
+        <p>No matter what kind of student you are, studyspace has a place for you.</p>
       </div>
+
+      <!-- SIGNUP -->
+      <div id="signup-form" class="signup-form-container form-container fadeInBack" ng-controller="SignUpController">
+        <form role="form" accept-charset="UTF-8" autocomplete="off">
+          <div class="form-group">
+            <label for="input-firstname">First Name
+              <span>{{firstNameMessage}}</span>
+            </label>
+            <input type="text" class="form-control" id="input-firstname"
+                   placeholder="first name" ng-model="signupFirstName"  maxlength="25">
+          </div>
+          <div class="form-group">
+            <label for="input-lastname">Last Name
+              <span>{{lastNameMessage}}</span>
+            </label>
+            <input type="text" class="form-control" id="input-name"
+                   placeholder="last name" ng-model="signupLastName" maxlength="25">
+          </div>
+          <!--
+          <div class="form-group">
+            <label for="input-school">School
+              <span>{{schoolMessage}}</span>
+            </label>
+            <input type="text" class="form-control" id="input-school" 
+                   placeholder="school name" ng-model="signupSchool">
+          </div>
+          -->
+          <div class="form-group">
+            <label for="input-email">Email
+              <span>{{emailMessage}}</span>
+            </label>
+            <input type="email" class="form-control" id="input-email" 
+                   placeholder="email@example.com" ng-model="signupEmail"  maxlength="35">
+          </div>
+          <div class="form-group">
+            <label for="input-password">Password
+              <span>{{passwordMessage}}</span>
+            </label>
+            <input type="password" class="form-control" id="input-password" 
+            ng-model="signupPassword" maxlength="30">
+          </div>
+          <div class="form-group">
+            <label for="input-confirm-password">Confirm Password
+              <span>{{confirmMessage}}</span>
+            </label>
+            <input type="password" class="form-control" id="input-confirm-password"
+            ng-model="signupConfirmPassword" maxlength="30">
+          </div>
+          <div class="btn-container text-center">
+            <button type="submit" class="btn btn-primary btn-block btn-submit-form"
+              ng-click="signup(signupFirstName, signupLastName,
+                        signupEmail,signupPassword, signupConfirmPassword)">
+              Submit</button>
+          </div>
+        </form>
+      </div>
+
     </main>
   </body>
 

@@ -1,201 +1,153 @@
 /* signup.css */
 
 /* General */
-html, body {
-  margin: 0;
-  height: 100%;
-}
-
 body {
   background: #ecf0f1;
 }
 
-main {
-  padding-left: 2rem;
-  padding-right: 2rem;
-  background: white;
+main.container {
+  margin-bottom: 1.5rem;
 }
 
 /* Navbar */
-#navbar-site {
+.navbar-site {
   background-color: transparent;
   color: #333333;
 }
 
-#navbar-site .navbar-brand,
-#navbar-site .nav-link {
+.navbar-site .navbar-brand,
+.navbar-site .nav-link {
   font-weight: 600;
 }
 
-#navbar-site a {
+.navbar-site a {
   color: #333333;
 }
 
-#navbar-site .nav-link #log-in path,
-#navbar-site .nav-link #log-in polyline {
-  stroke: #333333;
-  -webkit-transition: stroke 0.15s;
-  transition: stroke 0.15s;
-}
-
-#navbar-site .nav-link:hover {
+.navbar-site .nav-link:hover {
   background-color: #333333;
   color: white;
 }
 
-#navbar-site .nav-link:hover #log-in path,
-#navbar-site .nav-link:hover #log-in polyline {
-  stroke: white;
-}
-
-#navbar-site .text-log-in {
-  display: none;
-}
-
-#navbar-site .icon {
-  height: 2.5rem;
-  width: auto;
-}
-
-#icon-log-in {
-  margin-left: -0.4rem;
-}
-
 /* Sign Up Title */
+.header-signup {
+  padding-top: 2rem;
+  padding-bottom: 4rem;
+  padding-left: 2rem;
+  padding-right: 2rem;
+  margin-bottom: 0;
+}
+
+.header-signup h2 {
+  margin: 0;
+  font-size: 2.4rem;
+  font-weight: 600;
+  line-height: 1.2em;
+}
 
 /* Sign Up Info */
-#info-signup h4 {
+.signup-info-container {
+  margin-bottom: 1.5rem;
+}
+
+.signup-info-container h4 {
+  font-size: 2rem;
+  font-weight: 600;
   margin-top: 0;
 }
 
-#info-signup p {
+.signup-info-container p {
   font-size: 1.5rem;
   margin-bottom: 3rem;
 }
 
+.signup-info-container p:last-child {
+  margin-bottom: 0;
+}
+
 /* Sign Up Form */
-#signup {
+.signup-info-container,
+.signup-form-container {
   width: 100%;
   background: white;
-  padding: 5rem 3rem;
+  padding: 3rem;
+  border-radius: 0.5rem;
 }
 
-#signup h1::selection,
-#signup label::selection,
-#signup input::selection {
-  background: #333333;
-  color: white;
-}
-
-#signup .title {
-  font-size: 3rem;
-  font-weight: 700;
-  margin-top: 0;
-  margin-bottom: 0;
-}
-
-#signup .title-container {
-  margin-bottom: 3.5rem;
-}
-
-#signup label {
-  font-size: 1.5rem;
-  font-weight: 700;
-}
-
-#signup .form-group {
+.signup-form-container .btn-container {
   margin-top: 3rem;
-  margin-bottom: 0;
-}
-
-#signup .form-group:first-child {
-  margin-top: 0;
-}
-
-#signup .btn-container {
-  margin-top: 4.5rem;
-}
-
-#btn-submit {
-  padding: 0.5em 1em;
-  font-size: 2.5rem;
-  font-weight: 600;
-  background: #286090;
-  width: 100%;
-}
-
-#btn-submit:hover {
-  background: #337ab7;
-}
-
-#btn-submit:visited {
-  background: #337ab7;
 }
 
 @media screen and (min-width: 768px) {
-  main {
-    background: #ecf0f1;
-  }
-
-  main .container {
-    padding-left: 2rem;
-    padding-right: 2rem;
-  }
-
-  /* Navbar */
-  #navbar-site {
-    margin-top: 1.5rem;
-    margin-bottom: 1.5rem;
-  }
-
-  #link-login {
-    margin-right: -2rem;
-  }
-
-  #link-login .text-log-in {
-    display: inline;
-  }
-
-  /* Sign Up Title */
-  #header-signup {
-    padding-top: 4rem;
-    padding-bottom: 4rem;
-    margin-bottom: 3rem;
-  }
-
-  #header-signup h2 {
-    margin: 0;
-    font-weight: 600;
-    line-height: 1.2em;
-  }
-
-  /* Sign Up */
-  .container-main {
-    width: 95rem;
+  main.container {
     margin: 0 auto;
-  }
-
-  #info-signup,
-  #signup {
-    background-color: white;
-    width: 45rem;
-    height: 58.5rem;
-    padding: 4rem;
-    border-radius: 0.5rem;
     margin-bottom: 10rem;
   }
 
-  #info-signup {
-    float: left;
+  /* Navbar */
+  .navbar-site {
+    margin-top: 1.5rem;
   }
 
-  #signup {
+  .navbar-site .nav-link-login {
+    margin-right: -2rem;
+  }
+
+  /* Sign Up Title */
+  .header-signup {
+    padding-top: 4rem;
+    padding-bottom: 6rem;
+  }
+
+  .header-signup h2 {
+    font-size: 3rem;
+  }
+
+  /* Sign Up Info */
+  .signup-info-container {
+    margin-bottom: 3rem;
+    height: auto;
+  }
+
+  /* Sign Up */
+  .signup-info-container,
+  .signup-form-container {
+    background-color: white;
+    width: 100%;
+    padding: 4rem;
+  }
+
+  .signup-form-container .btn-container {
+    margin-top: 4rem;
+  }
+}
+
+@media (min-width: 992px) {
+  /* Sign Up Info */
+  .signup-info-container {
+    float: left;
+    margin-bottom: 0;
+    height: 51.8rem;
+  }
+
+  /* Sign Up Info */
+  .signup-info-container {
+    width: 50rem;
+  }
+
+  /* Sign Up */
+  .signup-form-container {
+    width: 40rem;
+  }
+
+  .signup-form-container {
     float: right;
   }
 }
 
-@media screen and (max-height: 688px) {
-  main {
-    display: block;
+@media (min-width: 1200px) {
+  /* Sign Up Info */
+  .signup-info-container {
+    width: 70rem;
   }
 }

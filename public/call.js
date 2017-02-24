@@ -9,23 +9,33 @@ var isLecturer = false;		// am I giving a lecture?
 var peer = new Peer(myID, 
     {host: "pacific-lake-64902.herokuapp.com", port: "",  path: '/peerjs'});
 peer._lastServerId = myID;
+var PEER_PING_PERIOD = 30000;
 var myStream = null;
 var myCalls = [];
 var myRemoteStreams = {}; // Dictionary from user.id to audio track
 navigator.getUserMedia = navigator.getUserMedia || navigator.webkitGetUserMedia || navigator.mozGetUserMedia;
 
 // Grab user media immediately
-navigator.getUserMedia({video: false, audio: true}, function(stream) {
-	myStream = stream;
-}, function(err) {
-	console.log('Failed to get local stream' ,err);
-});
+getVoice();
 
 /*********************** CALLING AND ANSWERING ***********************/
 
+// Grab user media (voice)
+function getVoice(callback) {
+	navigator.getUserMedia({video: false, audio: true}, function(stream) {
+		myStream = stream;
+		showAlert("voice-connect-alert", 3000);
+		if (callback) {
+			callback();
+		}
+	}, function(err) {
+		console.log('Failed to get local stream', err);
+	});
+}
+
 // Respond to open
 peer.on('open', function() {
-	console.log('My peer ID is: ' + peer.id);
+console.log('My peer ID is: ' + peer.id);
   //setup heartbeat ping after 5 seconds (wait for socket to finish httpr)
   setTimeout(pingPeerServer, 5000, true);
 });
@@ -52,7 +62,7 @@ peer.on("error", function(err) {
 function pingPeerServer(constant) {
   peer.socket.send({type:"Ping"});
   if (constant) {
-    setTimeout(pingPeerServer, 30000, true);
+    setTimeout(pingPeerServer, PEER_PING_PERIOD, true);
   }
 }
 
@@ -74,12 +84,7 @@ function startCall(other_user_id) {
 	// myStream not yet set
 	else {
 		console.log("myStream not yet set");
-		navigator.getUserMedia({video: false, audio: true}, function(stream) {
-			myStream = stream;
-			startCallHelper(other_user_id);
-		}, function(err) {
-			console.log('Failed to get local stream' ,err);
-		});
+		getVoice(startCallHelper(other_user_id));
 	}
 }
 
@@ -98,7 +103,7 @@ function startCallHelper(other_user_id) {
 	call.on('stream', function(remoteStream) {
 		console.log("incoming stream id: " + remoteStream.id)
 
-		addRemoteStream(remoteStream, call.peer);	
+		establishCall(remoteStream, call.peer);
 	});
 
 	// used for onClose
@@ -106,9 +111,7 @@ function startCallHelper(other_user_id) {
 
 	call.on('close', function() {
 		console.log("call closed");
-
-		// when a call closes, remove the corresponding stream
-		removeRemoteStream(call.peer);
+		destablishCall(call.peer);
 	});
 }
 
@@ -125,12 +128,7 @@ function answerCall(call) {
 	// myStream not yet set
 	else {
 		console.log("myStream not yet set");
-		navigator.getUserMedia({video: false, audio: true}, function(stream) {
-	    	myStream = stream;
-	    	answerCallHelper(call);
-		}, function(err) {
-			console.log('Failed to get local stream' ,err);
-		});
+		getVoice(answerCallHelper(call));
 	}
 }
 
@@ -145,10 +143,9 @@ function answerCallHelper(call) {
 
 	console.log("outgoing stream id: " + myStream.id)
 	call.on('stream', function(remoteStream) {
+		console.log("incoming stream id: " + remoteStream.id)	
 
- 		console.log("incoming stream id: " + remoteStream.id)	
-		
-		addRemoteStream(remoteStream, call.peer);
+		establishCall(remoteStream, call.peer);
 	});
 
 	// used for onClose
@@ -156,10 +153,28 @@ function answerCallHelper(call) {
 
 	call.on('close', function() {
 		console.log("call closed");
-
-		// when a call closes, remove the corresponding stream
-		removeRemoteStream(call.peer);
+		destablishCall(call.peer);
 	});
+}
+
+// just calls addRemoteStream and plays the sound effect
+function establishCall(remoteStream, peer_id) {
+		
+	// add their stream
+	addRemoteStream(remoteStream, peer_id);
+
+	// play join room sound
+	document.getElementById('join_room_audio').play();
+}
+
+// just calls removeRemoteStream and plays the sound effect
+function destablishCall(peer_id) {
+
+	// remove their stream
+	removeRemoteStream(peer_id);
+
+	// play leave room sound
+	document.getElementById('leave_room_audio').play();
 }
 
 /*********************************************************************/
@@ -167,13 +182,13 @@ function answerCallHelper(call) {
 
 // - updates server and returns list of user_id's
 // - calls all user_id's
-function joinRoomCall() {
+function joinRoomCall(currRoomCallID) {
 
-	console.log("joining room with id " + currRoomID);
+	console.log("joining room call with id " + currRoomCallID);
 
 	// send request to server
 	var xhr = new XMLHttpRequest();
-	xhr.open('GET', "/join_room/" + currRoomID, true);
+	xhr.open('GET', "/join_room/" + currRoomCallID, true);
 	xhr.send();
 
 	// on response
@@ -189,11 +204,15 @@ function joinRoomCall() {
 	        	return;
 	        }
 
-			// listen to the room
-			//listenToRoom();
+	        // set the onload function to use the new room id
+	        setOnBeforeUnload(currRoomCallID);
 
 	        // if this is a lecture and I am the host, I am the lecturer
 	        isLecturer = (response.is_lecture && response.host_id == myID);
+
+	        if (response.is_lecture) {
+	        	showAlert("lecture-alert", 4000);
+	        }
 	        
 	        // if this is a lecture-style room and I am not the lecturer,
 	        // then I only call the lecturer
@@ -201,7 +220,7 @@ function joinRoomCall() {
 	        	startCall(response.host_id);
 
 	        	// do not send out my audio
-	        	setMyStreamAudioEnabled(false);
+	        	setMyStreamAudioEnabled(false);	
 
 	        	// TODO: disable unmute button
 	        }
@@ -228,22 +247,19 @@ function joinRoomCall() {
 }
 
 // - updates server and leaves all current calls
-function leaveRoom() {
+function leaveRoom(currRoomCallID) {
 
 	// are we even in a room?
-	if (currRoomID != null) {
-		console.log("leaving room with id " + currRoomID);
+	if (currRoomCallID != null) {
+		console.log("leaving room with id " + currRoomCallID);
 
 		// leave our calls
 		leaveCalls();
 
 		// send request to server to tell them we left
 		var xhr = new XMLHttpRequest();
-		xhr.open('GET', "/leave_room/" + currRoomID, true);
+		xhr.open('GET', "/leave_room/" + currRoomCallID, true);
 		xhr.send();
-
-		// reset currRoomID
-		currRoomID = null;
 
 		// stop any song playing
 		stopSong();
@@ -291,52 +307,24 @@ function leaveCalls() {
 	myCalls = [];
 }
 /*********************************************************************/
-/************************* LISTENING TO ROOMS ************************/
-
-function listenToRoom() {
-
-	// detach any old listeners
-	classRoomsDatabase.child(currRoomID).off();
-
-	// attach listener to the current room
-	classRoomsDatabase.child(currRoomID).on("value", function(snapshot) {
-
-        var snapshotValueObject = snapshot.val();
-
-        if (snapshotValueObject) {
-        	// get the updated list of users in the room
-        	var updatedRoomUsers = Object.values(snapshotValueObject);
-
-        	// TODO: update UI with updated users list
-
-        	// set our currRoomUsers to the updated list
-        	currRoomUsers = updatedRoomUsers;
-        }
-
-    });
-}
-
-/*********************************************************************/
 /********************** MUTING / UNMUTING AUDIO **********************/
 
 // - toggle my own audio
 function toggleMyStreamAudioEnabled() {
-	console.log("toggling my audio to " + !(myStream.getAudioTracks()[0].enabled));
+	//console.log("toggling my audio to " + !(myStream.getAudioTracks()[0].enabled));
 	myStream.getAudioTracks()[0].enabled = !(myStream.getAudioTracks()[0].enabled);
 }
 
 // - set my audio
 function setMyStreamAudioEnabled(enabled) {
 	if (myStream) {
-		console.log("setting my audio to " + enabled);
+		//console.log("setting my audio to " + enabled);
 		myStream.getAudioTracks()[0].enabled = enabled;
 	}
 }
 
 // - toggle audio from another person
 function toggleRemoteStreamAudioEnabled(user_id) {
-  console.log(myRemoteStreams[user_id]);
-  console.log(user_id);
   if (myRemoteStreams[user_id] != null) {
     console.log("toggling remote audio to " + !(myRemoteStreams[user_id].muted));
 	myRemoteStreams[user_id].muted = !(myRemoteStreams[user_id].muted);
@@ -345,17 +333,19 @@ function toggleRemoteStreamAudioEnabled(user_id) {
 /*********************************************************************/
 /******************************* MISC ********************************/
 
-// when the window is about to close
-window.onbeforeunload = function(event) {
-	// send request to server to tell them we left
-	leaveRoomHard();
-};
+function setOnBeforeUnload(currRoomCallID) {
+	// when the window is about to close
+	window.onbeforeunload = function(event) {
+		// send request to server to tell them we left
+		leaveRoomHard(currRoomCallID);
+	};
+}
 
 // makes sure we leave the room
-function leaveRoomHard() {
-	if (currRoomID != null) {
+function leaveRoomHard(currRoomCallID) {
+	if (currRoomCallID != null) {
 		var xhr = new XMLHttpRequest();
-		xhr.open('GET', "/leave_room/" + currRoomID, false);
+		xhr.open('GET', "/leave_room/" + currRoomCallID, false);
 		xhr.send();
 	}
 }
