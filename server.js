@@ -464,12 +464,12 @@ app.get("/typing/:is_typing/:room_id", function(req, res) {
     var typing = req.params.is_typing == "true";
     var room_id = req.params.room_id;
     if (typing) {
-      //firebaseRoot.child("RoomTyping").child(room_id).push().set(req.signedCookies.name);
-      firebaseRoot.child("RoomTyping").child(room_id).child(req.signedCookies.name).set(true);
+      //firebaseRoot.child("RoomTyping").child(room_id).push().set(req.signedCookies.user_id);
+      firebaseRoot.child("RoomTyping").child(room_id).child(req.signedCookies.user_id).set(true);
     }
     else {
-      //firebaseRoot.child("RoomTyping").child(room_id).orderByValue().equalTo(req.signedCookies.name).
-      firebaseRoot.child("RoomTyping").child(room_id).child(req.signedCookies.name).remove();
+      //firebaseRoot.child("RoomTyping").child(room_id).orderByValue().equalTo(req.signedCookies.user_id).
+      firebaseRoot.child("RoomTyping").child(room_id).child(req.signedCookies.user_id).remove();
     }
   }
 });

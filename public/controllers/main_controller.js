@@ -1,5 +1,6 @@
 //Room app -- firebase initialized already
 var chatDatabase = null;
+var typingDatabase = null;
 var myApp = angular.module("mainApp", ["ngMaterial"]);
 
 // list of message objects with: email, name, roomID, text, timeSent
@@ -58,6 +59,9 @@ function($scope, $http, $timeout) {
 
       // empty typing list and listen to who's typing
       currTyping = [];
+      if (typingDatabase != null) {
+        typingDatabase.off();
+      }
       startCurrTyping();
     }
   }
@@ -124,16 +128,30 @@ function($scope, $http, $timeout) {
 
   // Listen to RoomTyping
   function startCurrTyping() {
-    databaseRef.child("RoomTyping").child($scope.currRoomChatID).on("value", function(snapshot) {
+    var typingDatabase = databaseRef.child("RoomTyping").child($scope.currRoomChatID).on("value", function(snapshot) {
       var val = snapshot.val();
       if (val) {
-        $scope.currTyping = Object.keys(val);
+        currTyping = Object.keys(val);
+        updateCurrTyping();
       }
       else {
         $scope.currTyping = [];
       }
       $scope.$apply();
     });
+  }
+
+  function updateCurrTyping() {
+    for (var i = currTyping.length-1; i >= 0; i--) {
+      console.log($scope.rooms[$scope.currRoomChatID].users);
+      if (!$scope.rooms[$scope.currRoomChatID].users.includes(currTyping[i])) {
+        currTyping.splice(i,1);
+      }
+    }
+    for (var i = 0; i < currTyping.length; i++) {
+      currTyping[i] = $scope.users[currTyping[i]].name;
+    }
+    $scope.currTyping = currTyping;
   }
 
   // Upload message to the database
@@ -219,7 +237,6 @@ function($scope, $http, $timeout) {
         i++;
       }
     }
-    console.log("length " + chatMessageList.length);
   }
 
   // Safely apply UI changes
@@ -615,6 +632,9 @@ function($scope, $http, $timeout) {
         // get room users
         updateRoomUsers($scope.rooms[room_id]);
 
+        // update currTyping ppl
+        updateCurrTyping();
+
         $scope.$apply(function() {/*
 var item = (document.getElementById(room_id));
 if (item.scrollWidth >  item.width) {
@@ -1003,7 +1023,7 @@ console.log("no overflow for " + room_id + ", scroll width: " + item.scrollWidth
       for (var i = 0; i < room.users.length; i++) {
         console.log("getting user info for user: " + room.users[i]);
         $http.get('/get_room_user/' + room.users[i]).then(function(response) {
-          $scope.users[room.users[i]] = response.data;
+          $scope.users[response.data.user_id] = response.data;
         });
       }
     }
