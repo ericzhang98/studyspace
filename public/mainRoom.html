@@ -123,6 +123,7 @@
                   classes[rooms[currRoomChatID].class_id].name + " - ":""}}{{rooms[currRoomChatID].name}}{{rooms[currRoomChatID].is_lecture ? ' (cast by ' + rooms[currRoomChatID].host_name + ')' : ''}}</span>
               </div>
               <ul ng-if="rooms[currRoomChatID].class_id != 'dm_class_id'" class="nav navbar-nav navbar-right">
+                <!--
                 <li class="dropdown">
                   <a class="dropdown-toggle" data-toggle="dropdown" href="#" style="background-color: inherit;">Rooms <span class="caret"></span></a>
                   <ul class="dropdown-menu" id="room-list">
@@ -130,6 +131,10 @@
                       <a href="#">{{rooms[room_id].name}}</a>
                     </li>
                   </ul>
+                </li>
+                -->
+                <li class="nav-link" ng-click="leaveRoom()">
+                  <a href="#">Leave room</a>
                 </li>
               </ul>
             </div>
@@ -153,7 +158,7 @@
                   <div class="dropdown">
 
                     <!-- Dropdown for non-me users -->
-                    <a ng-cloak ng-if="chatMessage.user_id != myID" class="user-name dropdown-toggle" data-toggle="dropdown" href="#" style="color:var(--accent-color)">{{chatMessage.name.split(" ")[0] + " " + chatMessage.name.split(" ")[1][0]}} <span class="caret"></span></a>
+                    <a ng-cloak ng-if="chatMessage.user_id != myID" class="user-name dropdown-toggle" data-toggle="dropdown" href="#" style="color:var(--accent-color)">{{chatMessage.name.split(" ")[0] + " " + chatMessage.name.split(" ")[1][0]}} </a>
                     <ul ng-if="chatMessage.user_id != myID" class="dropdown-menu">
                       <li><a href="#" onclick="toggleRemoteStreamAudioEnabled(chatMessage.user_id)">Mute</a></li>
                       <li><a href="#">Block</a></li>
@@ -180,7 +185,6 @@
                   <button id="mute-button" class="btn btn-mute text-center" type="button" ng-click="toggleMic()"> 
                     <span ng-class="muteBtnClass"></span>
                   </button>
-                  <button class="btn text-center" type="button" ng-click="leaveRoom()">LeaveRoom</button>
                 </span>
                 <input ng-cloak type="text" class="form-control input-message" id="chatInputBox" 
                        ng-model="chatInput" placeholder="Type a message..." autocomplete="off">

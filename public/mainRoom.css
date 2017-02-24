@@ -37,6 +37,18 @@ html, body {
   color: var(--primary-dark-color);
 }
 
+.navbar-room .nav-link {
+  margin-right: 0;
+}
+
+.navbar-room .navbar-nav>li>a {
+  color: white;
+}
+
+.navbar-room .nav>li>a:focus, .navbar-room .nav>li>a:hover {
+  background-color: transparent;
+}
+
 .dropdown-toggle {
   color: inherit;
 }
@@ -69,7 +81,7 @@ html, body {
   list-style: none;
   padding-top: 1.5rem;
   padding-bottom: 1.5rem;
-  border-bottom: solid 0px #333333;
+  border-bottom: solid 1px #333333;
   cursor: default;
 }
 
@@ -98,6 +110,10 @@ html, body {
   color: var(--primary-color);
   font-size: 1.5rem;
   font-weight: 500;
+}
+
+.message-header .dropdown .user-name:hover {
+  text-decoration: underline;
 }
 
 .message-header .dateTime {
