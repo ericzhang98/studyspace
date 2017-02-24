@@ -37,6 +37,18 @@ html, body {
   color: var(--primary-dark-color);
 }
 
+.navbar-room .nav-link {
+  margin-right: 0;
+}
+
+.navbar-room .navbar-nav>li>a {
+  color: white;
+}
+
+.navbar-room .nav>li>a:focus, .navbar-room .nav>li>a:hover {
+  background-color: transparent;
+}
+
 .dropdown-toggle {
   color: inherit;
 }
@@ -69,7 +81,7 @@ html, body {
   list-style: none;
   padding-top: 1.5rem;
   padding-bottom: 1.5rem;
-  border-bottom: solid 0px #333333;
+  border-bottom: solid 1px #333333;
   cursor: default;
 }
 
@@ -98,6 +110,10 @@ html, body {
   color: var(--primary-color);
   font-size: 1.5rem;
   font-weight: 500;
+}
+
+.message-header .dropdown .user-name:hover {
+  text-decoration: underline;
 }
 
 .message-header .dateTime {
@@ -251,12 +267,17 @@ html, body {
 }
 
 .menu-classes .panel .panel-title {
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-pack: justify;
+  -ms-flex-pack: justify;
+  justify-content: space-between;
+  padding: 1rem;
+  border-radius: 2rem;
+  background-color: #666666;
   font-size: 1.5rem;
   color: white;
-}
-
-.menu-classes .panel .panel-title:hover {
-  background-color: var(--base-color-focus);
 }
 
 .menu-classes .panel:hover .panel-heading {
@@ -264,7 +285,14 @@ html, body {
 }
 
 .menu-classes .panel>.panel-collapse>.list-group .list-group-item {
-  padding-left: 2rem;
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-pack: justify;
+  -ms-flex-pack: justify;
+  justify-content: space-between;
+  padding-left: 2.5rem;
+  padding-right: 2.5rem;
   background-color: var(--base-color);
   color: var(--over-base-color);
   outline: 0 !important;
@@ -309,14 +337,6 @@ html, body {
 .md-autocomplete-suggestions-container {
   z-index: 1051 !important; /* lol xD */
 
-}
-
-.room-name-span {
-  /*display: block; 
-  width: 200px; 
-  overflow: hidden; 
-  word-wrap: break-word; 
-  white-space: nowrap*/
 }
 
 #overlay {
