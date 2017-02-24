@@ -439,6 +439,9 @@ app.get("/ping", function(req, res) {
   if (user_id) {
     console.log("PING: " + user_id);
     userActivityDatabase.child(user_id).child("lastActive").set(Date.now()); 
+    if (req.signedCookies.name) {
+      userActivityDatabase.child(user_id).child("name").set(req.signedCookies.name);
+    }
   }
 });
 
