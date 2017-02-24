@@ -29,6 +29,8 @@ myApp.controller("MainController", ["$scope", "$http", "$timeout",
 			var chatInputBox = document.getElementById("chatInputBox");
 			var lastKey = null;
 			var scrollLock = false;
+      var currTyping = [];
+      var isTyping = false;
 
 /************************* JOINING A CHATROOM ************************/
 
@@ -53,6 +55,10 @@ myApp.controller("MainController", ["$scope", "$http", "$timeout",
 					// set up and start new listener
 					chatDatabase = databaseRef.child("RoomMessages").child($scope.currRoomChatID);
 					startChatMessages();
+
+          // empty typing list and listen to who's typing
+          currTyping = [];
+          startCurrTyping();
 				}
 			}
 /*********************************************************************/
@@ -89,12 +95,37 @@ myApp.controller("MainController", ["$scope", "$http", "$timeout",
 
 			// Send chat when enter key is pressed
 			$scope.keypress = function(e) {
-				if (e.keyCode == 13) {
-					if (chatInputBox.value) {
-						uploadMessage(chatInputBox.value);
-					}
-				}
+        setTimeout(function() {
+          if (chatInputBox.value) {
+            if (!isTyping) {
+              console.log("hi");
+              $http.get("/typing/true/" + $scope.currRoomChatID);
+              isTyping = true;
+            }
+          }
+          else {
+            if (isTyping) {
+              console.log("nope");
+              $http.get("/typing/false/" + $scope.currRoomChatID);
+              isTyping = false;
+            }
+          }
+        }, 10);
 			}
+
+      // Listen to RoomTyping
+      function startCurrTyping() {
+        databaseRef.child("RoomTyping").child($scope.currRoomChatID).on("value", function(snapshot) {
+          var val = snapshot.val();
+          if (val) {
+            $scope.currTyping = Object.keys(val);
+          }
+          else {
+            $scope.currTyping = [];
+          }
+          $scope.$apply();
+        });
+      }
 
 			// Upload message to the database
 			function uploadMessage(chatInput) {

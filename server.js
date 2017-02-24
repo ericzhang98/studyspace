@@ -458,6 +458,22 @@ app.get("/ping", function(req, res) {
   }
 });
 
+app.get("/typing/:is_typing/:room_id", function(req, res) {
+  res.end();
+  if (req.signedCookies.user_id) {
+    var typing = req.params.is_typing == "true";
+    var room_id = req.params.room_id;
+    if (typing) {
+      //firebaseRoot.child("RoomTyping").child(room_id).push().set(req.signedCookies.name);
+      firebaseRoot.child("RoomTyping").child(room_id).child(req.signedCookies.name).set(true);
+    }
+    else {
+      //firebaseRoot.child("RoomTyping").child(room_id).orderByValue().equalTo(req.signedCookies.name).
+      firebaseRoot.child("RoomTyping").child(room_id).child(req.signedCookies.name).remove();
+    }
+  }
+});
+
 /*************************************************************************************/
 /********************************* SIGNUP AND LOGIN **********************************/
 
@@ -819,6 +835,7 @@ function deleteRoom(room_id, class_id, firebase_push_id) {
   //messages database
   roomInfoDatabase.child(room_id).remove();
   classRoomsDatabase.child(class_id).child(firebase_push_id).remove();
+  //classRoomsDatabase.child(class_id).equalTo(room_id).ref.remove();
   roomMessagesDatabase.child(room_id).remove();
 }
 

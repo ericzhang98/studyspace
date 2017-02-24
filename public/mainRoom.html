@@ -198,7 +198,8 @@
                     </button>
                   </span>
                   <input ng-cloak type="text" class="form-control input-message" id="chatInputBox" 
-                         ng-model="chatInput" placeholder="Type a message..." autocomplete="off">
+                         ng-model="chatInput" placeholder="Type a message..."
+                         autocomplete="off" ng-keydown="keypress($event)">
                 </div>
               </form>
             </footer> <!-- END MESSAGE INPUT -->
@@ -212,7 +213,7 @@
             <input class="form-control" ng-model="friend.name">
             <button class="btn btn-primary" ng-click="sendRequest()">Send Request</button>
             <table class="table">
-              <tbody>   
+              <tbody ng-cloak>   
                 <tr ng-repeat="buddy_requests in buddies_list">
                   <td></td>
                   <td>{{buddy_requests.sent_from_name}}</td>
@@ -223,7 +224,7 @@
             </table>
             Friends
             <table class="table">
-              <tbody>   
+              <tbody ng-cloak>   
                 <tr ng-repeat="buddy in added_buddies_list">
                   <td></td>
                   <td>{{buddy.user_two_name}}</td>
@@ -240,7 +241,7 @@
                   <th><button class="btn btn-primary" ng-click="blockUser()">Block User</button></th>
                 </tr>
               </thead>
-              <tbody>
+              <tbody ng-cloak>
                 <tr ng-repeat="block_user in block_user_list">
                   <td></td>
                   <td>{{block_user.blocked_user_email}}</td>
@@ -249,6 +250,15 @@
               </tbody>
             </table>
           </div> 
+
+
+
+
+
+          <!-- CURRENTLY TYPING -->
+          <span>CURRENTLY TYPING:</span>
+          <span ng-cloak>{{currTyping}}</span>
+
         </aside>
 
         <!-- Create Room Modal -->
