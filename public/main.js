@@ -1,19 +1,22 @@
 /***** General variables **************************/
 var myID = getSignedCookie("user_id");
 var currTheme;
-var NUM_THEMES = 4;
+var NUM_THEMES = 6;
 var songCommands = ["/raindrop", "/destress"];
 var otherCommands = ["/gary", "/ord", "/stop"]
 var secretCommands = songCommands.concat(otherCommands);
 
 var garyisms = ["That's a professionalism deduction.", "Don't touch the bananas, please.",
-"Only handle it once!", "This isn't worth my time.", "What does 'DTF' mean?"];
-var ordisms = ["Keep it simple, students.", "Start early, start often!", 
+"Only handle it once.", "This isn't worth my time.", "What does 'DTF' mean?"];
+var ordisms = ["Keep it simple, students.", "Start early, start often.", 
 "If a simple boy from the midwest can do it, so can you.", "Think like a compiler."];
 
 var currSongAudio = null;
 document.getElementById('join_room_audio').volume = 0.4;
 document.getElementById('leave_room_audio').volume = 0.4;
+
+// set color theme
+setTheme(parseInt(getCookie('theme_num')));
 /**************************************************/
 
 /******************************** MODEL ******************************/
@@ -56,18 +59,30 @@ function showAlert(alert_id, duration) {
 		$('#' + alert_id).alert('close')
 
 	}, duration);
-	
 }
 
-setTheme(1);
-
 function changeTheme() {
+	
 	setTheme(currTheme + 1 <= NUM_THEMES ? currTheme + 1 : 1);
+
+	// play pop sound
+	var audio = document.createElement("audio");
+	audio.src = "/audio/pop_sfx";
+	audio.addEventListener("ended", function () {
+        document.removeChild(this);
+    }, false);
+    audio.volume = 0.4;
+    audio.play(); 
 }
 
 function setTheme(theme_num) {
-	console.log("changing theme...");
-	var prim, prim_light, prim_dark, base, base_two, base_focus, over_base, over_base_focus;
+
+	var prim, prim_light, prim_dark, base, base_two, base_focus, over_base, over_base_two, over_base_focus;
+
+	if (theme_num == null) {
+		setTheme(1);
+		return;
+	}
 
 	switch (theme_num) {
 
@@ -126,9 +141,41 @@ function setTheme(theme_num) {
 			accent = '#42ccff'; 
 			break;
 
+
+		// THEME 5 AQUA-BLACK-NAVY
+		case 5:
+
+			prim = '#353535';
+			prim_light = '#353535';
+			prim_dark = '#353535';
+			base = '#42ccff';
+			base_two = '#f9f9f9';
+			base_focus = '#f9f9f9';
+			over_base = '#ffffff';
+			over_base_two = '#353535';
+			over_base_focus ='#42ccff';
+			accent = '#004f7c'; 
+			break;
+
+		case 6:
+
+			prim = '#262626';
+			prim_light = '#262626';
+			prim_dark = '#262626';
+			base = '#cc0025';
+			base_two = '#f9f9f9';
+			base_focus = '#f9f9f9';
+			over_base = '#ffffff';
+			over_base_two = '#262626';
+			over_base_focus ='#cc0025';
+			accent = '#4c0015'; 
+			break;
+
 		default:
 			return;
 	}
+
+	over_base_two = over_base_two ? over_base_two : over_base;
 
 	document.documentElement.style.setProperty('--primary-color', prim);
 	document.documentElement.style.setProperty('--primary-light-color', prim_light);
@@ -137,10 +184,12 @@ function setTheme(theme_num) {
 	document.documentElement.style.setProperty('--base-two-color', base_two);
 	document.documentElement.style.setProperty('--base-focus-color', base_focus);
 	document.documentElement.style.setProperty('--over-base-color', over_base);
+	document.documentElement.style.setProperty('--over-base-two-color', over_base_two);
 	document.documentElement.style.setProperty('--over-base-focus-color', over_base_focus);
 	document.documentElement.style.setProperty('--accent-color', accent);
 
 	currTheme = theme_num;
+	storeCookie("theme_num", theme_num);
 }
 
 /*********************************************************************/

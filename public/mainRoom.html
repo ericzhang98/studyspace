@@ -58,7 +58,7 @@
   -moz-user-select: -moz-none; -khtml-user-select: none;-webkit-user-select: none;'>
               <span ng-cloak>{{myName | limitTo:1}}</span>
             </div>
-            <span class="user-name" style="color:var(--primary-color)">{{myName}}</span>
+            <span class="user-name" style="color:var(--primary-color)" ng-cloak>{{myName}}</span>
           </div>
 
           <!-- Log Out -->
@@ -318,8 +318,10 @@
           </div>
         </div>
 
-        <audio id="join_room_audio" src="/audio/join_room_sfx" volume=0.5></audio>
+        <audio id="join_room_audio" src="/audio/join_room_sfx"></audio>
         <audio id="leave_room_audio" src="/audio/leave_room_sfx"></audio>
+        <audio id="pop_audio" src="/audio/pop_sfx"></audio>
+
       </div>
       <div id="voice-connect-alert" class="alert fade in text-center" hidden>
         <a class="close" data-dismiss="alert">×</a>
