@@ -1,6 +1,6 @@
 /***** General variables **************************/
 var myID = getSignedCookie("user_id");
-var currTheme = 0;
+var currTheme;
 var numThemes = 3;
 var songCommands = ["/raindrop", "/destress"];
 var otherCommands = ["/gary", "/ord", "/stop"]
@@ -85,15 +85,15 @@ function setTheme(theme_num) {
 
 		// THEME 2 (green, dark, blue)
 		case 2:
-			prim = '#00ed43';
-			prim_light = '#00ed43';
-			prim_dark = '#00c938';
+			prim = '#a90046';
+			prim_light = '#a90046';
+			prim_dark = '#a90046';
 			base = '#353535';
 			base_two = '#262626';
 			base_focus = '#262626';
 			over_base = '#ffffff';
 			over_base_focus ='#ffffff';
-			accent = '#008de5'; 
+			accent = '#00c4e2'; 
 			break;
 
 		// THEME 3 (blue, light, pink)

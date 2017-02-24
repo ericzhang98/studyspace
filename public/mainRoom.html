@@ -54,8 +54,9 @@
 
           <!-- User Quick Info -->
           <div id="user-info" class="container-info-user">
-            <div class="container-user-icon" style='border: none;
-  background-color: var(--primary-color); color: #ffffff'>
+            <div onclick="changeTheme()" class="container-user-icon" 
+            style='border: none;background-color: var(--primary-color); color: #ffffff; 
+  -moz-user-select: -moz-none; -khtml-user-select: none;-webkit-user-select: none;'>
               <span ng-cloak>{{myName | limitTo:1}}</span>
             </div>
             <span class="user-name" style="color:var(--primary-color)">{{myName}}</span>
@@ -66,8 +67,6 @@
 
           <!-- User Preference -->
           <a id="preferences" class="btn btn-sm btn-low-pri" href="courses">Account</a>
-
-          <button class="btn btn-sm btn-low-pri" onclick="changeTheme()">*</button>
 
           <!-- Classes -->
           <div id="classes-menu" class="container-menu-classes">

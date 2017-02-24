@@ -11,21 +11,6 @@
   --accent-color: #ffbb00;
 }
 
-/**************** ACCENT ****************/
-/* PINK-RED 
---accent-color: #e01f4f;                */
-
-/* LIGHT-GREEN 
---accent-color: #00ed43;                */
-
-/* YELLOW
---accent-color: #ffbb00;                */
-
-/* DARK-GREEN 
---accent-color: #00b512;                */
-/****************************************/
-
-
 /* General */
 body {
   font-family: 'Montserrat', sans-serif;
@@ -378,7 +363,7 @@ a:hover {
 
 .btn-hi-pri {
   color: #ffffff;
-  background-color: #38c9ff;
+  background-color: var(--primary-color);
 }
 
 .btn-hi-pri:hover {
@@ -386,6 +371,6 @@ a:hover {
 }
 
 .btn-cancel {
-  background-color: #e01f4f;
+  background-color: var(--accent-color);
   color: #ffffff;
 }
