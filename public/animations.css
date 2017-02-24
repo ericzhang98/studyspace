@@ -79,12 +79,12 @@
     box-shadow: 0 0 1rem rgba(255, 255, 255, 0.25);
 }
 
-.blob-2 { animation: animate-to-2 0.7s infinite; }
-.blob-3 { animation: animate-to-3 0.7s infinite; }
-.blob-1 { animation: animate-to-1 0.7s infinite; }
-.blob-4 { animation: animate-to-4 0.7s infinite; }
-.blob-0 { animation: animate-to-0 0.7s infinite; }
-.blob-5 { animation: animate-to-5 0.7s infinite; }
+.blob-2 { animation: animate-to-2 0.5s infinite; }
+.blob-3 { animation: animate-to-3 0.5s infinite; }
+.blob-1 { animation: animate-to-1 0.5s infinite; }
+.blob-4 { animation: animate-to-4 0.5s infinite; }
+.blob-0 { animation: animate-to-0 0.5s infinite; }
+.blob-5 { animation: animate-to-5 0.5s infinite; }
 
 @keyframes animate-to-2 {
     25%, 75% { transform: translateX(-1.5rem) scale(0.75); }

@@ -1,9 +1,9 @@
 <!--
-   _____     ______     __   __     __  __
-  /\  __-.  /\  __ \   /\ "-.\ \   /\ \/ /
-  \ \ \/\ \ \ \  __ \  \ \ \-.  \  \ \  _"-.
-   \ \____-  \ \_\ \_\  \ \_\\"\_\  \ \_\ \_\
-    \/____/   \/_/\/_/   \/_/ \/_/   \/_/\/_/
+ _____     ______     __   __     __  __
+/\  __-.  /\  __ \   /\ "-.\ \   /\ \/ /
+\ \ \/\ \ \ \  __ \  \ \ \-.  \  \ \  _"-.
+ \ \____-  \ \_\ \_\  \ \_\\"\_\  \ \_\ \_\
+  \/____/   \/_/\/_/   \/_/ \/_/   \/_/\/_/
 
 -->
 
@@ -54,8 +54,8 @@
           <!-- User Quick Info -->
           <div id="user-info" class="container-info-user">
             <div onclick="changeTheme()" class="container-user-icon" 
-            style='border: none;background-color: var(--primary-color); color: #ffffff; 
-  -moz-user-select: -moz-none; -khtml-user-select: none;-webkit-user-select: none;'>
+                 style='border: none;background-color: var(--primary-color); color: #ffffff; 
+                        -moz-user-select: -moz-none; -khtml-user-select: none;-webkit-user-select: none;'>
               <span ng-cloak>{{myName | limitTo:1}}</span>
             </div>
             <span class="user-name" style="color:var(--primary-color)" ng-cloak>{{myName}}</span>
@@ -122,15 +122,15 @@
                 </div>
                 <ul ng-if="rooms[currRoomChatID].class_id != 'dm_class_id'" class="nav navbar-nav navbar-right">
                   <!--
-                  <li class="dropdown">
-                    <a class="dropdown-toggle" data-toggle="dropdown" href="#" style="background-color: inherit;">Rooms <span class="caret"></span></a>
-                    <ul class="dropdown-menu" id="room-list">
-                      <li ng-repeat="room_id in class_rooms[rooms[currRoomChatID].class_id]" ng-click="joinRoom(room_id, rooms[room_id].class_id)">
-                        <a href="#">{{rooms[room_id].name}}</a>
-                      </li>
-                    </ul>
-                  </li>
-                  -->
+<li class="dropdown">
+<a class="dropdown-toggle" data-toggle="dropdown" href="#" style="background-color: inherit;">Rooms <span class="caret"></span></a>
+<ul class="dropdown-menu" id="room-list">
+<li ng-repeat="room_id in class_rooms[rooms[currRoomChatID].class_id]" ng-click="joinRoom(room_id, rooms[room_id].class_id)">
+<a href="#">{{rooms[room_id].name}}</a>
+</li>
+</ul>
+</li>
+-->
                   <li class="nav-link" ng-click="leaveRoom()">
                     <a href="#">Leave room</a>
                   </li>
@@ -147,31 +147,31 @@
               </div>
               <div class="message" ng-repeat="chatMessage in chatMessageList">
                 <div class="container-user-icon" style="{{chatMessage.user_id != myID ? ('border: none;
-    background-color: var(--accent-color); color: #ffffff') : ('border: none;
-    background-color: var(--primary-dark-color); color: #ffffff')}}">
-                  <span ng-cloak>{{chatMessage.name | limitTo:1}}</span>
+                                                        background-color: var(--accent-color); color: #ffffff') : ('border: none;
+                                                        background-color: var(--primary-dark-color); color: #ffffff')}}">
+                  <span>{{chatMessage.name | limitTo:1}}</span>
                 </div>
                 <div class="message-content">
                   <header class="message-header">
                     <div class="dropdown">
 
                       <!-- Dropdown for non-me users -->
-                      <a ng-cloak ng-if="chatMessage.user_id != myID" class="user-name dropdown-toggle" data-toggle="dropdown" href="#" style="color:var(--accent-color)">{{chatMessage.name.split(" ")[0] + " " + chatMessage.name.split(" ")[1][0]}} </a>
+                      <a ng-if="chatMessage.user_id != myID" class="user-name dropdown-toggle" data-toggle="dropdown" href="#" style="color:var(--accent-color)">{{chatMessage.name.split(" ")[0] + " " + chatMessage.name.split(" ")[1][0]}} </a>
                       <ul ng-if="chatMessage.user_id != myID" class="dropdown-menu">
-                        <li><a href="#" onclick="toggleRemoteStreamAudioEnabled(chatMessage.user_id)">Mute</a></li>
+                        <li><a href="#" ng-click="toggleUserAudio(chatMessage.user_id)">{{muteText}}</a></li>
                         <li><a href="#">Block</a></li>
                         <li><a href="#">Friend</a></li>
                       </ul>
 
                       <!-- No dropdown if user is me -->
-                      <a ng-cloak ng-if="chatMessage.user_id == myID" class="user-name">{{chatMessage.name.split(" ")[0] + " " + chatMessage.name.split(" ")[1][0]}}</a>
+                      <a ng-if="chatMessage.user_id == myID" class="user-name">{{chatMessage.name.split(" ")[0] + " " + chatMessage.name.split(" ")[1][0]}}</a>
 
                     </div>
-                  <span ng-cloak  class="dateTime">{{timeAgo(chatMessage)}}</span>
+                    <span class="dateTime">{{timeAgo(chatMessage)}}</span>
                   </header>
-                  <p ng-cloak class="message-body">{{chatMessage.text}}</p>
-               </div>
-             </div>
+                  <p class="message-body">{{chatMessage.text}}</p>
+                </div>
+              </div>
             </div> 
             <!-- END MESSAGE PANE -->
 
@@ -185,7 +185,8 @@
                     </button>
                   </span>
                   <input ng-cloak type="text" class="form-control input-message" id="chatInputBox" 
-                         ng-model="chatInput" placeholder="Type a message..." autocomplete="off">
+                         ng-model="chatInput" placeholder="Type a message..."
+                         autocomplete="off" ng-keydown="keypress($event)">
                 </div>
               </form>
             </footer> <!-- END MESSAGE INPUT -->
@@ -199,7 +200,7 @@
             <input class="form-control" ng-model="friend.name">
             <button class="btn btn-primary" ng-click="sendRequest()">Send Request</button>
             <table class="table">
-              <tbody>   
+              <tbody ng-cloak>   
                 <tr ng-repeat="buddy_requests in buddies_list">
                   <td></td>
                   <td>{{buddy_requests.sent_from_name}}</td>
@@ -210,7 +211,7 @@
             </table>
             Friends
             <table class="table">
-              <tbody>   
+              <tbody ng-cloak>   
                 <tr ng-repeat="buddy in added_buddies_list">
                   <td></td>
                   <td>{{buddy.user_two_name}}</td>
@@ -227,7 +228,7 @@
                   <th><button class="btn btn-primary" ng-click="blockUser()">Block User</button></th>
                 </tr>
               </thead>
-              <tbody>
+              <tbody ng-cloak>
                 <tr ng-repeat="block_user in block_user_list">
                   <td></td>
                   <td>{{block_user.blocked_user_email}}</td>
@@ -236,6 +237,15 @@
               </tbody>
             </table>
           </div> 
+
+
+
+
+
+          <!-- CURRENTLY TYPING -->
+          <span>CURRENTLY TYPING:</span>
+          <span ng-cloak>{{currTyping}}</span>
+
         </aside>
 
         <!-- Create Room Modal -->
@@ -268,7 +278,7 @@
                     <input type="text" class="form-control" maxlength="28" placeholder="e.g. Midterm Review" id="room_name">
                   </div>
                   <div class="checkbox">
-                      <label style="font-size: 1.2rem"><input id="lecture-checkbox" type="checkbox" value="">Cast (only the host can be heard)</label>
+                    <label style="font-size: 1.2rem"><input id="lecture-checkbox" type="checkbox" value="">Cast (only the host can be heard)</label>
                   </div>
                   <div class="btn-container text-center">
                     <button type="submit" class="btn btn-primary btn-block btn-submit-form btn-hi-pri" ng-click="addRoom()">Create</button>
@@ -299,12 +309,12 @@
                   <md-content id="class-dropdown" class="md-padding">
                     <form ng-submit="ctrl.submitForm()">
                       <md-autocomplete
-                          md-selected-item="ctrl.selectedItem"
-                          md-search-text="ctrl.searchText"
-                          md-items="item in ctrl.querySearch(ctrl.searchText)"
-                          md-item-text="item"
-                          md-min-length="0"
-                          placeholder="Enter a Class Code (e.g. 'CSE110')">
+                         md-selected-item="ctrl.selectedItem"
+                         md-search-text="ctrl.searchText"
+                         md-items="item in ctrl.querySearch(ctrl.searchText)"
+                         md-item-text="item"
+                         md-min-length="0"
+                         placeholder="Enter a Class Code (e.g. 'CSE110')">
                         <md-item-template>
                           <span md-highlight-text="ctrl.searchText" md-highlight-flags="^i">{{item}}</span>
                         </md-item-template>
