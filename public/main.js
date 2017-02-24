@@ -1,7 +1,7 @@
 /***** General variables **************************/
 var myID = getSignedCookie("user_id");
-var currTheme = 0;
-var numThemes = 3;
+var currTheme;
+var NUM_THEMES = 4;
 var songCommands = ["/raindrop", "/destress"];
 var otherCommands = ["/gary", "/ord", "/stop"]
 var secretCommands = songCommands.concat(otherCommands);
@@ -62,7 +62,7 @@ function showAlert(alert_id, duration) {
 setTheme(1);
 
 function changeTheme() {
-	setTheme(currTheme + 1 <= numThemes ? currTheme + 1 : 1);
+	setTheme(currTheme + 1 <= NUM_THEMES ? currTheme + 1 : 1);
 }
 
 function setTheme(theme_num) {
@@ -70,7 +70,10 @@ function setTheme(theme_num) {
 	var prim, prim_light, prim_dark, base, base_two, base_focus, over_base, over_base_focus;
 
 	switch (theme_num) {
-		// THEME 1 (blue, dark, yellow)
+
+		// THEME NUM BASE-PRIMARY-ACCENT
+
+		// THEME 1 DARK-BLUE-YELLOW
 		case 1:
 			prim = '#38c9ff';
 			prim_light = '#91e0ff';
@@ -83,20 +86,20 @@ function setTheme(theme_num) {
 			accent = '#ffbb00'; 
 			break;
 
-		// THEME 2 (green, dark, blue)
+		// THEME 2 DARK-MAROON-RED
 		case 2:
-			prim = '#00ed43';
-			prim_light = '#00ed43';
-			prim_dark = '#00c938';
+			prim = '#d80059';
+			prim_light = '#d80059';
+			prim_dark = '#d80059';
 			base = '#353535';
 			base_two = '#262626';
 			base_focus = '#262626';
 			over_base = '#ffffff';
 			over_base_focus ='#ffffff';
-			accent = '#008de5'; 
+			accent = '#ff1443'; 
 			break;
 
-		// THEME 3 (blue, light, pink)
+		// THEME 3 LIGHT-BLUE-PINK
 		case 3:
 			prim = '#0079e5';
 			prim_light = '#0079e5';
@@ -107,6 +110,20 @@ function setTheme(theme_num) {
 			over_base = '#353535';
 			over_base_focus ='#ffffff';
 			accent = '#e01f4f'; 
+			break;
+
+		// THEME 4 LIGHT-GREEN-BLUE
+		case 4:
+
+			prim = '#00d11b';
+			prim_light = '#00d11b';
+			prim_dark = '#00d11b';
+			base = '#f9f7f7';
+			base_two = '#ffffff';
+			base_focus = '#3a3a3a';
+			over_base = '#353535';
+			over_base_focus ='#ffffff';
+			accent = '#42ccff'; 
 			break;
 
 		default:
