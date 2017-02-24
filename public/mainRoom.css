@@ -30,7 +30,9 @@ html, body {
 }
 
 .chat-room .main-content, .chat-room .main-content-hidden {
-  height: 100%;
+  position:relative; 
+  height:100%; 
+  z-index:2
 }
 
 .chat-room .main-content-hidden {

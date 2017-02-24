@@ -14,6 +14,9 @@ var ordisms = ["Keep it simple, students.", "Start early, start often.",
 var currSongAudio = null;
 document.getElementById('join_room_audio').volume = 0.4;
 document.getElementById('leave_room_audio').volume = 0.4;
+
+// set color theme
+setTheme(parseInt(getCookie('theme_num')));
 /**************************************************/
 
 /******************************** MODEL ******************************/
@@ -59,15 +62,18 @@ function showAlert(alert_id, duration) {
 	
 }
 
-setTheme(1);
-
 function changeTheme() {
 	setTheme(currTheme + 1 <= NUM_THEMES ? currTheme + 1 : 1);
 }
 
 function setTheme(theme_num) {
-	console.log("changing theme...");
+
 	var prim, prim_light, prim_dark, base, base_two, base_focus, over_base, over_base_focus;
+
+	if (theme_num == null) {
+		setTheme(1);
+		return;
+	}
 
 	switch (theme_num) {
 
@@ -141,6 +147,7 @@ function setTheme(theme_num) {
 	document.documentElement.style.setProperty('--accent-color', accent);
 
 	currTheme = theme_num;
+	storeCookie("theme_num", theme_num);
 }
 
 /*********************************************************************/
