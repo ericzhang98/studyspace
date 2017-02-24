@@ -55,7 +55,6 @@ myApp.controller("MainController", ["$scope", "$http", "$timeout",
 					startChatMessages();
 				}
 			}
-
 /*********************************************************************/
 /*************************** SENDING CHATS ***************************/
 			
@@ -131,7 +130,6 @@ myApp.controller("MainController", ["$scope", "$http", "$timeout",
 				}
 				toggleMyStreamAudioEnabled();
 			}
-
 /*********************************************************************/
 /************************** DISPLAYING CHATS *************************/
 			
@@ -313,6 +311,7 @@ myApp.controller("MainController", ["$scope", "$http", "$timeout",
 		$scope.classes = {}      // class_id : class
 		$scope.class_rooms = {}  // class_id : list of room_ids
 		$scope.rooms = {}        // room_id : room
+        $scope.users = {}        // user_id : user
 
 		// Initial call to pull data for user / classes / rooms
 		getClasses();
@@ -433,14 +432,21 @@ myApp.controller("MainController", ["$scope", "$http", "$timeout",
 		});
 
     function adjustSidebarToggle(class_id) {
-			$scope.my_class_ids.forEach(function(my_class_id) {
+        $scope.my_class_ids.forEach(function(my_class_id) {
 
-				if (my_class_id == class_id && $("#" + my_class_id).is(":hidden")) {
-					//console.log("class with id " + my_class_id + " being set to visible");
-					$('#' + my_class_id).collapse('toggle');
-				}
-			});
-		}
+          if (my_class_id == class_id && $("#" + my_class_id).is(":hidden")) {
+              //console.log("class with id " + my_class_id + " being set to visible");
+              $('#' + my_class_id).collapse('toggle');
+          }
+      });
+    };
+          
+    // onclick method that will toggles the user audio of the given user_id
+    $scope.muteText = "Mute";
+    $scope.toggleUserAudio = function(user_id) {
+      $scope.muteText = ($scope.muteText == 'Mute') ? 'Unmute' : 'Mute';
+      toggleRemoteStreamAudioEnabled(user_id);
+    };
 
 /*********************************************************************/
 /**************************** PULLING DATA ***************************/
@@ -563,7 +569,11 @@ myApp.controller("MainController", ["$scope", "$http", "$timeout",
 						setNumUsers($scope.rooms[room_id].class_id);
 
 						// update the UI
-						//console.log("applying in get room, room name is : " + $scope.rooms[room_id].name);
+						console.log("applying in get room, room name is : " + $scope.rooms[room_id].name);
+                      
+                                              
+                        // get room users
+                        updateRoomUsers($scope.rooms[room_id]);
 
 						$scope.$apply(function() {/*
 							var item = (document.getElementById(room_id));
@@ -575,6 +585,7 @@ myApp.controller("MainController", ["$scope", "$http", "$timeout",
 					    	", innerWidth: " + item.width);
 							}*/
 						});
+
 					}
 				});
 		}
@@ -934,13 +945,28 @@ myApp.controller("MainController", ["$scope", "$http", "$timeout",
   }
 
   function removeClass(className) {
-      var index = $.inArray(className, userClasses);
-      console.log("Removing index " + index);
-      if(index == -1) {
-          console.log("Cannot remove class, className " + className + " not found!")
+    var index = $.inArray(className, userClasses);
+    console.log("Removing index " + index);
+    if(index == -1) {
+        console.log("Cannot remove class, className " + className + " not found!")
+    }
+    userClasses.splice(index, 1);
+    displayClasses(userClasses);
+  }
+    
+  // getting the list of users in this room
+  function updateRoomUsers(room) {
+    console.log("this is a room " + room);
+    if (room) {
+      console.log("getting new list of users for room: " + room.room_id);
+
+      for (var i = 0; i < room.users.length; i++) {
+        console.log("getting user info for user: " + room.users[i]);
+        $http.get('/get_room_user/' + room.users[i]).then(function(response) {
+          $scope.users[room.users[i]] = response.data;
+        });
       }
-      userClasses.splice(index, 1);
-      displayClasses(userClasses);
+    }
   }
 
   function verifyClass(className) {
@@ -951,7 +977,6 @@ myApp.controller("MainController", ["$scope", "$http", "$timeout",
   /*---------------------------------------------------------------------------*/
 
 	
-
 /*********************************************************************/
 /**************************** BLOCK SYSTEM ***************************/
 

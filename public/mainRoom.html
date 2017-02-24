@@ -112,6 +112,18 @@
           <div class="main-content-hidden" ng-hide="currRoomChatID">
             <p class="brand">studyspace</p>
           </div>
+<!--
+<<<<<<< HEAD
+          <div class="message" ng-repeat="chatMessage in chatMessageList">
+            <div id="message-header">
+              <div class="dropdown">
+                <a id="username" class="dropdown-toggle" data-toggle="dropdown" href="#">{{chatMessage.name}} <span class="caret"></span></a>
+                <ul class="dropdown-menu">
+                  <li><a href="#" ng-click="toggleUserAudio(chatMessage.user_id)">{{muteText}}</a></li>
+                  <li><a href="#">Block</a></li>
+                  <li><a href="#">Friend</a></li>
+=======
+-->
           <div class="main-content" ng-hide="!currRoomChatID">
             <!-- ROOM NAVBAR -->
             <nav id="class-navigation" class="navbar navbar-room" style="color: #ffffff; background-color: {{!currRoomChatID ? '' : (rooms[currRoomChatID].is_lecture ? 'var(--accent-color)' : 'var(--primary-dark-color)')}}">
@@ -134,6 +146,7 @@
                   <li class="nav-link" ng-click="leaveRoom()">
                     <a href="#">Leave room</a>
                   </li>
+<!-- e1d1da965bfbd89ccf973bd5d6ab13b0a178334d-->
                 </ul>
               </div>
             </nav>
