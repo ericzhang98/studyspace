@@ -1,7 +1,7 @@
 /***** General variables **************************/
 var myID = getSignedCookie("user_id");
 var currTheme;
-var NUM_THEMES = 4;
+var NUM_THEMES = 5;
 var songCommands = ["/raindrop", "/destress"];
 var otherCommands = ["/gary", "/ord", "/stop"]
 var secretCommands = songCommands.concat(otherCommands);
@@ -59,11 +59,20 @@ function showAlert(alert_id, duration) {
 		$('#' + alert_id).alert('close')
 
 	}, duration);
-	
 }
 
 function changeTheme() {
+	
 	setTheme(currTheme + 1 <= NUM_THEMES ? currTheme + 1 : 1);
+
+	// play pop sound
+	var audio = document.createElement("audio");
+	audio.src = "/audio/pop_sfx";
+	audio.addEventListener("ended", function () {
+        document.removeChild(this);
+    }, false);
+    audio.volume = 0.4;
+    audio.play(); 
 }
 
 function setTheme(theme_num) {
@@ -130,6 +139,21 @@ function setTheme(theme_num) {
 			over_base = '#353535';
 			over_base_focus ='#ffffff';
 			accent = '#42ccff'; 
+			break;
+
+
+		// THEME 5 AQUA-BLACK-NAVY
+		case 5:
+
+			prim = '#353535';
+			prim_light = '#353535';
+			prim_dark = '#353535';
+			base = '#42ccff';
+			base_two = '#00abea';
+			base_focus = '#f9f9f9';
+			over_base = '#ffffff';
+			over_base_focus ='#42ccff';
+			accent = '#004f7c'; 
 			break;
 
 		default:
