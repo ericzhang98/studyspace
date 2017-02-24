@@ -616,47 +616,6 @@ myApp.controller("MainController", ["$scope", "$http",
 			}
 		}
 
-		// slightly jank
-		$scope.getStringToFit = function(room_name) {
-			return room_name;
-			if (!room_name) {
-				return "";
-			}
-			var space_left = 26;
-			var new_string = "";
-			var long_char = ["m", "w"];
-			var mid_char = ["a", "b", "c", "d", "e", "g", "h", "k", "n", "o", "p", "q", "s", "u", "v", "x", "y", "z"];
-			var short_char = ["f", "i","j", "l", "r", "t"];
-			for (var i = 0; i < room_name.length; i++) {
-
-				var c = room_name[i];
-
-				var len;
-				if (short_char.indexOf(c) != -1) {
-					len = 1;
-				}
-				else if (long_char.indexOf(c) != -1) {
-					len = 2.2;
-				}
-				else {
-					len = 1.8;
-				}
-				if (space_left > len) {
-					space_left -= len;
-					new_string += c;
-				}
-				else {
-					break;
-				}
-			}
-
-			if (new_string == room_name) {
-				return new_string;
-			} else {
-				return new_string + "...";
-			}
-		}
-
 /*********************************************************************/
 /**************************** BUDDY SYSTEM ***************************/
 

@@ -34,7 +34,7 @@
     <link rel="stylesheet" type="text/css" href="general.css">
     <link rel="stylesheet" type="text/css" href="mainRoom.css">
     <link rel="stylesheet" type="text/css" href="animations.css">
-    
+
     <!-- Additional Typefaces -->
     <link href="https://fonts.googleapis.com/css?family=Montserrat:400,500,600,700" rel="stylesheet">
 
@@ -65,6 +65,8 @@
 
           <!-- User Preference -->
           <a id="preferences" class="btn btn-sm btn-low-pri" href="courses">Account</a>
+
+          <button class="btn btn-sm btn-low-pri" onclick="changeTheme()">*</button>
 
           <!-- Classes -->
           <div id="classes-menu" class="container-menu-classes">
@@ -106,7 +108,7 @@
           </div>
         </aside> <!-- END LEFT SIDEBAR -->
 
-        <div id="main-initial" class="chat-room" role="main" ng-hide="currRoomChatID" style="position:relative; height:100%; z-index:1; background-color: #ffffff">
+        <div id="main-initial" class="chat-room" role="main" ng-hide="currRoomChatID" style="position:relative; height:100%; z-index:1; background-color: var(--over-base-color)">
           <p class="text-center" style="color: var(--primary-color); font-size: 4rem; font-weight: 500; 
           position:absolute; top: 40%; left:38%; width:20%; height: 20%">studyspace</p>
         </div>
@@ -114,7 +116,7 @@
         <!-- Main Content -->
         <main id="main" class="chat-room" role="main" ng-hide="!currRoomChatID">
           <!-- ROOM NAVBAR -->
-          <nav id="class-navigation" class="navbar navbar-room" style="color: #ffffff; background-color: {{!currRoomChatID ? '' : (rooms[currRoomChatID].is_lecture ? 'var(--accent-color)' : 'var(--primary-color)')}}">
+          <nav id="class-navigation" class="navbar navbar-room" style="color: #ffffff; background-color: {{!currRoomChatID ? '' : (rooms[currRoomChatID].is_lecture ? 'var(--accent-color)' : 'var(--primary-dark-color)')}}">
             <div class="container-fluid">
               <div class="navbar-header">
                 <span ng-cloak class="navbar-brand" >{{classes[rooms[currRoomChatID].class_id].name != "" ? 
@@ -143,7 +145,7 @@
             <div class="message" ng-repeat="chatMessage in chatMessageList">
               <div class="container-user-icon" style="{{chatMessage.user_id != myID ? ('border: none;
   background-color: var(--accent-color); color: #ffffff') : ('border: none;
-  background-color: #00b9ff; color: #ffffff')}}">
+  background-color: var(--primary-dark-color); color: #ffffff')}}">
                 <span ng-cloak>{{chatMessage.name | limitTo:1}}</span>
               </div>
               <div class="message-content">
@@ -313,14 +315,6 @@
             </div>
           </div>
         </div>
-
-
-
-
-
-
-
-
 
         <audio id="join_room_audio" src="/audio/join_room_sfx" volume=0.5></audio>
         <audio id="leave_room_audio" src="/audio/leave_room_sfx"></audio>

@@ -1,31 +1,29 @@
 /* General CSS File Across All Pages */
 :root {
   --primary-color: #38c9ff;
-  --primary-color-light: #91e0ff;
-  --primary-color-dark: #00b9ff;
-  --dark-color-dark: #262626;
-  --dark-color-light: #353535;
+  --primary-light-color: #91e0ff;
+  --primary-dark-color: #00b9ff;
+  --base-color: #353535;
+  --base-two-color: #262626;
+  --base-focus-color: #262626;
+  --over-base-color: #ffffff;
+  --over-base-focus-color: #ffffff;  
   --accent-color: #ffbb00;
 }
-/******************************* THEMES ******************************/
 
-/* PRIMARY */
+/**************** ACCENT ****************/
+/* PINK-RED 
+--accent-color: #e01f4f;                */
 
-/************ BLUE THEME ****************/
-/* primary-color: #38c9ff */ 
-/* primary-color-light: #91e0ff */ 
-/* primary-color-dark: var(--primary-color-dark) */
+/* LIGHT-GREEN 
+--accent-color: #00ed43;                */
+
+/* YELLOW
+--accent-color: #ffbb00;                */
+
+/* DARK-GREEN 
+--accent-color: #00b512;                */
 /****************************************/
-
-/* DARKS */
-/* dark-color-dark: var(--dark-color-dark) */
-/* dark-color-light: var(--dark-color-light) */
-
-/* ACCENTS */
-/* accent-color: #e01f4f pink-red   */
-/* accent-color: #00ed43 green      */
-/* accent-color: #ffbb00 yellow     */
-/*********************************************************************/
 
 
 /* General */
@@ -362,16 +360,20 @@ a:hover {
 /* More main styling */
 
 .primary-dark-text {
-  color: var(--primary-color-dark);
+  color: var(--primary-dark-color);
 }
 
 .btn-low-pri {
-  background-color: var(--dark-color-dark);
-  color: gainsboro;
+  background-color: var(--base-focus-color);
+  color: var(--over-base-focus-color);
   margin-left: 1.5rem;
 }
+
 .btn-low-pri:hover {
-  color: var(--primary-color-light);
+  color: var(--primary-light-color);
+}
+.btn-low-pri:active {
+  color: var(--over-base-focus-color);
 }
 
 .btn-hi-pri {
@@ -380,7 +382,7 @@ a:hover {
 }
 
 .btn-hi-pri:hover {
-  background-color: var(--primary-color-dark);
+  background-color: var(--primary-dark-color);
 }
 
 .btn-cancel {
