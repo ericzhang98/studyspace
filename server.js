@@ -121,10 +121,10 @@ app.get('/audio/:song_code', function (req, res) {
 app.post('/get_Id_From_Name', function(req, res) {
   var emailFind = req.body.email;
   console.log(emailFind);
-  
-	db.users.findOne({email:req.body.email}, function(err, docs){
-		res.json(docs);
-	});	
+
+  db.users.findOne({email:req.body.email}, function(err, docs){
+    res.json(docs);
+  });	
 });
 
 /************************************** BLOCKING *************************************/
@@ -151,10 +151,10 @@ app.post('/add_blocked_user', function(req, res) {
 
 app.delete('/remove_block/:id', function(req, res){
 
-	var id = req.params.id;
-	db.blocked_users.remove({_id: mongojs.ObjectId(id)}, function(err, doc){
-		res.json(doc);
-	});
+  var id = req.params.id;
+  db.blocked_users.remove({_id: mongojs.ObjectId(id)}, function(err, doc){
+    res.json(doc);
+  });
 });
 /*************************************************************************************/
 /************************************** BUDDIES **************************************/
@@ -165,10 +165,10 @@ app.post('/buddy_existing_user', function(req, res) {
   if(req.body.name == req.signedCookies.email){
     return null;
   }
-	db.users.findOne({email:req.body.name}, function(err, docs){
+  db.users.findOne({email:req.body.name}, function(err, docs){
     console.log(docs);
-		res.json(docs);
-	});	
+    res.json(docs);
+  });	
 
 });
 
@@ -178,12 +178,12 @@ app.post('/buddy_existing_request', function(req, res) {
   var user_id = req.signedCookies.user_id;
   var friend_id = req.body.friend_id;
   db.user_buddy_requests.find(
-  {$or:[{sent_from_id:user_id, sent_to_id:friend_id},
-  {sent_from_id:friend_id, sent_to_id:user_id}]},
-  function(err, docs){
-    console.log(docs);
-		res.json(docs);
-	});	
+    {$or:[{sent_from_id:user_id, sent_to_id:friend_id},
+          {sent_from_id:friend_id, sent_to_id:user_id}]},
+    function(err, docs){
+      console.log(docs);
+      res.json(docs);
+    });	
 
 });
 
@@ -197,8 +197,8 @@ app.post('/buddies_already', function(req, res) {
   db.user_buddies.find({user_one_id:user_id}, function(err, docs){
 
     if(!docs[0]) {
-        res.json(null);
-        return;
+      res.json(null);
+      return;
     }
 
     var buddies = docs[0]['buddies'];
@@ -210,9 +210,9 @@ app.post('/buddies_already', function(req, res) {
         return;
       }
     }
-    
+
     res.json(null);
-	});	
+  });	
 });
 
 app.post('/send_buddy_request', function(req, res) {
@@ -224,18 +224,18 @@ app.post('/send_buddy_request', function(req, res) {
   }
   var sent_to_id = req.body.sent_to_id;
   var sent_to_name = req.body.sent_to_name;
-	db.user_buddy_requests.insert({sent_from_id:sent_from_id, sent_from_name:sent_from_name,
+  db.user_buddy_requests.insert({sent_from_id:sent_from_id, sent_from_name:sent_from_name,
                                  sent_to_id:sent_to_id, sent_to_name:sent_to_name}, function(err, docs){
-		res.json(docs);
-	});	
+    res.json(docs);
+  });	
 });
 
 app.post('/buddy_requests', function(req, res) {
 
-	db.user_buddy_requests.find({sent_to_id:req.signedCookies.user_id}, function(err, docs){
+  db.user_buddy_requests.find({sent_to_id:req.signedCookies.user_id}, function(err, docs){
     console.log(docs);
-		res.json(docs);
-	});	
+    res.json(docs);
+  });	
 });
 
 app.post('/accept_buddy', function(req, res) {
@@ -245,39 +245,39 @@ app.post('/accept_buddy', function(req, res) {
   var user_two_id = req.body.user_two_id;
   var user_two_name = req.body.user_two_name;
   db.user_buddies.update({user_one_id:user_one_id}, {$push: {buddies:{user_two_id:user_two_id,
-                          user_two_name:user_two_name}}},{upsert: true}, function(err,docs){
-                            console.log("Yay");
-                          });
+                                                                      user_two_name:user_two_name}}},{upsert: true}, function(err,docs){
+    console.log("Yay");
+  });
   db.user_buddies.update({user_one_id:user_two_id}, {$push: {buddies:{user_two_id:user_one_id,
-                          user_two_name:user_one_name}}},{upsert: true}, function(err,docs){
-                            
-                            res.json(docs);
-                          });
+                                                                      user_two_name:user_one_name}}},{upsert: true}, function(err,docs){
+
+    res.json(docs);
+  });
 });
 
 app.post('/get_added_buddies', function(req, res){
-  
-	db.user_buddies.find({user_one_id:req.signedCookies.user_id}, function(err, docs){
-		res.json(docs);
-	});	
+
+  db.user_buddies.find({user_one_id:req.signedCookies.user_id}, function(err, docs){
+    res.json(docs);
+  });	
 });
 
 app.delete('/reject_buddy/:id', function(req, res){
 
-	var id = req.params.id;
-	db.user_buddy_requests.remove({_id: mongojs.ObjectId(id)}, function(err, doc){
-		res.json(doc);
-	});
+  var id = req.params.id;
+  db.user_buddy_requests.remove({_id: mongojs.ObjectId(id)}, function(err, doc){
+    res.json(doc);
+  });
 });
 
 app.delete('/remove_buddy/:id', function(req, res){
 
-	var id = req.params.id;
+  var id = req.params.id;
   var user_one_id = req.signedCookies.user_id;
-	db.user_buddies.update({user_one_id:user_one_id}, {$pull:{'buddies':{user_two_id:id}}});
-   db.user_buddies.update({user_one_id:id}, {$pull:{'buddies':{user_two_id:user_one_id}}}, function(err, doc){
-		res.json(doc);
-	});
+  db.user_buddies.update({user_one_id:user_one_id}, {$pull:{'buddies':{user_two_id:id}}});
+  db.user_buddies.update({user_one_id:id}, {$pull:{'buddies':{user_two_id:user_one_id}}}, function(err, doc){
+    res.json(doc);
+  });
 });
 
 /*************************************************************************************/
@@ -289,27 +289,27 @@ app.post('/user_classes', function(req, res) {
   console.log(req.body);
   var get_user_id = req.signedCookies.user_id;
   db.user_classes.createIndex({name: 1, user_id: 1}, {unique:true}); //BUG: NEEDS FIX
-	db.user_classes.insert({name:req.body.name, user_id:get_user_id}, function(err, docs){
-		res.json(docs);
-	});	
+  db.user_classes.insert({name:req.body.name, user_id:get_user_id}, function(err, docs){
+    res.json(docs);
+  });	
 
 });
 
 app.delete('/user_classes/:id', function(req, res){
 
-	var id = req.params.id;
-	db.user_classes.remove({_id: mongojs.ObjectId(id)}, function(err, doc){
-		res.json(doc);
-	});
+  var id = req.params.id;
+  db.user_classes.remove({_id: mongojs.ObjectId(id)}, function(err, doc){
+    res.json(doc);
+  });
 });
 
 //NOTE:Need to get userID working so it only gets the classes of this user
 app.get('/user_classes', function(req, res) {
 
   var get_user_id = req.signedCookies.user_id;
-	db.user_classes.find({user_id: get_user_id}, function(err, docs) {
-		res.json(docs);
-	});
+  db.user_classes.find({user_id: get_user_id}, function(err, docs) {
+    res.json(docs);
+  });
 });
 
 /*************************************************************************************/
@@ -317,7 +317,7 @@ app.get('/user_classes', function(req, res) {
 
 // return the class_ids of classes this user is enrolled in
 app.get('/get_my_classes/', function(req, res) {
-	var user_id = req.signedCookies.user_id;
+  var user_id = req.signedCookies.user_id;
   if (user_id) {
     db.users.findOne({user_id: user_id}, function (err, doc) {
       if (doc) {
@@ -342,12 +342,12 @@ app.get('/get_all_classes', function (req, res) {
 
 // return the class object with this id
 app.get('/get_class/:class_id', function(req, res) {
-	var class_id = req.params.class_id;
+  var class_id = req.params.class_id;
 
-	// look up name in mongoDB
-	db.classes.findOne({class_id: class_id}, function (err, doc) {
+  // look up name in mongoDB
+  db.classes.findOne({class_id: class_id}, function (err, doc) {
     res.send(doc);
-	});
+  });
 });
 
 /*************************************************************************************/
@@ -368,7 +368,7 @@ app.get('/add_room/:class_id/:room_name/:is_lecture/:time_created/:host_name', f
 
   // error checking
   db.classes.findOne({class_id: class_id}, function (err, doc) {
-    
+
     // if class with class_id exists
     if (doc) {
 
@@ -380,7 +380,7 @@ app.get('/add_room/:class_id/:room_name/:is_lecture/:time_created/:host_name', f
 
       // add the room
       addRoom(class_id, room_name, 
-        host_id, is_lecture, time_created, host_name, function(room_id){res.send(room_id);});
+              host_id, is_lecture, time_created, host_name, function(room_id){res.send(room_id);});
     }
 
     // class with class_id does not exist
@@ -394,9 +394,9 @@ app.get('/add_room/:class_id/:room_name/:is_lecture/:time_created/:host_name', f
 // - adds user_id to room with id room_id
 // - returns list of user_id's in that room
 app.get('/join_room/:room_id/', function(req, res) {
-	var user_id = req.signedCookies.user_id;
+  var user_id = req.signedCookies.user_id;
   if (user_id) {
-	  var room_id = req.params.room_id;
+    var room_id = req.params.room_id;
     joinRoom(user_id, room_id, function(roomInfo){res.send(roomInfo);});
   }
   else {
@@ -406,9 +406,9 @@ app.get('/join_room/:room_id/', function(req, res) {
 
 // - removes user_id from room with id room_id
 app.get('/leave_room/:room_id/', function(req, res) {
-	var user_id = req.signedCookies.user_id;
+  var user_id = req.signedCookies.user_id;
   if (user_id) {
-	  var room_id = req.params.room_id;
+    var room_id = req.params.room_id;
     leaveRoom(user_id, room_id, function(success){res.send(success);});
   }
   else {
@@ -422,11 +422,11 @@ app.post("/send_room_message", function(req, res) {
   var roomID = req.body.roomID;
   var timeSent = req.body.timeSent;
   var text = req.body.text;
-  
+
   //roomMessagesDatabase.child(roomID).push().set(req.body);
   if (req.signedCookies.user_id && req.signedCookies.email && req.signedCookies.name) {
     var newChatMessage = new ChatMessage(req.signedCookies.name, 
-      req.signedCookies.email, text, roomID, timeSent, req.signedCookies.user_id);
+                                         req.signedCookies.email, text, roomID, timeSent, req.signedCookies.user_id);
     roomMessagesDatabase.child(roomID).push().set(newChatMessage);
   }
 
@@ -522,15 +522,15 @@ app.get("/accountverify/:id/:token", function(req, res) {
         //verify the user if the token matches
         if (token == doc.token) {
           db.users.findAndModify({query: {_id: mongojs.ObjectId(id)}, 
-            update: {$set: {active: true}}, new: true}, function(err, doc) {
-              if (doc) {
-                console.log("Account verification: ACCOUNT VERIFIED");
-                res.json({success:true});
-              }
-              else {
-                console.log("WEIRD ASS ERROR - ACCOUNT EXISTS, BUT CAN'T MODIFY");
-                sendVerifyError(res);
-              }
+                                  update: {$set: {active: true}}, new: true}, function(err, doc) {
+            if (doc) {
+              console.log("Account verification: ACCOUNT VERIFIED");
+              res.json({success:true});
+            }
+            else {
+              console.log("WEIRD ASS ERROR - ACCOUNT EXISTS, BUT CAN'T MODIFY");
+              sendVerifyError(res);
+            }
           });
         }
         //either some guy tryna hack or some typo happened
@@ -578,9 +578,9 @@ app.post('/enroll', function (req, res) {
   var class_ids = req.body.class_ids;
   console.log("enrolling user with id " + user_id + " in " + class_ids);
   db.users.update({user_id: user_id},
-    {$set: {class_ids: class_ids}}, function (err, doc) {
-      res.send({success: doc != null});
-    });
+                  {$set: {class_ids: class_ids}}, function (err, doc) {
+    res.send({success: doc != null});
+  });
 })
 
 /* POST data: {email of account to reset password} - send password reset link to email
@@ -591,17 +591,17 @@ app.post("/sendforgotpassword", function(req, res) {
     //check if user with email exists
     if (doc) {
       db.users.findAndModify({query: {email: email},
-        update: {$set: {resetToken: generateToken()}}, new: true}, function(err, doc) {
-          if (doc) {
-            console.log("Account forgot password: sending reset link");
-            sendForgotPassword(doc);
-            res.send({success:true});
-          }
-          else {
-            console.log("WEIRD ASS ERROR - ACCOUNT EXISTS, BUT CAN'T MODIFY");
-            res.send({success:false});
-          }
-        });
+                              update: {$set: {resetToken: generateToken()}}, new: true}, function(err, doc) {
+        if (doc) {
+          console.log("Account forgot password: sending reset link");
+          sendForgotPassword(doc);
+          res.send({success:true});
+        }
+        else {
+          console.log("WEIRD ASS ERROR - ACCOUNT EXISTS, BUT CAN'T MODIFY");
+          res.send({success:false});
+        }
+      });
     }
     else {
       console.log("Account forgot password: error - account with email doesn't eixsts");
@@ -624,15 +624,15 @@ app.post("/resetpassword", function(req, res) {
         //verify the user if the token matches
         if (currPassword == doc.password) {
           db.users.findAndModify({query: {user_id: user_id}, 
-            update: {$set: {password: newPassword}}, new: true}, function(err, doc) {
-              if (doc) {
-                console.log("Account reset password: password reset");
-                res.json({success:true});
-              }
-              else {
-                console.log("WEIRD ASS ERROR - ACCOUNT EXISTS, BUT CAN'T MODIFY");
-                res.json({success:false});
-              }
+                                  update: {$set: {password: newPassword}}, new: true}, function(err, doc) {
+            if (doc) {
+              console.log("Account reset password: password reset");
+              res.json({success:true});
+            }
+            else {
+              console.log("WEIRD ASS ERROR - ACCOUNT EXISTS, BUT CAN'T MODIFY");
+              res.json({success:false});
+            }
           });
         }
         else {
@@ -656,7 +656,7 @@ app.post("/resetpassword", function(req, res) {
 /* Model -----------------------------------------------------------------*/
 
 function User(email, password, name, school) {
-//this._id = whatever mongo gives us
+  //this._id = whatever mongo gives us
   this.user_id = generateToken(20);
   this.email = email;
   this.password = password;
@@ -667,16 +667,16 @@ function User(email, password, name, school) {
 }
 
 function Class(class_id, class_name) {
-	this.class_id = class_id;	// "ucsd_cse_110_1"
-	this.name = class_name; // "CSE 110 Gillespie"
+  this.class_id = class_id;	// "ucsd_cse_110_1"
+  this.name = class_name; // "CSE 110 Gillespie"
 }
 
 function Room(room_id, room_name, room_host_id, class_id, is_lecture, time_created, host_name) {
-	this.room_id = room_id;
-	this.name = room_name;
-	this.host_id = room_host_id;
-	this.class_id = class_id;
-	this.is_lecture = is_lecture;
+  this.room_id = room_id;
+  this.name = room_name;
+  this.host_id = room_host_id;
+  this.class_id = class_id;
+  this.is_lecture = is_lecture;
   this.time_created = time_created;
   this.host_name = host_name;
 }
@@ -718,7 +718,7 @@ function addRoom(class_id, room_name, room_host_id, is_lecture, time_created, ho
 }
 
 function joinRoom(user_id, room_id, callback) {
-	//console.log("FIREBASE: Attempting to add user " + user_id + " to room " + room_id);
+  //console.log("FIREBASE: Attempting to add user " + user_id + " to room " + room_id);
   roomInfoDatabase.child(room_id).once("value").then(function(snapshot) {
     var room = snapshot.val();
     if (room) {
@@ -754,7 +754,7 @@ function joinRoom(user_id, room_id, callback) {
 }
 
 function leaveRoom(user_id, room_id, callback) {
-	//console.log("FIREBASE: Attempting to remove user " + user_id + " from room " + room_id);
+  //console.log("FIREBASE: Attempting to remove user " + user_id + " from room " + room_id);
   if (callback) {
     callback({success: true}); //assume user succesfully leaves the room
   }
@@ -840,14 +840,14 @@ function deleteRoom(room_id, class_id, firebase_push_id) {
 }
 
 function tutorInRoom(room) {
-	for (user_id in room.users) {
-		for (tutor_id in classes_dict[room.class_id].tutor_ids) {
-			if (user_id = tutor_id) {
-				return true;
-			}
-		}
-	}
-	return false;
+  for (user_id in room.users) {
+    for (tutor_id in classes_dict[room.class_id].tutor_ids) {
+      if (user_id = tutor_id) {
+        return true;
+      }
+    }
+  }
+  return false;
 }
 
 
