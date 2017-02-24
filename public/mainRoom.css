@@ -154,7 +154,7 @@ html, body {
 
 .message-content .message-body {
   white-space: pre-wrap;
-  color: var(--over-base-color);
+  color: var(--over-base-two-color);
   font-size: 1.5rem;
   margin-bottom: 0;
   padding-top: 0.2rem;

@@ -77,7 +77,7 @@ function changeTheme() {
 
 function setTheme(theme_num) {
 
-	var prim, prim_light, prim_dark, base, base_two, base_focus, over_base, over_base_focus;
+	var prim, prim_light, prim_dark, base, base_two, base_focus, over_base, over_base_two, over_base_focus;
 
 	if (theme_num == null) {
 		setTheme(1);
@@ -149,9 +149,10 @@ function setTheme(theme_num) {
 			prim_light = '#353535';
 			prim_dark = '#353535';
 			base = '#42ccff';
-			base_two = '#00abea';
+			base_two = '#f9f9f9';
 			base_focus = '#f9f9f9';
 			over_base = '#ffffff';
+			over_base_two = '#353535';
 			over_base_focus ='#42ccff';
 			accent = '#004f7c'; 
 			break;
@@ -160,6 +161,8 @@ function setTheme(theme_num) {
 			return;
 	}
 
+	over_base_two = over_base_two ? over_base_two : over_base;
+
 	document.documentElement.style.setProperty('--primary-color', prim);
 	document.documentElement.style.setProperty('--primary-light-color', prim_light);
 	document.documentElement.style.setProperty('--primary-dark-color', prim_dark);
@@ -167,6 +170,7 @@ function setTheme(theme_num) {
 	document.documentElement.style.setProperty('--base-two-color', base_two);
 	document.documentElement.style.setProperty('--base-focus-color', base_focus);
 	document.documentElement.style.setProperty('--over-base-color', over_base);
+	document.documentElement.style.setProperty('--over-base-two-color', over_base_two);
 	document.documentElement.style.setProperty('--over-base-focus-color', over_base_focus);
 	document.documentElement.style.setProperty('--accent-color', accent);
 
