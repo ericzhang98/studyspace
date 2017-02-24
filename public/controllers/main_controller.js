@@ -281,6 +281,7 @@ myApp.controller("MainController", ["$scope", "$http",
     $scope.classes = {}      // class_id : class
     $scope.class_rooms = {}  // class_id : list of room_ids
     $scope.rooms = {}        // room_id : room
+    $scope.users = {}        // user_id : user
 
     // Initial call to pull data for user / classes / rooms
     getClasses();
@@ -375,8 +376,8 @@ myApp.controller("MainController", ["$scope", "$http",
         //$scope.$broadcast("room_change");
     };
     
-    $scope.muteText = "Mute";
     // onclick method that will toggles the user audio of the given user_id
+    $scope.muteText = "Mute";
     $scope.toggleUserAudio = function(user_id) {
       $scope.muteText = ($scope.muteText == 'Mute') ? 'Unmute' : 'Mute';
       toggleRemoteStreamAudioEnabled(user_id);
@@ -481,6 +482,11 @@ myApp.controller("MainController", ["$scope", "$http",
 
                 // update the UI
                 $scope.$apply();
+              
+                // get room users
+                updateRoomUsers($scope.rooms[$scope.currRoomID]);
+                //updateRoomUsers();
+                
             }
         });
     }
@@ -522,6 +528,20 @@ myApp.controller("MainController", ["$scope", "$http",
 
         room.has_tutor = has_tutor;
         $scope.classes[room.class_id].has_tutor = has_tutor;
+      }
+    }
+    
+    // getting the list of users in this room
+    function updateRoomUsers(room) {
+      if (room) {
+        console.log("getting new list of users for room: " + room.room_id);
+
+        for (var i = 0; i < room.users.length; i++) {
+          console.log("getting user info for user: " + room.users[i]);
+          $http.get('/get_room_user/' + room.users[i]).then(function(response) {
+            $scope.users[room.users[i]] = response.data;
+          });
+        }
       }
     }
 

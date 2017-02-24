@@ -335,8 +335,8 @@ function setMyStreamAudioEnabled(enabled) {
 
 // - toggle audio from another person
 function toggleRemoteStreamAudioEnabled(user_id) {
-  console.log(myRemoteStreams[user_id] );
-  console.log(user_id );
+  console.log(myRemoteStreams[user_id]);
+  console.log(user_id);
   if (myRemoteStreams[user_id] != null) {
     console.log("toggling remote audio to " + !(myRemoteStreams[user_id].muted));
 	myRemoteStreams[user_id].muted = !(myRemoteStreams[user_id].muted);

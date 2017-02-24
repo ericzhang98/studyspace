@@ -410,6 +410,21 @@ app.post("/send_room_message", function(req, res) {
   res.send({}); //close the http request
 });
 
+// get room users from room_id
+app.get('/get_room_user/:user_id/', function(req, res) {
+  var user = req.params.user_id;
+  db.users.findOne({user_id:user}, function(err, doc) {
+    if (doc) {
+      console.log("Sending user object for user: " + user);
+      res.json(doc); 
+    }
+    else {
+      console.log("User with id: " + user_id + " could not be found.");
+      res.json({success: false})
+    }
+  });
+});
+
 /*************************************************************************************/
 /********************************* SIGNUP AND LOGIN **********************************/
 
