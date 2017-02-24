@@ -135,6 +135,7 @@ function($scope, $http, $timeout) {
         updateCurrTyping();
       }
       else {
+        currTyping = [];
         $scope.currTyping = [];
       }
       $scope.$apply();
@@ -148,10 +149,11 @@ function($scope, $http, $timeout) {
         currTyping.splice(i,1);
       }
     }
+    var names = []
     for (var i = 0; i < currTyping.length; i++) {
-      currTyping[i] = $scope.users[currTyping[i]].name;
+      names[i] = $scope.users[currTyping[i]].name;
     }
-    $scope.currTyping = currTyping;
+    $scope.currTyping = names;
   }
 
   // Upload message to the database
