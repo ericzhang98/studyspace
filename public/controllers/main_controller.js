@@ -258,7 +258,7 @@ myApp.controller("MainController", ["$scope", "$http", "$timeout",
 							console.log("prev height: " + (previousHeight));
 							//console.log("prev pos: " + (previousPosition));
 							updateChatView();
-              //setTimeout(function(){
+              setTimeout(function(){
               //$timeout(function(){
               var currHeight = div.scrollHeight;
 							console.log("curr height: " + currHeight);
@@ -268,7 +268,7 @@ myApp.controller("MainController", ["$scope", "$http", "$timeout",
 							//hide loading UI element
 							document.getElementById("loading").setAttribute("hidden", null);
               //});
-              //}, 20);
+              }, 20);
 						}
 					});
 				}
