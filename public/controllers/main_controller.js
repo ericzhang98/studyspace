@@ -10,8 +10,8 @@ var USER_PING_PERIOD = 15*1000;
 
 /* Chat controller -------------------------------------*/
 
-myApp.controller("MainController", ["$scope", "$http", 
-		function($scope, $http) {
+myApp.controller("MainController", ["$scope", "$http", "$timeout", 
+		function($scope, $http, $timeout) {
 			console.log("Hell yeah");
 
 			// general vars
@@ -143,24 +143,22 @@ myApp.controller("MainController", ["$scope", "$http",
 					chatMessageList.push(snapshotValue);
 					var shouldScroll = false;
 					//only auto-scroll if near bottom
-          console.log("checking scroll for " + snapshotValue.text);
-          console.log(div.scrollTop + 200 - div.scrollHeight + div.clientHeight);
 					if (div.scrollTop + 200 >= (div.scrollHeight - div.clientHeight)) {
 						shouldScroll = true;
 					}
 					updateChatView();
 					if (shouldScroll) {
-						setTimeout(scrollDown, 10); //scroll again upon ui update in 10ms
+						//setTimeout(scrollDown, 10); //scroll again upon ui update in 10ms
             scrollDown(); //scroll down immediately to ensure continuous position
 					}
 				});
 			}
 
 			// Update the chat view display
-			function updateChatView() {
+			function updateChatView(func) {
 				concatenateMessages();
 				$scope.chatMessageList = chatMessageList;
-				safeApply();
+				safeApply(func);
 			}
 
 			// Combine messages sent by the same user within
@@ -181,6 +179,7 @@ myApp.controller("MainController", ["$scope", "$http",
 						i++;
 					}
 				}
+        console.log("length " + chatMessageList.length);
 			}
 
 			// Safely apply UI changes
@@ -202,10 +201,11 @@ myApp.controller("MainController", ["$scope", "$http",
 				}
 			}
 
-			// Scroll event listener -- see more messages if scroll within 30px of top
+			// Scroll event listener -- see more messages if scroll within 200px of top
 			var lastScroll = 0;
 			$scope.scrollevent = function() {
 				//console.log("Scroll top: " + div.scrollTop);
+        //console.log("CURRENT HEIGHT: " + div.scrollHeight);
 				var currentScroll = div.scrollTop;
 				if(currentScroll <= 200 && currentScroll < lastScroll) {
 					//don't call seeMore if still processing past one
@@ -253,12 +253,17 @@ myApp.controller("MainController", ["$scope", "$http",
 							//console.log("prev height: " + (previousHeight));
 							//console.log("prev pos: " + (previousPosition));
 							updateChatView();
-							//console.log("curr height: " + (div.scrollHeight));
-							console.log("Scroll down by: " + (div.scrollHeight - previousHeight));
+              //setTimeout(function(){
+              //$timeout(function(){
+              var currHeight = div.scrollHeight;
+							//console.log("curr height: " + currHeight);
+							//console.log("Scroll down by: " + (currHeight - previousHeight));
 							div.scrollTop = previousPosition + (div.scrollHeight - previousHeight);
 							scrollLock = false;
 							//hide loading UI element
 							document.getElementById("loading").setAttribute("hidden", null);
+              //});
+              //}, 20);
 						}
 					});
 				}
@@ -290,7 +295,6 @@ myApp.controller("MainController", ["$scope", "$http",
 
 			// Scroll chat view to bottom 
 			function scrollDown() {
-        console.log("scrolled down");
 				div.scrollTop = div.scrollHeight - div.clientHeight;
 			}
 
@@ -589,7 +593,7 @@ myApp.controller("MainController", ["$scope", "$http",
 
 		// Set the number of total users studying for a class at the moment
 		function setNumUsers(class_id) {
-			console.log("setting num users for " + class_id);
+			//console.log("setting num users for " + class_id);
 			$scope.classes[class_id].num_users = 0;
 
 			for (i = 0; i < $scope.class_rooms[class_id].length; i++) {

@@ -58,7 +58,7 @@
   -moz-user-select: -moz-none; -khtml-user-select: none;-webkit-user-select: none;'>
               <span ng-cloak>{{myName | limitTo:1}}</span>
             </div>
-            <span class="user-name" style="color:var(--primary-color)">{{myName}}</span>
+            <span class="user-name" style="color:var(--primary-color)" ng-cloak>{{myName}}</span>
           </div>
 
           <!-- Log Out -->
@@ -162,14 +162,14 @@
                 <div class="container-user-icon" style="{{chatMessage.user_id != myID ? ('border: none;
     background-color: var(--accent-color); color: #ffffff') : ('border: none;
     background-color: var(--primary-dark-color); color: #ffffff')}}">
-                  <span ng-cloak>{{chatMessage.name | limitTo:1}}</span>
+                  <span>{{chatMessage.name | limitTo:1}}</span>
                 </div>
                 <div class="message-content">
                   <header class="message-header">
                     <div class="dropdown">
 
                       <!-- Dropdown for non-me users -->
-                      <a ng-cloak ng-if="chatMessage.user_id != myID" class="user-name dropdown-toggle" data-toggle="dropdown" href="#" style="color:var(--accent-color)">{{chatMessage.name.split(" ")[0] + " " + chatMessage.name.split(" ")[1][0]}} </a>
+                      <a ng-if="chatMessage.user_id != myID" class="user-name dropdown-toggle" data-toggle="dropdown" href="#" style="color:var(--accent-color)">{{chatMessage.name.split(" ")[0] + " " + chatMessage.name.split(" ")[1][0]}} </a>
                       <ul ng-if="chatMessage.user_id != myID" class="dropdown-menu">
                         <li><a href="#" onclick="toggleRemoteStreamAudioEnabled(chatMessage.user_id)">Mute</a></li>
                         <li><a href="#">Block</a></li>
@@ -177,12 +177,12 @@
                       </ul>
 
                       <!-- No dropdown if user is me -->
-                      <a ng-cloak ng-if="chatMessage.user_id == myID" class="user-name">{{chatMessage.name.split(" ")[0] + " " + chatMessage.name.split(" ")[1][0]}}</a>
+                      <a ng-if="chatMessage.user_id == myID" class="user-name">{{chatMessage.name.split(" ")[0] + " " + chatMessage.name.split(" ")[1][0]}}</a>
 
                     </div>
-                  <span ng-cloak  class="dateTime">{{timeAgo(chatMessage)}}</span>
+                  <span class="dateTime">{{timeAgo(chatMessage)}}</span>
                   </header>
-                  <p ng-cloak class="message-body">{{chatMessage.text}}</p>
+                  <p class="message-body">{{chatMessage.text}}</p>
                </div>
              </div>
             </div> 
@@ -331,8 +331,10 @@
           </div>
         </div>
 
-        <audio id="join_room_audio" src="/audio/join_room_sfx" volume=0.5></audio>
+        <audio id="join_room_audio" src="/audio/join_room_sfx"></audio>
         <audio id="leave_room_audio" src="/audio/leave_room_sfx"></audio>
+        <audio id="pop_audio" src="/audio/pop_sfx"></audio>
+
       </div>
       <div id="voice-connect-alert" class="alert fade in text-center" hidden>
         <a class="close" data-dismiss="alert">×</a>

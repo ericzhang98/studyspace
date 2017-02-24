@@ -30,7 +30,9 @@ html, body {
 }
 
 .chat-room .main-content, .chat-room .main-content-hidden {
-  height: 100%;
+  position:relative; 
+  height:100%; 
+  z-index:2
 }
 
 .chat-room .main-content-hidden {
@@ -147,12 +149,12 @@ html, body {
 
 .message-header .dateTime {
   font-size: 1.2rem;
-  color: var(--over-base-color);
+  color: var(--over-base-two-color);
 }
 
 .message-content .message-body {
   white-space: pre-wrap;
-  color: var(--over-base-color);
+  color: var(--over-base-two-color);
   font-size: 1.5rem;
   margin-bottom: 0;
   padding-top: 0.2rem;
