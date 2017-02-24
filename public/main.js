@@ -83,7 +83,7 @@ function setTheme(theme_num) {
 			accent = '#ffbb00'; 
 			break;
 
-		// THEME 2 (green, dark, blue)
+		// THEME 2 (maroon, dark, weird blue)
 		case 2:
 			prim = '#a90046';
 			prim_light = '#a90046';
