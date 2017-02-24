@@ -145,12 +145,15 @@ myApp.controller("MainController", ["$scope", "$http",
 					chatMessageList.push(snapshotValue);
 					var shouldScroll = false;
 					//only auto-scroll if near bottom
+          console.log("checking scroll for " + snapshotValue.text);
+          console.log(div.scrollTop + 200 - div.scrollHeight + div.clientHeight);
 					if (div.scrollTop + 200 >= (div.scrollHeight - div.clientHeight)) {
 						shouldScroll = true;
 					}
 					updateChatView();
 					if (shouldScroll) {
-						setTimeout(scrollDown, 1);
+						setTimeout(scrollDown, 10); //scroll again upon ui update in 10ms
+            scrollDown(); //scroll down immediately to ensure continuous position
 					}
 				});
 			}
@@ -189,10 +192,15 @@ myApp.controller("MainController", ["$scope", "$http",
 					if (func && (typeof(func) == "function")) {
 						$scope.$apply(func);
 					}
-					$scope.$apply();
+          else {
+            $scope.$apply();
+          }
 				}
 				else {
 					console.log("Already applying");
+					if (func && (typeof(func) == "function")) {
+						func();
+					}
 				}
 			}
 
@@ -284,6 +292,7 @@ myApp.controller("MainController", ["$scope", "$http",
 
 			// Scroll chat view to bottom 
 			function scrollDown() {
+        console.log("scrolled down");
 				div.scrollTop = div.scrollHeight - div.clientHeight;
 			}
 
