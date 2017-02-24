@@ -251,12 +251,25 @@ html, body {
 }
 
 .menu-classes .panel .panel-title {
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-pack: justify;
+  -ms-flex-pack: justify;
+  justify-content: space-between;
+  padding: 1rem;
+  border-radius: 2rem;
+  background-color: #666666;
   font-size: 1.5rem;
   color: white;
 }
 
-.menu-classes .panel .panel-title:hover {
-  color: #91e0ff;
+.menu-classes .room-name {
+  /*display: block; 
+  width: 200px; 
+  overflow: hidden; 
+  word-wrap: break-word; 
+  white-space: nowrap*/
 }
 
 .menu-classes .panel:hover .panel-heading {
@@ -264,7 +277,14 @@ html, body {
 }
 
 .menu-classes .panel>.panel-collapse>.list-group .list-group-item {
-  padding-left: 2rem;
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-pack: justify;
+  -ms-flex-pack: justify;
+  justify-content: space-between;
+  padding-left: 2.5rem;
+  padding-right: 2.5rem;
   background-color: #353535;
   color: white;
   outline: 0 !important;
@@ -272,7 +292,6 @@ html, body {
 
 .menu-classes .panel>.panel-collapse>.list-group .list-group-item:hover {
   background-color: #262626;
-  color: #91e0ff;
 }
 
 /* Classmates Sidebar */
@@ -309,14 +328,6 @@ html, body {
 .md-autocomplete-suggestions-container {
   z-index: 1051 !important; /* lol xD */
 
-}
-
-.room-name-span {
-  /*display: block; 
-  width: 200px; 
-  overflow: hidden; 
-  word-wrap: break-word; 
-  white-space: nowrap*/
 }
 
 #overlay {
