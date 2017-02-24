@@ -149,7 +149,7 @@ html, body {
 
 .message-header .dateTime {
   font-size: 1.2rem;
-  color: var(--over-base-color);
+  color: var(--over-base-two-color);
 }
 
 .message-content .message-body {

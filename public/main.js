@@ -159,15 +159,15 @@ function setTheme(theme_num) {
 
 		case 6:
 
-			prim = '#353535';
-			prim_light = '#353535';
-			prim_dark = '#353535';
-			base = '#ffc805';
+			prim = '#262626';
+			prim_light = '#262626';
+			prim_dark = '#262626';
+			base = '#cc0025';
 			base_two = '#f9f9f9';
 			base_focus = '#f9f9f9';
 			over_base = '#ffffff';
-			over_base_two = '#353535';
-			over_base_focus ='#ffc805';
+			over_base_two = '#262626';
+			over_base_focus ='#cc0025';
 			accent = '#4c0015'; 
 			break;
 
