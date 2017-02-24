@@ -145,14 +145,12 @@ myApp.controller("MainController", ["$scope", "$http", "$timeout",
 					chatMessageList.push(snapshotValue);
 					var shouldScroll = false;
 					//only auto-scroll if near bottom
-          console.log("checking scroll for " + snapshotValue.text);
-          console.log(div.scrollTop + 200 - div.scrollHeight + div.clientHeight);
 					if (div.scrollTop + 200 >= (div.scrollHeight - div.clientHeight)) {
 						shouldScroll = true;
 					}
 					updateChatView();
 					if (shouldScroll) {
-						setTimeout(scrollDown, 10); //scroll again upon ui update in 10ms
+						//setTimeout(scrollDown, 10); //scroll again upon ui update in 10ms
             scrollDown(); //scroll down immediately to ensure continuous position
 					}
 				});
@@ -178,7 +176,6 @@ myApp.controller("MainController", ["$scope", "$http", "$timeout",
 						currMessage.text += "\n" + nextMessage.text;
 						// remove the second message
 						chatMessageList.splice(i+1, 1);
-            console.log("concatting at " + i);
 					}
 					else {
 						i++;
@@ -210,7 +207,7 @@ myApp.controller("MainController", ["$scope", "$http", "$timeout",
 			var lastScroll = 0;
 			$scope.scrollevent = function() {
 				//console.log("Scroll top: " + div.scrollTop);
-        console.log("CURRENT HEIGHT: " + div.scrollHeight);
+        //console.log("CURRENT HEIGHT: " + div.scrollHeight);
 				var currentScroll = div.scrollTop;
 				if(currentScroll <= 200 && currentScroll < lastScroll) {
 					//don't call seeMore if still processing past one
@@ -255,20 +252,20 @@ myApp.controller("MainController", ["$scope", "$http", "$timeout",
 							//keep track of height diff, update view, and then scroll by diff
 							var previousHeight = div.scrollHeight;
 							var previousPosition = div.scrollTop;
-							console.log("prev height: " + (previousHeight));
+							//console.log("prev height: " + (previousHeight));
 							//console.log("prev pos: " + (previousPosition));
 							updateChatView();
-              setTimeout(function(){
+              //setTimeout(function(){
               //$timeout(function(){
               var currHeight = div.scrollHeight;
-							console.log("curr height: " + currHeight);
-							console.log("Scroll down by: " + (currHeight - previousHeight));
+							//console.log("curr height: " + currHeight);
+							//console.log("Scroll down by: " + (currHeight - previousHeight));
 							div.scrollTop = previousPosition + (div.scrollHeight - previousHeight);
 							scrollLock = false;
 							//hide loading UI element
 							document.getElementById("loading").setAttribute("hidden", null);
               //});
-              }, 20);
+              //}, 20);
 						}
 					});
 				}
@@ -300,7 +297,6 @@ myApp.controller("MainController", ["$scope", "$http", "$timeout",
 
 			// Scroll chat view to bottom 
 			function scrollDown() {
-        console.log("scrolled down");
 				div.scrollTop = div.scrollHeight - div.clientHeight;
 			}
 
