@@ -1005,7 +1005,7 @@ function ($scope, $http, classesTransport) {
 
   function verifyClass(className) {
     //console.log("verifying " + className);
-    var returnVal = $.inArray(className, Object.keys(allClassesNameToID).map(function(x){ return x.toUpperCase() }));
+    var returnVal = $.inArray(className, Object.keys(allClassesNameToID).map(function(x){ return x;}));
     return returnVal > -1;
   }
 
