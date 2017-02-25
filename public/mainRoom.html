@@ -8,7 +8,7 @@
 -->
 
 <!DOCTYPE html>
-<html ng-app="mainApp" ng-app="classesApp">
+<html ng-app="mainApp">
   <head>
 
     <!-- Bootstrap -->
@@ -26,6 +26,7 @@
     <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.4.8/angular-animate.min.js"></script>
     <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.4.8/angular-aria.min.js"></script>
     <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.4.8/angular-messages.min.js"></script>
+    <link rel="stylesheet" href="https://ajax.googleapis.com/ajax/libs/angular_material/1.1.0/angular-material.min.css">
 
     <!-- For mobile scaling -->
     <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -45,8 +46,8 @@
     <title>Main Room</title>
   </head>
 
-  <body id="myBody" ng-controller="MainController as ctrl">
-    <div id="overlay">
+  <body id="myBody" >
+    <div id="overlay" ng-controller="MainController">
       <div id="layer1">
         <!-- Classes Sidebar -->
         <aside id="classes-sidebar" class="sidebar sidebar-left" role="complementary">
@@ -72,7 +73,7 @@
           <div id="classes-menu" class="container-menu-classes">
 
             <!-- Create Room Button -->
-            <button id="btn-create-room" class="btn container-title">
+            <button id="btn-add-class" class="btn container-title">
               <span class="title">Spaces</span>
               <div>
                 <span class="glyphicon glyphicon-plus"></span>
@@ -290,43 +291,6 @@
           </div>
         </div>
 
-        <!-- Add Class Modal -->
-        <div id="modal-add-class" class="modal" role="dialog">
-          <div class="modal-dialog">
-            <!-- Content -->
-            <div id="add-class" class="modal-content modal-add-class-content hide">
-              <header class="modal-header text-center"> 
-                <button id="close-add-class" class="btn close" data-dismiss="modal" aria-label="Close">
-                  <span class="glyphicon glyphicon-remove" aria-hidden="true"></span>
-                </button>
-                <h1 class="title">Add courses</h1>
-              </header>
-              <div class="modal-main-content form-container">
-
-                <!-- Auto complete -->
-                <div layout="column" ng-cloak>
-                  <md-content id="class-dropdown" class="md-padding">
-                    <form ng-submit="ctrl.submitForm()">
-                      <md-autocomplete
-                         md-selected-item="ctrl.selectedItem"
-                         md-search-text="ctrl.searchText"
-                         md-items="item in ctrl.querySearch(ctrl.searchText)"
-                         md-item-text="item"
-                         md-min-length="0"
-                         placeholder="Enter a Class Code (e.g. 'CSE110')">
-                        <md-item-template>
-                          <span md-highlight-text="ctrl.searchText" md-highlight-flags="^i">{{item}}</span>
-                        </md-item-template>
-                      </md-autocomplete>
-                    </form>
-                  </md-content>
-                </div>
-
-              </div>
-            </div>
-          </div>
-        </div>
-
         <audio id="join_room_audio" src="/audio/join_room_sfx"></audio>
         <audio id="leave_room_audio" src="/audio/leave_room_sfx"></audio>
         <audio id="pop_audio" src="/audio/pop_sfx"></audio>
@@ -341,6 +305,62 @@
         <span>In casts, only the host can be heard.</span>
       </div>
     </div>
+
+
+
+
+
+
+
+
+
+
+
+
+    <!-- Misc and standalone divs -->
+    <!-- Add Class Modal -->
+    <div id="modal-add-class" class="modal" role="dialog"
+      ng-controller="AddClassController">
+      <div class="modal-dialog">
+        <!-- Content -->
+        <div id="add-class" class="modal-content modal-add-class-content hide">
+          <header class="modal-header text-center"> 
+            <button id="close-add-class" class="btn close" data-dismiss="modal" aria-label="Close">
+              <span class="glyphicon glyphicon-remove" aria-hidden="true"></span>
+            </button>
+            <h1 class="title">Add courses</h1>
+          </header>
+          <div class="modal-main-content form-container">
+            <!-- Auto complete -->
+            <div layout="column" ng-cloak>
+              <md-content id="class-dropdown" class="md-padding">
+                <form ng-submit="submitForm()">
+                  <md-autocomplete
+                     md-selected-item="selectedItem"
+                     md-search-text="searchText"
+                     md-items="item in querySearch(searchText)"
+                     md-item-text="item"
+                     md-min-length="0"
+                     placeholder="Enter a Class Code (e.g. 'CSE110')">
+                    <md-item-template>
+                      <span md-highlight-text="searchText" md-highlight-flags="^i">{{item}}</span>
+                    </md-item-template>
+                  </md-autocomplete>
+                </form>
+              </md-content>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+
+
+
+
+
+
+
 
 
   </body>

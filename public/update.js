@@ -4,7 +4,7 @@ angular
    .module('MyApp', ['ngMaterial'])
    .controller('updateController', autoCompleteController);
 
-function autoCompleteController ($timeout, $q, $log, $http) {
+function autoCompleteController ($scope, $http) {
     // Global Variables
     var userClasses = []; // list of class_ids of classes user is enrolled in
     var allClassesNameToID = {}; // name: class_id dictionary for all available classes
@@ -13,7 +13,7 @@ function autoCompleteController ($timeout, $q, $log, $http) {
     getAllClasses();
 
     // list of states to be displayed
-    this.querySearch = querySearch;
+    $scope.querySearch = querySearch;
 
     // If enter is pressed inside the dropdown
     $("#class-dropdown").keypress(function(event) {
@@ -44,7 +44,7 @@ function autoCompleteController ($timeout, $q, $log, $http) {
     function addClass(classID) {
         console.log("adding class with ID " + classID);
         userClasses.push(classID);
-        displayClasses(userClasses);
+        displayClasses();
     }
 
     // return to main
@@ -67,7 +67,7 @@ function autoCompleteController ($timeout, $q, $log, $http) {
         userClasses.forEach(function(class_id, index) {
             classNames.push(getNameOfClass(class_id))
         })
-        classNames.sort();
+        //classNames.sort();
         classNames.forEach(function(className, index) {
             htmlString += '<div class="school-class"><button class="btn btn-hi-pri">' 
             + className + '<span class="x-button" aria-hidden="true">&times;</span></button></div>';
@@ -136,6 +136,7 @@ function autoCompleteController ($timeout, $q, $log, $http) {
                 
                 // update the UI
                 displayClasses();
+                console.log(userClasses);
             }
           }
         }
@@ -152,7 +153,7 @@ function autoCompleteController ($timeout, $q, $log, $http) {
             console.log("Cannot remove class, className " + className + " not found!")
         }
         userClasses.splice(index, 1);
-        displayClasses(userClasses);
+        displayClasses();
     }
 
     // Server stuff
