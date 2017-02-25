@@ -959,40 +959,54 @@ function ($scope, $http) {
     // Send requests to populate the two fields above
     getAllClasses();
 
-    // list of states to be displayed
     $scope.querySearch = querySearch;
+    $scope.classes = [];
 
     // If enter is pressed inside the dropdown
     $("#class-dropdown").keypress(function(event) {
         if(event.which == 13) {
 
-            var className = $("#input-0").val().toUpperCase();
+            var class_name = $("#input-0").val().toUpperCase();
 
-            if (verifyClass(className)) {
+            if (verifyClass(class_name)) {
 
-                var class_id = allClassesNameToID[className];
+                var class_id = allClassesNameToID[class_name];
                 // Make sure the user isn't already in the class
                 if($.inArray(class_id, userClasses) == -1) {
                     console.log("ADD " + class_id)
                     addClass(class_id);
                 } else {
-                    console.log("already in class with name " + className + " and id " + class_id);
+                    console.log("already in class with name " + class_name+ " and id " + class_id);
                 }
             }
             else {
-                console.log("could not verify class with name " + className + " and id " + class_id);
+                console.log("could not verify class with name " + class_name + " and id " + class_id);
             }
         }
     });
-    $("#cancel-button").click(cancelChanges)
-    $("#save-button").click(saveChanges);
 
-    // adds classID to list of user's classes and updates the UI to reflect this
-    function addClass(classID) {
-        console.log("adding class with ID " + classID);
-        userClasses.push(classID);
-        displayClasses(userClasses);
+    /* Add, remove, and save */
+    function addClass(class_id) {
+        console.log("UI Adding" + class_id);
+        userClasses.push(class_id);
+        displayClasses();
     }
+
+    function removeClass(class_id) {
+        var index = $.inArray(class_id, userClasses);
+        console.log("UI Removing " + class_id);
+        if(index == -1) {
+            console.log("Cannot remove class, class_id" + class_id+ " not found!")
+        }
+        userClasses.splice(index, 1);
+        displayClasses();
+    }
+    $scope.removeClass = removeClass;
+
+    function saveChanges() {
+        $http.post('/enroll', {class_ids: userClasses});
+    }
+    $scope.saveChanges = saveChanges;
 
     // return to main
     function cancelChanges() {
@@ -1009,24 +1023,17 @@ function ($scope, $http) {
 
     // updates UI to display currently enrolled classes
     function displayClasses() {
-        var htmlString = "";
         var classNames = new Array();
         userClasses.forEach(function(class_id, index) {
             classNames.push(getNameOfClass(class_id))
         })
-        classNames.sort();
-        classNames.forEach(function(className, index) {
-            htmlString += '<div class="school-class"><button class="btn btn-hi-pri">' 
-            + className + '<span class="x-button" aria-hidden="true">&times;</span></button></div>';
-        });
-        $("#school-classes").html(htmlString);
+        //classNames.sort();
 
-        // Add a listener to the new html
-        $(".school-class").each(function(index, element) {
-            $(this).click(function() {
-                removeClass(userClasses[index]);
-            })
-        });
+        var classObjects = [];
+        for (var i = 0; i < userClasses.length; i++) {
+          classObjects.push({class_id: userClasses[i], class_name: classNames[i]});
+        }
+        $scope.classes = classObjects;
     }
 
     // returns name of class given class_id
@@ -1040,7 +1047,6 @@ function ($scope, $http) {
 
     // populates the allClassesNameToID dictionary with all available classes
     function getAllClasses() {
-        console.log("Getting all classes...")
         var xhr = new XMLHttpRequest();
         xhr.open('GET', "/get_all_classes", true); // responds with class_ids
         xhr.send();
@@ -1065,8 +1071,6 @@ function ($scope, $http) {
     // populates userClasses list with ids of all classes they are enrolled in
     // calls displayClasses afterward to reflect changes
     function getUserClasses() {
-
-        console.log("Getting my classes...")
         var xhr = new XMLHttpRequest();
         xhr.open('GET', "/get_my_classes", true); // responds with class_ids
         xhr.send();
@@ -1075,7 +1079,6 @@ function ($scope, $http) {
         xhr.onreadystatechange = function(e) {
           if (xhr.readyState == 4 && xhr.status == 200) {
             var response = JSON.parse(xhr.responseText);
-
             if (response.class_ids != null) {
 
                 // set userClasses to equal this list
@@ -1090,21 +1093,6 @@ function ($scope, $http) {
 
     function querySearch (query) {
         return query ? Object.keys(allClassesNameToID).filter(createFilterFor(query)) : [];
-    }
-
-    function removeClass(className) {
-        var index = $.inArray(className, userClasses);
-        console.log("Removing index " + index);
-        if(index == -1) {
-            console.log("Cannot remove class, className " + className + " not found!")
-        }
-        userClasses.splice(index, 1);
-        displayClasses(userClasses);
-    }
-
-    // Server stuff
-    function saveChanges() {
-        $http.post('/enroll', {class_ids: userClasses});
     }
 
     function verifyClass(className) {

@@ -399,6 +399,26 @@ acc {
   width: 50%;
 }
 
+.modal-add-class-content .classes {
+  display: inline-block;
+  margin: 3px;
+}
+
+.modal-add-class-content .classes-container {
+  -webkit-box-align: center;
+  -ms-flex-align: center;
+  align-items: center;
+  -webkit-justify-content: center;
+  -ms-flex-pack: center;
+  justify-content: center;
+  text-align: center;
+  margin: auto;
+}
+
+.modal-add-class-content .save-btn {
+  margin-top: 10px;
+}
+
 .md-autocomplete-suggestions-container {
   z-index: 1051 !important; /* lol xD */
 }
