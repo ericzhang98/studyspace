@@ -153,6 +153,7 @@
                 <div class="container-user-icon white-text {{chatMessage.user_id != myID ? 'acc-back' : 'prim-back'}}">
                   <span>{{chatMessage.name | limitTo:1}}</span>
                 </div>
+
                 <div class="message-content">
                   <header class="message-header">
                     <div class="dropdown">
@@ -172,6 +173,15 @@
                     <span class="dateTime">{{timeAgo(chatMessage)}}</span>
                   </header>
                   <p class="message-body">{{chatMessage.text}}</p>
+                </div>
+              </div>
+
+              <div ng-if="currTyping.length > 0" class="message">
+                <div ng-repeat="name in currTyping" class="container-user-icon-small white-text acc-back">
+                  <span>{{name | limitTo:1}}</span>
+                </div>
+                <div class="message-content">
+                  <p class="curr-typing-text"> {{currTyping.length > 1 ? 'are' : 'is'}} typing ...</p>
                 </div>
               </div>
             </div> 

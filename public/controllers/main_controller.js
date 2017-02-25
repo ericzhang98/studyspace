@@ -151,9 +151,10 @@ function($scope, $http, $timeout) {
     }
     var names = []
     for (var i = 0; i < currTyping.length; i++) {
-      names[i] = $scope.users[currTyping[i]].name;
+      names.push($scope.users[currTyping[i]].name);
     }
     $scope.currTyping = names;
+    scrollDown();
   }
 
   // Upload message to the database
@@ -173,7 +174,6 @@ function($scope, $http, $timeout) {
     chatInputBox.value = "";
     $scope.chatInput = "";
     chatInputBox.focus();
-    scrollDown();
   }
 
   $scope.muteBtnClass = ['glyphicon', 'glyphicon-volume-up'];

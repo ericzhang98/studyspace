@@ -251,6 +251,35 @@ html, body {
   user-select: none;
 }
 
+.container-user-icon-small {
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-align: center;
+  -ms-flex-align: center;
+  align-items: center;
+  -webkit-justify-content: center;
+  -ms-flex-pack: center;
+  justify-content: center;
+  font-size: 1.5rem;
+  width: 3rem;
+  min-width: 3rem;
+  height: 3rem;
+  margin-left: .5rem;
+  margin-right: 2rem;
+  border-radius: 50%;
+  border: solid 1px var(--over-base-color);
+  overflow: hidden;
+  cursor: default;
+}
+
+.curr-typing-text {
+  margin-top: .5rem;
+  font-style: italic;
+  font-size: 1.5rem;
+  color: #666666;
+}
+
 .container-info-user .container-user-icon {
   margin-right: 1rem;
 }
