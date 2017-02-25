@@ -65,7 +65,6 @@ html, body {
   border-radius: 0;
   height: 5rem;
   font-weight: 600;
-  color: var(--primary-dark-color);
 }
 
 .navbar-room .nav-link {
@@ -78,10 +77,6 @@ html, body {
 
 .navbar-room .nav>li>a:focus, .navbar-room .nav>li>a:hover {
   background-color: transparent;
-}
-
-.dropdown-toggle {
-  color: inherit;
 }
 
 .navbar-room .navbar-brand {
@@ -138,7 +133,6 @@ html, body {
 }
 
 .message-header .dropdown .user-name {
-  color: var(--primary-color);
   font-size: 1.5rem;
   font-weight: 500;
 }
@@ -238,9 +232,7 @@ html, body {
   width: 4rem;
   height: 4rem;
   border-radius: 50%;
-  border: solid 2px var(--primary-dark-color);
-  color: var(--primary-dark-color);
-  background: white;
+  border: solid 2px var(--over-base-color);
   overflow: hidden;
   cursor: default;
 }
@@ -313,8 +305,11 @@ html, body {
   justify-content: space-between;
   padding: 1rem;
   border-radius: 2rem;
-  background-color: #666666;
   font-size: 1.5rem;
+}
+
+.color-def-panel-title {
+  background-color: #666666;
   color: white;
 }
 
@@ -331,8 +326,6 @@ html, body {
   justify-content: space-between;
   padding-left: 2.5rem;
   padding-right: 2.5rem;
-  background-color: var(--base-color);
-  color: var(--over-base-color);
   outline: 0 !important;
 }
 

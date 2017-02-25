@@ -1,15 +1,15 @@
 /* General CSS File Across All Pages */
 :root {
-  --primary-color: #38c9ff;
-  --primary-light-color: #91e0ff;
-  --primary-dark-color: #00b9ff;
-  --base-color: #353535;
+  --primary-color: #262626;
+  --primary-light-color: #262626;
+  --primary-dark-color: #262626;
+  --base-color: #262626;
   --base-two-color: #262626;
   --base-focus-color: #262626;
-  --over-base-color: #ffffff;
-  --over-base-two-color: #ffffff;
-  --over-base-focus-color: #ffffff;  
-  --accent-color: #ffbb00;
+  --over-base-color: #262626;
+  --over-base-two-color: #262626;
+  --over-base-focus-color: #262626;  
+  --accent-color: #262626;
 }
 
 /* General */
@@ -345,8 +345,39 @@ a:hover {
 
 /* More main styling */
 
-.primary-dark-text {
+.prim-back {
+  background-color: var(--primary-color);
+}
+
+.acc-back {
+  background-color: var(--accent-color);
+}
+
+.prim-dark-back {
+  background-color: var(--primary-dark-color);
+}
+
+.base-back {
+  background-color: var(--base-color);
+}
+
+.prim-text {
+  color: var(--primary-color);
+}
+
+.acc-text {
+  color: var(--accent-color);
+}
+
+.white-text {
+  color: #ffffff;
+}
+
+.prim-dark-text {
   color: var(--primary-dark-color);
+}
+.over-base-text {
+  color: var(--over-base-color);
 }
 
 .btn-low-pri {
