@@ -365,7 +365,15 @@ a:hover {
   color: var(--primary-color);
 }
 
+.prim-text:hover {
+  color: var(--primary-color);
+}
+
 .acc-text {
+  color: var(--accent-color);
+}
+
+.acc-text:hover {
   color: var(--accent-color);
 }
 

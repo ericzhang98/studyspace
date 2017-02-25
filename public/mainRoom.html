@@ -26,7 +26,6 @@
     <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.4.8/angular-animate.min.js"></script>
     <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.4.8/angular-aria.min.js"></script>
     <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.4.8/angular-messages.min.js"></script>
-    <link rel="stylesheet" href="https://ajax.googleapis.com/ajax/libs/angular_material/1.1.0/angular-material.min.css">
 
     <!-- For mobile scaling -->
     <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -46,7 +45,7 @@
     <title>Main Room</title>
   </head>
 
-  <body id="myBody" >
+  <body id="myBody">
     <div id="overlay" ng-controller="MainController">
       <div id="layer1">
         <!-- Classes Sidebar -->
@@ -59,7 +58,8 @@
                    style='-moz-user-select: -moz-none; -khtml-user-select: none;-webkit-user-select: none;'>
                 <span ng-cloak>{{myName | limitTo:1}}</span>
               </div>
-              <span class="user-name prim-text"  ng-cloak>{{myName}}</span>
+              
+              <span class="user-name prim-text" ng-cloak>{{myName}}</span>
 
               <button class="btn btn-sm btn-low-key" onclick="setMode()"> </button>
             </div>
@@ -143,7 +143,7 @@
             </nav>
 
             <!-- MESSAGE PANE -->
-            <div id="chat-message-pane" class="message-pane container-fluid" scroll scroll-event="scrollevent">
+            <div id="chat-message-pane" class="message-pane" scroll scroll-event="scrollevent">
               <div id="loading" hidden> 
                 <div class="blob blob-0"></div><div class="blob blob-1"></div>
                 <div class="blob blob-2"></div><div class="blob blob-3"></div>
