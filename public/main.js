@@ -70,8 +70,8 @@ function setMode(is_day = !currIsDay) {
 	var base, base_two, base_focus, over_base, over_base_two, over_base_focus;
 
 	if (is_day) {
-		base = '#e0e0e0';
-		base_two = '#f9f7f7';
+		base = '#f3f3f3';
+		base_two = '#f3f3f3';
 		base_focus = '#3a3a3a';
 		over_base = '#353535';
 		over_base_focus ='#ffffff';
@@ -136,7 +136,7 @@ function setTheme(theme_num) {
 		case 2:
 			prim = '#d80059';
 			prim_light = '#d80059';
-			prim_dark = '#d80059';
+			prim_dark = '#aa0046';
 			accent = '#ff1443'; 
 			break;
 
@@ -153,7 +153,7 @@ function setTheme(theme_num) {
 
 			prim = '#00d11b';
 			prim_light = '#00d11b';
-			prim_dark = '#00d11b';
+			prim_dark = '#00b516';
 			accent = '#42ccff'; 
 			break;
 

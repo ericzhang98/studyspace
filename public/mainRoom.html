@@ -175,9 +175,6 @@
                   <p class="message-body">{{chatMessage.text}}</p>
                 </div>
               </div>
-              <div ng-if="currTyping.length > 0" class="curr-typing-container">
-                <p class="curr-typing-text grey-text"> <acc>{{currTyping[0]}}</acc> is typing ...</p>
-              </div>
                 
             </div> 
             <!-- END MESSAGE PANE -->
@@ -196,6 +193,10 @@
                          autocomplete="off" ng-keydown="keypress($event)">
                 </div>
               </form>
+              
+              <div ng-if="currTyping.length > 0" class="curr-typing-container">
+                <p class="curr-typing-text grey-text"> <acc>{{currTyping[0]}}</acc> is typing ...</p>
+              </div>
             </footer> <!-- END MESSAGE INPUT -->
           </div>
         </main>   

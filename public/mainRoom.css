@@ -204,6 +204,7 @@ html, body {
 /* Classes Sidebar */
 .sidebar-left {
   left: 0;
+  border-right: solid 1px var(--primary-color);
 }
 
 .sidebar-left>.menu-user {
@@ -252,7 +253,6 @@ html, body {
 }
 
 .curr-typing-text {
-  margin-top: .5rem;
   font-size: .9rem;
   display: inline;
 }
@@ -272,7 +272,6 @@ acc {
   padding-left: 0;
   list-style: none;
   padding-top: .3rem;
-  padding-bottom: .3rem;
   cursor: default;
 
 }

@@ -151,7 +151,9 @@ function($scope, $http, $timeout) {
     }
     var names = []
     for (var i = 0; i < currTyping.length; i++) {
-      names.push($scope.users[currTyping[i]].name);
+    	if (currTyping[i] != myID) {
+      	names.push($scope.users[currTyping[i]].name);
+    	}
     }
     $scope.currTyping = names;
   }
