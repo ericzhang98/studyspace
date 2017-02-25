@@ -11,8 +11,8 @@ var USER_PING_PERIOD = 15*1000;
 
 /* Main controller -------------------------------------*/
 
-myApp.controller("MainController", ["$scope", "$http", "$timeout", "classesTransport",
-function($scope, $http, $timeout, classesTransport) {
+myApp.controller("MainController", ["$scope", "$http", "$timeout", "classesTransport", "$rootScope",
+function($scope, $http, $timeout, classesTransport, $rootScope) {
   console.log("Hell yeah");
 
   // general vars
@@ -376,6 +376,7 @@ function($scope, $http, $timeout, classesTransport) {
 
   $scope.refreshAddClass = function() {
     classesTransport.setClasses($scope.my_class_ids);
+    $rootScope.$broadcast("refresh"); //temp
     console.log("refresh");
   };
 
@@ -886,7 +887,7 @@ console.log("no overflow for " + room_id + ", scroll width: " + item.scrollWidth
         if (!(room.users[i] in $scope.users)) {
           var id = room.users[i];
           $http.get('/get_room_user/' + room.users[i]).then(function(response) {
-            $scope.users[id] = response.data;
+            $scope.users[response.data.id] = response.data;
             console.log("user info pulled: " + response.data.name);
           });
       	}
@@ -957,15 +958,17 @@ console.log("no overflow for " + room_id + ", scroll width: " + item.scrollWidth
   }
 }]);
 
-myApp.controller("AddClassController", ["$scope", "$http", "classesTransport", 
-function ($scope, $http, classesTransport) {
+myApp.controller("AddClassController", ["$scope", "$http", "classesTransport", "$rootScope",
+function ($scope, $http, classesTransport, $rootScope) {
   // Global Variables
   var userClasses = []; // local list of class_ids of classes user is enrolled in
   var allClassesNameToID = {}; // name: class_id dictionary for all available classes
   getAllClasses();
 
+  $scope.currClasses = []; //what's displayed
   //$scope.currClasses = classesTransport.userClasses;
 
+  $rootScope.$on("refresh", function(){getUserClasses()});
   /*
   $scope.userClasses = classesTransport.userClasses;
   $scope.$watch("userClasses", function() {
