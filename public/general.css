@@ -9,6 +9,7 @@
   --over-base-color: #353535;
   --over-base-two-color: #262626;
   --over-base-focus-color: #262626;  
+  --line-color: #dddddd;
   --accent-color: #262626;
 }
 
@@ -45,7 +46,6 @@ a:hover {
   height: 6rem;
   border: none;
   z-index: 100;
-  background-color: #aaaaaa;
   color: white;
   margin-bottom: 0;
 }
@@ -397,6 +397,15 @@ a:hover {
   color: #666666;
 }
 
+
+acc {
+  color: var(--accent-color);
+}
+
+prim {
+  color: var(--primary-color);
+}
+
 .btn-low-pri {
   background-color: var(--base-two-color);
   color: var(--over-base-color);
@@ -417,6 +426,10 @@ a:hover {
 
 .btn-hi-pri:hover {
   background-color: var(--primary-dark-color);
+}
+
+.btn-hi-pri:focus {
+  background-color: var(--primary-color);
 }
 
 .btn-low-key {
