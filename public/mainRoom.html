@@ -193,9 +193,9 @@
                          autocomplete="off" ng-keydown="keypress($event)">
                 </div>
               </form>
-              
+
               <div ng-if="currTyping.length > 0" class="curr-typing-container">
-                <p class="curr-typing-text grey-text"> <acc>{{currTyping[0]}}</acc> is typing ...</p>
+                <span class="curr-typing-text grey-text"> <acc>{{currTyping[0]}}</acc> is typing ...</span>
               </div>
             </footer> <!-- END MESSAGE INPUT -->
           </div>
@@ -419,6 +419,7 @@
 
   <!-- Other -->
   <script src="cookies.js"></script>
+  <script src="theme.js"></script>
   <script src="main.js"></script>
   <script src="call.js"></script>
 

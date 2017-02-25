@@ -639,7 +639,6 @@ function($scope, $http, $timeout) {
         // update the UI
         console.log("applying in get room, room name is : " + $scope.rooms[room_id].name);
 
-
         // get room users
         updateRoomUsers($scope.rooms[room_id]);
 
@@ -832,8 +831,6 @@ console.log("no overflow for " + room_id + ", scroll width: " + item.scrollWidth
     getBuddies(function(response){
       $scope.added_buddies_list = response;
     });
-
-
   };
 
   $scope.deleteFriend = function(id){
@@ -879,12 +876,15 @@ console.log("no overflow for " + room_id + ", scroll width: " + item.scrollWidth
     console.log("this is a room " + room);
     if (room) {
       console.log("getting new list of users for room: " + room.room_id);
-
+      console.log($scope.rooms);
       for (var i = 0; i < room.users.length; i++) {
-        console.log("getting user info for user: " + room.users[i]);
-        $http.get('/get_room_user/' + room.users[i]).then(function(response) {
-          $scope.users[response.data.user_id] = response.data;
-        });
+        if (!(room.users[i] in $scope.users)) {
+          var id = room.users[i];
+          $http.get('/get_room_user/' + room.users[i]).then(function(response) {
+            $scope.users[id] = response.data;
+            console.log("user info pulled: " + response.data.name);
+          });
+      	}
       }
     }
   }

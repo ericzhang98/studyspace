@@ -52,6 +52,8 @@ main {
   .jumbotron-splash {
     padding-top: 15rem;
     padding-bottom: 15rem;
+    background-color: var(--base-two-color);
+    color: var(--over-base-color);
   }
 
   .jumbotron-splash .container {

@@ -41,45 +41,58 @@
     <title>Study Space - Update</title>
   </head>
   <body>
-    <!-- Aesthetics TODO -->
-    <aside>
-    </aside>
 
     <main role="main" class="container">
-      <h2 id="page-title" class="primary-dark-text">Account Settings</h2>
+      <div id="class-settings" class="container-settings">
+        <h2 id="page-title" class="text-center primary-dark-text">Account Settings</h2>
 
-      <h3>Classes</h3>
+        <h3>Classes</h3>
 
-      <div layout="column" ng-cloak>
-        <md-content id="class-dropdown" class="md-padding">
-          <form ng-submit="submitForm()">
-            <md-autocomplete
-                md-selected-item="selectedItem"
-                md-search-text="searchText"
-                md-items="item in querySearch(searchText)"
-                md-item-text="item"
-                md-min-length="0"
-                placeholder="Enter a Class Code (e.g. 'CSE110')">
-              <md-item-template>
-                <span md-highlight-text="searchText" md-highlight-flags="^i">{{item}}</span>
-              </md-item-template>
-            </md-autocomplete>
-          </form>
-        </md-content>
+        <div layout="column" ng-cloak>
+          <md-content id="class-dropdown" class="md-padding">
+            <form ng-submit="submitForm()">
+              <md-autocomplete
+                  md-selected-item="selectedItem"
+                  md-search-text="searchText"
+                  md-items="item in querySearch(searchText)"
+                  md-item-text="item"
+                  md-min-length="0"
+                  placeholder="Enter a Class Code (e.g. 'CSE110')">
+                <md-item-template>
+                  <span md-highlight-text="searchText" md-highlight-flags="^i">{{item}}</span>
+                </md-item-template>
+              </md-autocomplete>
+            </form>
+          </md-content>
+        </div>
+
+        <div id="school-classes" class="selected-classes"></div>
       </div>
 
-      <div id="school-classes"></div>
+      <div id="password-settings" class="container-settings">
+        <h2 id="page-title" class="text-center primary-dark-text">Privacy Settings</h2>
 
-      <h3>Change Password</h3>
+        <h3>Change Password</h3>
 
-      <input id="curr-pass-input" class="form-control password-input" type="password" placeholder="Current Password">
-      <input id="new-pass-input" class="form-control password-input" type="password" placeholder="New Password">
-      <input id="confirm-pass-input" class="form-control password-input" type="password" placeholder="Confirm Password">
+        <div class="form-group">
+          <label>Current Password</label>
+          <input id="curr-pass-input" class="form-control password-input" type="password" placeholder="Current Password">
+        </div>
 
+        <div class="form-group">
+          <label>New Password</label>
+          <input id="new-pass-input" class="form-control password-input" type="password" placeholder="New Password">
+        </div>
 
-      <div id="buttons">
-        <button id="cancel-button" class="btn btn-cancel">Cancel</button>
-        <a id="save-button" class="btn btn-hi-pri" href="/">Apply Changes</a>
+        <div class="form-group">
+          <label>Confirm Password</label>
+          <input id="confirm-pass-input" class="form-control password-input" type="password" placeholder="Confirm Password">
+        </div>
+      </div>
+
+      <div id="buttons" class="btn-container">
+        <button id="cancel-button" class="btn btn-cancel btn-block">Cancel</button>
+        <a id="save-button" class="btn btn-hi-pri btn-block" href="/">Apply Changes</a>
       </div>
     </main>
   </body>
