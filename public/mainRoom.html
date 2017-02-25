@@ -361,6 +361,20 @@
             </div>
           </div>
 
+          <!-- Current courses -->
+          <div class="classes-container">
+            <span class="classes" ng-repeat="class in classes">
+              <button class="btn btn-hi-pri"
+                ng-click="removeClass(class.class_id)">
+                {{class.class_name}}
+                <span class="glyphicon glyphicon-remove" aria-hidden="true"></span>
+              </button>
+            </span>
+            <br>
+            <button class="btn btn-hi-pri save-btn" ng-click="saveChanges()">Save</button>
+          </div>
+
+
         </div>
       </div>
     </div>
