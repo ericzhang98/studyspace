@@ -14,7 +14,7 @@ $(document).ready(function() {
     closeModal("#modal-login", "#login");
   });
   
-  /* Create Class Modal */
+  /* Create Room Modal */
   $("#btn-create-room").click(function() {
     $("#modal-create-room").fadeIn(100);
     setTimeout(function() {
@@ -38,7 +38,6 @@ $(document).ready(function() {
   $("#close-add-class").click(function() {
     closeModal("#modal-add-class", "#add-class");
   });
-  
 });
 
 function closeModal(modal_name, content_name) {
@@ -48,6 +47,7 @@ function closeModal(modal_name, content_name) {
     $(content_name).addClass("hide");
   }, 100);
 }
+
 
 //exit out modals if esc key pressed
 document.onkeydown = function(evt) {

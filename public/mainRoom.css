@@ -325,15 +325,26 @@ html, body {
 }
 
 .menu-classes .panel .panel-title {
-  display: -webkit-box;
-  display: -ms-flexbox;
-  display: flex;
-  -webkit-box-pack: justify;
-  -ms-flex-pack: justify;
-  justify-content: space-between;
   padding: 1rem;
   border-radius: 2rem;
   font-size: 1.5rem;
+}
+
+.menu-classes .panel-heading {
+  position: relative;
+}
+
+.menu-classes .panel-heading .btn-add-room {
+  position: absolute;
+  padding: 0;
+  top: 1.8rem;
+  right: 2.5rem;
+  background: transparent;
+  color: white;
+}
+
+.menu-classes .panel-title .glyphicon {
+  font-size: 1.2rem;
 }
 
 .color-def-panel-title {
