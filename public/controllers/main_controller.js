@@ -11,8 +11,8 @@ var USER_PING_PERIOD = 15*1000;
 
 /* Main controller -------------------------------------*/
 
-myApp.controller("MainController", ["$scope", "$http", "$timeout", 
-function($scope, $http, $timeout) {
+myApp.controller("MainController", ["$scope", "$http", "$timeout", "classesTransport", "$rootScope",
+function($scope, $http, $timeout, classesTransport, $rootScope) {
   console.log("Hell yeah");
 
   // general vars
@@ -373,6 +373,12 @@ function($scope, $http, $timeout) {
   $scope.rooms = {}        // room_id : room
   $scope.users = {}        // user_id : user
   $scope.muted_user_ids = [];
+
+  $scope.refreshAddClass = function() {
+    classesTransport.setClasses($scope.my_class_ids);
+    $rootScope.$broadcast("refresh"); //temp
+    console.log("refresh");
+  };
 
   // Initial call to pull data for user / classes / rooms
   getClasses();
@@ -885,14 +891,14 @@ console.log("no overflow for " + room_id + ", scroll width: " + item.scrollWidth
     console.log("this is a room " + room);
     if (room) {
       console.log("getting new list of users for room: " + room.room_id);
-
+      console.log($scope.rooms);
       for (var i = 0; i < room.users.length; i++) {
-        console.log("getting user info for user: " + room.users[i]);
-
-        if (!$scope.users(room.users[i])) {
-        	$http.get('/get_room_user/' + room.users[i]).then(function(response) {
-          	$scope.users[room.users[i].user_id] = response.data;
-       		});
+        if (!(room.users[i] in $scope.users)) {
+          var id = room.users[i];
+          $http.get('/get_room_user/' + room.users[i]).then(function(response) {
+            $scope.users[response.data.id] = response.data;
+            console.log("user info pulled: " + response.data.name);
+          });
       	}
       }
     }
@@ -961,14 +967,34 @@ console.log("no overflow for " + room_id + ", scroll width: " + item.scrollWidth
   }
 }]);
 
-myApp.controller("AddClassController", ["$scope", "$http",
-function ($scope, $http) {
+myApp.controller("AddClassController", ["$scope", "$http", "classesTransport", "$rootScope",
+function ($scope, $http, classesTransport, $rootScope) {
   // Global Variables
   var userClasses = []; // local list of class_ids of classes user is enrolled in
   var allClassesNameToID = {}; // name: class_id dictionary for all available classes
   getAllClasses();
 
-  $scope.currClasses = [];
+  $scope.currClasses = []; //what's displayed
+  //$scope.currClasses = classesTransport.userClasses;
+
+  $rootScope.$on("refresh", function(){getUserClasses()});
+  /*
+  $scope.userClasses = classesTransport.userClasses;
+  $scope.$watch("userClasses", function() {
+    return classesTransport.userClasses;
+  }, function(data) {
+    console.log("CHANGED");
+    console.log(data);
+  });
+  */
+  /*
+  $scope.$watch("classesTransport.userClasses", 
+  function(data) {
+    console.log("CHANGED");
+    console.log(data);
+    //displayClasses();
+  });
+  */
 
   $scope.processSelection = function processSelection() {
     //don't trigger on null (when the selected item changes from a good one)
@@ -991,7 +1017,7 @@ function ($scope, $http) {
 
   function verifyClass(className) {
     //console.log("verifying " + className);
-    var returnVal = $.inArray(className, Object.keys(allClassesNameToID).map(function(x){ return x.toUpperCase() }));
+    var returnVal = $.inArray(className, Object.keys(allClassesNameToID).map(function(x){ return x;}));
     return returnVal > -1;
   }
 
@@ -1034,6 +1060,7 @@ function ($scope, $http) {
     })
     //classNames.sort();
 
+    console.log("DISPLAY CLASSES");
     var classObjects = [];
     for (var i = 0; i < userClasses.length; i++) {
       classObjects.push({class_id: userClasses[i], class_name: classNames[i]});
@@ -1067,6 +1094,7 @@ function ($scope, $http) {
           allClassesNameToID[classObj.name] = classObj.class_id;
         }
 
+        displayClasses();
         // get my classes
         getUserClasses();
       }
@@ -1102,6 +1130,17 @@ function ($scope, $http) {
 
 }]);
 
+//helper service for communicating between MainController and AddClassController
+myApp.factory("classesTransport", function() {
+  var classesTransport = {};
+  userClasses = []; //list of class ids
+  classesTransport.setClasses = function(classes) { //set list of class ids
+    while(userClasses.length > 0) {userClasses.pop();}
+    for (var i = 0; i < classes.length; i++) {userClasses.push(classes[i]);}
+  };
+  return classesTransport;
+});
+
 //helper directive for scrolling listener
 myApp.directive("scroll", function ($window) {
   return {
@@ -1113,4 +1152,3 @@ myApp.directive("scroll", function ($window) {
     }
   }
 });
-
