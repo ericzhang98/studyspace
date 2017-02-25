@@ -13,7 +13,12 @@
 }
 
 /* General */
-body {
+body,
+button,
+html,
+input,
+select,
+textarea {
   font-family: 'Montserrat', sans-serif;
   letter-spacing: 0.07em;
 }
