@@ -876,14 +876,14 @@ console.log("no overflow for " + room_id + ", scroll width: " + item.scrollWidth
     console.log("this is a room " + room);
     if (room) {
       console.log("getting new list of users for room: " + room.room_id);
-
+      console.log($scope.rooms);
       for (var i = 0; i < room.users.length; i++) {
-        console.log("getting user info for user: " + room.users[i]);
-
-        if (!$scope.users(room.users[i])) {
-        	$http.get('/get_room_user/' + room.users[i]).then(function(response) {
-          	$scope.users[room.users[i].user_id] = response.data;
-       		});
+        if (!(room.users[i] in $scope.users)) {
+          var id = room.users[i];
+          $http.get('/get_room_user/' + room.users[i]).then(function(response) {
+            $scope.users[id] = response.data;
+            console.log("user info pulled: " + response.data.name);
+          });
       	}
       }
     }
