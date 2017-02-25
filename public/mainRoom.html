@@ -26,7 +26,6 @@
     <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.4.8/angular-animate.min.js"></script>
     <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.4.8/angular-aria.min.js"></script>
     <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.4.8/angular-messages.min.js"></script>
-    <link rel="stylesheet" href="https://ajax.googleapis.com/ajax/libs/angular_material/1.1.0/angular-material.min.css">
 
     <!-- For mobile scaling -->
     <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -46,7 +45,7 @@
     <title>Main Room</title>
   </head>
 
-  <body id="myBody" >
+  <body id="myBody">
     <div id="overlay" ng-controller="MainController">
       <div id="layer1">
         <!-- Classes Sidebar -->
@@ -59,14 +58,17 @@
                    style='-moz-user-select: -moz-none; -khtml-user-select: none;-webkit-user-select: none;'>
                 <span ng-cloak>{{myName | limitTo:1}}</span>
               </div>
-              <span class="user-name prim-text"  ng-cloak>{{myName}}</span>
+              
+              <span class="user-name prim-text" ng-cloak>{{myName}}</span>
+
+              <button class="btn btn-sm btn-low-key" onclick="setMode()"> </button>
             </div>
 
             <!-- Log Out -->
             <button id="log-out" class="btn btn-low-pri btn-block" onclick="logOut()">Log Out</button>
-
             <!-- User Preference -->
             <a id="preferences" class="btn btn-low-pri btn-block" href="courses">Account</a>
+
           </div>
 
           <!-- Classes -->
@@ -141,7 +143,7 @@
             </nav>
 
             <!-- MESSAGE PANE -->
-            <div id="chat-message-pane" class="message-pane container-fluid" scroll scroll-event="scrollevent">
+            <div id="chat-message-pane" class="message-pane" scroll scroll-event="scrollevent">
               <div id="loading" hidden> 
                 <div class="blob blob-0"></div><div class="blob blob-1"></div>
                 <div class="blob blob-2"></div><div class="blob blob-3"></div>
@@ -151,6 +153,7 @@
                 <div class="container-user-icon white-text {{chatMessage.user_id != myID ? 'acc-back' : 'prim-back'}}">
                   <span>{{chatMessage.name | limitTo:1}}</span>
                 </div>
+
                 <div class="message-content">
                   <header class="message-header">
                     <div class="dropdown">
@@ -158,7 +161,7 @@
                       <!-- Dropdown for non-me users -->
                       <a ng-if="chatMessage.user_id != myID" class="user-name dropdown-toggle acc-text" data-toggle="dropdown" href="#">{{chatMessage.name.split(" ")[0] + " " + chatMessage.name.split(" ")[1][0]}} </a>
                       <ul ng-if="chatMessage.user_id != myID" class="dropdown-menu">
-                        <li><a href="#" ng-click="toggleUserAudio(chatMessage.user_id)">{{muteText}}</a></li>
+                        <li><a href="#" ng-click="toggleUserAudio(chatMessage.user_id)">{{muted_user_ids.indexOf(chatMessage.user_id) == -1 ? 'Mute' : 'Unmute'}}</a></li>
                         <li><a href="#">Block</a></li>
                         <li><a href="#">Friend</a></li>
                       </ul>
@@ -170,6 +173,15 @@
                     <span class="dateTime">{{timeAgo(chatMessage)}}</span>
                   </header>
                   <p class="message-body">{{chatMessage.text}}</p>
+                </div>
+              </div>
+
+              <div ng-if="currTyping.length > 0" class="message">
+                <div ng-repeat="name in currTyping" class="container-user-icon-small white-text acc-back">
+                  <span>{{name | limitTo:1}}</span>
+                </div>
+                <div class="message-content">
+                  <p class="curr-typing-text"> {{currTyping.length > 1 ? 'are' : 'is'}} typing ...</p>
                 </div>
               </div>
             </div> 

@@ -151,9 +151,10 @@ function($scope, $http, $timeout) {
     }
     var names = []
     for (var i = 0; i < currTyping.length; i++) {
-      names[i] = $scope.users[currTyping[i]].name;
+      names.push($scope.users[currTyping[i]].name);
     }
     $scope.currTyping = names;
+    scrollDown();
   }
 
   // Upload message to the database
@@ -173,7 +174,6 @@ function($scope, $http, $timeout) {
     chatInputBox.value = "";
     $scope.chatInput = "";
     chatInputBox.focus();
-    scrollDown();
   }
 
   $scope.muteBtnClass = ['glyphicon', 'glyphicon-volume-up'];
@@ -371,6 +371,7 @@ function($scope, $http, $timeout) {
   $scope.class_rooms = {}  // class_id : list of room_ids
   $scope.rooms = {}        // room_id : room
   $scope.users = {}        // user_id : user
+  $scope.muted_user_ids = [];
 
   // Initial call to pull data for user / classes / rooms
   getClasses();
@@ -501,9 +502,16 @@ function($scope, $http, $timeout) {
   };
 
   // onclick method that will toggles the user audio of the given user_id
-  $scope.muteText = "Mute";
   $scope.toggleUserAudio = function(user_id) {
-    $scope.muteText = ($scope.muteText == 'Mute') ? 'Unmute' : 'Mute';
+  	// update muted_user_ids, which we use in the html to
+  	// determine whether to display 'mute' or 'unmute'
+    var index = $scope.muted_user_ids.indexOf(user_id);
+    if (index != -1) {
+    	$scope.muted_user_ids.splice(index, 1);
+    } 
+    else {
+    	$scope.muted_user_ids.push(user_id);
+    }
     toggleRemoteStreamAudioEnabled(user_id);
   };
 
