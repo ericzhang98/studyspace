@@ -292,7 +292,7 @@ html, body {
   margin-top: 1rem;
 }
 
-.container-menu-classes .container-title {
+.container-title {
   display: -webkit-box;
   display: -ms-flexbox;
   display: flex;
@@ -309,11 +309,11 @@ html, body {
   color: var(--primary-color);
 }
 
-.container-menu-classes .container-title:hover {
+.container-title:hover {
   color: var(--primary-light-color);
 }
 
-.container-menu-classes .container-title .title {
+.container-title .title {
   font-size: 1.2rem;
   font-weight: 600;
   margin-top: 0;

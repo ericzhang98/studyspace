@@ -439,7 +439,7 @@ app.get('/get_room_user/:user_id/', function(req, res) {
   db.users.findOne({user_id:user}, function(err, doc) {
     if (doc) {
       console.log("Sending user object for user: " + user);
-      res.json({name: doc.name}); 
+      res.json({name: doc.name, user_id: doc.user_id}); 
     }
     else {
       console.log("User with id: " + user_id + " could not be found.");
