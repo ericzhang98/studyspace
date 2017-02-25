@@ -154,7 +154,6 @@ function($scope, $http, $timeout) {
       names.push($scope.users[currTyping[i]].name);
     }
     $scope.currTyping = names;
-    scrollDown();
   }
 
   // Upload message to the database
