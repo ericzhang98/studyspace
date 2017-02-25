@@ -58,14 +58,17 @@
                    style='-moz-user-select: -moz-none; -khtml-user-select: none;-webkit-user-select: none;'>
                 <span ng-cloak>{{myName | limitTo:1}}</span>
               </div>
+              
               <span class="user-name prim-text" ng-cloak>{{myName}}</span>
+
+              <button class="btn btn-sm btn-low-key" onclick="setMode()"> </button>
             </div>
 
             <!-- Log Out -->
             <button id="log-out" class="btn btn-low-pri btn-block" onclick="logOut()">Log Out</button>
-
             <!-- User Preference -->
             <a id="preferences" class="btn btn-low-pri btn-block" href="courses">Account</a>
+
           </div>
 
           <!-- Classes -->

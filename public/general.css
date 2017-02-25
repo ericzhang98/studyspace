@@ -1,12 +1,12 @@
 /* General CSS File Across All Pages */
 :root {
   --primary-color: #262626;
-  --primary-light-color: #262626;
-  --primary-dark-color: #262626;
-  --base-color: #262626;
+  --primary-light-color: #353535;
+  --primary-dark-color: #353535;
+  --base-color: #353535;
   --base-two-color: #262626;
   --base-focus-color: #262626;
-  --over-base-color: #262626;
+  --over-base-color: #353535;
   --over-base-two-color: #262626;
   --over-base-focus-color: #262626;  
   --accent-color: #262626;
@@ -389,13 +389,14 @@ a:hover {
 }
 
 .btn-low-pri {
-  background-color: var(--base-focus-color);
-  color: var(--over-base-focus-color);
+  background-color: var(--base-two-color);
+  color: var(--over-base-color);
 }
 
 .btn-low-pri:hover {
   color: var(--primary-light-color);
 }
+
 .btn-low-pri:active {
   color: var(--over-base-focus-color);
 }
@@ -407,6 +408,12 @@ a:hover {
 
 .btn-hi-pri:hover {
   background-color: var(--primary-dark-color);
+}
+
+.btn-low-key {
+  background-color: var(--over-base-color);
+  color: transparent;
+  margin-left: .3rem;
 }
 
 .btn-cancel {
