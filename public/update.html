@@ -46,6 +46,7 @@
     </aside>
 
     <main role="main" class="container">
+      <div id="info">
       <h2 id="page-title" class="primary-dark-text">Account Settings</h2>
 
       <h3>Classes</h3>
@@ -67,15 +68,29 @@
           </form>
         </md-content>
       </div>
+      </div>
 
       <div id="school-classes"></div>
 
+      <div id="info">
+      <h2 id="page-title" class="primary-dark-text">Privacy Settings</h2>
+
       <h3>Change Password</h3>
+        <div class =form-inline>
+          <label>Current Password</label>
+          <input id="curr-pass-input" class="form-control password-input" type="password" placeholder="Current Password">
+        </div>
 
-      <input id="curr-pass-input" class="form-control password-input" type="password" placeholder="Current Password">
-      <input id="new-pass-input" class="form-control password-input" type="password" placeholder="New Password">
-      <input id="confirm-pass-input" class="form-control password-input" type="password" placeholder="Confirm Password">
+        <div class=form-inline>
+          <label>New Password</label>
+          <input id="new-pass-input" class="form-control password-input" type="password" placeholder="New Password">
+        </div>
 
+        <div class=form-inline>
+          <label>Confirm Password</label>
+          <input id="confirm-pass-input" class="form-control password-input" type="password" placeholder="Confirm Password">
+        </div>
+      </div>
 
       <div id="buttons">
         <button id="cancel-button" class="btn btn-cancel">Cancel</button>

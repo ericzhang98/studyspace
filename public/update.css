@@ -12,10 +12,17 @@
 #buttons {
   margin: 8px auto;
   text-align: center;
+
 }
 
 #page-title {
   text-align: center;
+}
+
+#info {
+  background: white;
+  padding: 15px; 
+  margin: 20px;
 }
 
 .password-input {
@@ -27,16 +34,17 @@
   margin: 4px;
 }
 
+
 /* General */
 body {
   background: #ecf0f1;
 }
-
+/*
 main {
   background: white;
   height: 100%;
 }
-
+*/
 /*
 h1 {
     margin-bottom: 10px;
