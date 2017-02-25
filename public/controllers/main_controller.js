@@ -952,154 +952,143 @@ console.log("no overflow for " + room_id + ", scroll width: " + item.scrollWidth
 
 myApp.controller("AddClassController", ["$scope", "$http",
 function ($scope, $http) {
-    // Global Variables
-    var userClasses = []; // list of class_ids of classes user is enrolled in
-    var allClassesNameToID = {}; // name: class_id dictionary for all available classes
+  // Global Variables
+  var userClasses = []; // local list of class_ids of classes user is enrolled in
+  var allClassesNameToID = {}; // name: class_id dictionary for all available classes
+  getAllClasses();
 
-    // Send requests to populate the two fields above
-    getAllClasses();
+  $scope.currClasses = [];
 
-    $scope.querySearch = querySearch;
-    $scope.classes = [];
-
-    // If enter is pressed inside the dropdown
-    $("#class-dropdown").keypress(function(event) {
-        if(event.which == 13) {
-
-            var class_name = $("#input-0").val().toUpperCase();
-
-            if (verifyClass(class_name)) {
-
-                var class_id = allClassesNameToID[class_name];
-                // Make sure the user isn't already in the class
-                if($.inArray(class_id, userClasses) == -1) {
-                    console.log("ADD " + class_id)
-                    addClass(class_id);
-                } else {
-                    console.log("already in class with name " + class_name+ " and id " + class_id);
-                }
-            }
-            else {
-                console.log("could not verify class with name " + class_name + " and id " + class_id);
-            }
+  $scope.processSelection = function processSelection() {
+    //don't trigger on null (when the selected item changes from a good one)
+    if ($scope.selectedItem) {
+      var class_name = $scope.selectedItem;
+      if (verifyClass(class_name)) {
+        var class_id = allClassesNameToID[class_name];
+        // Make sure the user isn't already in the class
+        if($.inArray(class_id, userClasses) == -1) {
+            addClass(class_id);
+        } else {
+          console.log("already in class with name " + class_name+ " and id " + class_id);
         }
-    });
-
-    /* Add, remove, and save */
-    function addClass(class_id) {
-        console.log("UI Adding" + class_id);
-        userClasses.push(class_id);
-        displayClasses();
+      }
+      else {
+        console.log("could not verify class with name " + class_name + " and id " + class_id);
+      }
     }
+  }
 
-    function removeClass(class_id) {
-        var index = $.inArray(class_id, userClasses);
-        console.log("UI Removing " + class_id);
-        if(index == -1) {
-            console.log("Cannot remove class, class_id" + class_id+ " not found!")
+  function verifyClass(className) {
+    //console.log("verifying " + className);
+    var returnVal = $.inArray(className, Object.keys(allClassesNameToID).map(function(x){ return x.toUpperCase() }));
+    return returnVal > -1;
+  }
+
+  /* Add, remove, and save */
+  function addClass(class_id) {
+    console.log("UI Adding " + class_id);
+    userClasses.push(class_id);
+    displayClasses();
+    $scope.searchText = "";
+  }
+
+  $scope.removeClass = function removeClass(class_id) {
+    console.log("UI Removing " + class_id);
+    var index = $.inArray(class_id, userClasses);
+    if(index == -1) {
+      console.log("Cannot remove class, class_id" + class_id+ " not found!")
+    }
+    userClasses.splice(index, 1);
+    displayClasses();
+  }
+
+  $scope.saveChanges = function saveChanges() {
+    $http.post('/enroll', {class_ids: userClasses});
+    closeModal("#modal-add-class", "#add-class");
+  }
+
+  // filter function for search query
+  function createFilterFor(query) {
+    var uppercaseQuery = query.toUpperCase();
+    return function filterFn(thisClass) {
+      return (thisClass.toUpperCase().indexOf(uppercaseQuery) === 0);
+    };
+  }
+
+  // updates UI to display currently enrolled classes
+  function displayClasses() {
+    var classNames = new Array();
+    userClasses.forEach(function(class_id, index) {
+      classNames.push(getNameOfClass(class_id))
+    })
+    //classNames.sort();
+
+    var classObjects = [];
+    for (var i = 0; i < userClasses.length; i++) {
+      classObjects.push({class_id: userClasses[i], class_name: classNames[i]});
+    }
+    $scope.currClasses = classObjects;
+  }
+
+  // returns name of class given class_id
+  function getNameOfClass(class_id) {
+    for (var name in allClassesNameToID) {
+      if (allClassesNameToID[name] == class_id) {
+        return name;
+      }
+    }
+  }
+
+  // populates the allClassesNameToID dictionary with all available classes
+  function getAllClasses() {
+    var xhr = new XMLHttpRequest();
+    xhr.open('GET', "/get_all_classes", true); // responds with class_ids
+    xhr.send();
+
+    // once we have the user's classes
+    xhr.onreadystatechange = function(e) {
+      if (xhr.readyState == 4 && xhr.status == 200) {
+        var response = JSON.parse(xhr.responseText);
+
+        // populate the classes dictionary
+        for (var i = 0; i < response.length; i++) {
+          var classObj = response[i];
+          allClassesNameToID[classObj.name] = classObj.class_id;
         }
-        userClasses.splice(index, 1);
-        displayClasses();
+
+        // get my classes
+        getUserClasses();
+      }
     }
-    $scope.removeClass = removeClass;
+  }
 
-    function saveChanges() {
-        $http.post('/enroll', {class_ids: userClasses});
-    }
-    $scope.saveChanges = saveChanges;
+  // populates userClasses list with ids of all classes they are enrolled in
+  // calls displayClasses afterward to reflect changes
+  function getUserClasses() {
+    var xhr = new XMLHttpRequest();
+    xhr.open('GET', "/get_my_classes", true); // responds with class_ids
+    xhr.send();
 
-    // return to main
-    function cancelChanges() {
-        document.location.href = "/";
-    }
+    // once we have the user's classes
+    xhr.onreadystatechange = function(e) {
+      if (xhr.readyState == 4 && xhr.status == 200) {
+        var response = JSON.parse(xhr.responseText);
+        if (response.class_ids != null) {
 
-    // filter function for search query
-    function createFilterFor(query) {
-        var uppercaseQuery = query.toUpperCase();
-        return function filterFn(thisClass) {
-            return (thisClass.toUpperCase().indexOf(uppercaseQuery) === 0);
-        };
-    }
+          // set userClasses to equal this list
+          userClasses = response.class_ids;
 
-    // updates UI to display currently enrolled classes
-    function displayClasses() {
-        var classNames = new Array();
-        userClasses.forEach(function(class_id, index) {
-            classNames.push(getNameOfClass(class_id))
-        })
-        //classNames.sort();
-
-        var classObjects = [];
-        for (var i = 0; i < userClasses.length; i++) {
-          classObjects.push({class_id: userClasses[i], class_name: classNames[i]});
+          // update the UI
+          displayClasses();
         }
-        $scope.classes = classObjects;
+      }
     }
+  }
 
-    // returns name of class given class_id
-    function getNameOfClass(class_id) {
-        for (var name in allClassesNameToID) {
-            if (allClassesNameToID[name] == class_id) {
-                return name;
-            }
-        }
-    }
+  $scope.querySearch = function querySearch (query) {
+    return query ? Object.keys(allClassesNameToID).filter(createFilterFor(query)) : [];
+  }
 
-    // populates the allClassesNameToID dictionary with all available classes
-    function getAllClasses() {
-        var xhr = new XMLHttpRequest();
-        xhr.open('GET', "/get_all_classes", true); // responds with class_ids
-        xhr.send();
-
-        // once we have the user's classes
-        xhr.onreadystatechange = function(e) {
-          if (xhr.readyState == 4 && xhr.status == 200) {
-            var response = JSON.parse(xhr.responseText);
-
-            // populate the classes dictionary
-            for (var i = 0; i < response.length; i++) {
-                var classObj = response[i];
-                allClassesNameToID[classObj.name] = classObj.class_id;
-            }
-
-            // get my classes
-            getUserClasses();
-          }
-        }
-    }
-
-    // populates userClasses list with ids of all classes they are enrolled in
-    // calls displayClasses afterward to reflect changes
-    function getUserClasses() {
-        var xhr = new XMLHttpRequest();
-        xhr.open('GET', "/get_my_classes", true); // responds with class_ids
-        xhr.send();
-
-        // once we have the user's classes
-        xhr.onreadystatechange = function(e) {
-          if (xhr.readyState == 4 && xhr.status == 200) {
-            var response = JSON.parse(xhr.responseText);
-            if (response.class_ids != null) {
-
-                // set userClasses to equal this list
-                userClasses = response.class_ids;
-                
-                // update the UI
-                displayClasses();
-            }
-          }
-        }
-    }
-
-    function querySearch (query) {
-        return query ? Object.keys(allClassesNameToID).filter(createFilterFor(query)) : [];
-    }
-
-    function verifyClass(className) {
-        console.log("verifying " + className);
-        var returnVal = $.inArray(className, Object.keys(allClassesNameToID).map(function(x){ return x.toUpperCase() }));
-        return returnVal > -1;
-    }
 }]);
 
 //helper directive for scrolling listener

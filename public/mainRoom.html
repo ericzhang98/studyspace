@@ -351,13 +351,15 @@
             <!-- Auto complete -->
             <div>
               <md-content id="class-dropdown" class="md-padding">
-                <form ng-submit="submitForm()">
+                <form>
                   <md-autocomplete
-                     md-selected-item="selectedItem"
                      md-search-text="searchText"
                      md-items="item in querySearch(searchText)"
                      md-item-text="item"
                      md-min-length="0"
+                     md-selected-item="selectedItem"
+                     md-selected-item-change="processSelection()"
+                     md-autoselect="true"
                      placeholder="Enter a Class Code (e.g. 'CSE110')">
                     <md-item-template>
                       <span md-highlight-text="searchText" md-highlight-flags="^i">{{item}}</span>
@@ -370,7 +372,7 @@
 
           <!-- Current courses -->
           <div class="classes-container">
-            <span class="classes" ng-repeat="class in classes">
+            <span class="classes" ng-repeat="class in currClasses">
               <button class="btn btn-hi-pri"
                 ng-click="removeClass(class.class_id)">
                 {{class.class_name}}

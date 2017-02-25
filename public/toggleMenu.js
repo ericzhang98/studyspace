@@ -48,3 +48,13 @@ function closeModal(modal_name, content_name) {
     $(content_name).addClass("hide");
   }, 100);
 }
+
+//exit out modals if esc key pressed
+document.onkeydown = function(evt) {
+  evt = evt || window.event;
+  if (evt.keyCode == 27) {
+    closeModal("#modal-login", "#login");
+    closeModal("#modal-create-room", "#create-room");
+    closeModal("#modal-add-class", "#add-class");
+  }
+};
