@@ -710,23 +710,6 @@ console.log("no overflow for " + room_id + ", scroll width: " + item.scrollWidth
     }
   }
 
-  // getting the list of users in this room
-  function updateRoomUsers(room) {
-    console.log("this is a room " + room);
-    if (room) {
-      console.log("getting new list of users for room: " + room.room_id);
-
-      for (var i = 0; i < room.users.length; i++) {
-        console.log("getting user info for user: " + room.users[i]);
-        	var user_id = room.users[i]
-        	$http.get('/get_room_user/' + room.users[i]).then(function(response) {
-          	$scope.users[user_id] = response.data;
-       		});
-      	
-      }
-    }
-  }
-
   /*********************************************************************/
   /**************************** BUDDY SYSTEM ***************************/
 
@@ -888,6 +871,25 @@ console.log("no overflow for " + room_id + ", scroll width: " + item.scrollWidth
     // join the chat
     joinRoomChat(dm_room_id);
   };
+
+  // getting the list of users in this room
+  function updateRoomUsers(room) {
+    console.log("this is a room " + room);
+    if (room) {
+      console.log("getting new list of users for room: " + room.room_id);
+      console.log($scope.rooms);
+      for (var i = 0; i < room.users.length; i++) {
+        if (!(room.users[i] in $scope.users)) {
+          var id = room.users[i];
+          $http.get('/get_room_user/' + room.users[i]).then(function(response) {
+            $scope.users[id] = response.data;
+            console.log("i is " + id);
+            console.log("user info pulled: " + response.data.name);
+          });
+      	}
+      }
+    }
+  }
 
   /*********************************************************************/
   /**************************** BLOCK SYSTEM ***************************/

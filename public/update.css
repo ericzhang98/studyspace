@@ -9,20 +9,12 @@
 /* dark-color-light: #353535 */ /* Our lighter dark color */
 /* accent-color: #e01f4f */
 
-#buttons {
-  margin: 8px auto;
-  text-align: center;
-
-}
-
-#page-title {
-  text-align: center;
-}
-
-#info {
+.container-settings {
   background: white;
-  padding: 15px; 
-  margin: 20px;
+  padding: 4rem; 
+  margin: 3rem auto;
+  border-radius: 0.5rem;
+  width: 50rem;
 }
 
 .password-input {
@@ -34,11 +26,48 @@
   margin: 4px;
 }
 
+.btn-container {
+  width: 50rem;
+  margin: 0 auto;
+}
+
+.btn-container .btn {
+  padding-top: 1rem;
+  padding-bottom: 1rem;
+  font-weight: 500;
+  font-size: 2rem;
+}
+
+.btn-block+.btn-block {
+  margin-top: 1rem;
+  margin-bottom: 3rem;
+}
+
+.selected-classes {
+  margin-top: 1rem;
+}
 
 /* General */
-body {
+html, body {
   background: #ecf0f1;
+  height: auto;
 }
+
+body {
+  padding: 1.5rem;
+}
+
+h2, h3 {
+  font-weight: 600;
+}
+
+h2 {
+  margin-top: 0;
+  margin-bottom: 3.5rem;
+  padding-bottom: 3rem;
+  border-bottom: solid 1px #eee;
+}
+
 /*
 main {
   background: white;
