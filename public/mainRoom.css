@@ -170,13 +170,15 @@ html, body {
 
 .form-message .input-group {
   height: inherit;
+  background-color: var(--base-two-color);
 }
 
 .input-group .btn-mute {
   width: 4.5rem;
   height: 4.5rem;
-  border: solid 2px #eeeeee;
-  background-color: white;
+  border: solid 2px var(--over-base-two-color);
+  background-color: var(--base-two-color);
+  color: var(--over-base-two-color);
 }
 
 .input-group .btn-mute .glyphicon {
@@ -191,16 +193,25 @@ html, body {
   height: 100%;
   padding-left: 1.5rem;
   padding-right: 1.5rem;
-  border-top: solid 2px #eeeeee;
-  border-bottom: solid 2px #eeeeee;
-  border-right: solid 2px #eeeeee;
+  border-top: solid 2px var(--over-base-two-color);
+  border-bottom: solid 2px var(--over-base-two-color);
+  border-right: solid 2px var(--over-base-two-color);
   border-top-right-radius: 0.5rem;
   border-bottom-right-radius: 0.5rem;
+  color: var(--over-base-two-color);
 }
 
 /* Classes Sidebar */
 .sidebar-left {
   left: 0;
+}
+
+.sidebar-left>.menu-user {
+  padding-top: 1.5rem;
+  padding-bottom: 2rem;
+  margin-left: 1.5rem;
+  margin-right: 1.5rem;
+  border-bottom: solid 1px #000000;
 }
 
 .container-info-user {
@@ -211,11 +222,7 @@ html, body {
   -ms-flex-align: center;
   align-items: center;
   height: auto;
-  padding-top: 1.5rem;
-  padding-bottom: 1.5rem;
-  margin-left: 1.5rem;
-  margin-right: 1.5rem;
-  border-bottom: solid 0px #000000;
+  margin-bottom: 1.5rem;
 }
 
 .container-user-icon {
@@ -261,7 +268,7 @@ html, body {
 
 /* Classes Menu */
 .container-menu-classes {
-  margin-top: 2rem;
+  margin-top: 1rem;
 }
 
 .container-menu-classes .container-title {
@@ -362,14 +369,15 @@ html, body {
 
 /* Add Class Modal */
 .modal-add-class-content {
-  height: 50%;
+  height: 65%;
   width: 50%;
 }
 
 .md-autocomplete-suggestions-container {
   z-index: 1051 !important; /* lol xD */
-
 }
+
+/* Other stuff */
 
 #overlay {
   width: 100%;

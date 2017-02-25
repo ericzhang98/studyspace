@@ -468,7 +468,10 @@ app.get("/typing/:is_typing/:room_id", function(req, res) {
       firebaseRoot.child("RoomTyping").child(room_id).child(req.signedCookies.user_id).set(true);
     }
     else {
-      //firebaseRoot.child("RoomTyping").child(room_id).orderByValue().equalTo(req.signedCookies.user_id).
+      /*
+      firebaseRoot.child("RoomTyping").child(room_id).orderByValue().equalTo(req.signedCookies.user_id).once("child_added", function(snapshot) {
+        snapshot.ref.remove();
+      });*/
       firebaseRoot.child("RoomTyping").child(room_id).child(req.signedCookies.user_id).remove();
     }
   }
@@ -759,7 +762,7 @@ function leaveRoom(user_id, room_id, callback) {
     callback({success: true}); //assume user succesfully leaves the room
   }
   console.log("FIREBASE: leaveRoom - Removed user " + user_id + " from room" + room_id);
-  //query room's users list
+  //grab the room's users list and rm the user from it
   roomInfoDatabase.child(room_id).child("users").once("value").then(function(snapshot) {
     if (snapshot.val()) {
       var users = [];
@@ -773,7 +776,7 @@ function leaveRoom(user_id, room_id, callback) {
           //rm the user
           childSnapshot.ref.remove(function(err) {
             if (users.length == 1) {
-              //if last user left, check for delete conditions
+              //if last user left, set last_active_time and check for delete conditions after delay
               setTimeout(bufferTimer, MAX_IDLE, room_id);
               snapshot.ref.parent.child("last_active_time").set(Date.now());
             }
@@ -785,6 +788,10 @@ function leaveRoom(user_id, room_id, callback) {
       console.log("FIREBASE: ERROR - room no longer exists");
     }
   });
+
+  //rm the typing lol
+  firebaseRoot.child("RoomTyping").child(room_id).child(user_id).remove();
+  
 }
 
 function bufferTimer(room_id) {

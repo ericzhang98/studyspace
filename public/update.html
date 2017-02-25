@@ -8,7 +8,7 @@
 -->
 
 <!DOCTYPE html>
-<html ng-app="MyApp" ng-controller="updateController as ctrl">
+<html ng-app="MyApp" ng-controller="updateController">
   <head>
     <!-- Bootstrap -->
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
@@ -52,16 +52,16 @@
 
       <div layout="column" ng-cloak>
         <md-content id="class-dropdown" class="md-padding">
-          <form ng-submit="ctrl.submitForm()">
+          <form ng-submit="submitForm()">
             <md-autocomplete
-                md-selected-item="ctrl.selectedItem"
-                md-search-text="ctrl.searchText"
-                md-items="item in ctrl.querySearch(ctrl.searchText)"
+                md-selected-item="selectedItem"
+                md-search-text="searchText"
+                md-items="item in querySearch(searchText)"
                 md-item-text="item"
                 md-min-length="0"
                 placeholder="Enter a Class Code (e.g. 'CSE110')">
               <md-item-template>
-                <span md-highlight-text="ctrl.searchText" md-highlight-flags="^i">{{item}}</span>
+                <span md-highlight-text="searchText" md-highlight-flags="^i">{{item}}</span>
               </md-item-template>
             </md-autocomplete>
           </form>

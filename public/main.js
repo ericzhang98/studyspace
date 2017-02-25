@@ -1,7 +1,7 @@
 /***** General variables **************************/
 var myID = getSignedCookie("user_id");
 var currTheme;
-var is_day;
+var currIsDay;
 var NUM_THEMES = 4;
 var songCommands = ["/raindrop", "/destress"];
 var otherCommands = ["/gary", "/ord", "/stop"]
@@ -18,8 +18,9 @@ document.getElementById('leave_room_audio').volume = 0.4;
 
 // set color theme
 var tn = getCookie('theme_num');
+var is_day = getCookie('is_day') == 'true';
 setTheme(tn ? parseInt(tn) : 1);
-changeMode();
+setMode(is_day);
 /**************************************************/
 
 /******************************** MODEL ******************************/
@@ -64,18 +65,7 @@ function showAlert(alert_id, duration) {
 	}, duration);
 }
 
-function changeTheme() {
-	
-	setTheme(currTheme + 1 <= NUM_THEMES ? currTheme + 1 : 1);
-
-	// play pop sound
-	var audio = document.createElement("audio");
-	audio.src = "/audio/pop_sfx";
-    audio.volume = 0.4;
-    audio.play(); 
-}
-
-function changeMode() {
+function setMode(is_day = !currIsDay) {
 
 	var base, base_two, base_focus, over_base, over_base_two, over_base_focus;
 
@@ -85,7 +75,7 @@ function changeMode() {
 		base_focus = '#3a3a3a';
 		over_base = '#353535';
 		over_base_focus ='#ffffff';
-		is_day = false;
+		currIsDay = true;
 	}
 
 	else {
@@ -94,7 +84,7 @@ function changeMode() {
 		base_focus = '#262626';
 		over_base = '#ffffff';
 		over_base_focus ='#ffffff';
-		is_day = true;
+		currIsDay = false;
 	}
 
 	over_base_two = over_base_two ? over_base_two : over_base;
@@ -106,6 +96,19 @@ function changeMode() {
 	document.documentElement.style.setProperty('--over-base-two-color', over_base_two);
 	document.documentElement.style.setProperty('--over-base-focus-color', over_base_focus);
 
+	storeCookie("is_day", is_day);
+
+}
+
+function changeTheme() {
+	
+	setTheme(currTheme + 1 <= NUM_THEMES ? currTheme + 1 : 1);
+
+	// play pop sound
+	var audio = document.createElement("audio");
+	audio.src = "/audio/pop_sfx";
+    audio.volume = 0.4;
+    audio.play(); 
 }
 
 function setTheme(theme_num) {
@@ -154,7 +157,7 @@ function setTheme(theme_num) {
 			accent = '#42ccff'; 
 			break;
 
-
+		/*
 		// THEME 5 AQUA-BLACK-NAVY
 		case 5:
 
@@ -182,7 +185,7 @@ function setTheme(theme_num) {
 			over_base_two = '#262626';
 			over_base_focus ='#cc0025';
 			accent = '#4c0015'; 
-			break;
+			break;*/
 
 		default:
 			return;
