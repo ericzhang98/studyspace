@@ -362,14 +362,15 @@ html, body {
 
 /* Add Class Modal */
 .modal-add-class-content {
-  height: 50%;
+  height: 65%;
   width: 50%;
 }
 
 .md-autocomplete-suggestions-container {
   z-index: 1051 !important; /* lol xD */
-
 }
+
+/* Other stuff */
 
 #overlay {
   width: 100%;

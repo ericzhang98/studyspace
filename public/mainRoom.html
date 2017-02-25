@@ -71,7 +71,7 @@
           <div id="classes-menu" class="container-menu-classes">
 
             <!-- Create Room Button -->
-            <button id="btn-add-class" class="btn container-title">
+            <button id="btn-create-room" class="btn container-title">
               <span class="title">Spaces</span>
               <div>
                 <span class="glyphicon glyphicon-plus"></span>
@@ -239,10 +239,19 @@
 
 
 
-
+          <span>TEMP FOR ERIC</span>
+          <br>
           <!-- CURRENTLY TYPING -->
           <span>CURRENTLY TYPING:</span>
           <span ng-cloak>{{currTyping}}</span>
+          <br>
+          <!-- Add Class Button -->
+          <button id="btn-add-class" class="btn container-title">
+            <span class="title">Classes</span>
+            <div>
+              <span class="glyphicon glyphicon-plus"></span>
+            </div>
+          </button>
 
         </aside>
 
@@ -326,11 +335,12 @@
             <button id="close-add-class" class="btn close" data-dismiss="modal" aria-label="Close">
               <span class="glyphicon glyphicon-remove" aria-hidden="true"></span>
             </button>
-            <h1 class="title">Add courses</h1>
+            <h1 class="title">Add classes</h1>
           </header>
-          <div class="modal-main-content form-container">
+          <div class="main form-container">
+
             <!-- Auto complete -->
-            <div layout="column" ng-cloak>
+            <div>
               <md-content id="class-dropdown" class="md-padding">
                 <form ng-submit="submitForm()">
                   <md-autocomplete
@@ -348,6 +358,7 @@
               </md-content>
             </div>
           </div>
+
         </div>
       </div>
     </div>
