@@ -70,8 +70,8 @@ function setMode(is_day = !currIsDay) {
 	var base, base_two, base_focus, over_base, over_base_two, over_base_focus;
 
 	if (is_day) {
-		base = '#f3f3f3';
-		base_two = '#f3f3f3';
+		base = '#f0f0f0';
+		base_two = '#f7f7f7';
 		base_focus = '#3a3a3a';
 		over_base = '#353535';
 		over_base_focus ='#ffffff';
