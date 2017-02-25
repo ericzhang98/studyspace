@@ -275,9 +275,28 @@ html, body {
 
 .curr-typing-text {
   margin-top: .5rem;
-  font-style: italic;
-  font-size: 1.5rem;
-  color: #666666;
+  font-size: .9rem;
+  display: inline;
+}
+
+acc {
+  color: var(--accent-color);
+}
+
+.curr-typing-container {  
+  width: calc(100% - 6rem);
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-pack: justify;
+  -ms-flex-pack: justify;
+  justify-content: space-between;
+  padding-left: 0;
+  list-style: none;
+  padding-top: .3rem;
+  padding-bottom: .3rem;
+  cursor: default;
+
 }
 
 .container-info-user .container-user-icon {

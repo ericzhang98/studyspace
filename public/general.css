@@ -388,6 +388,10 @@ a:hover {
   color: var(--over-base-color);
 }
 
+.grey-text {
+  color: #666666;
+}
+
 .btn-low-pri {
   background-color: var(--base-two-color);
   color: var(--over-base-color);
