@@ -345,8 +345,39 @@ a:hover {
 
 /* More main styling */
 
-.primary-dark-text {
+.prim-back {
+  background-color: var(--primary-color);
+}
+
+.acc-back {
+  background-color: var(--accent-color);
+}
+
+.prim-dark-back {
+  background-color: var(--primary-dark-color);
+}
+
+.base-back {
+  background-color: var(--base-color);
+}
+
+.prim-text {
+  color: var(--primary-color);
+}
+
+.acc-text {
+  color: var(--accent-color);
+}
+
+.white-text {
+  color: #ffffff;
+}
+
+.prim-dark-text {
   color: var(--primary-dark-color);
+}
+.over-base-text {
+  color: var(--over-base-color);
 }
 
 .btn-low-pri {

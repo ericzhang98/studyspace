@@ -16,7 +16,8 @@ document.getElementById('join_room_audio').volume = 0.4;
 document.getElementById('leave_room_audio').volume = 0.4;
 
 // set color theme
-setTheme(parseInt(getCookie('theme_num')));
+var tn = getCookie('theme_num');
+setTheme(tn ? parseInt(tn) : 1);
 /**************************************************/
 
 /******************************** MODEL ******************************/
@@ -68,9 +69,6 @@ function changeTheme() {
 	// play pop sound
 	var audio = document.createElement("audio");
 	audio.src = "/audio/pop_sfx";
-	audio.addEventListener("ended", function () {
-        document.removeChild(this);
-    }, false);
     audio.volume = 0.4;
     audio.play(); 
 }
