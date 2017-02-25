@@ -107,7 +107,7 @@ html, body {
   list-style: none;
   padding-top: 1.5rem;
   padding-bottom: 1.5rem;
-  border-bottom: solid 1px #333333;
+  border-bottom: solid 1px var(--line-color);
   cursor: default;
 }
 
@@ -204,6 +204,7 @@ html, body {
 /* Classes Sidebar */
 .sidebar-left {
   left: 0;
+  border-right: solid 1px var(--line-color);
 }
 
 .sidebar-left>.menu-user {
@@ -211,7 +212,7 @@ html, body {
   padding-bottom: 2rem;
   margin-left: 1.5rem;
   margin-right: 1.5rem;
-  border-bottom: solid 1px #000000;
+  border-bottom: solid 1px var(--line-color);
 }
 
 .container-info-user {
@@ -252,13 +253,8 @@ html, body {
 }
 
 .curr-typing-text {
-  margin-top: .5rem;
   font-size: .9rem;
   display: inline;
-}
-
-acc {
-  color: var(--accent-color);
 }
 
 .curr-typing-container {  
@@ -272,7 +268,6 @@ acc {
   padding-left: 0;
   list-style: none;
   padding-top: .3rem;
-  padding-bottom: .3rem;
   cursor: default;
 
 }

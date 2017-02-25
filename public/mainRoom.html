@@ -175,9 +175,6 @@
                   <p class="message-body">{{chatMessage.text}}</p>
                 </div>
               </div>
-              <div ng-if="currTyping.length > 0" class="curr-typing-container">
-                <p class="curr-typing-text grey-text"> <acc>{{currTyping[0]}}</acc> is typing ...</p>
-              </div>
                 
             </div> 
             <!-- END MESSAGE PANE -->
@@ -196,6 +193,10 @@
                          autocomplete="off" ng-keydown="keypress($event)">
                 </div>
               </form>
+
+              <div ng-if="currTyping.length > 0" class="curr-typing-container">
+                <span class="curr-typing-text grey-text"> <acc>{{currTyping[0]}}</acc> is typing ...</span>
+              </div>
             </footer> <!-- END MESSAGE INPUT -->
           </div>
         </main>   
@@ -263,7 +264,14 @@
             </div>
           </button>
 
-        </aside>
+          <h3>StudyMates</h3>
+          <div id="studymates" ng-repeat="user_id in rooms[currRoomChatID].user">
+             <div>{{users[user_id].name}}</div>
+             <div>asdf</div>
+          </div>
+
+
+        </aside><!-- End Classmates Sidebar -->
 
         <!-- Create Room Modal -->
         <div id="modal-create-room" class="modal modal-create-room-container" role="dialog">
@@ -412,6 +420,7 @@
 
   <!-- Other -->
   <script src="cookies.js"></script>
+  <script src="theme.js"></script>
   <script src="main.js"></script>
   <script src="call.js"></script>
 
