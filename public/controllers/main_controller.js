@@ -958,12 +958,11 @@ console.log("no overflow for " + room_id + ", scroll width: " + item.scrollWidth
 myApp.controller("AddClassController", ["$scope", "$http", "classesTransport", 
 function ($scope, $http, classesTransport) {
   // Global Variables
-  //var userClasses = []; // local list of class_ids of classes user is enrolled in
+  var userClasses = []; // local list of class_ids of classes user is enrolled in
   var allClassesNameToID = {}; // name: class_id dictionary for all available classes
   getAllClasses();
 
-  $scope.userClasses = classesTransport.userClasses;
-  $scope.currClasses = classesTransport.userClasses;
+  //$scope.currClasses = classesTransport.userClasses;
 
   /*
   $scope.userClasses = classesTransport.userClasses;
@@ -974,12 +973,14 @@ function ($scope, $http, classesTransport) {
     console.log(data);
   });
   */
+  /*
   $scope.$watch("classesTransport.userClasses", 
   function(data) {
     console.log("CHANGED");
     console.log(data);
     //displayClasses();
   });
+  */
 
   $scope.processSelection = function processSelection() {
     //don't trigger on null (when the selected item changes from a good one)
@@ -988,7 +989,7 @@ function ($scope, $http, classesTransport) {
       if (verifyClass(class_name)) {
         var class_id = allClassesNameToID[class_name];
         // Make sure the user isn't already in the class
-        if($.inArray(class_id, classesTransport.userClasses) == -1) {
+        if($.inArray(class_id, userClasses) == -1) {
             addClass(class_id);
         } else {
           console.log("already in class with name " + class_name+ " and id " + class_id);
@@ -1009,23 +1010,23 @@ function ($scope, $http, classesTransport) {
   /* Add, remove, and save */
   function addClass(class_id) {
     console.log("UI Adding " + class_id);
-    classesTransport.userClasses.push(class_id);
+    userClasses.push(class_id);
     displayClasses();
     $scope.searchText = "";
   }
 
   $scope.removeClass = function removeClass(class_id) {
     console.log("UI Removing " + class_id);
-    var index = $.inArray(class_id, classesTransport.userClasses);
+    var index = $.inArray(class_id, userClasses);
     if(index == -1) {
       console.log("Cannot remove class, class_id" + class_id+ " not found!")
     }
-    classesTransport.userClasses.splice(index, 1);
+    userClasses.splice(index, 1);
     displayClasses();
   }
 
   $scope.saveChanges = function saveChanges() {
-    $http.post('/enroll', {class_ids: classesTransport.userClasses});
+    $http.post('/enroll', {class_ids: userClasses});
     closeModal("#modal-add-class", "#add-class");
   }
 
@@ -1040,15 +1041,15 @@ function ($scope, $http, classesTransport) {
   // updates UI to display currently enrolled classes
   function displayClasses() {
     var classNames = new Array();
-    classesTransport.userClasses.forEach(function(class_id, index) {
+    userClasses.forEach(function(class_id, index) {
       classNames.push(getNameOfClass(class_id))
     })
     //classNames.sort();
 
     console.log("DISPLAY CLASSES");
     var classObjects = [];
-    for (var i = 0; i < classesTransport.userClasses.length; i++) {
-      classObjects.push({class_id: classesTransport.userClasses[i], class_name: classNames[i]});
+    for (var i = 0; i < userClasses.length; i++) {
+      classObjects.push({class_id: userClasses[i], class_name: classNames[i]});
     }
     $scope.currClasses = classObjects;
   }
@@ -1081,12 +1082,11 @@ function ($scope, $http, classesTransport) {
 
         displayClasses();
         // get my classes
-        //getUserClasses();
+        getUserClasses();
       }
     }
   }
 
-  /*
   // populates userClasses list with ids of all classes they are enrolled in
   // calls displayClasses afterward to reflect changes
   function getUserClasses() {
@@ -1109,7 +1109,6 @@ function ($scope, $http, classesTransport) {
       }
     }
   }
-  */
 
   $scope.querySearch = function querySearch (query) {
     return query ? Object.keys(allClassesNameToID).filter(createFilterFor(query)) : [];
@@ -1120,10 +1119,10 @@ function ($scope, $http, classesTransport) {
 //helper service for communicating between MainController and AddClassController
 myApp.factory("classesTransport", function() {
   var classesTransport = {};
-  classesTransport.userClasses = []; //list of class ids
+  userClasses = []; //list of class ids
   classesTransport.setClasses = function(classes) { //set list of class ids
-    while(classesTransport.userClasses.length > 0) {classesTransport.userClasses.pop();}
-    for (var i = 0; i < classes.length; i++) {classesTransport.userClasses.push(classes[i]);}
+    while(userClasses.length > 0) {userClasses.pop();}
+    for (var i = 0; i < classes.length; i++) {userClasses.push(classes[i]);}
   };
   return classesTransport;
 });
