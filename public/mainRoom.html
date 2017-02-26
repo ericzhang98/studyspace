@@ -111,8 +111,23 @@
           </div>
 
 
+          <!-- BUDDIES -->
           <div class="container-title">
             <span class="title">buddies</span>
+          </div>
+
+          <!-- REQUESTS -->
+          <div ng-repeat="buddy_requests in buddies_list">
+              <span>{{buddy_requests.sent_from_name}}</span>
+              <button class="btn" ng-click="acceptBuddy(buddy_requests)">Accept Request</button>
+              <button class="btn btn-danger" ng-click="rejectBuddyRequest(buddy_requests._id)">Reject Request</button>
+          </div>
+
+          <!-- OLD FRIENDS -->
+          <div ng-repeat="buddy in added_buddies_list">
+            <div class="panel" ng-click="openDM(buddy.user_two_id, buddy.user_two_name)">
+              <span>{{buddy.user_two_name}}</span>
+            </div>
           </div>
 
               
