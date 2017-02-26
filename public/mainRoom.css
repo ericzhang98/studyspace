@@ -354,7 +354,7 @@ html, body {
 }
 
 .color-def-panel-title {
-  background-color: #666666;
+  background-color: var(--panel-color);
   color: white;
 }
 
