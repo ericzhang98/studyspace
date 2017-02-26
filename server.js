@@ -684,7 +684,7 @@ app.get("/get_privacy_settings", function(req, res) {
   }
 });
 
-app.post("/updateprivacy", function(req, res) {
+app.post("/update_privacy", function(req, res) {
   var user_id = req.signedCookies.user_id;
   var anon = req.body.anon;
   db.users.findAndModify({query: {user_id: user_id}, update: {$set: {anon: anon}}, new: true}, function(err, doc) {

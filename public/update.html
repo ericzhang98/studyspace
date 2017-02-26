@@ -34,6 +34,8 @@
     <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.4.8/angular-messages.min.js"></script>
 
     <!-- Custom JavaScript -->
+    <script type="text/javascript" src="cookies.js"></script>
+    <script type="text/javascript" src="theme.js"></script>
     <script type="text/javascript" src="update.js"></script>
     <script type="text/javascript" src="sha1.js"></script>
     <script type="text/javascript" src="cookies.js"></script>
@@ -44,19 +46,18 @@
   <body>
 
     <main role="main" class="container">
-      <h2 class="text-center primary-dark-text">Account Settings</h2>
-
+      <h2 class="text-center">Account Settings</h2>
       <ul class="nav nav-tabs" role="tablist">
         <li class="nav-item active">
-          <a class="nav-link" data-toggle="tab"
+          <a class="nav-link prim-dark-text" data-toggle="tab"
             href="#classes-form" role="tab">Classes</a>
         </li>
         <li class="nav-item">
-          <a class="nav-link" data-toggle="tab"
+          <a class="nav-link prim-dark-text" data-toggle="tab"
             href="#privacy-form" role="tab">Privacy</a>
         </li>
         <li class="nav-item">
-          <a class="nav-link" data-toggle="tab"
+          <a class="nav-link prim-dark-text" data-toggle="tab"
             href="#password-form" role="tab">Change Password</a>
         </li>
       </ul>
@@ -88,7 +89,7 @@
 
         <div class="tab-pane" id="privacy-form" role="tabpanel">
           <div class="container-settings">
-            <input id="anon-checkbox" type="checkbox" name="anon" value="anon"> I want to be anonymous in chat rooms
+            <input id="anon-checkbox" type="checkbox" name="anon" value="anon" > I want to be anonymous in chat rooms
           </div>
         </div>
 
@@ -111,6 +112,7 @@
           </div>
         </div>
       </div> <!-- END tab-content div -->
+
       <div class="btn-container">
         <a id="save-button" class="btn btn-hi-pri btn-block" href="/">Apply Changes</a>
         <button id="cancel-button" class="btn btn-cancel btn-block">Cancel</button>
