@@ -59,6 +59,8 @@ function changeTheme() {
 
 function setTheme(theme_num) {
 
+	console.log("setting theme to " + theme_num);
+
 	var prim, prim_light, prim_dark, base, base_two, base_focus, over_base, over_base_two, over_base_focus, accent;
 
 	if (theme_num == null) {

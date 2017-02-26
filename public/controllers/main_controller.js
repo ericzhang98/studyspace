@@ -11,8 +11,8 @@ var USER_PING_PERIOD = 15*1000;
 
 /* Main controller -------------------------------------*/
 
-myApp.controller("MainController", ["$scope", "$http", "$timeout", "classesTransport",
-function($scope, $http, $timeout, classesTransport) {
+myApp.controller("MainController", ["$scope", "$http", "$timeout", "classesTransport", "$rootScope",
+function($scope, $http, $timeout, classesTransport, $rootScope) {
   console.log("Hell yeah");
 
   // general vars
@@ -376,6 +376,7 @@ function($scope, $http, $timeout, classesTransport) {
 
   $scope.refreshAddClass = function() {
     classesTransport.setClasses($scope.my_class_ids);
+    $rootScope.$broadcast("refresh"); //temp
     console.log("refresh");
   };
 
@@ -385,11 +386,21 @@ function($scope, $http, $timeout, classesTransport) {
   /*********************************************************************/
   /*************************** ROOM INTERACTION ************************/
 
+  $scope.createRoom = function(class_id) {
+    console.log('create room');
+    creationClassID = class_id;
+    $("#modal-create-room").fadeIn(100);
+    setTimeout(function() {
+      $("#create-room").removeClass("hide");
+      $("#create-room").addClass("fadeInBack");
+    }, 100);
+  }
+
   // Reads input from create-room-modal, creates room, and joins room
   $scope.addRoom = function() {
 
     // Grab modal values
-    var class_id = $('input:radio[name=class_id_radio]:checked').val();
+    var class_id = creationClassID;
 
     // style choice: all room names be lower case only
     var room_name = (document.getElementById('room_name').value).toLowerCase();
@@ -867,6 +878,7 @@ console.log("no overflow for " + room_id + ", scroll width: " + item.scrollWidth
     $scope.classes["dm_class_id"] = {
       "name" : ""
     }
+
     $scope.rooms[dm_room_id] = {
       "name" : other_user_name,
       "class_id" : "dm_class_id"
@@ -886,7 +898,7 @@ console.log("no overflow for " + room_id + ", scroll width: " + item.scrollWidth
         if (!(room.users[i] in $scope.users)) {
           var id = room.users[i];
           $http.get('/get_room_user/' + room.users[i]).then(function(response) {
-            $scope.users[id] = response.data;
+            $scope.users[response.data.id] = response.data;
             console.log("user info pulled: " + response.data.name);
           });
       	}
@@ -957,15 +969,17 @@ console.log("no overflow for " + room_id + ", scroll width: " + item.scrollWidth
   }
 }]);
 
-myApp.controller("AddClassController", ["$scope", "$http", "classesTransport", 
-function ($scope, $http, classesTransport) {
+myApp.controller("AddClassController", ["$scope", "$http", "classesTransport", "$rootScope",
+function ($scope, $http, classesTransport, $rootScope) {
   // Global Variables
-  var userClasses = []; // local list of class_ids of classes user is enrolled in
   var allClassesNameToID = {}; // name: class_id dictionary for all available classes
   getAllClasses();
 
+  var userClasses = []; // class id's that are going to be displayed
+  $scope.currClasses = []; //what's displayed
   //$scope.currClasses = classesTransport.userClasses;
 
+  $rootScope.$on("refresh", function(){getUserClasses()});
   /*
   $scope.userClasses = classesTransport.userClasses;
   $scope.$watch("userClasses", function() {
@@ -1005,7 +1019,7 @@ function ($scope, $http, classesTransport) {
 
   function verifyClass(className) {
     //console.log("verifying " + className);
-    var returnVal = $.inArray(className, Object.keys(allClassesNameToID).map(function(x){ return x.toUpperCase() }));
+    var returnVal = $.inArray(className, Object.keys(allClassesNameToID).map(function(x){ return x;}));
     return returnVal > -1;
   }
 
@@ -1042,18 +1056,14 @@ function ($scope, $http, classesTransport) {
 
   // updates UI to display currently enrolled classes
   function displayClasses() {
-    var classNames = new Array();
-    userClasses.forEach(function(class_id, index) {
-      classNames.push(getNameOfClass(class_id))
-    })
-    //classNames.sort();
-
     console.log("DISPLAY CLASSES");
     var classObjects = [];
     for (var i = 0; i < userClasses.length; i++) {
-      classObjects.push({class_id: userClasses[i], class_name: classNames[i]});
+      classObjects.push({class_id: userClasses[i], class_name: getNameOfClass(userClasses[i])});
     }
     $scope.currClasses = classObjects;
+    console.log($scope.currClasses);
+    safeApply();
   }
 
   // returns name of class given class_id
@@ -1114,6 +1124,24 @@ function ($scope, $http, classesTransport) {
 
   $scope.querySearch = function querySearch (query) {
     return query ? Object.keys(allClassesNameToID).filter(createFilterFor(query)) : [];
+  }
+
+  function safeApply(func) {
+    var phase = $scope.$root.$$phase;
+    if (phase != "$apply" && phase != "$digest") {
+      if (func && (typeof(func) == "function")) {
+        $scope.$apply(func);
+      }
+      else {
+        $scope.$apply();
+      }
+    }
+    else {
+      console.log("Already applying");
+      if (func && (typeof(func) == "function")) {
+        func();
+      }
+    }
   }
 
 }]);
