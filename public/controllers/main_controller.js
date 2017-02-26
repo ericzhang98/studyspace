@@ -386,8 +386,9 @@ function($scope, $http, $timeout, classesTransport, $rootScope) {
   /*********************************************************************/
   /*************************** ROOM INTERACTION ************************/
 
-  $scope.createRoom = function(room_id) {
+  $scope.createRoom = function(class_id) {
     console.log('create room');
+    creationClassID = class_id;
     $("#modal-create-room").fadeIn(100);
     setTimeout(function() {
       $("#create-room").removeClass("hide");
@@ -399,7 +400,7 @@ function($scope, $http, $timeout, classesTransport, $rootScope) {
   $scope.addRoom = function() {
 
     // Grab modal values
-    var class_id = $('input:radio[name=class_id_radio]:checked').val();
+    var class_id = creationClassID;
 
     // style choice: all room names be lower case only
     var room_name = (document.getElementById('room_name').value).toLowerCase();
