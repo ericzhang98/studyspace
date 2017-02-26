@@ -425,12 +425,27 @@ app.post("/send_room_message", function(req, res) {
   var roomID = req.body.roomID;
   var timeSent = req.body.timeSent;
   var text = req.body.text;
+  var other_user_id = req.body.other_user_id;
 
   //roomMessagesDatabase.child(roomID).push().set(req.body);
   if (req.signedCookies.user_id && req.signedCookies.email && req.signedCookies.name) {
     var newChatMessage = new ChatMessage(req.signedCookies.name, 
                                          req.signedCookies.email, text, roomID, timeSent, req.signedCookies.user_id);
     roomMessagesDatabase.child(roomID).push().set(newChatMessage);
+    //if other_user_id is set, it's a DM so increment notification for other user
+    if (other_user_id) {
+      firebaseRoot.child("Notifications").child(other_user_id).child("MessageNotifications")
+        .child(req.signedCookies.user_id).transaction(function(notification) {
+          //if notification is null or 0
+          if (!notification) {
+            notification = 1;
+          }
+          else {
+            notification = notification + 1;
+          }
+        return notification;
+      });
+    }
   }
 
   res.send({}); //close the http request
@@ -656,6 +671,32 @@ app.post("/resetpassword", function(req, res) {
     console.log("Account reset password: error - impossible ID");
     res.json({success:false});
   }
+});
+
+app.get("/get_privacy_settings", function(req, res) {
+  var user_id = req.signedCookies.user_id;
+  if (user_id) {
+    db.users.findOne({user_id: user_id}, function (err, doc) {
+      if (doc) {
+        res.send({anon_status: doc.anon});
+      }
+    });
+  }
+});
+
+app.post("/updateprivacy", function(req, res) {
+  var user_id = req.signedCookies.user_id;
+  var anon = req.body.anon;
+  db.users.findAndModify({query: {user_id: user_id}, update: {$set: {anon: anon}}, new: true}, function(err, doc) {
+    if(doc) {
+      console.log("anon status updated to" + anon);
+      res.json({success:true});
+    }
+    else {
+      console.log("weird error");
+      res.json({success:false});
+    }
+  })
 });
 /*************************************************************************************/
 

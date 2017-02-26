@@ -11,6 +11,7 @@ function autoCompleteController ($scope, $http) {
 
     // Send requests to populate the two fields above
     getAllClasses();
+    getPrivacySettings();
 
     // list of states to be displayed
     $scope.querySearch = querySearch;
@@ -18,7 +19,6 @@ function autoCompleteController ($scope, $http) {
     // If enter is pressed inside the dropdown
     $("#class-dropdown").keypress(function(event) {
         if(event.which == 13) {
-
             var className = $("#input-0").val().toUpperCase();
 
             if (verifyClass(className)) {
@@ -115,10 +115,29 @@ function autoCompleteController ($scope, $http) {
         }
     }
 
+    function getPrivacySettings() {
+      var xhr = new XMLHttpRequest();
+      xhr.open('GET', "/get_privacy_settings", true);
+      xhr.send();
+
+      xhr.onreadystatechange = function(e) {
+        if (xhr.readyState == 4 && xhr.status == 200) {
+          var response = JSON.parse(xhr.responseText);
+          if (response.anon_status != null) {
+            if(response.anon_status) {
+              $("#anon-checkbox").prop("checked", true);
+            }
+            else {
+              $("#anon-checkbox").prop("checked", false);
+            }
+          }
+        }
+      }
+    }
+
     // populates userClasses list with ids of all classes they are enrolled in
     // calls displayClasses afterward to reflect changes
     function getUserClasses() {
-
         console.log("Getting my classes...")
         var xhr = new XMLHttpRequest();
         xhr.open('GET', "/get_my_classes", true); // responds with class_ids
@@ -148,7 +167,6 @@ function autoCompleteController ($scope, $http) {
 
     function removeClass(className) {
         var index = $.inArray(className, userClasses);
-        console.log("Removing index " + index);
         if(index == -1) {
             console.log("Cannot remove class, className " + className + " not found!")
         }
@@ -158,14 +176,34 @@ function autoCompleteController ($scope, $http) {
 
     // Server stuff
     function saveChanges() {
+        processPassword();
+        processClasses();
+        processPrivacy();
+    }
+
+    function processPrivacy() {
+        var anon = $("#anon-checkbox").prop("checked");
+        $http.post('/updateprivacy', {anon: anon}).then(function(res) {
+            if(res.data.success) {
+                console.log("Anonymous status updated")
+            }
+            else {
+                console.log("Anonymous status not changed, error")
+            }
+        });
+    }
+
+    function processPassword() {
+        var currPass = $("#curr-pass-input").val();
         var newPass = $("#new-pass-input").val();
-        var hashedCurrPass = Sha1.hash($("#curr-pass-input").val());
+        var confirmPass = $("#confirm-pass-input").val();
+        var hashedCurrPass = Sha1.hash(currPass);
         var hashedNewPass = Sha1.hash(newPass);
-        var hashedConfirmPass = Sha1.hash($("#confirm-pass-input").val());
+        var hashedConfirmPass = Sha1.hash(confirmPass);
         // empty the input boxes after getting the data
         $(".password-input").val("");
 
-        if (hashedCurrPass && hashedNewPass && hashedConfirmPass) {
+        if (currPass && newPass && confirmPass) {
           if (hashedNewPass === hashedConfirmPass) {
             if (newPass.length >= 6) {
                 var passToServerObject = {
@@ -189,7 +227,9 @@ function autoCompleteController ($scope, $http) {
                 console.log("Passwords don't match");
           }
         }
+    }
 
+    function processClasses() {
         $http.post('/enroll', {class_ids: userClasses});
     }
 

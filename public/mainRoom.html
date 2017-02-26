@@ -179,11 +179,11 @@
 </li>
 -->
                   <li ng-if="rooms[currRoomChatID].class_id != 'dm_class_id'" class="nav-link" ng-click="leaveRoom()">
-                    <a href="#">Leave room</a>
+                    <a>Leave room</a>
                   </li>
 
                   <li ng-if="rooms[currRoomChatID].class_id == 'dm_class_id'" class="nav-link" ng-click="leaveDM()">
-                    <a href="#">Close chat</a>
+                    <a>Close chat</a>
                   </li>
                 </ul>
               </div>
@@ -206,11 +206,11 @@
                     <div class="dropdown">
 
                       <!-- Dropdown for non-me users -->
-                      <a ng-if="chatMessage.user_id != myID" class="user-name dropdown-toggle acc-text" data-toggle="dropdown" href="#">{{chatMessage.name.split(" ")[0] + " " + chatMessage.name.split(" ")[1][0]}} </a>
+                      <a ng-if="chatMessage.user_id != myID" class="user-name dropdown-toggle acc-text" data-toggle="dropdown">{{chatMessage.name.split(" ")[0] + " " + chatMessage.name.split(" ")[1][0]}} </a>
                       <ul ng-if="chatMessage.user_id != myID" class="dropdown-menu">
-                        <li><a href="#" ng-click="toggleUserAudio(chatMessage.user_id)">{{muted_user_ids.indexOf(chatMessage.user_id) == -1 ? 'Mute' : 'Unmute'}}</a></li>
-                        <li><a href="#">Block</a></li>
-<li><a href="#">{{isFriendsWith(chatMessage.user_id) ? 'Unfriend' : 'Friend'}}</a></li>
+                        <li><a ng-click="toggleUserAudio(chatMessage.user_id)">{{muted_user_ids.indexOf(chatMessage.user_id) == -1 ? 'Mute' : 'Unmute'}}</a></li>
+                        <li><a>Block</a></li>
+<li><a ng-click="sendRequest(chatMessage.user_id)">{{isFriendsWith(chatMessage.user_id) ? 'Unfriend' : 'Friend'}}</a></li>
 
 <!--<li><a href="#">Friend</a></li>-->
                       </ul>
