@@ -299,6 +299,7 @@
             </table>
           </div> 
 -->
+          <!--
           <span>TEMP FOR ERIC</span>
           <br>
           <span>CURRENTLY TYPING:</span>
@@ -310,9 +311,9 @@
             <div>
               <span class="glyphicon glyphicon-plus"></span>
             </div>
-          </button>
+          </button>-->
 
-          <h3 ng-cloak ng-if="currRoomChatID" class="studymates">StudyMates</h3>
+          <h4 ng-cloak ng-if="currRoomChatID" class="studymates over-base-text" style="margin-top:2rem">In <prim>{{rooms[currRoomChatID].name}}</prim></h4>
           <div class="studymates names" ng-repeat="user_id in rooms[currRoomChatID].users" ng-cloak>
              <div>{{users[user_id].name}}</div>
           </div>

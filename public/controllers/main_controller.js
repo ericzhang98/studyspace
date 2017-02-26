@@ -732,6 +732,7 @@ function($scope, $http, $timeout, classesTransport, $rootScope) {
   $scope.isFriendsWith = function(user_id) {
     console.log("friends??");
     for (buddy in $scope.added_buddies_list) {
+      console.log(buddy);
       console.log(buddy.user_two_name + " is not a friend");
       if (buddy.user_two_id == user_id) {
         return true;
