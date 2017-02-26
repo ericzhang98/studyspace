@@ -291,8 +291,8 @@
             </div>
           </button>
 
-          <h3>StudyMates</h3>
-          <div id="studymates" ng-repeat="user_id in rooms[currRoomChatID].users">
+          <h3 class="studymates">StudyMates</h3>
+          <div class="studymates names" ng-repeat="user_id in rooms[currRoomChatID].users" ng-cloak>
              <div>{{users[user_id].name}}</div>
           </div>
 
