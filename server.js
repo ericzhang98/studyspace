@@ -657,6 +657,32 @@ app.post("/resetpassword", function(req, res) {
     res.json({success:false});
   }
 });
+
+app.get("/get_privacy_settings", function(req, res) {
+  var user_id = req.signedCookies.user_id;
+  if (user_id) {
+    db.users.findOne({user_id: user_id}, function (err, doc) {
+      if (doc) {
+        res.send({anon_status: doc.anon});
+      }
+    });
+  }
+});
+
+app.post("/updateprivacy", function(req, res) {
+  var user_id = req.signedCookies.user_id;
+  var anon = req.body.anon;
+  db.users.findAndModify({query: {user_id: user_id}, update: {$set: {anon: anon}}, new: true}, function(err, doc) {
+    if(doc) {
+      console.log("anon status updated to" + anon);
+      res.json({success:true});
+    }
+    else {
+      console.log("weird error");
+      res.json({success:false});
+    }
+  })
+});
 /*************************************************************************************/
 
 /* Model -----------------------------------------------------------------*/
