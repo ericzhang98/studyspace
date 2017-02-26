@@ -44,7 +44,7 @@ function setMode(is_day = !currIsDay) {
 	document.documentElement.style.setProperty('--over-base-focus-color', over_base_focus);
 	document.documentElement.style.setProperty('--panel-color', panel);
 	document.documentElement.style.setProperty('--line-color', line);
-	document.documentElement.style.setProperty('--borders', currIsDay ? 'solid' : 'none');
+	document.documentElement.style.setProperty('--border-color', currIsDay ? 'var(--primary-dark-color' : 'transparent');
 
 	storeCookie("is_day", is_day);
 

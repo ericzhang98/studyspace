@@ -12,7 +12,7 @@
   --panel-color: #dddddd;  
   --line-color: #dddddd;
   --accent-color: #262626;
-  --borders: none;
+  --border-color: none;
 }
 
 /* General */
@@ -410,8 +410,8 @@ prim {
 .btn-low-pri {
   background-color: var(--base-two-color);
   color: var(--over-base-color);
-  border-style: var(--borders);
-  border-color: var(--primary-dark-color);
+  border-style: solid;
+  border-color: var(--border-color);
   border-width: 1px;
 }
 
