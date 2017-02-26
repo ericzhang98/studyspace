@@ -723,8 +723,6 @@ function($scope, $http, $timeout, classesTransport, $rootScope) {
 
   console.log("buddies");
 
-  $scope.added_buddies_list = [];
-
   //Saurabh's local check if friends
   $scope.isFriendsWith = function(user_id) {
     console.log("friends??");
