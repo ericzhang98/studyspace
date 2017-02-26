@@ -39,59 +39,79 @@
     <script type="text/javascript" src="cookies.js"></script>
 
     <!-- Title -->
-    <title>Study Space - Update</title>
+    <title>Account Settings</title>
   </head>
   <body>
 
     <main role="main" class="container">
-      <div id="class-settings" class="container-settings">
-        <h2 id="page-title" class="text-center primary-dark-text">Account Settings</h2>
+      <h2 class="text-center primary-dark-text">Account Settings</h2>
 
-        <h3>Classes</h3>
+      <ul class="nav nav-tabs" role="tablist">
+        <li class="nav-item active">
+          <a class="nav-link" data-toggle="tab"
+            href="#classes-form" role="tab">Classes</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" data-toggle="tab"
+            href="#privacy-form" role="tab">Privacy</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" data-toggle="tab"
+            href="#password-form" role="tab">Change Password</a>
+        </li>
+      </ul>
 
-        <div layout="column" ng-cloak>
-          <md-content id="class-dropdown" class="md-padding">
-            <form ng-submit="submitForm()">
-              <md-autocomplete
-                  md-selected-item="selectedItem"
-                  md-search-text="searchText"
-                  md-items="item in querySearch(searchText)"
-                  md-item-text="item"
-                  md-min-length="0"
-                  placeholder="Enter a Class Code (e.g. 'CSE110')">
-                <md-item-template>
-                  <span md-highlight-text="searchText" md-highlight-flags="^i">{{item}}</span>
-                </md-item-template>
-              </md-autocomplete>
-            </form>
-          </md-content>
+      <div class="tab-content">
+        <div class="tab-pane active" id="classes-form" role="tabpanel">
+          <div id="classes-form" class="container-settings">
+            <h2>Classes</h2>
+            <div layout="column" ng-cloak>
+              <md-content id="class-dropdown" class="md-padding">
+                <form ng-submit="submitForm()">
+                  <md-autocomplete
+                      md-selected-item="selectedItem"
+                      md-search-text="searchText"
+                      md-items="item in querySearch(searchText)"
+                      md-item-text="item"
+                      md-min-length="0"
+                      placeholder="Enter a Class Code (e.g. 'CSE110')">
+                    <md-item-template>
+                      <span md-highlight-text="searchText" md-highlight-flags="^i">{{item}}</span>
+                    </md-item-template>
+                  </md-autocomplete>
+                </form>
+              </md-content>
+            </div>
+            <div id="school-classes" class="selected-classes"></div>
+          </div>
         </div>
 
-        <div id="school-classes" class="selected-classes"></div>
-      </div>
-
-      <div id="password-settings" class="container-settings">
-        <h2 id="page-title" class="text-center primary-dark-text">Privacy Settings</h2>
-
-        <h3>Change Password</h3>
-
-        <div class="form-group">
-          <label>Current Password</label>
-          <input id="curr-pass-input" class="form-control password-input" type="password" placeholder="Current Password">
+        <div class="tab-pane" id="privacy-form" role="tabpanel">
+          <div class="container-settings">
+            <input id="anon-checkbox" type="checkbox" name="anon" value="anon"> I want to be anonymous in chat rooms
+          </div>
         </div>
 
-        <div class="form-group">
-          <label>New Password</label>
-          <input id="new-pass-input" class="form-control password-input" type="password" placeholder="New Password">
-        </div>
+        <div class="tab-pane" id="password-form" role="tabpanel">
+          <div class="container-settings">
+            <div class="form-group">
+              <label>Current Password</label>
+              <input id="curr-pass-input" class="form-control password-input" type="password" placeholder="Current Password">
+            </div>
 
-        <div class="form-group">
-          <label>Confirm Password</label>
-          <input id="confirm-pass-input" class="form-control password-input" type="password" placeholder="Confirm Password">
-        </div>
-      </div>
+            <div class="form-group">
+              <label>New Password</label>
+              <input id="new-pass-input" class="form-control password-input" type="password" placeholder="New Password">
+            </div>
 
-      <div id="buttons" class="btn-container">
+            <div class="form-group">
+              <label>Confirm Password</label>
+              <input id="confirm-pass-input" class="form-control password-input" type="password" placeholder="Confirm Password">
+            </div>
+          </div>
+        </div>
+      </div> <!-- END tab-content div -->
+      <div class="btn-container">
         <a id="save-button" class="btn btn-hi-pri btn-block" href="/">Apply Changes</a>
         <button id="cancel-button" class="btn btn-cancel btn-block">Cancel</button>
       </div>
