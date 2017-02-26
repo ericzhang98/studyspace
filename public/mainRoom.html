@@ -289,10 +289,10 @@
             <div>
               <span class="glyphicon glyphicon-plus"></span>
             </div>
-          </button>
-          -->
-          <h3 ng-cloak ng-if="currRoomChatID">StudyMates</h3>
-          <div ng-cloak id="studymates" ng-repeat="user_id in rooms[currRoomChatID].users">
+          </button>-->
+
+          <h3 ng-cloak ng-if="currRoomChatID" class="studymates">StudyMates</h3>
+          <div class="studymates names" ng-repeat="user_id in rooms[currRoomChatID].users" ng-cloak>
              <div>{{users[user_id].name}}</div>
           </div>
 

@@ -384,6 +384,17 @@ html, body {
   padding-right: 1.5rem;
 }
 
+.studymates {
+   text-align: center;
+}
+
+.names{
+  padding-left: 1.5rem;
+  padding-bottom: .5rem;
+  color: white;
+  font-size: 1.5rem;
+}
+
 /* Create Room Modal */
 .modal-create-room-content .btn-container {
   margin-top: 3rem;

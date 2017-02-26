@@ -67,7 +67,7 @@
         <!-- Login Modal Content -->
         <div id="login" class="modal-content modal-login-content hide" ng-controller="LogInCtrl">
           <header class="modal-header text-center"> 
-            <button id="close-login" class="btn close" aria-label="Close">
+            <button id="close-login" class="btn close" aria-label="Close" ng-click="reset()">
               <span class="glyphicon glyphicon-remove" aria-hidden="true"></span>
             </button>
             <h1 class="title">Welcome Back!</h1>
@@ -75,11 +75,11 @@
           <div class="main form-container">
             <form role="form" accept-charset="UTF-8" autocomplete="off">
               <div class="form-group">
-                <label for="input-name">Email</label>
+                <label for="input-name">Email <span class="alert-danger">{{emailMessage}}</span></label>
                 <input type="text" class="form-control" id="input-name" placeholder="Email" ng-model="email">
               </div>
               <div class="form-group">
-                <label for="input-password">Password</label>
+                <label for="input-password">Password <span class="alert-danger">{{passwordMessage}}</span></label>
                 <input type="password" class="form-control" id="input-password" placeholder="Password" ng-model="password">
               </div>
               <div class="btn-container text-center">
