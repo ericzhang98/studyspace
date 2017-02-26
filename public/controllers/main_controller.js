@@ -386,6 +386,15 @@ function($scope, $http, $timeout, classesTransport, $rootScope) {
   /*********************************************************************/
   /*************************** ROOM INTERACTION ************************/
 
+  $scope.createRoom = function(room_id) {
+    console.log('create room');
+    $("#modal-create-room").fadeIn(100);
+    setTimeout(function() {
+      $("#create-room").removeClass("hide");
+      $("#create-room").addClass("fadeInBack");
+    }, 100);
+  }
+
   // Reads input from create-room-modal, creates room, and joins room
   $scope.addRoom = function() {
 
