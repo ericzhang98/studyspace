@@ -233,7 +233,7 @@ app.post('/send_buddy_request', function(req, res) {
 });
 
 app.post('/get_my_buddy_requests', function(req, res) {
-
+  console.log("get_my_buddy_requests")
   db.user_buddy_requests.find({sent_to_id: req.signedCookies.user_id}, function(err, docs){
     console.log(docs);
     res.json(docs);
