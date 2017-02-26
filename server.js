@@ -162,11 +162,13 @@ app.delete('/remove_block/:id', function(req, res){
 // 
 app.post('/buddy_existing_user', function(req, res) {
 
-  console.log(req.body.name);
-  if(req.body.name == req.signedCookies.email){
+  console.log(req.body);
+  //check if the user is themself
+  if(req.body.user_id == req.signedCookies.user_id){
     return null;
   }
-  db.users.findOne({email:req.body.name}, function(err, docs){
+  //grab other user's data, null if they don't exist
+  db.users.findOne({user_id: req.body.user_id}, function(err, docs){
     console.log(docs);
     res.json(docs);
   });	
