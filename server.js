@@ -159,6 +159,7 @@ app.delete('/remove_block/:id', function(req, res){
 /*************************************************************************************/
 /************************************** BUDDIES **************************************/
 
+// 
 app.post('/buddy_existing_user', function(req, res) {
 
   console.log(req.body.name);
@@ -216,7 +217,7 @@ app.post('/buddies_already', function(req, res) {
 });
 
 app.post('/send_buddy_request', function(req, res) {
-
+  
   var sent_from_id = req.signedCookies.user_id;
   var sent_from_name = req.signedCookies.name;
   if(!sent_from_id){
@@ -227,15 +228,17 @@ app.post('/send_buddy_request', function(req, res) {
   db.user_buddy_requests.insert({sent_from_id:sent_from_id, sent_from_name:sent_from_name,
                                  sent_to_id:sent_to_id, sent_to_name:sent_to_name}, function(err, docs){
     res.json(docs);
-  });	
+  });
+  
 });
 
-app.post('/buddy_requests', function(req, res) {
+app.post('/get_my_buddy_requests', function(req, res) {
 
-  db.user_buddy_requests.find({sent_to_id:req.signedCookies.user_id}, function(err, docs){
+  db.user_buddy_requests.find({sent_to_id: req.signedCookies.user_id}, function(err, docs){
     console.log(docs);
     res.json(docs);
   });	
+
 });
 
 app.post('/accept_buddy', function(req, res) {
@@ -255,7 +258,7 @@ app.post('/accept_buddy', function(req, res) {
   });
 });
 
-app.post('/get_added_buddies', function(req, res){
+app.post('/get_my_buddies', function(req, res){
 
   db.user_buddies.find({user_one_id:req.signedCookies.user_id}, function(err, docs){
     res.json(docs);
@@ -433,10 +436,10 @@ app.post("/send_room_message", function(req, res) {
   res.send({}); //close the http request
 });
 
-// get room users from room_id
-app.get('/get_room_user/:user_id/', function(req, res) {
+// get a user from a user_id
+app.get('/get_user/:user_id/', function(req, res) {
   var user = req.params.user_id;
-  db.users.findOne({user_id:user}, function(err, doc) {
+  db.users.findOne({user_id: user}, function(err, doc) {
     if (doc) {
       console.log("Sending user object for user: " + user);
       res.json({name: doc.name, user_id: doc.user_id}); 

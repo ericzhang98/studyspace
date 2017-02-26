@@ -722,7 +722,8 @@ function($scope, $http, $timeout, classesTransport, $rootScope) {
   /**************************** BUDDY SYSTEM ***************************/
 
   console.log("buddies");
-
+  
+    
   //Saurabh's local check if friends
   $scope.isFriendsWith = function(user_id) {
     console.log("friends??");
@@ -736,18 +737,18 @@ function($scope, $http, $timeout, classesTransport, $rootScope) {
     return false;
   }
 
+  // gets a user's buddy requests, calls a callback on the data,
+  // and returns the result of the callback
   var getBuddyRequests = function(onResponseReceived){
-    var data = {"sent_to_id":"user_id inserted"};
-    console.log(data);
-    $http.post('/buddy_requests', data).then(function(response){
-      //console.log(response.data);
+    $http.post('/get_my_buddy_requests').then(function(response){
       return onResponseReceived(response.data);
     });
   };
 
+  // gets a user's list of buddies, calls a callback on the data,
+  // and returns the result of the callback
   var getBuddies = function(onResponseReceived){
-    var data = {"user_one_id":"user_id goes here"};
-    $http.post('/get_added_buddies', data).then(function(response){
+    $http.post('/get_my_buddies').then(function(response){
       if (response.data[0]) {
         return onResponseReceived(response.data[0]['buddies']);
       }
@@ -777,6 +778,7 @@ function($scope, $http, $timeout, classesTransport, $rootScope) {
       return onResponseReceived(response.data);
     });   
   }  
+
   var deleteBuddy = function(id, onResponseReceived){
     console.log(id);
     $http.delete('/reject_buddy/' + id).then(function(response){
@@ -825,7 +827,7 @@ function($scope, $http, $timeout, classesTransport, $rootScope) {
                 console.log("Adding friend");
                 var data = {"sent_from_id":"Place user_id here", 
                             "sent_from_name": "user_name",
-                            "sent_to_id":String(friend_id),
+                            "other_user_id":String(friend_id),
                             "sent_to_name": String(friend_name)};
                 $http.post('/send_buddy_request', data).then(function(response){
                   console.log(response.data);
@@ -844,7 +846,6 @@ function($scope, $http, $timeout, classesTransport, $rootScope) {
   };
 
   $scope.acceptBuddy = function(requestInfo){
-    //console.log(requestInfo);
     var data = {"user_one_id":String(requestInfo.sent_to_id),
                 "user_one_name":String(requestInfo.sent_to_name),
                 "user_two_id":String(requestInfo.sent_from_id),
@@ -868,19 +869,21 @@ function($scope, $http, $timeout, classesTransport, $rootScope) {
     });    
   };
 
+  $scope.getDMID = function(other_user_id) {
+		if (myID > other_user_id){     
+      return myID + other_user_id;
+    }
+
+    else {
+      return other_user_id + myID;
+    }    
+  }
+
   $scope.openDM = function(other_user_id, other_user_name){
 
     // the room_id of DM's between id's "aaa" and "bbb"
     // will be "bbbaaa"
-    var dm_room_id;
-
-    if (myID > other_user_id){     
-      dm_room_id = myID + other_user_id;
-    }
-
-    else {
-      dm_room_id = other_user_id + myID;
-    }    
+    var dm_room_id = $scope.getDMID(other_user_id);
 
     console.log("entering dm room with id: " + dm_room_id);
 
@@ -907,7 +910,7 @@ function($scope, $http, $timeout, classesTransport, $rootScope) {
       for (var i = 0; i < room.users.length; i++) {
         if (!(room.users[i] in $scope.users)) {
           var id = room.users[i];
-          $http.get('/get_room_user/' + room.users[i]).then(function(response) {
+          $http.get('/get_user/' + room.users[i]).then(function(response) {
             $scope.users[response.data.user_id] = response.data;
             console.log("user info pulled: " + response.data.name + " " + response.data.user_id);
           });
