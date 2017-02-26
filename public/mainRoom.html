@@ -123,6 +123,16 @@
           </div>
 
           <!-- REQUESTS -->
+          <!--<div ng-cloak ng-repeat="buddy_request in buddies_list">
+              
+            <span>{{buddy_request.sent_from_name}}</span>
+            <button class="btn">
+              <span class="glyphicon glyphicon-ok" ng-click="acceptBuddy(buddy_request)"></span>
+            </button>
+            <button class="btn-danger">
+              <span class="glyphicon glyphicon-remove" ng-click="rejectBuddyRequest(buddy_request._id)"></span>
+            </button> -->
+
           <div ng-repeat="buddy_requests in buddies_list">
             <li style="border: none" class="list-group-item buddy-panel base-back over-base-text">
               <span ng-cloak class="room-name">
@@ -203,7 +213,9 @@
                       <ul ng-if="chatMessage.user_id != myID" class="dropdown-menu">
                         <li><a href="#" ng-click="toggleUserAudio(chatMessage.user_id)">{{muted_user_ids.indexOf(chatMessage.user_id) == -1 ? 'Mute' : 'Unmute'}}</a></li>
                         <li><a href="#">Block</a></li>
-                        <li><a href="#">Friend</a></li>
+<li><a href="#">{{isFriendsWith(chatMessage.user_id) ? 'Unfriend' : 'Friend'}}</a></li>
+
+<!--<li><a href="#">Friend</a></li>-->
                       </ul>
 
                       <!-- No dropdown if user is me -->
@@ -243,7 +255,7 @@
 
         <!-- Classmates Sidebar -->
         <aside id="classmates-sidebar" class="sidebar sidebar-right" role="complementary">
-          
+<!--          
           <h3>Buddies</h3>   
           <div class="container-search">
             <input class="form-control" ng-model="friend.name">
@@ -286,7 +298,7 @@
               </tbody>
             </table>
           </div> 
-
+-->
           <span>TEMP FOR ERIC</span>
           <br>
           <span>CURRENTLY TYPING:</span>

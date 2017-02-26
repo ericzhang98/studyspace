@@ -726,6 +726,20 @@ function($scope, $http, $timeout, classesTransport, $rootScope) {
   /**************************** BUDDY SYSTEM ***************************/
 
   console.log("buddies");
+  
+    
+  //Saurabh's local check if friends
+  $scope.isFriendsWith = function(user_id) {
+    console.log("friends??");
+    for (buddy in $scope.added_buddies_list) {
+      console.log(buddy.user_two_name + " is not a friend");
+      if (buddy.user_two_id == user_id) {
+        return true;
+      }
+    }
+    console.log("RIP not friends");
+    return false;
+  }
 
   // gets a user's buddy requests, calls a callback on the data,
   // and returns the result of the callback
@@ -791,6 +805,10 @@ function($scope, $http, $timeout, classesTransport, $rootScope) {
 
   getBuddies(function(response){ 
     $scope.added_buddies_list = response;
+    console.log("got buddies");
+    for (buddy in $scope.added_buddies_list) {
+      console.log("buddy found is " + buddy.user_two_name);
+    }
   });
 
   $scope.sendRequest = function(){
