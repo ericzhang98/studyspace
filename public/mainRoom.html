@@ -45,8 +45,8 @@
     <title>Main Room</title>
   </head>
 
-  <body id="myBody">
-    <div id="overlay" ng-controller="MainController">
+  <body id="myBody" ng-controller="MainController">
+    <div id="overlay">
       <div id="layer1">
         <!-- Classes Sidebar -->
         <aside id="classes-sidebar" class="sidebar sidebar-left" role="complementary">
@@ -335,20 +335,9 @@
     </div>
 
 
-
-
-
-
-
-
-
-
-
-
     <!-- Misc and standalone divs -->
     <!-- Add Class Modal -->
-    <div id="modal-add-class" class="modal" role="dialog"
-      ng-controller="AddClassController">
+    <div id="modal-add-class" class="modal" role="dialog">
       <div class="modal-dialog">
         <!-- Content -->
         <div id="add-class" class="modal-content modal-add-class-content hide">
@@ -384,7 +373,7 @@
 
           <!-- Current courses -->
           <div class="classes-container">
-            <span class="classes" ng-repeat="class in currClasses">
+            <span class="classes" ng-repeat="class in tempClasses">
               <button class="btn btn-hi-pri"
                 ng-click="removeClass(class.class_id)">
                 {{class.class_name}}
