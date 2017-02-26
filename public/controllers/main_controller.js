@@ -97,16 +97,6 @@ function($scope, $http, $timeout) {
     }
   };
 
-  // Send chat when enter key is pressed
-  $scope.keypress = function(e) {
-    if (e.keyCode == 13) {
-      if (chatInputBox.value) {
-        uploadMessage(chatInputBox.value);
-      }
-    }
-  }
-
-  // Send chat when enter key is pressed
   $scope.keypress = function(e) {
     setTimeout(function() {
       if (chatInputBox.value) {
@@ -144,10 +134,12 @@ function($scope, $http, $timeout) {
 
   function updateCurrTyping() {
     for (var i = currTyping.length-1; i >= 0; i--) {
-      console.log($scope.rooms[$scope.currRoomChatID].users);
+      //console.log($scope.rooms[$scope.currRoomChatID]);
+      /*
       if (!$scope.rooms[$scope.currRoomChatID].users.includes(currTyping[i])) {
         currTyping.splice(i,1);
       }
+      */
     }
     var names = []
     for (var i = 0; i < currTyping.length; i++) {
@@ -168,6 +160,10 @@ function($scope, $http, $timeout) {
 
       // Create the message and pass it on to the server
       var newChatMessage = {text: chatInput, roomID: $scope.currRoomChatID, timeSent: Date.now()};
+      //adjust newChatMessage with whether or not it's a DM
+      if ($scope.rooms[$scope.currRoomChatID].other_user_id) {
+        newChatMessage.other_user_id = $scope.rooms[$scope.currRoomChatID].other_user_id;
+      }
       $http.post("/send_room_message", newChatMessage);
     }
 
@@ -786,13 +782,29 @@ function($scope, $http, $timeout) {
 
   getBuddyRequests(function(response){ 
     $scope.buddies_list = response; 
+    console.log($scope.buddies_list);
   });
 
+  var messageNotifications = {};
   getBuddies(function(response){ 
     $scope.added_buddies_list = response;
-    console.log("got buddies");
-    for (buddy in $scope.added_buddies_list) {
-      console.log("buddy found is " + buddy.user_two_name);
+    //setup msg notification listener
+    if (getSignedCookie("user_id")) {
+      databaseRef.child("Notifications").child(getSignedCookie("user_id"))
+        .child("MessageNotifications").on("child_changed", function(snapshot) {
+          var changedNotification = snapshot.val();
+          //update msg notification list if not in current chat
+          if (changedNotification && snapshot.key != $scope.currChatRoomID) {
+            messageNotifications[snapshot.key] = changedNotification;
+          }
+          else {
+            //tell server to set msg notif to zero since we already in DM
+            //snapshot.ref.set(0);
+          }
+      });
+    }
+    for (var i = 0; i < $scope.added_buddies_list.length; i++) {
+      console.log("BUDDY NAME: " + $scope.added_buddies_list[i].user_two_name);
     }
   });
 
@@ -883,7 +895,8 @@ function($scope, $http, $timeout) {
 
     $scope.rooms[dm_room_id] = {
       "name" : other_user_name,
-      "class_id" : "dm_class_id"
+      "class_id" : "dm_class_id",
+      "other_user_id" : other_user_id
     }
 
     // join the chat
