@@ -45,8 +45,8 @@
     <title>Main Room</title>
   </head>
 
-  <body id="myBody">
-    <div id="overlay" ng-controller="MainController">
+  <body id="myBody" ng-controller="MainController">
+    <div id="overlay">
       <div id="layer1">
         <!-- Classes Sidebar -->
         <aside id="classes-sidebar" class="sidebar sidebar-left" role="complementary">
@@ -300,14 +300,6 @@
           <span>CURRENTLY TYPING:</span>
           <span ng-cloak>{{currTyping}}</span>
           <br>
-          <button id="btn-add-class" class="btn container-title"
-            ng-click="refreshAddClass()">
-            <span class="title">Classes</span>
-            <div>
-              <span class="glyphicon glyphicon-plus"></span>
-            </div>
-          </button>
-
           <h3 ng-cloak ng-if="currRoomChatID" class="studymates">StudyMates</h3>
           <div class="studymates names" ng-repeat="user_id in rooms[currRoomChatID].users" ng-cloak>
              <div>{{users[user_id].name}}</div>
@@ -350,6 +342,60 @@
           </div>
         </div>
 
+        <!-- Add Class Modal -->
+        <div id="modal-add-class" class="modal" role="dialog">
+          <div class="modal-dialog">
+            <!-- Content -->
+            <div id="add-class" class="modal-content modal-add-class-content hide">
+              <header class="modal-header text-center"> 
+                <button id="close-add-class" class="btn close" data-dismiss="modal" aria-label="Close">
+                  <span class="glyphicon glyphicon-remove" aria-hidden="true"></span>
+                </button>
+                <h1 class="title" style="margin-bottom: 5px;">Add a class</h1>
+              </header>
+              <div class="main form-container">
+
+                <!-- Auto complete -->
+                <div>
+                  <md-content id="class-dropdown" class="md-padding">
+                    <form>
+                      <md-autocomplete
+                         md-search-text="searchText"
+                         md-items="item in querySearch(searchText)"
+                         md-item-text="item"
+                         md-min-length="0"
+                         md-selected-item="selectedItem"
+                         md-selected-item-change="processSelection()"
+                         md-autoselect="true"
+                         placeholder="Enter a Class Code (e.g. 'CSE110')">
+                        <md-item-template>
+                          <span md-highlight-text="searchText" md-highlight-flags="^i">{{item}}</span>
+                        </md-item-template>
+                      </md-autocomplete>
+                    </form>
+                  </md-content>
+                </div>
+              </div>
+
+              <!-- Current courses -->
+              <div class="classes-container">
+                <span class="classes" ng-repeat="class in tempClasses">
+                  <button class="btn btn-hi-pri"
+                    ng-click="removeClass(class.class_id)">
+                    {{class.class_name}}
+                    <span class="glyphicon glyphicon-remove" aria-hidden="true"></span>
+                  </button>
+                </span>
+                <br>
+                <button class="btn btn-hi-pri save-btn" ng-click="saveChanges()" style="margin-bottom: 20px">Save</button>
+              </div>
+
+            </div>
+          </div>
+        </div>
+
+
+        <!-- Audio -->
         <audio id="join_room_audio" src="/audio/join_room_sfx"></audio>
         <audio id="leave_room_audio" src="/audio/leave_room_sfx"></audio>
         <audio id="pop_audio" src="/audio/pop_sfx"></audio>
@@ -364,6 +410,7 @@
         <span>In casts, only the host can be heard.</span>
       </div>
     </div>
+
 
 
 
@@ -454,12 +501,6 @@
 
           </div>
         </div>
-
-
-
-
-
-
 
 
 
