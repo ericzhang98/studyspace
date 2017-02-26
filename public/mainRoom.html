@@ -409,6 +409,35 @@
     </div>
 
 
+    <!--Buddy Request Modal-->
+    <div id="modal-buddy-request" class="modal modal-buddy-request-container" role="dialog">
+      <div class="modal-dialog">
+
+        <!-- Content -->
+        <div id="buddy-request" class="modal-content modal-buddy-request-content hide">
+          <header class="modal-header text-center"> 
+            <button id="close-buddy-request" class="btn close" data-dismiss="modal" aria-label="Close">
+              <span class="glyphicon glyphicon-remove" aria-hidden="true"></span>
+            </button>
+            <h1 class="title prim-dark-text">Name your space</h1>
+          </header>
+          <div class="main form-container">
+
+            <!-- Class selection -->
+            <form role="form" accept-charset="UTF-8" autocomplete="off">
+              <div class="form-group">
+                <!--<label for="room_name">Room Name</label>-->
+                <input type="text" class="form-control" maxlength="28" placeholder="Enter your Buddy's Email" id="room_name">
+              </div>
+              
+              <div class="btn-container text-center">
+                <button type="submit" class="btn btn-primary btn-block btn-submit-form btn-hi-pri" ng-click="TODOTODOTODO addRoom()">Send Request</button>
+              </div>
+            </form>
+
+          </div>
+        </div>
+
 
 
 
