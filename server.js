@@ -425,12 +425,27 @@ app.post("/send_room_message", function(req, res) {
   var roomID = req.body.roomID;
   var timeSent = req.body.timeSent;
   var text = req.body.text;
+  var other_user_id = req.body.other_user_id;
 
   //roomMessagesDatabase.child(roomID).push().set(req.body);
   if (req.signedCookies.user_id && req.signedCookies.email && req.signedCookies.name) {
     var newChatMessage = new ChatMessage(req.signedCookies.name, 
                                          req.signedCookies.email, text, roomID, timeSent, req.signedCookies.user_id);
     roomMessagesDatabase.child(roomID).push().set(newChatMessage);
+    //if other_user_id is set, it's a DM so increment notification for other user
+    if (other_user_id) {
+      firebaseRoot.child("Notifications").child(other_user_id).child("MessageNotifications")
+        .child(req.signedCookies.user_id).transaction(function(notification) {
+          //if notification is null or 0
+          if (!notification) {
+            notification = 1;
+          }
+          else {
+            notification = notification + 1;
+          }
+        return notification;
+      });
+    }
   }
 
   res.send({}); //close the http request
