@@ -138,7 +138,7 @@ function($scope, $http, $timeout, classesTransport, $rootScope) {
         currTyping = [];
         $scope.currTyping = [];
       }
-      $scope.$apply();
+      safeApply();
     });
   }
 
@@ -576,7 +576,7 @@ function($scope, $http, $timeout, classesTransport, $rootScope) {
         console.log(response);
 
         // update UI
-        $scope.$apply();
+        safeApply();
 
         // add listener for class rooms
         classRoomsDatabase.child(class_id).on("value", function(snapshot) {
@@ -601,7 +601,7 @@ function($scope, $http, $timeout, classesTransport, $rootScope) {
     // if there is a change, apply it
     // needed for case that a room is deleted, but none are added
     if (curr_rooms != updated_rooms) {
-      $scope.$apply();
+      safeApply();
     }
 
     // detach listeners for removed rooms
@@ -651,16 +651,8 @@ function($scope, $http, $timeout, classesTransport, $rootScope) {
         // update currTyping ppl
         updateCurrTyping();
 
-        $scope.$apply(function() {/*
-var item = (document.getElementById(room_id));
-if (item.scrollWidth >  item.width) {
-console.log("overflow for " + room_id + ", scroll width: " + item.scrollWidth + 
-", innerWidth: " + item.width);
-} else {
-console.log("no overflow for " + room_id + ", scroll width: " + item.scrollWidth + 
-", innerWidth: " + item.width);
-}*/
-        });
+        safeApply();
+
 
       }
     });
@@ -887,8 +879,8 @@ console.log("no overflow for " + room_id + ", scroll width: " + item.scrollWidth
         if (!(room.users[i] in $scope.users)) {
           var id = room.users[i];
           $http.get('/get_room_user/' + room.users[i]).then(function(response) {
-            $scope.users[response.data.id] = response.data;
-            console.log("user info pulled: " + response.data.name);
+            $scope.users[response.data.user_id] = response.data;
+            console.log("user info pulled: " + response.data.name + " " + response.data.user_id);
           });
       	}
       }
