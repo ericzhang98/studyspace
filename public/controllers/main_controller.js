@@ -550,7 +550,7 @@ function($scope, $http, $timeout) {
           $scope.my_class_ids = response.class_ids;
         }
 
-        $scope.my_class_ids.push("lounge_id");
+        $scope.my_class_ids.push('lounge_id');
 
         console.log("Getting classes info...")
 
@@ -581,7 +581,6 @@ function($scope, $http, $timeout) {
         response.rooms_with_tutors = [];
 
         $scope.classes[class_id] = response;
-        console.log(response);
 
         // update UI
         safeApply();
@@ -616,7 +615,6 @@ function($scope, $http, $timeout) {
     for (i = 0; i < curr_rooms.length; i++) {
       // if this room is not in the new rooms, detach listener
       if (updated_rooms.indexOf(curr_rooms[i]) == -1) {
-        console.log("detaching listener for room with id " + curr_rooms[i]);
         roomsDatabase.child(curr_rooms[i]).off();
       }
     }
@@ -649,9 +647,6 @@ function($scope, $http, $timeout) {
 
         // how many people are studying for this class now?
         setNumUsers($scope.rooms[room_id].class_id);
-
-        // update the UI
-        console.log("applying in get room, room name is : " + $scope.rooms[room_id].name);
 
         // get room users
         updateRoomUsers($scope.rooms[room_id]);
@@ -723,7 +718,7 @@ function($scope, $http, $timeout) {
   
     
   //Saurabh's local check if friends
-  $scope.isFriendsWith = function(user_id) {
+  $scope.isFriendsWith = function(user_id) {/*
     console.log("friends??");
     for (buddy in $scope.added_buddies_list) {
       console.log(buddy);
@@ -732,7 +727,7 @@ function($scope, $http, $timeout) {
         return true;
       }
     }
-    console.log("RIP not friends");
+    console.log("RIP not friends");*/
     return false;
   }
 
@@ -786,6 +781,7 @@ function($scope, $http, $timeout) {
       });
     });
   };
+
   var acceptBuddy = function(data, onResponseReceived){
     console.log(data);
     $http.post('/accept_buddy', data).then(function(response){
@@ -989,7 +985,14 @@ function($scope, $http, $timeout) {
 
   $scope.refreshAddClass = function() {
     //deep copy so we won't copy over temp changes, also has an extra lounge_id
-    temp_class_ids = $scope.my_class_ids.slice(0);
+
+
+    temp_class_ids = $scope.my_class_ids.slice();
+    temp_class_ids.splice(temp_class_ids.indexOf('lounge_id'), 1);
+
+    console.log('LUL ' + $scope.my_class_ids);
+    console.log('LUL ' + temp_class_ids);
+
     //grab all classes if they weren't pulled before
     if (allClassesNameToID == null) {
       getAllClasses();
@@ -1063,7 +1066,34 @@ function($scope, $http, $timeout) {
   $scope.saveChanges = function() {
     $http.post('/enroll', {class_ids: temp_class_ids});
     closeModal("#modal-add-class", "#add-class");
+
     //ISAAC -- call function(temp_class_ids)
+    updateLocalClasses(temp_class_ids);
+  }
+
+  function updateLocalClasses(updated_class_ids) {
+    console.log("UPDATING LOCAL CLASSES")
+    updated_class_ids = updated_class_ids.concat(['lounge_id']);
+    console.log('LUL2 ' + $scope.my_class_ids);
+    console.log('LUL2 ' + updated_class_ids);
+    var noChange = true;
+    updated_class_ids.forEach(function(class_id) {
+      // for classes I've added
+      if ($scope.my_class_ids.indexOf(class_id) == -1) {
+        getClass(class_id);
+        noChange = false;
+      }
+    });
+
+    noChange = noChange && $scope.my_class_ids.length == updated_class_ids.length; 
+
+    $scope.my_class_ids = updated_class_ids;
+    safeApply();
+
+    if (!noChange) {
+      console.log('was changed');
+      showAlert("course-change-alert", 4000, false);
+    }
   }
 
   // populates the allClassesNameToID dictionary with all available classes

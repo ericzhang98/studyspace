@@ -16,6 +16,12 @@ html, body {
 .sidebar {
   background-color: var(--base-color);
   width: 24rem;
+  height: 100%;
+  overflow: auto;
+}
+
+::-webkit-scrollbar {
+  width: 5px;
 }
 
 .panel {
