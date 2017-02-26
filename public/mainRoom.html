@@ -86,15 +86,12 @@
             <!-- Classes/Rooms Dropdown -->
             <div id="classes" class="panel-group menu-classes">
 
-              <div ng-repeat="(class_id, class_obj) in classes" ng-if="class_id != 'dm_class_id'" id="#{{class_id}}" class="panel" href="#{{class_id}}">
+              <div ng-repeat="class_id in my_class_ids track by $index" ng-if="class_id != 'dm_class_id'" id="#{{class_id}}" class="panel" href="#{{class_id}}">
                 <div class="panel-heading">
                   <h4 class="panel-title {{class_id == rooms[currRoomCallID].class_id ? (rooms[currRoomCallID].is_lecture ? 'white-text acc-back' : 'white-text prim-dark-back') : 'color-def-panel-title'}}" data-toggle="collapse" data-target="#{{class_id}}" data-parent="#classes">
                     <span ng-cloak class="class-title">
-                      {{class_obj.name}}
+                      {{classes[class_id].name}}
                     </span>
-                    <!--
-                    <span ng-cloak>{{classes[class_id].num_users}}{{class_obj.rooms_with_tutors.length != 0 ? "*":""}}</span>
-                    -->
                   </h4>
                   <button class="btn btn-add-room" ng-click="createRoom(class_id)">
                     <span class="glyphicon glyphicon-plus"></span>
@@ -134,7 +131,6 @@
             </button> -->
 
           <div ng-repeat="buddy_requests in buddies_list">
-            lul
             <li style="border: none" class="list-group-item buddy-panel base-back over-base-text">
               <span ng-cloak class="room-name">
                 {{buddy_requests.sent_from_name}}
@@ -256,7 +252,7 @@
 
         <!-- Classmates Sidebar -->
         <aside id="classmates-sidebar" class="sidebar sidebar-right" role="complementary">
-          
+          <!--
           <h3>Buddies</h3>   
           <div class="container-search">
             <input class="form-control" ng-model="friend.name">
@@ -299,7 +295,7 @@
               </tbody>
             </table>
           </div> 
-
+-->
           <!--
           <span>TEMP FOR ERIC</span>
           <br>
@@ -418,6 +414,10 @@
       <div id="lecture-alert" class="alert fade in text-center" hidden>
         <a class="close" data-dismiss="alert">×</a>
         <span>In casts, only the host can be heard.</span>
+      </div>
+      <div id="course-change-alert" class="alert fade in text-center" hidden>
+        <a class="close" data-dismiss="alert">×</a>
+        <span>Your course changes were successfully applied.</span>
       </div>
     </div>
 

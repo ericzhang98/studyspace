@@ -52,14 +52,18 @@ function logOut() {
 /*********************************************************************/
 /********************************* MISC ******************************/
 
-function showAlert(alert_id, duration) {
+function showAlert(alert_id, duration, show_only_once = true) {
+
+
 	$('#' + alert_id).show();
 
-	setTimeout(function() { // this will automatically close the alert and remove this if the users doesnt close it in 5 secs
-
-		$('#' + alert_id).alert('close')
-
-	}, duration);
+	setTimeout(function() {
+		$("#" + alert_id).fadeOut(1000, function() {
+			if (show_only_once) {
+				$("#" + alert_id).alert('close');
+			}
+		});
+	}, duration-1000);
 }
 
 /*********************************************************************/
