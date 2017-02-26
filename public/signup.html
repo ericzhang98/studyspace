@@ -74,14 +74,14 @@
         <form role="form" accept-charset="UTF-8" autocomplete="off">
           <div class="form-group">
             <label for="input-firstname">First Name
-              <span>{{firstNameMessage}}</span>
+              <span class="alert-danger">{{firstNameMessage}}</span>
             </label>
             <input type="text" class="form-control" id="input-firstname"
                    placeholder="first name" ng-model="signupFirstName"  maxlength="25">
           </div>
           <div class="form-group">
             <label for="input-lastname">Last Name
-              <span>{{lastNameMessage}}</span>
+              <span class="alert-danger">{{lastNameMessage}}</span>
             </label>
             <input type="text" class="form-control" id="input-name"
                    placeholder="last name" ng-model="signupLastName" maxlength="25">
@@ -96,22 +96,22 @@
           </div>
           -->
           <div class="form-group">
-            <label for="input-email">Email
-              <span>{{emailMessage}}</span>
+            <label for="input-email">Email 
+              <span class="alert-danger">{{emailMessage}}</span>
             </label>
             <input type="email" class="form-control" id="input-email" 
                    placeholder="email@example.com" ng-model="signupEmail"  maxlength="35">
           </div>
           <div class="form-group">
-            <label for="input-password">Password
-              <span>{{passwordMessage}}</span>
+            <label for="input-password">Password 
+              <span class="alert-danger">{{passwordMessage}}</span>
             </label>
             <input type="password" class="form-control" id="input-password" 
             ng-model="signupPassword" maxlength="30">
           </div>
           <div class="form-group">
-            <label for="input-confirm-password">Confirm Password
-              <span>{{confirmMessage}}</span>
+            <label for="input-confirm-password">Confirm Password 
+              <span class="alert-danger">{{confirmMessage}}</span>
             </label>
             <input type="password" class="form-control" id="input-confirm-password"
             ng-model="signupConfirmPassword" maxlength="30">
