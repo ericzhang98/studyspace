@@ -10,7 +10,7 @@ setMode(is_day);
 
 function setMode(is_day = !currIsDay) {
 
-	var base, base_two, base_focus, over_base, over_base_two, over_base_focus, line_color;
+	var base, base_two, base_focus, over_base, over_base_two, over_base_focus, line, panel;
 
 	if (is_day) {
 		base = '#f0f0f0';
@@ -18,7 +18,8 @@ function setMode(is_day = !currIsDay) {
 		base_focus = '#3a3a3a';
 		over_base = '#353535';
 		over_base_focus ='#ffffff';
-		line_color = '#dddddd';
+		panel = '#434343';
+		line = '#dddddd';
 		currIsDay = true;
 	}
 
@@ -28,7 +29,8 @@ function setMode(is_day = !currIsDay) {
 		base_focus = '#262626';
 		over_base = '#ffffff';
 		over_base_focus ='#ffffff';
-		line_color = '#303030';
+		panel = '#666666';
+		line = '#303030';
 		currIsDay = false;
 	}
 
@@ -40,7 +42,9 @@ function setMode(is_day = !currIsDay) {
 	document.documentElement.style.setProperty('--over-base-color', over_base);
 	document.documentElement.style.setProperty('--over-base-two-color', over_base_two);
 	document.documentElement.style.setProperty('--over-base-focus-color', over_base_focus);
-	document.documentElement.style.setProperty('--line-color', line_color);
+	document.documentElement.style.setProperty('--panel-color', panel);
+	document.documentElement.style.setProperty('--line-color', line);
+	document.documentElement.style.setProperty('--borders', currIsDay ? 'solid' : 'none');
 
 	storeCookie("is_day", is_day);
 
@@ -104,6 +108,7 @@ function setTheme(theme_num) {
 			prim_dark = '#00b516';
 			accent = '#42ccff'; 
 			break;
+
 
 		/*
 		// THEME 5 AQUA-BLACK-NAVY

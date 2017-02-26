@@ -54,14 +54,14 @@
           <div class="menu-user">
             <!-- User Quick Info -->
             <div id="user-info" class="container-info-user">
-              <div onclick="changeTheme()" class="container-user-icon white-text prim-back" 
+              <div onclick="changeTheme()" class="container-user-icon over-base-text prim-back" 
                    style='-moz-user-select: -moz-none; -khtml-user-select: none;-webkit-user-select: none;'>
                 <span ng-cloak>{{myName | limitTo:1}}</span>
               </div>
               
               <span class="user-name prim-text" ng-cloak>{{myName}}</span>
 
-              <button class="btn btn-sm btn-low-key" onclick="setMode()"> </button>
+              <button class="btn btn-sm btn-low-key" style="position:absolute; right:16px" onclick="setMode()"> </button>
             </div>
 
             <!-- Log Out -->
@@ -197,7 +197,7 @@
                 <div class="blob blob-4"></div><div class="blob blob-5"></div>
               </div>
               <div class="message" ng-repeat="chatMessage in chatMessageList">
-                <div class="container-user-icon white-text {{chatMessage.user_id != myID ? 'acc-back' : 'prim-back'}}">
+                <div class="container-user-icon over-base-text {{chatMessage.user_id != myID ? 'acc-back' : 'prim-back'}}">
                   <span>{{chatMessage.name | limitTo:1}}</span>
                 </div>
 
@@ -357,7 +357,7 @@
                 <button id="close-add-class" class="btn close" data-dismiss="modal" aria-label="Close">
                   <span class="glyphicon glyphicon-remove" aria-hidden="true"></span>
                 </button>
-                <h1 class="title" style="margin-bottom: 5px;">Add a class</h1>
+                <h1 class="title" style="margin-bottom: 5px;">Manage your classes</h1>
               </header>
               <div class="main form-container">
 

@@ -183,7 +183,7 @@ function autoCompleteController ($scope, $http) {
 
     function processPrivacy() {
         var anon = $("#anon-checkbox").prop("checked");
-        $http.post('/updateprivacy', {anon: anon}).then(function(res) {
+        $http.post('/update_privacy', {anon: anon}).then(function(res) {
             if(res.data.success) {
                 console.log("Anonymous status updated")
             }

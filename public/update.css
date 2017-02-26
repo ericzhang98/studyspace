@@ -17,6 +17,10 @@
   width: 50rem;
 }
 
+.tab-content {
+  height: 350px;
+}
+
 .password-input {
   margin: 4px 0;
 }
