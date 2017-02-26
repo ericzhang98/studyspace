@@ -75,12 +75,13 @@
           <div id="classes-menu" class="container-menu-classes">
 
             <!-- Create Room Button -->
-            <button id="btn-create-room" class="btn container-title">
-              <span class="title">Spaces</span>
-              <div>
-                <span class="glyphicon glyphicon-plus"></span>
-              </div>
-            </button>
+            <button id="btn-add-class" class="btn container-title"
+            ng-click="refreshAddClass()">
+            <span class="title">Classes</span>
+            <div>
+              <span class="glyphicon glyphicon-plus"></span>
+            </div>
+          </button>
 
             <!-- Classes/Rooms Dropdown -->
             <div id="classes" class="panel-group menu-classes">
@@ -118,7 +119,7 @@
 
           <!-- BUDDIES -->
           <div class="container-title">
-            <span class="title">buddies</span>
+            <span class="title">Buddies</span>
           </div>
 
           <!-- REQUESTS -->
@@ -239,6 +240,7 @@
 
         <!-- Classmates Sidebar -->
         <aside id="classmates-sidebar" class="sidebar sidebar-right" role="complementary">
+          <!--
           <h3>Buddies</h3>   
           <div class="container-search">
             <input class="form-control" ng-model="friend.name">
@@ -287,20 +289,18 @@
 
           <span>TEMP FOR ERIC</span>
           <br>
-          <!-- CURRENTLY TYPING -->
           <span>CURRENTLY TYPING:</span>
           <span ng-cloak>{{currTyping}}</span>
           <br>
-          <!-- Add Class Button -->
           <button id="btn-add-class" class="btn container-title"
             ng-click="refreshAddClass()">
             <span class="title">Classes</span>
             <div>
               <span class="glyphicon glyphicon-plus"></span>
             </div>
-          </button>
+          </button>-->
 
-          <h3 class="studymates">StudyMates</h3>
+          <h3 ng-cloak ng-if="currRoomChatID" class="studymates">StudyMates</h3>
           <div class="studymates names" ng-repeat="user_id in rooms[currRoomChatID].users" ng-cloak>
              <div>{{users[user_id].name}}</div>
           </div>
@@ -318,7 +318,7 @@
                 <button id="close-create-room" class="btn close" data-dismiss="modal" aria-label="Close">
                   <span class="glyphicon glyphicon-remove" aria-hidden="true"></span>
                 </button>
-                <h1 class="title prim-dark-text">Name your room</h1>
+                <h1 class="title prim-dark-text">Name your space</h1>
               </header>
               <div class="main form-container">
 
@@ -362,12 +362,6 @@
 
 
 
-
-
-
-
-
-
     <!-- Misc and standalone divs -->
     <!-- Add Class Modal -->
     <div id="modal-add-class" class="modal" role="dialog"
@@ -379,7 +373,7 @@
             <button id="close-add-class" class="btn close" data-dismiss="modal" aria-label="Close">
               <span class="glyphicon glyphicon-remove" aria-hidden="true"></span>
             </button>
-            <h1 class="title">Add classes</h1>
+            <h1 class="title" style="margin-bottom: 5px;">Add a class</h1>
           </header>
           <div class="main form-container">
 
@@ -415,7 +409,7 @@
               </button>
             </span>
             <br>
-            <button class="btn btn-hi-pri save-btn" ng-click="saveChanges()">Save</button>
+            <button class="btn btn-hi-pri save-btn" ng-click="saveChanges()" style="margin-bottom: 20px">Save</button>
           </div>
 
 

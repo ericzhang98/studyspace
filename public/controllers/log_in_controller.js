@@ -34,19 +34,25 @@ angular.module('logInApp', []).controller('LogInCtrl', ['$scope', '$http', funct
         // login returned a user
         // check if user activated account or not
         if (user != null) {
-          if (user.active) {
+          if (user.active) { 
             console.log(LOG + "login succeeded");
             console.log(document.location.href);
+            $scope.emailMessage = "";
+            $scope.passwordMessage = "";
             document.location.href = "/";
           }
           else {
             console.log(LOG + "need to verify account, verify email");
+            $scope.emailMessage = "(Invalid email or password)";
+            $scope.passwordMessage = "(Invalid email or password)";
           }
         }
 
         // login failed 
         else {
           console.log(LOG + "login failed, user info incorrect");
+          $scope.emailMessage = "(Invalid email or password)";
+          $scope.passwordMessage = "(Invalid email or password)";
         }
       });
     } 
@@ -54,6 +60,8 @@ angular.module('logInApp', []).controller('LogInCtrl', ['$scope', '$http', funct
     // invalid login info
     else {
       console.log(LOG + "login failed, user info invalid");
+      $scope.emailMessage = "(Field Required)";
+      $scope.passwordMessage = "(Field Required)";
     }
   }
 
@@ -62,13 +70,33 @@ angular.module('logInApp', []).controller('LogInCtrl', ['$scope', '$http', funct
     if (user == null) {
       return false;
     }
-    if (user.email == null || user.password == null) {
+
+    if (user.email == null) {
+      return false;
+    } 
+
+    if (user.email == "") {
+      $scope.emailMessage = "(Field Required)";
       return false;
     }
-    if (user.email == "" || user.password == "") {
+
+    if (user.password == null ) {
       return false;
     }
+
+    if (user.password == "" ) {
+      return false;
+    }
+
     return true;
+  }
+
+  // Resets error messages
+  $scope.reset = function() {
+    $scope.emailMessage = "";
+    $scope.passwordMessage = "";
+    $scope.email = null;
+    $scope.password = null;
   }
 
 }]);
