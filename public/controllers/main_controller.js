@@ -364,10 +364,10 @@ function($scope, $http, $timeout) {
 
   // Scope variables
   $scope.my_class_ids = [];
-  $scope.classes = {}      // class_id : class
+  $scope.classes = {}      // class_id : class, grabbed on initial load
   $scope.class_rooms = {}  // class_id : list of room_ids
-  $scope.rooms = {}        // room_id : room
-  $scope.users = {}        // user_id : user
+  $scope.rooms = {}        // room_id : room, listened to after grabbing classes
+  $scope.users = {}        // user_id : user, info added as u join rooms
   $scope.muted_user_ids = [];
 
   // Initial call to pull data for user / classes / rooms
@@ -742,8 +742,9 @@ function($scope, $http, $timeout) {
   
   // checks if the user exists, calls a callback on the data
   // and either returns null or the user object
-  var userExists = function(name, onResponseReceived){  
-    $http.post('/buddy_existing_user', $scope.friend).then(function(response){
+  var userExists = function(other_user_id, onResponseReceived){  
+    var other_user = $scope.users[other_user_id]; //get other user info
+    $http.post('/buddy_existing_user', other_user).then(function(response){
       //console.log(response.data + "RESPONSE");
       return onResponseReceived(response.data);
     });
@@ -820,10 +821,10 @@ function($scope, $http, $timeout) {
   });
 
   // functionality for sending a buddy request
-  $scope.sendRequest = function(){
-    console.log("request");
+  $scope.sendRequest = function(other_user_id){
+    console.log("friend request to " + other_user_id);
     // checks if the user exists, if not exits
-    userExists($scope.friend.name, function(response){
+    userExists(other_user_id, function(response){
       console.log(response);
       if(response){
         var friend_id = response.user_id;
