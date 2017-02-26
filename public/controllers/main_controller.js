@@ -536,7 +536,6 @@ function($scope, $http, $timeout) {
   // - gets all class_ids for user
   // - delegates to getClass
   function getClasses() {
-    console.log("Getting class ids...")
     var xhr = new XMLHttpRequest();
     xhr.open('GET', "/get_my_classes", true); // responds with class_ids
     xhr.send();
@@ -551,8 +550,6 @@ function($scope, $http, $timeout) {
         }
 
         $scope.my_class_ids.push('lounge_id');
-
-        console.log("Getting classes info...")
 
         // Get more data
         for (i = 0; i < $scope.my_class_ids.length; i++) {
@@ -714,9 +711,6 @@ function($scope, $http, $timeout) {
   /*********************************************************************/
   /**************************** BUDDY SYSTEM ***************************/
 
-  console.log("buddies");
-  
-    
   //Saurabh's local check if friends
   $scope.isFriendsWith = function(user_id) {/*
     console.log("friends??");
@@ -744,6 +738,7 @@ function($scope, $http, $timeout) {
   var getBuddies = function(onResponseReceived){
     $http.post('/get_my_buddies').then(function(response){
       if (response.data[0]) {
+        console.log(response.data[0]);
         return onResponseReceived(response.data[0]['buddies']);
       }
     });
@@ -897,10 +892,10 @@ function($scope, $http, $timeout) {
 
   // getting the list of users in this room
   function updateRoomUsers(room) {
-    console.log("this is a room " + room);
+    //console.log("this is a room " + room);
     if (room) {
-      console.log("getting new list of users for room: " + room.room_id);
-      console.log($scope.rooms);
+      //console.log("getting new list of users for room: " + room.room_id);
+      //console.log($scope.rooms);
       for (var i = 0; i < room.users.length; i++) {
         if (!(room.users[i] in $scope.users)) {
           var id = room.users[i];
@@ -928,9 +923,7 @@ function($scope, $http, $timeout) {
   var refresh = function(){
     $http.get('/get_blocked_users').then(function(response){
       $scope.block_user_list = response.data;
-      console.log(response.data);
-      console.log(response.data.length);
-      console.log(response.data[0]);
+      //console.log(response.data[0]);
       if(!(response.data[0])){
         return;
       }
@@ -1148,7 +1141,6 @@ function($scope, $http, $timeout) {
         $scope.$apply(func);
       }
       else {
-        console.log("Succesful apply");
         $scope.$apply();
       }
     }
