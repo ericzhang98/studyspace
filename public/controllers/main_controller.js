@@ -730,6 +730,22 @@ console.log("no overflow for " + room_id + ", scroll width: " + item.scrollWidth
   /**************************** BUDDY SYSTEM ***************************/
 
   console.log("buddies");
+
+  $scope.added_buddies_list = [];
+
+  //Saurabh's local check if friends
+  $scope.isFriendsWith = function(user_id) {
+    console.log("friends??");
+    for (buddy in $scope.added_buddies_list) {
+      console.log(buddy.user_two_name + " is not a friend");
+      if (buddy.user_two_id == user_id) {
+        return true;
+      }
+    }
+    console.log("RIP not friends");
+    return false;
+  }
+
   var getBuddyRequests = function(onResponseReceived){
     var data = {"sent_to_id":"user_id inserted"};
     console.log(data);
@@ -793,6 +809,10 @@ console.log("no overflow for " + room_id + ", scroll width: " + item.scrollWidth
 
   getBuddies(function(response){ 
     $scope.added_buddies_list = response;
+    console.log("got buddies");
+    for (buddy in $scope.added_buddies_list) {
+      console.log("buddy found is " + buddy.user_two_name);
+    }
   });
 
   $scope.sendRequest = function(){
