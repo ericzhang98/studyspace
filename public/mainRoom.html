@@ -160,7 +160,7 @@
                   <span ng-cloak class="navbar-brand" >{{classes[rooms[currRoomChatID].class_id].name != "" ? 
                     classes[rooms[currRoomChatID].class_id].name + " - ":""}}{{rooms[currRoomChatID].name}}{{rooms[currRoomChatID].is_lecture ? ' (cast by ' + rooms[currRoomChatID].host_name + ')' : ''}}</span>
                 </div>
-                <ul ng-if="rooms[currRoomChatID].class_id != 'dm_class_id'" class="nav navbar-nav navbar-right">
+                <ul class="nav navbar-nav navbar-right">
                   <!--
 <li class="dropdown">
 <a class="dropdown-toggle" data-toggle="dropdown" href="#" style="background-color: inherit;">Rooms <span class="caret"></span></a>
@@ -171,8 +171,12 @@
 </ul>
 </li>
 -->
-                  <li class="nav-link" ng-click="leaveRoom()">
+                  <li ng-if="rooms[currRoomChatID].class_id != 'dm_class_id'" class="nav-link" ng-click="leaveRoom()">
                     <a href="#">Leave room</a>
+                  </li>
+
+                  <li ng-if="rooms[currRoomChatID].class_id == 'dm_class_id'" class="nav-link" ng-click="leaveDM()">
+                    <a href="#">Close chat</a>
                   </li>
                 </ul>
               </div>
@@ -407,15 +411,9 @@
             <br>
             <button class="btn btn-hi-pri save-btn" ng-click="saveChanges()" style="margin-bottom: 20px">Save</button>
           </div>
-
-
         </div>
       </div>
     </div>
-
-
-
-
 
 
 

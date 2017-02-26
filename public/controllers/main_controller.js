@@ -493,6 +493,10 @@ function($scope, $http, $timeout, classesTransport, $rootScope) {
     $scope.currRoomChatID = null;
   }
 
+  $scope.leaveDM = function() {
+    joinRoomChat($scope.currRoomCallID);
+  }
+
   function pingUserActivity(constant) {
     var xhr = new XMLHttpRequest();
     xhr.open("GET", "/ping", true);
