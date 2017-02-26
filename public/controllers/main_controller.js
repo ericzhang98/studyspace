@@ -739,7 +739,9 @@ function($scope, $http, $timeout) {
       }
     });
   };
-
+  
+  // checks if the user exists, calls a callback on the data
+  // and either returns null or the user object
   var userExists = function(name, onResponseReceived){  
     $http.post('/buddy_existing_user', $scope.friend).then(function(response){
       //console.log(response.data + "RESPONSE");
@@ -747,6 +749,8 @@ function($scope, $http, $timeout) {
     });
   };
 
+  // checks if this buddy request already exists, calls a callback
+  // on the data and either returns null or the request
   var buddyRequestExists = function(friend_id, onResponseReceived){
     var data = {"user_id":"user_id placed here",
                 "friend_id":String(friend_id)};
@@ -755,6 +759,8 @@ function($scope, $http, $timeout) {
     });   
   };
 
+  // checks if the two users are already friends, calls a callback
+  // on the data containing the friendship object or null
   var friendshipExists = function(friend_id, friend_name, onResponseReceived){
     var data = {"user_id":"user_id inserted",
                 "friend_id":String(friend_id),
@@ -764,6 +770,7 @@ function($scope, $http, $timeout) {
     });   
   }  
 
+  // deletes a friend and then in the callback calls to update the buddy requests
   var deleteBuddy = function(id, onResponseReceived){
     console.log(id);
     $http.delete('/reject_buddy/' + id).then(function(response){
@@ -773,6 +780,8 @@ function($scope, $http, $timeout) {
     });
   };
 
+  // adds a friendship in the database and deletes the request, and calls 
+  // a callback on the data
   var acceptBuddy = function(data, onResponseReceived){
     console.log(data);
     $http.post('/accept_buddy', data).then(function(response){
@@ -780,16 +789,18 @@ function($scope, $http, $timeout) {
     });      
   }
 
+  // updates the buddy requests list
   getBuddyRequests(function(response){ 
     $scope.buddies_list = response; 
     console.log($scope.buddies_list);
   });
 
-  var messageNotifications = {};
+  // gets the users added buddies
   getBuddies(function(response){ 
     $scope.added_buddies_list = response;
     //setup msg notification listener
     if (getSignedCookie("user_id")) {
+      var messageNotifications = {};
       databaseRef.child("Notifications").child(getSignedCookie("user_id"))
         .child("MessageNotifications").on("child_changed", function(snapshot) {
           var changedNotification = snapshot.val();
@@ -808,23 +819,28 @@ function($scope, $http, $timeout) {
     }
   });
 
+  // functionality for sending a buddy request
   $scope.sendRequest = function(){
     console.log("request");
+    // checks if the user exists, if not exits
     userExists($scope.friend.name, function(response){
       console.log(response);
       if(response){
         var friend_id = response.user_id;
         var friend_name = response.name;
         console.log(friend_id);
+        // checks if the buddy request already exists, if it does then exits
         buddyRequestExists(friend_id, function(requestExists){ 
 
           console.log("BUDDY REQUEST EXISTS? " + requestExists);
           console.log(requestExists);
           if(!requestExists || requestExists.length == 0){ 
-            console.log("ARE WE FRIENDS ALREADY");          
+            console.log("ARE WE FRIENDS ALREADY"); 
+            // checks if you're already friends, if you are then exits            
             friendshipExists(friend_id, friend_name, function(friendship){ 
               console.log("FRIENDSHIP? " + friendship);
               if(!friendship || friendship.length == 0){
+                // if we made it here then we send a friend request
                 console.log("Adding friend");
                 var data = {"sent_from_id":"Place user_id here", 
                             "sent_from_name": "user_name",
