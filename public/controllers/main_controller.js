@@ -1077,7 +1077,9 @@ function($scope, $http, $timeout) {
         // populate the classes dictionary
         for (var i = 0; i < response.length; i++) {
           var classObj = response[i];
-          allClassesNameToID[classObj.name] = classObj.class_id;
+          if (classObj.class_id != "lounge_id") {
+            allClassesNameToID[classObj.name] = classObj.class_id;
+          }
         }
       }
       displayClasses();
