@@ -373,6 +373,15 @@ html, body {
   color: var(--over-base-focus-color);
 }
 
+.buddy-panel {
+  outline: 0 !important;
+}
+
+.buddy-panel:hover {
+  background-color: var(--base-focus-color);
+  color: var(--over-base-focus-color);
+}
+
 /* Classmates Sidebar */
 .sidebar-right {
   color: var(--primary-color);
@@ -382,6 +391,17 @@ html, body {
 .sidebar-right .container-search {
   padding-left: 1.5rem;
   padding-right: 1.5rem;
+}
+
+.studymates {
+   text-align: center;
+}
+
+.names{
+  padding-left: 1.5rem;
+  padding-bottom: .5rem;
+  color: white;
+  font-size: 1.5rem;
 }
 
 /* Create Room Modal */
@@ -427,6 +447,17 @@ html, body {
 
 .md-autocomplete-suggestions-container {
   z-index: 1051 !important; /* lol xD */
+}
+
+.bud-req-button {
+  width: 2rem;
+  font-size: 1.2rem;
+  color: #ffffff;
+  border:none;
+  text-align: center;
+  padding: 0px;
+  margin-right: 7px;
+
 }
 
 /* Other stuff */

@@ -75,12 +75,13 @@
           <div id="classes-menu" class="container-menu-classes">
 
             <!-- Create Room Button -->
-            <button id="btn-create-room" class="btn container-title">
-              <span class="title">Spaces</span>
-              <div>
-                <span class="glyphicon glyphicon-plus"></span>
-              </div>
-            </button>
+            <button id="btn-add-class" class="btn container-title"
+            ng-click="refreshAddClass()">
+            <span class="title">Classes</span>
+            <div>
+              <span class="glyphicon glyphicon-plus"></span>
+            </div>
+          </button>
 
             <!-- Classes/Rooms Dropdown -->
             <div id="classes" class="panel-group menu-classes">
@@ -116,8 +117,41 @@
           </div>
 
 
+          <!-- BUDDIES -->
           <div class="container-title">
-            <span class="title">buddies</span>
+            <span class="title">Buddies</span>
+          </div>
+
+          <!-- REQUESTS -->
+          <!--<div ng-cloak ng-repeat="buddy_request in buddies_list">
+              
+            <span>{{buddy_request.sent_from_name}}</span>
+            <button class="btn">
+              <span class="glyphicon glyphicon-ok" ng-click="acceptBuddy(buddy_request)"></span>
+            </button>
+            <button class="btn-danger">
+              <span class="glyphicon glyphicon-remove" ng-click="rejectBuddyRequest(buddy_request._id)"></span>
+            </button> -->
+
+          <div ng-repeat="buddy_requests in buddies_list">
+            <li style="border: none" class="list-group-item buddy-panel base-back over-base-text">
+              <span ng-cloak class="room-name">
+                {{buddy_requests.sent_from_name}}
+              </span>
+              <div class="pull-right">
+                <button class="btn bud-req-button prim-back" ng-click="acceptBuddy(buddy_requests)">+</button>
+                <button class="btn bud-req-button acc-back" ng-click="rejectBuddyRequest(buddy_requests._id)">x</button>
+              </div>
+            </li>
+          </div>
+
+          <!-- OLD FRIENDS -->
+          <div>
+            <li style="border: none" class="list-group-item base-back buddy-panel {{currRoomChatID == getDMID(buddy.user_two_id) ? 'prim-text' : 'over-base-text'}}" ng-repeat="buddy in added_buddies_list" ng-click="openDM(buddy.user_two_id, buddy.user_two_name)">
+              <span ng-cloak class="room-name">
+                {{buddy.user_two_name}}
+              </span>
+            </li>
           </div>
 
               
@@ -175,7 +209,9 @@
                       <ul ng-if="chatMessage.user_id != myID" class="dropdown-menu">
                         <li><a href="#" ng-click="toggleUserAudio(chatMessage.user_id)">{{muted_user_ids.indexOf(chatMessage.user_id) == -1 ? 'Mute' : 'Unmute'}}</a></li>
                         <li><a href="#">Block</a></li>
-                        <li><a href="#">Friend</a></li>
+<li><a href="#">{{isFriendsWith(chatMessage.user_id) ? 'Unfriend' : 'Friend'}}</a></li>
+
+<!--<li><a href="#">Friend</a></li>-->
                       </ul>
 
                       <!-- No dropdown if user is me -->
@@ -215,6 +251,7 @@
 
         <!-- Classmates Sidebar -->
         <aside id="classmates-sidebar" class="sidebar sidebar-right" role="complementary">
+<!--          
           <h3>Buddies</h3>   
           <div class="container-search">
             <input class="form-control" ng-model="friend.name">
@@ -257,29 +294,15 @@
               </tbody>
             </table>
           </div> 
-
-
-
-
+-->
           <span>TEMP FOR ERIC</span>
           <br>
-          <!-- CURRENTLY TYPING -->
           <span>CURRENTLY TYPING:</span>
           <span ng-cloak>{{currTyping}}</span>
           <br>
-          <!-- Add Class Button -->
-          <button id="btn-add-class" class="btn container-title"
-            ng-click="refreshAddClass()">
-            <span class="title">Classes</span>
-            <div>
-              <span class="glyphicon glyphicon-plus"></span>
-            </div>
-          </button>
-
-          <h3>StudyMates</h3>
-          <div id="studymates" ng-repeat="user_id in rooms[currRoomChatID].user">
+          <h3 ng-cloak ng-if="currRoomChatID" class="studymates">StudyMates</h3>
+          <div class="studymates names" ng-repeat="user_id in rooms[currRoomChatID].users" ng-cloak>
              <div>{{users[user_id].name}}</div>
-             <div>asdf</div>
           </div>
 
 
@@ -295,14 +318,14 @@
                 <button id="close-create-room" class="btn close" data-dismiss="modal" aria-label="Close">
                   <span class="glyphicon glyphicon-remove" aria-hidden="true"></span>
                 </button>
-                <h1 class="title prim-dark-text">Create a room</h1>
+                <h1 class="title prim-dark-text">Name your space</h1>
               </header>
               <div class="main form-container">
 
                 <!-- Class selection -->
                 <form role="form" accept-charset="UTF-8" autocomplete="off">
                   <div class="form-group">
-                    <label for="room_name">Room Name</label>
+                    <!--<label for="room_name">Room Name</label>-->
                     <input type="text" class="form-control" maxlength="28" placeholder="e.g. Midterm Review" id="room_name">
                   </div>
                   <div class="checkbox">
@@ -319,6 +342,60 @@
           </div>
         </div>
 
+        <!-- Add Class Modal -->
+        <div id="modal-add-class" class="modal" role="dialog">
+          <div class="modal-dialog">
+            <!-- Content -->
+            <div id="add-class" class="modal-content modal-add-class-content hide">
+              <header class="modal-header text-center"> 
+                <button id="close-add-class" class="btn close" data-dismiss="modal" aria-label="Close">
+                  <span class="glyphicon glyphicon-remove" aria-hidden="true"></span>
+                </button>
+                <h1 class="title" style="margin-bottom: 5px;">Add a class</h1>
+              </header>
+              <div class="main form-container">
+
+                <!-- Auto complete -->
+                <div>
+                  <md-content id="class-dropdown" class="md-padding">
+                    <form>
+                      <md-autocomplete
+                         md-search-text="searchText"
+                         md-items="item in querySearch(searchText)"
+                         md-item-text="item"
+                         md-min-length="0"
+                         md-selected-item="selectedItem"
+                         md-selected-item-change="processSelection()"
+                         md-autoselect="true"
+                         placeholder="Enter a Class Code (e.g. 'CSE110')">
+                        <md-item-template>
+                          <span md-highlight-text="searchText" md-highlight-flags="^i">{{item}}</span>
+                        </md-item-template>
+                      </md-autocomplete>
+                    </form>
+                  </md-content>
+                </div>
+              </div>
+
+              <!-- Current courses -->
+              <div class="classes-container">
+                <span class="classes" ng-repeat="class in tempClasses">
+                  <button class="btn btn-hi-pri"
+                    ng-click="removeClass(class.class_id)">
+                    {{class.class_name}}
+                    <span class="glyphicon glyphicon-remove" aria-hidden="true"></span>
+                  </button>
+                </span>
+                <br>
+                <button class="btn btn-hi-pri save-btn" ng-click="saveChanges()" style="margin-bottom: 20px">Save</button>
+              </div>
+
+            </div>
+          </div>
+        </div>
+
+
+        <!-- Audio -->
         <audio id="join_room_audio" src="/audio/join_room_sfx"></audio>
         <audio id="leave_room_audio" src="/audio/leave_room_sfx"></audio>
         <audio id="pop_audio" src="/audio/pop_sfx"></audio>
@@ -334,60 +411,6 @@
       </div>
     </div>
 
-
-    <!-- Misc and standalone divs -->
-    <!-- Add Class Modal -->
-    <div id="modal-add-class" class="modal" role="dialog">
-      <div class="modal-dialog">
-        <!-- Content -->
-        <div id="add-class" class="modal-content modal-add-class-content hide">
-          <header class="modal-header text-center"> 
-            <button id="close-add-class" class="btn close" data-dismiss="modal" aria-label="Close">
-              <span class="glyphicon glyphicon-remove" aria-hidden="true"></span>
-            </button>
-            <h1 class="title">Add classes</h1>
-          </header>
-          <div class="main form-container">
-
-            <!-- Auto complete -->
-            <div>
-              <md-content id="class-dropdown" class="md-padding">
-                <form>
-                  <md-autocomplete
-                     md-search-text="searchText"
-                     md-items="item in querySearch(searchText)"
-                     md-item-text="item"
-                     md-min-length="0"
-                     md-selected-item="selectedItem"
-                     md-selected-item-change="processSelection()"
-                     md-autoselect="true"
-                     placeholder="Enter a Class Code (e.g. 'CSE110')">
-                    <md-item-template>
-                      <span md-highlight-text="searchText" md-highlight-flags="^i">{{item}}</span>
-                    </md-item-template>
-                  </md-autocomplete>
-                </form>
-              </md-content>
-            </div>
-          </div>
-
-          <!-- Current courses -->
-          <div class="classes-container">
-            <span class="classes" ng-repeat="class in tempClasses">
-              <button class="btn btn-hi-pri"
-                ng-click="removeClass(class.class_id)">
-                {{class.class_name}}
-                <span class="glyphicon glyphicon-remove" aria-hidden="true"></span>
-              </button>
-            </span>
-            <br>
-            <button class="btn btn-hi-pri save-btn" ng-click="saveChanges()">Save</button>
-          </div>
-
-
-        </div>
-      </div>
-    </div>
 
 
 
