@@ -949,10 +949,10 @@ function($scope, $http, $timeout) {
     $http.get('/get_user/' + other_user_id).then(function(response) {
       $scope.users[response.data.user_id] = response.data;
       console.log("user info pulled: " + response.data.name + " " + response.data.user_id);
+      // join the chat
+      joinRoomChat(dm_room_id);
     });
 
-    // join the chat
-    joinRoomChat(dm_room_id);
     $http.get("/clear_message_notifications/" + other_user_id);
     $scope.messageNotifications[other_user_id] = 0;
   };
