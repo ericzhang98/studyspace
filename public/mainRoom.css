@@ -382,6 +382,7 @@ html, body {
 .buddy-panel {
   outline: 0 !important;
   border: none;
+  border-radius: 0px !important; 
 }
 
 .buddy-panel:hover {
