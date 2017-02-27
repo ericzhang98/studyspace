@@ -41,30 +41,34 @@ function($scope, $http, $timeout) {
     if ($scope.currRoomChatID != room_id) {
       $scope.currRoomChatID = room_id;
 
-      // turn off any pre-existing listeners and control vars
+      // turn off any pre-existing listeners
       if (chatDatabase != null) {
         chatDatabase.off();
       }
-
+      // empty our message list in logic and UI and reset control vars
+      chatMessageList = [];
       lastKey = null;
       scrollLock = false;
-
-      // empty our message list in logic and UI
-      chatMessageList = [];
       updateChatView();
 
-      // set up and start new listener
-      chatDatabase = databaseRef.child("RoomMessages").child($scope.currRoomChatID);
-      startChatMessages();
+      // set up and start new listener if room_id isn't null
+      if (room_id) {
+        chatDatabase = databaseRef.child("RoomMessages").child($scope.currRoomChatID);
+        startChatMessages();
+      }
 
-      // empty typing list and listen to who's typing
-      currTyping = [];
+      // empty typing list
       if (typingDatabase != null) {
         typingDatabase.off();
       }
-      //setTimeout(
-      startCurrTyping();
-      //, 50); //in case it's a dm, need to wait for other user info?
+      currTyping = [];
+
+      if (room_id) {
+        typingDatabase = databaseRef.child("RoomTyping").child($scope.currRoomChatID);
+        //setTimeout(
+        startCurrTyping();
+        //, 50); //in case it's a dm, need to wait for other user info?
+      }
     }
   }
   /*********************************************************************/
@@ -120,7 +124,7 @@ function($scope, $http, $timeout) {
 
   // Listen to RoomTyping
   function startCurrTyping() {
-    typingDatabase = databaseRef.child("RoomTyping").child($scope.currRoomChatID).on("value", function(snapshot) {
+    typingDatabase.on("value", function(snapshot) {
       var val = snapshot.val();
       if (val) {
         currTyping = Object.keys(val);
