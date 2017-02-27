@@ -349,6 +349,10 @@ html, body {
   color: white;
 }
 
+.btn-add-room:hover {
+  color: var(--primary-color) !important;
+}
+
 .menu-classes .panel-title .glyphicon {
   font-size: 1.2rem;
 }
