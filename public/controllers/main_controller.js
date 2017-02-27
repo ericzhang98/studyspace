@@ -41,28 +41,34 @@ function($scope, $http, $timeout) {
     if ($scope.currRoomChatID != room_id) {
       $scope.currRoomChatID = room_id;
 
-      // turn off any pre-existing listeners and control vars
+      // turn off any pre-existing listeners
       if (chatDatabase != null) {
         chatDatabase.off();
       }
-
+      // empty our message list in logic and UI and reset control vars
+      chatMessageList = [];
       lastKey = null;
       scrollLock = false;
-
-      // empty our message list in logic and UI
-      chatMessageList = [];
       updateChatView();
 
-      // set up and start new listener
-      chatDatabase = databaseRef.child("RoomMessages").child($scope.currRoomChatID);
-      startChatMessages();
+      // set up and start new listener if room_id isn't null
+      if (room_id) {
+        chatDatabase = databaseRef.child("RoomMessages").child($scope.currRoomChatID);
+        startChatMessages();
+      }
 
-      // empty typing list and listen to who's typing
-      currTyping = [];
+      // empty typing list
       if (typingDatabase != null) {
         typingDatabase.off();
       }
-      startCurrTyping();
+      currTyping = [];
+
+      if (room_id) {
+        typingDatabase = databaseRef.child("RoomTyping").child($scope.currRoomChatID);
+        //setTimeout(
+        startCurrTyping();
+        //, 50); //in case it's a dm, need to wait for other user info?
+      }
     }
   }
   /*********************************************************************/
@@ -118,11 +124,12 @@ function($scope, $http, $timeout) {
 
   // Listen to RoomTyping
   function startCurrTyping() {
-    var typingDatabase = databaseRef.child("RoomTyping").child($scope.currRoomChatID).on("value", function(snapshot) {
+    typingDatabase.on("value", function(snapshot) {
       var val = snapshot.val();
       if (val) {
         currTyping = Object.keys(val);
         updateCurrTyping();
+        console.log(currTyping);
       }
       else {
         currTyping = [];
@@ -144,6 +151,7 @@ function($scope, $http, $timeout) {
     var names = []
     for (var i = 0; i < currTyping.length; i++) {
     	if (currTyping[i] != myID) {
+        console.log($scope.users[currTyping[i]]); //if breaking, tell Eric (joinRoom after user info pull)
       	names.push($scope.users[currTyping[i]].name);
     	}
     }
@@ -827,26 +835,48 @@ function($scope, $http, $timeout) {
   // gets the users added buddies
   getBuddies(function(response){ 
     $scope.added_buddies_list = response;
-    //setup msg notification listener
-    if (getSignedCookie("user_id")) {
-      var messageNotifications = {};
-      databaseRef.child("Notifications").child(getSignedCookie("user_id"))
-        .child("MessageNotifications").on("child_changed", function(snapshot) {
-          var changedNotification = snapshot.val();
-          //update msg notification list if not in current chat
-          if (changedNotification && snapshot.key != $scope.currChatRoomID) {
-            messageNotifications[snapshot.key] = changedNotification;
-          }
-          else {
-            //tell server to set msg notif to zero since we already in DM
-            //snapshot.ref.set(0);
-          }
-      });
-    }
+    startMessageNotifications();
     for (var i = 0; i < $scope.added_buddies_list.length; i++) {
       console.log("BUDDY NAME: " + $scope.added_buddies_list[i].user_two_name);
     }
   });
+
+  function startMessageNotifications() {
+    //grab all notifs on load
+    $scope.messageNotifications = {};
+    if (getSignedCookie("user_id")) {
+      databaseRef.child("Notifications").child(getSignedCookie("user_id"))
+        .child("MessageNotifications").once("value", function(snapshot) {
+          var snapshotValue = snapshot.val();
+          if (snapshotValue) {
+            //setup message notifications dictionary
+            var keys = Object.keys(snapshotValue);
+            for (var i = 0; i < keys.length; i++) {
+              $scope.messageNotifications[keys[i]] = snapshotValue[keys[i]];
+            }
+            safeApply();
+          }
+
+          //continuous listener for updates
+          databaseRef.child("Notifications").child(getSignedCookie("user_id"))
+            .child("MessageNotifications").on("child_changed", function(snapshot) {
+              var changedNotification = snapshot.val();
+              if (changedNotification) {
+                if ($scope.getDMID(snapshot.key) != $scope.currRoomChatID) {
+                  //update msg notifications property if not in current chat
+                  $scope.messageNotifications[snapshot.key] = changedNotification;
+                  safeApply();
+                }
+                else {
+                  //tell server to set msg notif to zero since we already in DM
+                  $http.get("/clear_message_notifications/" + snapshot.key);
+                  $scope.messageNotifications[snapshot.key] = 0;
+                }
+              }
+          });
+      });
+    }
+  }
 
   // functionality for sending a buddy request
   $scope.sendRequest = function(other_user_id){
@@ -946,6 +976,8 @@ function($scope, $http, $timeout) {
 
     // join the chat
     joinRoomChat(dm_room_id);
+    $http.get("/clear_message_notifications/" + other_user_id);
+    $scope.messageNotifications[other_user_id] = 0;
   };
 
   // getting the list of users in this room
