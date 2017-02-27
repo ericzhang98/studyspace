@@ -36,14 +36,14 @@ function SoundMeter(context) {
     var input = event.inputBuffer.getChannelData(0);
     var i;
     var sum = 0.0;
-    
+
     for (i = 0; i < input.length; ++i) {
       sum += input[i] * input[i];
     }
 
     that.instant = Math.sqrt(sum / input.length);
     if (!that.loudDetected && that.instant.toFixed(2) > 0.00) {
-      console.log('setting loudDetected to true, instant is ' + that.instant.toFixed(2));
+      //console.log('setting loudDetected to true, instant is ' + that.instant.toFixed(2));
       that.loudDetected = true;
     }
   };

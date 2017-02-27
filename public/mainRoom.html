@@ -143,7 +143,7 @@
 
           <!-- OLD FRIENDS -->
           <div>
-            <li style="border: none" class="list-group-item base-back buddy-panel {{currRoomChatID == getDMID(buddy.user_two_id) ? 'prim-text' : 'over-base-text'}}" ng-repeat="buddy in added_buddies_list" ng-click="openDM(buddy.user_two_id, buddy.user_two_name)">
+            <li class="list-group-item base-back buddy-panel {{ messageNotifications[buddy.user_two_id] > 0 ? 'acc-text bold-text' : (currRoomChatID == getDMID(buddy.user_two_id) ? 'prim-text' : 'over-base-text')}}" ng-repeat="buddy in added_buddies_list" ng-click="openDM(buddy.user_two_id, buddy.user_two_name)">
               <span ng-cloak class="room-name">
                 {{buddy.user_two_name}} 
                 <span ng-if="messageNotifications[buddy.user_two_id] > 0">

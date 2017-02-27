@@ -67,7 +67,7 @@ function($scope, $http, $timeout) {
         typingDatabase = databaseRef.child("RoomTyping").child($scope.currRoomChatID);
         //setTimeout(
         startCurrTyping();
-        //, 50); //in case it's a dm, need to wait for other user info?
+        //], 50); //in case it's a dm, need to wait for other user info?
       }
     }
   }
@@ -152,7 +152,9 @@ function($scope, $http, $timeout) {
     for (var i = 0; i < currTyping.length; i++) {
     	if (currTyping[i] != myID) {
         console.log($scope.users[currTyping[i]]); //if breaking, tell Eric (joinRoom after user info pull)
-      	names.push($scope.users[currTyping[i]].name);
+        if ($scope.users[currTyping[i]]) {
+      	 names.push($scope.users[currTyping[i]].name);
+        }
     	}
     }
     $scope.currTyping = names;
@@ -678,10 +680,10 @@ function($scope, $http, $timeout) {
         setNumUsers($scope.rooms[room_id].class_id);
 
         // get room users
-        updateRoomUsers($scope.rooms[room_id]);
+        updateRoomUsers($scope.rooms[room_id], updateCurrTyping);
 
         // update currTyping ppl
-        updateCurrTyping();
+        //updateCurrTyping();
 
         safeApply();
 
@@ -981,7 +983,7 @@ function($scope, $http, $timeout) {
   };
 
   // getting the list of users in this room
-  function updateRoomUsers(room) {
+  function updateRoomUsers(room, callback=null) {
     //console.log("this is a room " + room);
     if (room) {
       //console.log("getting new list of users for room: " + room.room_id);
@@ -992,6 +994,7 @@ function($scope, $http, $timeout) {
           $http.get('/get_user/' + room.users[i]).then(function(response) {
             $scope.users[response.data.user_id] = response.data;
             console.log("user info pulled: " + response.data.name + " " + response.data.user_id);
+            if (callback){callback();}
           });
       	}
       }
