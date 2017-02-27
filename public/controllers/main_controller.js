@@ -62,9 +62,7 @@ function($scope, $http, $timeout) {
       if (typingDatabase != null) {
         typingDatabase.off();
       }
-      //setTimeout(
       startCurrTyping();
-      //, 50); //in case it's a dm, need to wait for other user info?
     }
   }
   /*********************************************************************/
@@ -135,19 +133,17 @@ function($scope, $http, $timeout) {
   }
 
   function updateCurrTyping() {
-    /* //extra check if curr typing user is actually in room
     for (var i = currTyping.length-1; i >= 0; i--) {
       //console.log($scope.rooms[$scope.currRoomChatID]);
+      /*
       if (!$scope.rooms[$scope.currRoomChatID].users.includes(currTyping[i])) {
         currTyping.splice(i,1);
       }
+      */
     }
-    */
     var names = []
     for (var i = 0; i < currTyping.length; i++) {
     	if (currTyping[i] != myID) {
-        console.log($scope.users);
-        console.log($scope.users[currTyping[i]]);
       	names.push($scope.users[currTyping[i]].name);
     	}
     }
@@ -373,6 +369,7 @@ function($scope, $http, $timeout) {
   $scope.rooms = {}        // room_id : room, listened to after grabbing classes
   $scope.users = {}        // user_id : user, info added as u join rooms
   $scope.muted_user_ids = [];
+  $scope.volumes = {"ayy" : "lmao"};      // user_id : int (volume coming from them);
 
   // Initial call to pull data for user / classes / rooms
   getClasses();
@@ -478,6 +475,33 @@ function($scope, $http, $timeout) {
     joinRoomChat(room_id);
 
   };
+
+  $scope.setVolumeListener = function(user_id, stream) {
+    console.log('listening to stream');
+    var soundMeter = new SoundMeter(window.audioContext);
+    soundMeter.connectToSource(stream, function(e) {
+      if (e) {
+        alert(e);
+        return;
+      }
+
+      var loudDetected = false;
+
+      // long interval for updating the UI
+      setInterval(function() {
+        var wasLoud = $scope.volumes[user_id];
+        var isLoud = soundMeter.loudDetected;
+
+        if (isLoud != wasLoud) {
+          console.log("user with id " + user_id + " is now " + (isLoud ? 'loud' : 'not loud'));
+          $scope.volumes[user_id] = isLoud;
+          $scope.$apply();
+        }
+
+        soundMeter.loudDetected = false;
+      }, 500);
+    });
+  }
 
   $scope.leaveRoom = function() {
 
@@ -913,17 +937,12 @@ function($scope, $http, $timeout) {
     $scope.classes["dm_class_id"] = {
       "name" : ""
     }
+
     $scope.rooms[dm_room_id] = {
       "name" : other_user_name,
       "class_id" : "dm_class_id",
       "other_user_id" : other_user_id
     }
-
-    //get other user info
-    $http.get('/get_user/' + other_user_id).then(function(response) {
-      $scope.users[response.data.user_id] = response.data;
-      console.log("user info pulled: " + response.data.name + " " + response.data.user_id);
-    });
 
     // join the chat
     joinRoomChat(dm_room_id);

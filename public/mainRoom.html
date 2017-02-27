@@ -50,8 +50,6 @@
       <div id="layer1">
         <!-- Classes Sidebar -->
         <aside id="classes-sidebar" class="sidebar sidebar-left" role="complementary">
-          <div class="white-text" ng-repeat="(user_id, volume) in volumes">lmao
-          </div>
           <div class="menu-user">
             <!-- User Quick Info -->
             <div id="user-info" class="container-info-user">
@@ -309,7 +307,7 @@
           <h4 ng-cloak ng-if="currRoomChatID ? !rooms[currRoomChatID].is_lecture : false" ng-hide="rooms[currRoomChatID].class_id == 'dm_class_id'" class="studymates over-base-text" style="margin-top:2rem">In <prim>{{rooms[currRoomChatID].name}}</prim></h4>
 
           <div class="studymates names" ng-repeat="user_id in rooms[currRoomChatID].users" ng-cloak>
-             <div class="{{user_id == rooms[currRoomChatID].host_id ? (rooms[currRoomChatID].is_lecture ? 'acc-text' :'prim-text') : 'over-base-text'}}">{{users[user_id].name}}</div>
+             <div class="{{user_id == rooms[currRoomChatID].host_id ? (rooms[currRoomChatID].is_lecture ? 'acc-text' :'prim-text') : 'over-base-text'}}" style="color: {{volumes[user_id] ? 'red' : ''}}">{{users[user_id].name}}</div>
           </div>
 
 

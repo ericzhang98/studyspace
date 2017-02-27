@@ -24,6 +24,7 @@ getVoice();
 function getVoice(callback) {
   navigator.getUserMedia({video: false, audio: true}, function(stream) {
     myStream = stream;
+    angular.element(document.getElementById('myBody')).scope().setVolumeListener(myID, myStream);
     showAlert("voice-connect-alert", 3000);
     if (callback) {
       callback();
@@ -159,6 +160,9 @@ function answerCallHelper(call) {
 
 // just calls addRemoteStream and plays the sound effect
 function establishCall(remoteStream, peer_id) {
+
+  // set up the listener for this peer
+  angular.element(document.getElementById('myBody')).scope().setVolumeListener(peer_id, remoteStream);
 
   // add their stream
   addRemoteStream(remoteStream, peer_id);

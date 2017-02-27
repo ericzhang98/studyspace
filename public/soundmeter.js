@@ -20,22 +20,6 @@ var constraints = window.constraints = {
   video: false
 };
 
-function listenTo(stream) {
-  console.log('listening to stream');
-  var soundMeter = new SoundMeter(window.audioContext);
-  soundMeter.connectToSource(stream, function(e) {
-
-    if (e) {
-      alert(e);
-      return;
-    }
-
-    setInterval(function() {
-      console.log("ivd : " + soundMeter.instant.toFixed(2));
-    }, 200);
-  });
-}
-
 // Meter class that generates a number correlated to audio volume.
 // The meter class itself displays nothing, but it makes the
 // instantaneous and time-decaying volumes available for inspection.
@@ -44,24 +28,24 @@ function listenTo(stream) {
 function SoundMeter(context) {
   this.context = context;
   this.instant = 0.0;
-  this.slow = 0.0;
-  this.clip = 0.0;
   this.script = context.createScriptProcessor(2048, 1, 1);
+  this.loudDetected = false;
   var that = this;
+
   this.script.onaudioprocess = function(event) {
     var input = event.inputBuffer.getChannelData(0);
     var i;
     var sum = 0.0;
-    var clipcount = 0;
+    
     for (i = 0; i < input.length; ++i) {
       sum += input[i] * input[i];
-      if (Math.abs(input[i]) > 0.99) {
-        clipcount += 1;
-      }
     }
+
     that.instant = Math.sqrt(sum / input.length);
-    that.slow = 0.95 * that.slow + 0.05 * that.instant;
-    that.clip = clipcount / input.length;
+    if (!that.loudDetected && that.instant.toFixed(2) > 0.00) {
+      console.log('setting loudDetected to true, instant is ' + that.instant.toFixed(2));
+      that.loudDetected = true;
+    }
   };
 }
 
