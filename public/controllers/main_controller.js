@@ -50,6 +50,7 @@ function($scope, $http, $timeout) {
       lastKey = null;
       scrollLock = false;
       updateChatView();
+      $scope.chatInput = "";
 
       // set up and start new listener if room_id isn't null
       if (room_id) {
@@ -90,7 +91,6 @@ function($scope, $http, $timeout) {
 
         else {
           // reset fields     
-          chatInputBox.value = "";
           $scope.chatInput = "";
           chatInputBox.focus();
         }
@@ -105,7 +105,7 @@ function($scope, $http, $timeout) {
 
   $scope.keypress = function(e) {
     setTimeout(function() {
-      if (chatInputBox.value) {
+      if ($scope.chatInput) {
         if (!isTyping) {
           console.log("hi");
           $http.get("/typing/true/" + $scope.currRoomChatID);
@@ -178,7 +178,6 @@ function($scope, $http, $timeout) {
     }
 
     // Reset the local chat UI/logic
-    chatInputBox.value = "";
     $scope.chatInput = "";
     chatInputBox.focus();
   }
