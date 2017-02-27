@@ -846,6 +846,7 @@ function($scope, $http, $timeout) {
   function startMessageNotifications() {
     //grab all notifs on load
     $scope.messageNotifications = {};
+    //TODO: fix some niche bug where notification isn't updated on buddy accept
     if (getSignedCookie("user_id")) {
       databaseRef.child("Notifications").child(getSignedCookie("user_id"))
         .child("MessageNotifications").once("value", function(snapshot) {
@@ -862,11 +863,11 @@ function($scope, $http, $timeout) {
           //continuous listener for updates
           databaseRef.child("Notifications").child(getSignedCookie("user_id"))
             .child("MessageNotifications").on("child_changed", function(snapshot) {
-              var changedNotification = snapshot.val();
-              if (changedNotification) {
+              var numMessages = snapshot.val();
+              if (numMessages) {
                 if ($scope.getDMID(snapshot.key) != $scope.currRoomChatID) {
                   //update msg notifications property if not in current chat
-                  $scope.messageNotifications[snapshot.key] = changedNotification;
+                  $scope.messageNotifications[snapshot.key] = numMessages
                   safeApply();
                 }
                 else {
