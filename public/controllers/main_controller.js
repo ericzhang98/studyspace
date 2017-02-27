@@ -949,7 +949,7 @@ function($scope, $http, $timeout) {
     $http.get('/get_user/' + other_user_id).then(function(response) {
       $scope.users[response.data.user_id] = response.data;
       console.log("user info pulled: " + response.data.name + " " + response.data.user_id);
-      // join the chat
+      // join the chat needs to be on callback b/c of currTyping
       joinRoomChat(dm_room_id);
     });
 
