@@ -232,6 +232,12 @@ function joinRoomCall(currRoomCallID) {
       // if I am a lecturer or this is a normal room
       else {
 
+        //show alert if no audio permissions
+        if (myStream == null) {
+          console.log("GIVE MIC PERMISSIONS PLZ");
+          showAlert("no-permissions-alert", 4000, false);
+        }
+
         // by default, unmute me
         setMyStreamAudioEnabled(true);
 
