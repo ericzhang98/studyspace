@@ -453,6 +453,16 @@ app.post("/send_room_message", function(req, res) {
   res.send({}); //close the http request
 });
 
+app.get("/clear_message_notifications/:other_user_id", function(req, res) {
+  var other_user_id = req.params.other_user_id;
+  console.log("CLEARING " + other_user_id);
+  if (other_user_id) {
+    firebaseRoot.child("Notifications").child(req.signedCookies.user_id).child("MessageNotifications")
+      .child(other_user_id).set(0);
+  }
+  res.end();
+});
+
 // get a user from a user_id
 app.get('/get_user/:user_id/', function(req, res) {
   var user = req.params.user_id;
