@@ -486,6 +486,7 @@ function($scope, $http, $timeout) {
 
   };
 
+  // set listener that updates the volumes dict
   $scope.setVolumeListener = function(user_id, stream) {
     console.log('listening to stream');
     var soundMeter = new SoundMeter(window.audioContext);
@@ -503,7 +504,6 @@ function($scope, $http, $timeout) {
         var isLoud = soundMeter.loudDetected;
 
         if (isLoud != wasLoud) {
-          console.log("user with id " + user_id + " is now " + (isLoud ? 'loud' : 'not loud'));
           $scope.volumes[user_id] = isLoud;
           $scope.$apply();
         }
