@@ -235,8 +235,10 @@ function joinRoomCall(currRoomCallID) {
         var usersArray = Object.values(response.users);
 
         for (i = 0; i < usersArray.length; i++) {
-          var other_user_id =usersArray[i];
+
+          var other_user_id = usersArray[i];
           console.log("assessing " + other_user_id);
+
           if (other_user_id != myID) {
             startCall(other_user_id);
           }
