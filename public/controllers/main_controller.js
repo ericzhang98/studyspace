@@ -120,11 +120,12 @@ function($scope, $http, $timeout) {
 
   // Listen to RoomTyping
   function startCurrTyping() {
-    var typingDatabase = databaseRef.child("RoomTyping").child($scope.currRoomChatID).on("value", function(snapshot) {
+    typingDatabase = databaseRef.child("RoomTyping").child($scope.currRoomChatID).on("value", function(snapshot) {
       var val = snapshot.val();
       if (val) {
         currTyping = Object.keys(val);
         updateCurrTyping();
+        console.log(currTyping);
       }
       else {
         currTyping = [];
@@ -146,7 +147,6 @@ function($scope, $http, $timeout) {
     var names = []
     for (var i = 0; i < currTyping.length; i++) {
     	if (currTyping[i] != myID) {
-        console.log($scope.users);
         console.log($scope.users[currTyping[i]]);
       	names.push($scope.users[currTyping[i]].name);
     	}
