@@ -62,7 +62,9 @@ function($scope, $http, $timeout) {
       if (typingDatabase != null) {
         typingDatabase.off();
       }
+      //setTimeout(
       startCurrTyping();
+      //, 50); //in case it's a dm, need to wait for other user info?
     }
   }
   /*********************************************************************/
@@ -133,17 +135,19 @@ function($scope, $http, $timeout) {
   }
 
   function updateCurrTyping() {
+    /* //extra check if curr typing user is actually in room
     for (var i = currTyping.length-1; i >= 0; i--) {
       //console.log($scope.rooms[$scope.currRoomChatID]);
-      /*
       if (!$scope.rooms[$scope.currRoomChatID].users.includes(currTyping[i])) {
         currTyping.splice(i,1);
       }
-      */
     }
+    */
     var names = []
     for (var i = 0; i < currTyping.length; i++) {
     	if (currTyping[i] != myID) {
+        console.log($scope.users);
+        console.log($scope.users[currTyping[i]]);
       	names.push($scope.users[currTyping[i]].name);
     	}
     }
@@ -909,12 +913,17 @@ function($scope, $http, $timeout) {
     $scope.classes["dm_class_id"] = {
       "name" : ""
     }
-
     $scope.rooms[dm_room_id] = {
       "name" : other_user_name,
       "class_id" : "dm_class_id",
       "other_user_id" : other_user_id
     }
+
+    //get other user info
+    $http.get('/get_user/' + other_user_id).then(function(response) {
+      $scope.users[response.data.user_id] = response.data;
+      console.log("user info pulled: " + response.data.name + " " + response.data.user_id);
+    });
 
     // join the chat
     joinRoomChat(dm_room_id);
