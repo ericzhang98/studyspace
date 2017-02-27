@@ -53,8 +53,7 @@ function logOut() {
 /********************************* MISC ******************************/
 
 function showAlert(alert_id, duration, show_only_once = true) {
-
-
+	
 	$('#' + alert_id).show();
 
 	setTimeout(function() {

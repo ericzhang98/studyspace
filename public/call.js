@@ -303,10 +303,12 @@ function addRemoteStream(remoteStream, user_id) {
 function removeRemoteStream(user_id) {
 
   // remove the audio track from the page
-  document.getElementById("myBody").removeChild(myRemoteStreams[user_id]);
+  if (myRemoteStreams[user_id]) {
+    document.getElementById("myBody").removeChild(myRemoteStreams[user_id]);
 
-  // remove the remoteStream from myRemoteStreams
-  delete myRemoteStreams[user_id];
+    // remove the remoteStream from myRemoteStreams
+    delete myRemoteStreams[user_id];
+  }
 }
 
 // - removes all {user_id: call} pairs in myCalls and closes calls

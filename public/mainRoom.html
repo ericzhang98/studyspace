@@ -360,7 +360,7 @@
                 <button id="close-add-class" class="btn close" data-dismiss="modal" aria-label="Close">
                   <span class="glyphicon glyphicon-remove" aria-hidden="true"></span>
                 </button>
-                <h1 class="title" style="margin-bottom: 5px;">Manage your classes</h1>
+                <h1 class="title">Add a class</h1>
               </header>
               <div class="main form-container">
 
@@ -388,15 +388,16 @@
 
               <!-- Current courses -->
               <div class="classes-container">
+                <h4 class="title" style="margin-bottom: 5px;">Current classes</h4><p style="font-size: 1rem; margin-bottom: 15px;">(click to remove)</p>
                 <span class="classes" ng-repeat="class in tempClasses">
-                  <button class="btn btn-hi-pri"
+                  <button class="btn btn-cancel"
                     ng-click="removeClass(class.class_id)">
                     {{class.class_name}}
-                    <span class="glyphicon glyphicon-remove" aria-hidden="true"></span>
+                    <!--<span class="glyphicon glyphicon-remove" aria-hidden="true"></span>-->
                   </button>
                 </span>
                 <br>
-                <button class="btn btn-hi-pri save-btn" ng-click="saveChanges()" style="margin-bottom: 20px">Save</button>
+                <button class="btn btn-hi-pri save-btn" style="margin-top: 30px; width: 30%" ng-click="saveChanges()" style="margin-bottom: 20px">Save</button>
               </div>
 
             </div>
