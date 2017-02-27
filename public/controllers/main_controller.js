@@ -815,7 +815,7 @@ function($scope, $http, $timeout) {
 
   function startMessageNotifications() {
     //grab all notifs on load
-    var messageNotifications = {};
+    $scope.messageNotifications = {};
     if (getSignedCookie("user_id")) {
       databaseRef.child("Notifications").child(getSignedCookie("user_id"))
         .child("MessageNotifications").once("value", function(snapshot) {
@@ -824,9 +824,8 @@ function($scope, $http, $timeout) {
             //setup message notifications dictionary
             var keys = Object.keys(snapshotValue);
             for (var i = 0; i < keys.length; i++) {
-              messageNotifications[keys[i]] = snapshotValue[keys[i]];
+              $scope.messageNotifications[keys[i]] = snapshotValue[keys[i]];
             }
-            $scope.messageNotifications = messageNotifications;
             safeApply();
           }
 
@@ -837,13 +836,11 @@ function($scope, $http, $timeout) {
               if (changedNotification) {
                 if ($scope.getDMID(snapshot.key) != $scope.currRoomChatID) {
                   //update msg notifications property if not in current chat
-                  messageNotifications[snapshot.key] = changedNotification;
-                  $scope.messageNotifications = messageNotifications;
+                  $scope.messageNotifications[snapshot.key] = changedNotification;
                   safeApply();
                 }
                 else {
                   //tell server to set msg notif to zero since we already in DM
-                  console.log(snapshot.key);
                   $http.get("/clear_message_notifications/" + snapshot.key);
                   $scope.messageNotifications[snapshot.key] = 0;
                 }

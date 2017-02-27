@@ -455,7 +455,6 @@ app.post("/send_room_message", function(req, res) {
 
 app.get("/clear_message_notifications/:other_user_id", function(req, res) {
   var other_user_id = req.params.other_user_id;
-  console.log("CLEARING " + other_user_id);
   if (other_user_id) {
     firebaseRoot.child("Notifications").child(req.signedCookies.user_id).child("MessageNotifications")
       .child(other_user_id).set(0);
