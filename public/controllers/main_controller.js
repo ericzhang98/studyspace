@@ -781,9 +781,7 @@ function($scope, $http, $timeout) {
   // checks if the user exists, calls a callback on the data
   // and either returns null or the user object
   var userExists = function(other_user_id, onResponseReceived){  
-    var other_user = $scope.users[other_user_id]; //get other user info
-    $http.post('/buddy_existing_user', other_user).then(function(response){
-      //console.log(response.data + "RESPONSE");
+    $http.post('/buddy_existing_user', {other_user_id: other_user_id}).then(function(response){
       return onResponseReceived(response.data);
     });
   };
@@ -837,12 +835,12 @@ function($scope, $http, $timeout) {
   // gets the users added buddies
   getBuddies(function(response){ 
     $scope.added_buddies_list = response;
-    startMessageNotifications();
     for (var i = 0; i < $scope.added_buddies_list.length; i++) {
       console.log("BUDDY NAME: " + $scope.added_buddies_list[i].user_two_name);
     }
   });
 
+  startMessageNotifications();
   function startMessageNotifications() {
     //grab all notifs on load
     $scope.messageNotifications = {};

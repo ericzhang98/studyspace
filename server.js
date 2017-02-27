@@ -164,11 +164,11 @@ app.post('/buddy_existing_user', function(req, res) {
 
   console.log(req.body);
   //check if the user is themself
-  if(req.body.user_id == req.signedCookies.user_id){
+  if(req.body == req.signedCookies.user_id){
     return null;
   }
   //grab other user's data, null if they don't exist
-  db.users.findOne({user_id: req.body.user_id}, function(err, docs){
+  db.users.findOne({user_id: req.body.other_user_id}, function(err, docs){
     console.log(docs);
     res.json(docs);
   });	
@@ -227,9 +227,11 @@ app.post('/send_buddy_request', function(req, res) {
   }
   var sent_to_id = req.body.sent_to_id;
   var sent_to_name = req.body.sent_to_name;
-  db.user_buddy_requests.insert({sent_from_id:sent_from_id, sent_from_name:sent_from_name,
-                                 sent_to_id:sent_to_id, sent_to_name:sent_to_name}, function(err, docs){
-    res.json(docs);
+  db.user_buddy_requests.insert(
+    {sent_from_id:sent_from_id, sent_from_name:sent_from_name,
+    sent_to_id:sent_to_id, sent_to_name:sent_to_name}, 
+      function(err, docs){
+        res.json(docs);
   });
   
 });
@@ -244,20 +246,28 @@ app.post('/get_my_buddy_requests', function(req, res) {
 });
 
 app.post('/accept_buddy', function(req, res) {
-
   var user_one_id = req.signedCookies.user_id;
   var user_one_name = req.body.user_one_name;
   var user_two_id = req.body.user_two_id;
   var user_two_name = req.body.user_two_name;
-  db.user_buddies.update({user_one_id:user_one_id}, {$push: {buddies:{user_two_id:user_two_id,
-                                                                      user_two_name:user_two_name}}},{upsert: true}, function(err,docs){
-    console.log("Yay");
+  db.user_buddies.update({user_one_id:user_one_id}, 
+    {$push: {buddies:{user_two_id:user_two_id, user_two_name:user_two_name}}},
+    {upsert: true}, function(err,docs){
+      
   });
-  db.user_buddies.update({user_one_id:user_two_id}, {$push: {buddies:{user_two_id:user_one_id,
-                                                                      user_two_name:user_one_name}}},{upsert: true}, function(err,docs){
 
+  // b/c this is the user that actually accepted the request
+  db.user_buddies.update({user_one_id:user_two_id},
+    {$push: {buddies:{user_two_id:user_one_id, user_two_name:user_one_name}}},
+    {upsert: true}, function(err,docs){
     res.json(docs);
   });
+
+  //setup msg notifcations
+  firebaseRoot.child("Notifications").child(user_one_id).child("MessageNotifications")
+    .child(user_two_id).set(0);
+  firebaseRoot.child("Notifications").child(user_two_id).child("MessageNotifications")
+    .child(user_one_id).set(0);
 });
 
 app.post('/get_my_buddies', function(req, res){
@@ -432,7 +442,7 @@ app.post("/send_room_message", function(req, res) {
   //roomMessagesDatabase.child(roomID).push().set(req.body);
   if (req.signedCookies.user_id && req.signedCookies.email && req.signedCookies.name) {
     var newChatMessage = new ChatMessage(req.signedCookies.name, 
-                                         req.signedCookies.email, text, roomID, timeSent, req.signedCookies.user_id);
+      req.signedCookies.email, text, roomID, timeSent, req.signedCookies.user_id);
     roomMessagesDatabase.child(roomID).push().set(newChatMessage);
     //if other_user_id is set, it's a DM so increment notification for other user
     if (other_user_id) {
@@ -498,7 +508,8 @@ app.get("/typing/:is_typing/:room_id", function(req, res) {
     }
     else {
       /*
-      firebaseRoot.child("RoomTyping").child(room_id).orderByValue().equalTo(req.signedCookies.user_id).once("child_added", function(snapshot) {
+      firebaseRoot.child("RoomTyping").child(room_id).orderByValue().equalTo(req.signedCookies.user_id)
+      .once("child_added", function(snapshot) {
         snapshot.ref.remove();
       });*/
       firebaseRoot.child("RoomTyping").child(room_id).child(req.signedCookies.user_id).remove();
