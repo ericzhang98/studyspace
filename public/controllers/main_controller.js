@@ -1,7 +1,7 @@
 //Room app -- firebase must be initialized already
 var chatDatabase = null;
 var typingDatabase = null;
-var myApp = angular.module("mainApp", ["ngMaterial"]);
+var myApp = angular.module("mainApp", ["ngMaterial", "ngSanitize"]);
 
 // list of message objects with: email, name, roomID, text, timeSent
 var chatMessageList = [];
@@ -509,7 +509,7 @@ function($scope, $http, $timeout) {
         }
 
         soundMeter.loudDetected = false;
-      }, 500);
+      }, 700);
     });
   }
 
