@@ -133,7 +133,7 @@
             </button> -->
 
           <div ng-repeat="buddy_requests in buddies_list">
-            <li style="border: none" class="list-group-item buddy-panel base-back over-base-text">
+            <li style="border: none" class="list-group-item buddy-req-panel base-back acc-text">
               <span ng-cloak class="room-name">
                 {{buddy_requests.sent_from_name}}
               </span>
@@ -147,15 +147,12 @@
           <!-- OLD FRIENDS -->
           <div>
             <li class="list-group-item buddy-panel {{ messageNotifications[buddy.user_two_id] > 0 ? 'acc-text base-back bold-text' : 'over-base-text ' + (currRoomChatID == getDMID(buddy.user_two_id) ? 'prim-dark-back' : 'base-back')}}" ng-repeat="buddy in added_buddies_list" ng-click="openDM(buddy.user_two_id, buddy.user_two_name)">
+
+              <span class="{{buddies_status[buddy.user_two_id] ? (currRoomChatID == getDMID(buddy.user_two_id) ? 'white-text' : 'online-text') : 'invis-text'}}"
+                style="text-align: center; vertical-align: middle; margin-right: 3px;">◕</span>
               <span ng-cloak class="room-name">
                 {{buddy.user_two_name}} 
-                <span ng-if="messageNotifications[buddy.user_two_id] > 0">
-                | {{messageNotifications[buddy.user_two_id]}}
-                </span>
-                <span ng-if="buddies_status[buddy.user_two_id]"
-                  style="float:right"> ༼つ◕_◕༽つ </span>
-                <span ng-if="!buddies_status[buddy.user_two_id]"
-                  style="float:right"> ¯\_(ツ)_/¯ </span>
+                <span ng-if="messageNotifications[buddy.user_two_id] > 0">| {{messageNotifications[buddy.user_two_id]}}</span>
               </span>
             </li>
           </div>

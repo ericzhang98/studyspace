@@ -410,6 +410,12 @@ html, body {
   color: var(--over-base-focus-color);
 }
 
+.buddy-req-panel {
+  outline: 0 !important;
+  border: none;
+  border-radius: 0px !important; 
+}
+
 .buddy-panel {
   outline: 0 !important;
   border: none;
