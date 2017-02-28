@@ -3,7 +3,7 @@ var myID = getSignedCookie("user_id");
 var SONG_COMMANDS = ["/raindrop", "/destress", "/420"];
 var OTHER_COMMANDS = ["/gary", "/ord", "/stop", "/dank", "/scrub"];
 var SONG_VOLUMES = {
-	"/raindrop" : 0.3,
+	"/raindrop" : 0.25,
 	"/destress" : 0.3,
 	"/420" : 0.13
 }

@@ -525,7 +525,7 @@ function($scope, $http, $timeout, $window) {
         }
 
         soundMeter.loudDetected = false;
-      }, 200);
+      }, 500);
 
       // long interval for updating the UI
       $scope.volumes[user_id] = soundMeter;
