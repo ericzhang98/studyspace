@@ -370,6 +370,15 @@ a:hover {
   background-color: var(--base-two-color);
 }
 
+
+.online-text {
+  color: #59E01B;
+}
+
+.invis-text {
+  color: transparent;
+}
+
 .prim-text {
   color: var(--primary-color);
 }
