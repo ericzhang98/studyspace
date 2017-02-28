@@ -1,7 +1,7 @@
 //Room app -- firebase must be initialized already
 var chatDatabase = null;
 var typingDatabase = null;
-var myApp = angular.module("mainApp", ["ngMaterial"]);
+var myApp = angular.module("mainApp", ["ngMaterial", "ngSanitize"]);
 
 // list of message objects with: email, name, roomID, text, timeSent
 var chatMessageList = [];
@@ -50,6 +50,7 @@ function($scope, $http, $timeout) {
       lastKey = null;
       scrollLock = false;
       updateChatView();
+      $scope.chatInput = "";
 
       // set up and start new listener if room_id isn't null
       if (room_id) {
@@ -90,7 +91,6 @@ function($scope, $http, $timeout) {
 
         else {
           // reset fields     
-          chatInputBox.value = "";
           $scope.chatInput = "";
           chatInputBox.focus();
         }
@@ -105,7 +105,7 @@ function($scope, $http, $timeout) {
 
   $scope.keypress = function(e) {
     setTimeout(function() {
-      if (chatInputBox.value) {
+      if ($scope.chatInput) {
         if (!isTyping) {
           console.log("hi");
           $http.get("/typing/true/" + $scope.currRoomChatID);
@@ -178,7 +178,6 @@ function($scope, $http, $timeout) {
     }
 
     // Reset the local chat UI/logic
-    chatInputBox.value = "";
     $scope.chatInput = "";
     chatInputBox.focus();
   }
@@ -509,7 +508,7 @@ function($scope, $http, $timeout) {
         }
 
         soundMeter.loudDetected = false;
-      }, 500);
+      }, 700);
     });
   }
 
@@ -781,9 +780,7 @@ function($scope, $http, $timeout) {
   // checks if the user exists, calls a callback on the data
   // and either returns null or the user object
   var userExists = function(other_user_id, onResponseReceived){  
-    var other_user = $scope.users[other_user_id]; //get other user info
-    $http.post('/buddy_existing_user', other_user).then(function(response){
-      //console.log(response.data + "RESPONSE");
+    $http.post('/buddy_existing_user', {other_user_id: other_user_id}).then(function(response){
       return onResponseReceived(response.data);
     });
   };
@@ -837,15 +834,16 @@ function($scope, $http, $timeout) {
   // gets the users added buddies
   getBuddies(function(response){ 
     $scope.added_buddies_list = response;
-    startMessageNotifications();
     for (var i = 0; i < $scope.added_buddies_list.length; i++) {
       console.log("BUDDY NAME: " + $scope.added_buddies_list[i].user_two_name);
     }
   });
 
+  startMessageNotifications();
   function startMessageNotifications() {
     //grab all notifs on load
     $scope.messageNotifications = {};
+    //TODO: fix some niche bug where notification isn't updated on buddy accept
     if (getSignedCookie("user_id")) {
       databaseRef.child("Notifications").child(getSignedCookie("user_id"))
         .child("MessageNotifications").once("value", function(snapshot) {
@@ -862,11 +860,11 @@ function($scope, $http, $timeout) {
           //continuous listener for updates
           databaseRef.child("Notifications").child(getSignedCookie("user_id"))
             .child("MessageNotifications").on("child_changed", function(snapshot) {
-              var changedNotification = snapshot.val();
-              if (changedNotification) {
+              var numMessages = snapshot.val();
+              if (numMessages) {
                 if ($scope.getDMID(snapshot.key) != $scope.currRoomChatID) {
                   //update msg notifications property if not in current chat
-                  $scope.messageNotifications[snapshot.key] = changedNotification;
+                  $scope.messageNotifications[snapshot.key] = numMessages
                   safeApply();
                 }
                 else {
