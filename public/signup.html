@@ -70,7 +70,8 @@
       </div>
 
       <!-- SIGNUP -->
-      <div id="signup-form" class="signup-form-container form-container fadeInBack" ng-controller="SignUpController">
+      <div id="signup-form" class="signup-form-container form-container fadeInBack" 
+        ng-controller="signupController">
         <form role="form" accept-charset="UTF-8" autocomplete="off">
           <div class="form-group">
             <label for="input-firstname">First Name
@@ -125,12 +126,45 @@
         </form>
       </div>
 
+      <!-- Login Modal -->
+      <div id="modal-login" class="modal modal-login-container" role="dialog">
+        <div class="modal-dialog">
+          <!-- Login Modal Content -->
+          <div id="login" class="modal-content modal-login-content hide" 
+            ng-controller="loginController">
+            <header class="modal-header text-center"> 
+              <button id="close-login" class="btn close" aria-label="Close" ng-click="reset()">
+                <span class="glyphicon glyphicon-remove" aria-hidden="true"></span>
+              </button>
+              <h1 class="title">Welcome Back!</h1>
+            </header>
+            <div class="main form-container">
+              <form role="form" accept-charset="UTF-8" autocomplete="off">
+                <div class="form-group">
+                  <label for="input-name">Email <span class="alert-danger">{{emailMessage}}</span></label>
+                  <input type="text" class="form-control" id="input-name" placeholder="Email" ng-model="email">
+                </div>
+                <div class="form-group">
+                  <label for="input-password">Password <span class="alert-danger">{{passwordMessage}}</span></label>
+                  <input type="password" class="form-control" id="input-password" placeholder="Password" ng-model="password">
+                </div>
+                <div class="btn-container text-center">
+                  <button type="submit" class="btn btn-primary btn-block btn-submit-form btn-hi-pri " ng-click="attemptLogin(email, password)">Submit</button>
+                </div>
+              </form>
+            </div>
+          </div>
+        </div>
+      </div>
+
     </main>
   </body>
 
-  <!-- Angular scripts -->
+  <!-- Javascript -->
   <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.6.1/angular.min.js"></script>
+  <script type="text/javascript" src="toggleMenu.js"></script>
   <script src="sha1.js"></script>
-  <script src="controllers/sign_up_controller.js"></script>
   <script src="cookies.js"></script>
+  <script src="controllers/sign_up_controller.js"></script>
+  <script src="controllers/log_in_controller.js"></script>
 </html>
