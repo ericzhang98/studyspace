@@ -79,6 +79,7 @@ app.get('/', function(req, res) {
     db.users.findOne({user_id: user_id}, function(err, doc){
       if (doc) {
         userActivityDatabase.child(user_id).child("online").set(true); //set online status
+        console.log("USER ONLINE: " + user_id);
         res.sendFile(VIEW_DIR + "mainRoom.html");
       }
       else {
@@ -500,7 +501,7 @@ app.get("/offline", function(req, res) {
   res.end();
   var user_id = req.signedCookies.user_id;
   if (user_id) {
-    //console.log("OFFLINE: " + user_id);
+    console.log("USER OFFLINE: " + user_id);
     userActivityDatabase.child(user_id).child("online").set(false);
   }
 });
@@ -602,7 +603,7 @@ app.post('/accountlogin', function(req, res) {
 
   var email = req.body.email;
   var password = req.body.password;
-  console.log("get user with email " + email + " and pass " + password);
+  //console.log("get user with email " + email + " and pass " + password);
   db.users.findOne({email: email, password: password}, function (err, doc) {
     if (doc) {
       res.cookie("user_id", doc.user_id, {signed: true, maxAge: COOKIE_TIME});
@@ -829,7 +830,7 @@ function leaveRoom(user_id, room_id, callback) {
   if (callback) {
     callback({success: true}); //assume user succesfully leaves the room
   }
-  console.log("FIREBASE: leaveRoom - Removed user " + user_id + " from room" + room_id);
+  console.log("FIREBASE: leaveRoom - Removed user " + user_id + " from room " + room_id);
   //grab the room's users list and rm the user from it
   roomInfoDatabase.child(room_id).child("users").once("value").then(function(snapshot) {
     if (snapshot.val()) {
@@ -853,7 +854,7 @@ function leaveRoom(user_id, room_id, callback) {
       });
     }
     else {
-      console.log("FIREBASE: ERROR - room no longer exists");
+      console.log("FIREBASE: ERROR - room or user no longer exists");
     }
   });
 
@@ -877,19 +878,18 @@ function bufferTimer(room_id) {
 }
 
 function checkToDelete(room_id) {
-  console.log("FIREBASE: checkToDelete - Checking delete conditions for " + room_id);
+  //console.log("FIREBASE: checkToDelete - Checking delete conditions for " + room_id);
   //query room data to check delete conditions
   roomInfoDatabase.child(room_id).once("value").then(function(snapshot) {
     var room = snapshot.val();
     if (room) {
       if (!room.users) { //no users left
-        console.log("FIREBASE: checkToDelete - No more users left in room " + room_id);
-        console.log("FIREBASE: checkToDelete - Last active: " + room.last_active_time);
+        //console.log("FIREBASE: checkToDelete - No more users left in room " + room_id);
+        //console.log("FIREBASE: checkToDelete - Last active: " + room.last_active_time);
         var now = Date.now();
         if (now - room.last_active_time > MAX_IDLE) {
-          console.log("FIREBASE: checkToDelete - Would be deleting");
+          //console.log("FIREBASE: checkToDelete - Would be deleting");
           if (room.host_id != MAIN_HOST) { //not a main room
-            console.log("FIREBASE: checkToDelete - Attempting to delete room");
             var class_id = room.class_id;
             var firebase_push_id = room.firebase_push_id;
             deleteRoom(room_id, class_id, firebase_push_id);
@@ -1004,12 +1004,12 @@ function processActivity(user_id, activityLog) {
   if (activityLog) {
     //if the user is in a room and hasn't pinged within the last minute, rm them from room
     if (activityLog.lastRoom && Date.now() - activityLog.lastActive > USER_IDLE) {
-      console.log("USER ACTIVITY CHECKER: removing user " + user_id);
+      //console.log("USER ACTIVITY CHECKER: removing user " + user_id);
       leaveRoom(user_id, activityLog.lastRoom);
       userActivityDatabase.child(user_id).child("lastRoom").set(null);
     }
     if (activityLog.online && Date.now() - activityLog.lastActive > USER_IDLE) {
-      console.log("USER ACTIVITY CHECKER: user offline - " + user_id);
+      //console.log("USER ACTIVITY CHECKER: user offline - " + user_id);
       userActivityDatabase.child(user_id).child("online").set(false);
     }
   }

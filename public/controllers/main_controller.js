@@ -1081,10 +1081,10 @@ function($scope, $http, $timeout, $window) {
     databaseRef.child("UserActivity").child(other_user_id).child("online")
       .on("value", function(snapshot) {
         if (snapshot.val()) {
-          console.log("buddy online - " + other_user_id);
+          //console.log("buddy online - " + other_user_id);
         }
         else if ($scope.buddies_status[other_user_id] == true) {
-          console.log("buddy offline - " + other_user_id);
+          //console.log("buddy offline - " + other_user_id);
         }
         $scope.buddies_status[other_user_id] = snapshot.val();
         adjustBuddyList();
@@ -1185,6 +1185,7 @@ function($scope, $http, $timeout, $window) {
 
   var allClassesNameToID = null;
   var temp_class_ids = []; // class id's that are going to be displayed
+  //TODO: ERIC -- change temp_class_ids as $scope model for clealiness?
 
   $scope.refreshAddClass = function() {
     //deep copy so we won't copy over temp changes, also has an extra lounge_id
