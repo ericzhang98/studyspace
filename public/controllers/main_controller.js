@@ -928,7 +928,7 @@ function($scope, $http, $timeout, $window) {
                             "sent_to_name": String(friend_name)};
                 $http.post('/send_buddy_request', data).then(function(response){
                   console.log(response.data);
-                  showAlert('friend-request-alert', false);
+                  showAlert('buddy-request-alert', false);
                 });  
               }
             });
