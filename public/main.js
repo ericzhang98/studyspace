@@ -1,7 +1,7 @@
 /***** General variables **************************/
 var myID = getSignedCookie("user_id");
 var songCommands = ["/raindrop", "/destress", "/420"];
-var otherCommands = ["/gary", "/ord", "/stop"]
+var otherCommands = ["/gary", "/ord", "/stop", "/dank", "/scrub"];
 var secretCommands = songCommands.concat(otherCommands);
 
 var garyisms = ["That's a professionalism deduction.", "Don't touch the bananas, please.",
@@ -127,9 +127,13 @@ function doCommand(command) {
 		return msg;
 	}
 
-	else if (command == '/dank') {
-
+	else if (command == "/dank") {
+    storeCookie("dank", true);
 	}
+  
+  else if (command == "/scrub") {
+    removeCookie("dank");
+  }
 
 	return null;
 }
