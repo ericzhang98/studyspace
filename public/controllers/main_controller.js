@@ -928,6 +928,7 @@ function($scope, $http, $timeout, $window) {
                             "sent_to_name": String(friend_name)};
                 $http.post('/send_buddy_request', data).then(function(response){
                   console.log(response.data);
+                  showAlert('friend-request-alert', false);
                 });  
               }
             });
@@ -1151,6 +1152,7 @@ function($scope, $http, $timeout, $window) {
       onResponseReceived(response.data);
     });
   };
+
   $scope.unblock = function(id){
 
     console.log(id);
@@ -1158,7 +1160,9 @@ function($scope, $http, $timeout, $window) {
       refresh();
     });
   }
+
   refresh();
+
   $scope.blockUser = function(){
     getIdFromName($scope.block_user.name, function(response){
       console.log(response);
@@ -1167,6 +1171,7 @@ function($scope, $http, $timeout, $window) {
         addBlock(response.user_id, response.email, function(response){
           console.log("XX");
           console.log(response);
+          showAlert('block-alert', false);
           refresh();
         });
       }
@@ -1290,7 +1295,7 @@ function($scope, $http, $timeout, $window) {
 
     if (!noChange) {
       console.log('was changed');
-      showAlert("course-change-alert", 4000, false);
+      showAlert("course-change-alert", false);
     }
   }
 
