@@ -5,11 +5,8 @@
 var LOG = "log_in_controller: "
 
 // defining the controller
-angular.module('logInApp', []).controller('LogInCtrl', ['$scope', '$http', function($scope, $http) {
+angular.module('loginApp', []).controller('loginController', ['$scope', '$http', function($scope, $http) {
   console.log(LOG + "started");
-  console.log(getSignedCookie("name"));
-  console.log(getSignedCookie("user_id"));
-  console.log(getSignedCookie("email"));
 
   // - verifyLogin looks for a user with specified info and
   // - calls onResponseReceived when it gets and response

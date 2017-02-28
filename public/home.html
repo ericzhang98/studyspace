@@ -15,8 +15,6 @@
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>
 
-    <!-- Angular -->
-    <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.6.1/angular.min.js"></script>
 
     <!-- For mobile scaling -->
     <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -29,7 +27,8 @@
     <!-- Additional Typefaces -->
     <link href="https://fonts.googleapis.com/css?family=Montserrat:400,500,600,700" rel="stylesheet">
 
-    <!-- javascript files -->
+    <!-- Javascript files -->
+    <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.6.1/angular.min.js"></script>
     <script type="text/javascript" src="toggleMenu.js"></script>
     <script src="sha1.js"></script>
     <script src="cookies.js"></script>
@@ -61,10 +60,11 @@
     </nav>
 
     <!-- Login Modal -->
-    <div id="modal-login" class="modal modal-login-container" ng-app="logInApp" role="dialog">
+    <div id="modal-login" class="modal modal-login-container" ng-app="loginApp" role="dialog">
       <div class="modal-dialog">
         <!-- Login Modal Content -->
-        <div id="login" class="modal-content modal-login-content hide" ng-controller="LogInCtrl">
+        <div id="login" class="modal-content modal-login-content hide" 
+          ng-controller="loginController">
           <header class="modal-header text-center"> 
             <button id="close-login" class="btn close" aria-label="Close" ng-click="reset()">
               <span class="glyphicon glyphicon-remove" aria-hidden="true"></span>

@@ -496,7 +496,7 @@ function($scope, $http, $timeout, $window) {
   $scope.setVolumeListener = function(user_id, stream) {
     var soundMeter = new SoundMeter(window.audioContext);
 
-    if ($scope.volumes[user_id]) {
+    if ($scope.volumes[user_id] != null) {
       console.log('already listening to ' + user_id);
       return;
     }
@@ -521,7 +521,7 @@ function($scope, $http, $timeout, $window) {
         }
 
         soundMeter.loudDetected = false;
-      }, 200);
+      }, 500);
     });
   }
 
