@@ -116,14 +116,12 @@ function($scope, $http, $timeout, $window) {
     setTimeout(function() {
       if ($scope.chatInput) {
         if (!isTyping) {
-          console.log("hi");
           $http.get("/typing/true/" + $scope.currRoomChatID);
           isTyping = true;
         }
       }
       else {
         if (isTyping) {
-          console.log("nope");
           $http.get("/typing/false/" + $scope.currRoomChatID);
           isTyping = false;
         }
@@ -138,7 +136,6 @@ function($scope, $http, $timeout, $window) {
       if (val) {
         currTyping = Object.keys(val);
         updateCurrTyping();
-        console.log(currTyping);
       }
       else {
         currTyping = [];
@@ -590,7 +587,11 @@ function($scope, $http, $timeout, $window) {
     }
     toggleRemoteStreamAudioEnabled(user_id);
   };
-
+  
+  $scope.classmateDropdown = function() {
+    $('.dropdown-toggle').dropdown('toggle');
+  }
+  
   /*********************************************************************/
   /**************************** PULLING DATA ***************************/
 
@@ -1075,6 +1076,8 @@ function($scope, $http, $timeout, $window) {
   function ezSort(a, b) {
     return a.user_two_name.localeCompare(b.user_two_name);
   }
+
+  $scope.isDank = function() {return getCookie("dank");}
 
 
   /*********************************************************************/
