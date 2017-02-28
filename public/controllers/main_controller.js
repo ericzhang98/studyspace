@@ -371,6 +371,17 @@ function($scope, $http, $timeout, $window) {
 
   /*********************************************************************/
 
+  $scope.toggleDropdown = function(user_id) {
+    $("#" + user_id + "_dropdown").click(function(e){
+      e.stopPropagation();
+    });
+    
+    $("#" + user_id + "_dropdown").show();
+
+    /* Clicks within the dropdown won't make
+       it past the dropdown itself */
+  }
+
   /*-------------------------------------------------------------------*/
   /***************************** CLASSES BAR ***************************/
   /*-------------------------------------------------------------------*/

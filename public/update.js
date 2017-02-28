@@ -6,7 +6,7 @@ angular
 
 function autoCompleteController ($scope, $http) {
     // Global Variables
-    var userClasses = []; // list of class_ids of classes user is enrolled in
+    $scope.userClasses = []; // list of class_ids of classes user is enrolled in
     var allClassesNameToID = {}; // name: class_id dictionary for all available classes
 
     // Send requests to populate the two fields above
@@ -25,7 +25,7 @@ function autoCompleteController ($scope, $http) {
 
                 var class_id = allClassesNameToID[className];
                 // Make sure the user isn't already in the class
-                if($.inArray(class_id, userClasses) == -1) {
+                if($.inArray(class_id, $scope.userClasses) == -1) {
                     console.log("ADD " + class_id)
                     addClass(class_id);
                 } else {
@@ -43,7 +43,7 @@ function autoCompleteController ($scope, $http) {
     // adds classID to list of user's classes and updates the UI to reflect this
     function addClass(classID) {
         console.log("adding class with ID " + classID);
-        userClasses.push(classID);
+        $scope.userClasses.push(classID);
         displayClasses();
     }
 
@@ -64,7 +64,7 @@ function autoCompleteController ($scope, $http) {
     function displayClasses() {
         var htmlString = "";
         var classNames = new Array();
-        userClasses.forEach(function(class_id, index) {
+        $scope.userClasses.forEach(function(class_id, index) {
             classNames.push(getNameOfClass(class_id))
         })
         //classNames.sort();
@@ -77,7 +77,7 @@ function autoCompleteController ($scope, $http) {
         // Add a listener to the new html
         $(".school-class").each(function(index, element) {
             $(this).click(function() {
-                removeClass(userClasses[index]);
+                removeClass($scope.userClasses[index]);
             })
         });
     }
@@ -151,11 +151,11 @@ function autoCompleteController ($scope, $http) {
             if (response.class_ids != null) {
 
                 // set userClasses to equal this list
-                userClasses = response.class_ids;
+                $scope.userClasses = response.class_ids;
                 
                 // update the UI
                 displayClasses();
-                console.log(userClasses);
+                console.log($scope.userClasses);
             }
           }
         }
@@ -166,11 +166,11 @@ function autoCompleteController ($scope, $http) {
     }
 
     function removeClass(className) {
-        var index = $.inArray(className, userClasses);
+        var index = $.inArray(className, $scope.userClasses);
         if(index == -1) {
             console.log("Cannot remove class, className " + className + " not found!")
         }
-        userClasses.splice(index, 1);
+        $scope.userClasses.splice(index, 1);
         displayClasses();
     }
 
@@ -230,7 +230,7 @@ function autoCompleteController ($scope, $http) {
     }
 
     function processClasses() {
-        $http.post('/enroll', {class_ids: userClasses});
+        $http.post('/enroll', {class_ids: $scope.userClasses});
     }
 
     function verifyClass(className) {
