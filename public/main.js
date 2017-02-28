@@ -1,8 +1,13 @@
 /***** General variables **************************/
 var myID = getSignedCookie("user_id");
-var songCommands = ["/raindrop", "/destress", "/420"];
-var otherCommands = ["/gary", "/ord", "/stop", "/dank", "/scrub"];
-var secretCommands = songCommands.concat(otherCommands);
+var SONG_COMMANDS = ["/raindrop", "/destress", "/420"];
+var OTHER_COMMANDS = ["/gary", "/ord", "/stop", "/dank", "/scrub"];
+var SONG_VOLUMES = {
+	"/raindrop" : 0.3,
+	"/destress" : 0.3,
+	"/420" : 0.13
+}
+var SECRET_COMMANDS = SONG_COMMANDS.concat(OTHER_COMMANDS);
 
 var garyisms = ["That's a professionalism deduction.", "Don't touch the bananas, please.",
 "Only handle it once.", "This isn't worth my time.", "What does 'DTF' mean?"];
@@ -59,23 +64,23 @@ function showAlert(alert_id, duration, show_only_once = true) {
 function doCommand(command) {
 
 	// if it's a song
-	if (songCommands.indexOf(command) != -1) {
+	if (SONG_COMMANDS.indexOf(command) != -1) {
 
 		if (!currSongAudio) {
 
 			// create a new audio element and make it play automatically
 			var audio = document.createElement('audio');
-			audio.volume = 0.3;
+			audio.volume = SONG_VOLUMES[command];
 			audio.autoplay = true;
 
 			// set the source
-		    audio.src = "/audio/" + command.slice(1);
+	    audio.src = "/audio/" + command.slice(1);
 
-		   	// set the current song audio element
-		    currSongAudio = audio;
-		    
-		    // add audio stream to the page
-		    document.getElementById("myBody").insertBefore(audio, document.getElementById("myDiv"));
+	   	// set the current song audio element
+	    currSongAudio = audio;
+	    
+	    // add audio stream to the page
+	    document.getElementById("myBody").insertBefore(audio, document.getElementById("myDiv"));
 		}
 
 		else {

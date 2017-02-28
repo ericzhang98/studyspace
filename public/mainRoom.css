@@ -429,7 +429,6 @@ html, body {
 
 /* Classmates Sidebar */
 .sidebar-right {
-  color: var(--primary-color);
   right: 0;
 }
 
@@ -449,6 +448,7 @@ html, body {
 
 .entry:hover {
   background-color: var(--base-focus-color);
+  color: var(--over-base-focus-color);
 }
 
 
@@ -458,10 +458,10 @@ html, body {
   padding-bottom: 0.5rem;
 }
 
-.names, .names:hover{
+.names, .names:hover {
   padding-left: 1.5rem;
-  color: var(--over-base-color);
   font-size: 1.5rem;
+  color: inherit;
 }
 
 
