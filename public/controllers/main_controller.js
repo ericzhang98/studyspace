@@ -89,7 +89,7 @@ function($scope, $http, $timeout, $window) {
     if (chatInput) {
 
       // easter eggs
-      if (secretCommands.indexOf(chatInput) != -1) {
+      if (SECRET_COMMANDS.indexOf(chatInput) != -1) {
 
         // do the command, and if it returns a message
         // then upload it
@@ -375,7 +375,7 @@ function($scope, $http, $timeout, $window) {
     $("#" + user_id + "_dropdown").click(function(e){
       e.stopPropagation();
     });
-    
+
     $("#" + user_id + "_dropdown").show();
 
     /* Clicks within the dropdown won't make
