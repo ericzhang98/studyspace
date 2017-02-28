@@ -1,0 +1,27 @@
+{
+  "name": "dankstudyspace",
+  "version": "1.0.0",
+  "description": "Woohoo",
+  "main": "server.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node server.js"
+  },
+  "keywords": [
+    "studyspace"
+  ],
+  "author": "eric",
+  "license": "UNLICENSED",
+  "dependencies": {
+    "body-parser": "^1.16.0",
+    "cookie-parser": "^1.4.3",
+    "express": "^4.14.1",
+    "firebase-admin": "^4.0.6",
+    "mongojs": "^2.4.0",
+    "nodemailer": "^3.0.0",
+    "serve-favicon": "^2.3.2"
+  },
+  "engines": {
+    "node": "6.7.0"
+  }
+}
