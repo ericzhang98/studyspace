@@ -351,12 +351,14 @@ function setOnBeforeUnload(currRoomCallID) {
   // when the window is about to close
   window.onbeforeunload = function(event) {
     // send request to server to tell them we left
-    leaveRoomHard(currRoomCallID);
+    //leaveRoomHard(currRoomCallID);
+    leaveRoom(currRoomCallID);
   };
 }
 
 // makes sure we leave the room
 function leaveRoomHard(currRoomCallID) {
+  console.log(currRoomCallID);
   if (currRoomCallID != null) {
     var xhr = new XMLHttpRequest();
     xhr.open('GET', "/leave_room/" + currRoomCallID, false);

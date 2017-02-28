@@ -70,17 +70,14 @@ var USER_IDLE = 30*1000;
 /* HTTP requests ---------------------------------------------------------*/
 
 
-/************************************ HTML PAGES *************************************/
+/************************************ SERVING CONTENT *************************************/
 
 app.get('/', function(req, res) {
   //check login and decide whether to send login or home
   var user_id = req.signedCookies.user_id;
   if (user_id) {
-    console.log("checking user credentials: " + req.signedCookies.user_id);
     db.users.findOne({user_id: user_id}, function(err, doc){
-      console.log("got info");
       if (doc) {
-        console.log("user logged in");
         userActivityDatabase.child(user_id).child("online").set(true); //set online status
         res.sendFile(VIEW_DIR + "mainRoom.html");
       }
@@ -106,12 +103,12 @@ app.get('/courses', function (req, res) {
   res.sendFile(VIEW_DIR + "update.html");
 });
 
-/*************************************************************************************/
 app.get('/audio/:song_code', function (req, res) {
   var song_code = req.params.song_code;
   res.sendFile('/audio/' + song_code);
 });
 
+/*************************************************************************************/
 
 
 
@@ -133,19 +130,18 @@ app.post('/get_Id_From_Name', function(req, res) {
 app.get('/get_blocked_users', function(req, res) {
 
   db.blocked_users.find({user_id:req.signedCookies.user_id}, function(req, docs){
-    console.log(docs);
+    //console.log(docs);
     res.json(docs);
   });
 });
 
 app.post('/add_blocked_user', function(req, res) {
-  console.log("XX");
   var blocked_id = req.body.blocked_user_id;
   var blocked_email = req.body.blocked_user_email;
   db.blocked_users.createIndex({user_id: 1, blocked_user_id: 1}, {unique:true});
   db.blocked_users.insert({user_id: req.signedCookies.user_id, blocked_user_id:blocked_id, 
                            blocked_user_email:blocked_email}, function(req, docs){
-    console.log(docs);
+    //console.log(docs);
     res.json(docs);
   });
 });
@@ -163,14 +159,13 @@ app.delete('/remove_block/:id', function(req, res){
 // 
 app.post('/buddy_existing_user', function(req, res) {
 
-  console.log(req.body);
   //check if the user is themself
   if(req.body == req.signedCookies.user_id){
     return null;
   }
   //grab other user's data, null if they don't exist
   db.users.findOne({user_id: req.body.other_user_id}, function(err, docs){
-    console.log(docs);
+    //console.log(docs);
     res.json(docs);
   });	
 
@@ -178,14 +173,14 @@ app.post('/buddy_existing_user', function(req, res) {
 
 app.post('/buddy_existing_request', function(req, res) {
 
-  console.log(req.body.friend_id);
+  //console.log(req.body.friend_id);
   var user_id = req.signedCookies.user_id;
   var friend_id = req.body.friend_id;
   db.user_buddy_requests.find(
     {$or:[{sent_from_id:user_id, sent_to_id:friend_id},
           {sent_from_id:friend_id, sent_to_id:user_id}]},
     function(err, docs){
-      console.log(docs);
+      //console.log(docs);
       res.json(docs);
     });	
 
@@ -193,7 +188,7 @@ app.post('/buddy_existing_request', function(req, res) {
 
 app.post('/buddies_already', function(req, res) {
 
-  console.log("Friendship check");
+  //console.log("Friendship check");
   var user_id = req.signedCookies.user_id;
   var friend_id = req.body.friend_id;
   var friend_name = req.body.friend_name;
@@ -238,9 +233,8 @@ app.post('/send_buddy_request', function(req, res) {
 });
 
 app.post('/get_my_buddy_requests', function(req, res) {
-  console.log("get_my_buddy_requests")
   db.user_buddy_requests.find({sent_to_id: req.signedCookies.user_id}, function(err, docs){
-    console.log(docs);
+    //console.log(docs);
     res.json(docs);
   });	
 
@@ -302,7 +296,7 @@ app.delete('/remove_buddy/:id', function(req, res){
 // forces the name property to be unique in user_classes collection
 //db.user_classes.createIndex({name: 1}, {unique:true});
 app.post('/user_classes', function(req, res) {
-  console.log(req.body);
+  //console.log(req.body);
   var get_user_id = req.signedCookies.user_id;
   db.user_classes.createIndex({name: 1, user_id: 1}, {unique:true}); //BUG: NEEDS FIX
   db.user_classes.insert({name:req.body.name, user_id:get_user_id}, function(err, docs){
@@ -424,8 +418,9 @@ app.get('/join_room/:room_id/', function(req, res) {
 app.get('/leave_room/:room_id/', function(req, res) {
   var user_id = req.signedCookies.user_id;
   if (user_id) {
+    res.send({success: true}); //assume user leaves, fast for windowunload
     var room_id = req.params.room_id;
-    leaveRoom(user_id, room_id, function(success){res.send(success);});
+    leaveRoom(user_id, room_id);
   }
   else {
     res.send({error: "invalid_user_id"});
@@ -478,11 +473,11 @@ app.get('/get_user/:user_id/', function(req, res) {
   var user = req.params.user_id;
   db.users.findOne({user_id: user}, function(err, doc) {
     if (doc) {
-      console.log("Sending user object for user: " + user);
+      //console.log("Sending user object for user: " + user);
       res.json({name: doc.name, user_id: doc.user_id}); 
     }
     else {
-      console.log("User with id: " + user_id + " could not be found.");
+      //console.log("User with id: " + user_id + " could not be found.");
       res.json({success: false})
     }
   });
@@ -492,10 +487,12 @@ app.get("/ping", function(req, res) {
   res.end();
   var user_id = req.signedCookies.user_id;
   if (user_id) {
-    console.log("PING: " + user_id);
+    //console.log("PING: " + user_id);
     userActivityDatabase.child(user_id).child("lastActive").set(Date.now()); 
     userActivityDatabase.child(user_id).child("online").set(true);
-    firebaseRoot.child("zLookup").child(user_id).set(req.signedCookies.name);
+    if (req.signedCookies.name) {
+      firebaseRoot.child("zLookup").child(user_id).set(req.signedCookies.name);
+    }
   }
 });
 
@@ -503,7 +500,7 @@ app.get("/offline", function(req, res) {
   res.end();
   var user_id = req.signedCookies.user_id;
   if (user_id) {
-    console.log("OFFLINE: " + user_id);
+    //console.log("OFFLINE: " + user_id);
     userActivityDatabase.child(user_id).child("online").set(false);
   }
 });
@@ -624,7 +621,7 @@ app.post('/accountlogin', function(req, res) {
 app.post('/enroll', function (req, res) {
   var user_id = req.signedCookies.user_id;
   var class_ids = req.body.class_ids;
-  console.log("enrolling user with id " + user_id + " in " + class_ids);
+  //console.log("enrolling user with id " + user_id + " in " + class_ids);
   db.users.update({user_id: user_id},
                   {$set: {class_ids: class_ids}}, function (err, doc) {
     res.send({success: doc != null});

@@ -49,7 +49,7 @@ function autoCompleteController ($scope, $http) {
 
     // return to main
     function cancelChanges() {
-        document.location.href = "/";
+        window.location.href = "/";
     }
 
     // filter function for search query
