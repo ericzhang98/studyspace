@@ -1,6 +1,6 @@
 /***** General variables **************************/
 var myID = getSignedCookie("user_id");
-var songCommands = ["/raindrop", "/destress"];
+var songCommands = ["/raindrop", "/destress", "/420"];
 var otherCommands = ["/gary", "/ord", "/stop"]
 var secretCommands = songCommands.concat(otherCommands);
 
