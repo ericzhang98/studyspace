@@ -150,7 +150,7 @@
               <span ng-cloak class="room-name">
                 {{buddy.user_two_name}} 
                 <span ng-if="messageNotifications[buddy.user_two_id] > 0">
-                | {{messageNotifications[buddy.user_two_id]}}
+                | {{messageNotifications[buddy.user_two_id]}} unread
                 </span>
                 <span ng-if="buddies_status[buddy.user_two_id]"
                   style="float:right"> ༼つ◕_◕༽つ </span>
@@ -247,7 +247,7 @@
                       <span ng-class="muteBtnClass"></span>
                     </button>
                   </span>
-                  <input ng-cloak type="text" class="form-control input-message" id="chatInputBox" 
+                  <input maxlength="200" ng-cloak type="text" class="form-control input-message" id="chatInputBox" 
                          ng-model="chatInput" placeholder="Type a message..."
                          autocomplete="off" ng-keydown="keypress($event)">
                 </div>
@@ -401,7 +401,7 @@
 
               <!-- Current courses -->
               <div class="classes-container">
-                <h4 class="title" style="margin-bottom: 5px;">Current classes</h4><p style="font-size: 1rem; margin-bottom: 15px;">(click to remove)</p>
+                <h4 class="title" style="margin-bottom: 20px;">Current classes</h4>
                 <span class="classes" ng-repeat="class in tempClasses">
                   <button class="btn btn-cancel"
                     ng-click="removeClass(class.class_id)">
@@ -409,6 +409,7 @@
                     <!--<span class="glyphicon glyphicon-remove" aria-hidden="true"></span>-->
                   </button>
                 </span>
+                <p style="font-size: 1rem; margin-top: 15px;">(click to remove)</p>
                 <br>
                 <button class="btn btn-hi-pri save-btn" style="margin-top: 30px; width: 30%" ng-click="saveChanges()" style="margin-bottom: 20px">Save</button>
               </div>

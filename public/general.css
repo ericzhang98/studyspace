@@ -81,8 +81,7 @@ a:hover {
 }
 
 .navbar-site .nav-link:hover {
-  background: white;
-  color: #aaaaaa;
+  color: var(--base-color);
 }
 
 .navbar-site .navbar-brand {
@@ -367,6 +366,9 @@ a:hover {
 .base-back {
   background-color: var(--base-color);
 }
+.base-two-back {
+  background-color: var(--base-two-color);
+}
 
 .prim-text {
   color: var(--primary-color);
@@ -429,15 +431,15 @@ prim {
 
 .btn-hi-pri {
   color: #ffffff;
-  background-color: var(--primary-color);
-}
-
-.btn-hi-pri:hover {
   background-color: var(--primary-dark-color);
 }
 
-.btn-hi-pri:focus {
+.btn-hi-pri:hover {
   background-color: var(--primary-color);
+}
+
+.btn-hi-pri:focus {
+  background-color: var(--primary-dark-color);
 }
 
 .btn-low-key {
