@@ -11,8 +11,8 @@ var USER_PING_PERIOD = 15*1000;
 
 /* Main controller -------------------------------------*/
 
-myApp.controller("MainController", ["$scope", "$http", "$timeout",
-function($scope, $http, $timeout) {
+myApp.controller("MainController", ["$scope", "$http", "$timeout", "$window",
+function($scope, $http, $timeout, $window) {
   console.log("Hell yeah");
 
   // general vars
@@ -37,6 +37,15 @@ function($scope, $http, $timeout) {
 
   // Join a room's chat
   function joinRoomChat(room_id) {
+
+    //leave old room
+    if ($scope.currRoomChatID) {
+      //temp
+      isTyping = false;
+      var temp = new XMLHttpRequest();
+      temp.open("GET", "/typing/false/" + $scope.currRoomChatID, true);
+      temp.send();
+    }
 
     if ($scope.currRoomChatID != room_id) {
       $scope.currRoomChatID = room_id;
@@ -383,6 +392,15 @@ function($scope, $http, $timeout) {
   // Initial call to pull data for user / classes / rooms
   getClasses();
 
+  // Grab initial notifictions and start a listener for updates
+  startMessageNotifications();
+
+  //setup activity ping
+  //the client can mess around with this, we need to handle kicking the
+  //client somehow if they stop pinging, it's fine if they can still
+  //listen in on data, but other users must always be aware of prescence
+  pingUserActivity(true);
+
   /*********************************************************************/
   /*************************** ROOM INTERACTION ************************/
 
@@ -470,14 +488,6 @@ function($scope, $http, $timeout) {
 
       // open up the sidebar panel with this new room
       adjustSidebarToggle(class_id);
-
-      //setup activity ping
-      //the client can mess around with this, we need to handle kicking the
-      //client somehow if they stop pinging, it's fine if they can still
-      //listen in on data, but other users must always be aware of prescence
-      if (!currPing) {
-        pingUserActivity(true);
-      }
     }
 
     // join this room's chat
@@ -515,14 +525,26 @@ function($scope, $http, $timeout) {
   $scope.leaveRoom = function() {
 
     leaveRoom($scope.currRoomCallID);
-
     $scope.currRoomCallID = null;
-    $scope.currRoomChatID = null;
+
+    joinRoomChat(null); //leave chat room
   }
 
   $scope.leaveDM = function() {
-    joinRoomChat($scope.currRoomCallID);
+    joinRoomChat($scope.currRoomCallID); //join or leave chat room
   }
+
+  $window.onbeforeunload = function() {
+    //in order to leave DM on window close
+    var temp = new XMLHttpRequest();
+    temp.open("GET", "/typing/false/" + $scope.currRoomChatID, true);
+    temp.send();
+
+    //send offline ping
+    var xhr = new XMLHttpRequest();
+    xhr.open("GET", "/offline", true);
+    xhr.send();
+  };
 
   function pingUserActivity(constant) {
     var xhr = new XMLHttpRequest();
@@ -828,55 +850,14 @@ function($scope, $http, $timeout) {
   // updates the buddy requests list
   getBuddyRequests(function(response){ 
     $scope.buddies_list = response; 
-    console.log($scope.buddies_list);
   });
 
   // gets the users added buddies
   getBuddies(function(response){ 
     $scope.added_buddies_list = response;
-    for (var i = 0; i < $scope.added_buddies_list.length; i++) {
-      console.log("BUDDY NAME: " + $scope.added_buddies_list[i].user_two_name);
-    }
+    $scope.added_buddies_list.sort(ezSort);
+    setupOnlineNotifications();
   });
-
-  startMessageNotifications();
-  function startMessageNotifications() {
-    //grab all notifs on load
-    $scope.messageNotifications = {};
-    //TODO: fix some niche bug where notification isn't updated on buddy accept
-    if (getSignedCookie("user_id")) {
-      databaseRef.child("Notifications").child(getSignedCookie("user_id"))
-        .child("MessageNotifications").once("value", function(snapshot) {
-          var snapshotValue = snapshot.val();
-          if (snapshotValue) {
-            //setup message notifications dictionary
-            var keys = Object.keys(snapshotValue);
-            for (var i = 0; i < keys.length; i++) {
-              $scope.messageNotifications[keys[i]] = snapshotValue[keys[i]];
-            }
-            safeApply();
-          }
-
-          //continuous listener for updates
-          databaseRef.child("Notifications").child(getSignedCookie("user_id"))
-            .child("MessageNotifications").on("child_changed", function(snapshot) {
-              var numMessages = snapshot.val();
-              if (numMessages) {
-                if ($scope.getDMID(snapshot.key) != $scope.currRoomChatID) {
-                  //update msg notifications property if not in current chat
-                  $scope.messageNotifications[snapshot.key] = numMessages
-                  safeApply();
-                }
-                else {
-                  //tell server to set msg notif to zero since we already in DM
-                  $http.get("/clear_message_notifications/" + snapshot.key);
-                  $scope.messageNotifications[snapshot.key] = 0;
-                }
-              }
-          });
-      });
-    }
-  }
 
   // functionality for sending a buddy request
   $scope.sendRequest = function(other_user_id){
@@ -1004,6 +985,91 @@ function($scope, $http, $timeout) {
       }
     }
   }
+
+
+  //Message notifications
+  function startMessageNotifications() {
+    //grab all notifs on load
+    $scope.messageNotifications = {};
+    //TODO: test notifications on new buddy accept
+    if (getSignedCookie("user_id")) {
+      databaseRef.child("Notifications").child(getSignedCookie("user_id"))
+        .child("MessageNotifications").once("value", function(snapshot) {
+          var snapshotValue = snapshot.val();
+          if (snapshotValue) {
+            //setup message notifications dictionary
+            var keys = Object.keys(snapshotValue);
+            for (var i = 0; i < keys.length; i++) {
+              $scope.messageNotifications[keys[i]] = snapshotValue[keys[i]];
+            }
+            safeApply();
+          }
+
+          //continuous listener for updates
+          databaseRef.child("Notifications").child(getSignedCookie("user_id"))
+            .child("MessageNotifications").on("child_changed", function(snapshot) {
+              var numMessages = snapshot.val();
+              if (numMessages) {
+                if ($scope.getDMID(snapshot.key) != $scope.currRoomChatID) {
+                  //update msg notifications property if not in current chat
+                  $scope.messageNotifications[snapshot.key] = numMessages
+                  safeApply();
+                }
+                else {
+                  //tell server to set msg notif to zero since we already in DM
+                  $http.get("/clear_message_notifications/" + snapshot.key);
+                  $scope.messageNotifications[snapshot.key] = 0;
+                }
+              }
+          });
+      });
+    }
+  }
+
+  //Check online buddies
+  function setupOnlineNotifications() {
+    $scope.buddies_status= {};
+    var lastOnline = {};
+    for (var i = 0; i < $scope.added_buddies_list.length; i++) {
+      var other_user_id = $scope.added_buddies_list[i].user_two_id;
+      startOnlineListener(other_user_id);
+    }
+  }
+
+  function startOnlineListener(other_user_id) {
+    databaseRef.child("UserActivity").child(other_user_id).child("online")
+      .on("value", function(snapshot) {
+        if (snapshot.val()) {
+          console.log("buddy online - " + other_user_id);
+        }
+        else if ($scope.buddies_status[other_user_id] == true) {
+          console.log("buddy offline - " + other_user_id);
+        }
+        $scope.buddies_status[other_user_id] = snapshot.val();
+        adjustBuddyList();
+        safeApply();
+    });
+  }
+
+  function adjustBuddyList() {
+    buddies_online = [];
+    buddies_offline = [];
+    for (var i = 0; i < $scope.added_buddies_list.length; i++) {
+      if ($scope.buddies_status[$scope.added_buddies_list[i].user_two_id]) {
+        buddies_online.push($scope.added_buddies_list[i]);
+      }
+      else {
+        buddies_offline.push($scope.added_buddies_list[i]);
+      }
+    }
+    //buddies_online.sort(ezSort);
+    //buddies_offline.sort(ezSort);
+    $scope.added_buddies_list = buddies_online.concat(buddies_offline);
+  }
+  function ezSort(a, b) {
+    return a.user_two_name.localeCompare(b.user_two_name);
+  }
+
 
   /*********************************************************************/
   /**************************** BLOCK SYSTEM ***************************/
@@ -1227,24 +1293,6 @@ function($scope, $http, $timeout) {
     for (var name in allClassesNameToID) {
       if (allClassesNameToID[name] == class_id) {
         return name;
-      }
-    }
-  }
-
-  function safeApply(func) {
-    var phase = $scope.$root.$$phase;
-    if (phase != "$apply" && phase != "$digest") {
-      if (func && (typeof(func) == "function")) {
-        $scope.$apply(func);
-      }
-      else {
-        $scope.$apply();
-      }
-    }
-    else {
-      console.log("Already applying");
-      if (func && (typeof(func) == "function")) {
-        func();
       }
     }
   }

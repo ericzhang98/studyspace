@@ -265,11 +265,6 @@ function leaveRoom(currRoomCallID) {
   if (currRoomCallID != null) {
     console.log("leaving room with id " + currRoomCallID);
 
-    //temp
-    var temp = new XMLHttpRequest();
-    temp.open("GET", "/typing/false/" + currRoomCallID, true);
-    temp.send();
-
     // leave our calls
     leaveCalls();
 

@@ -81,6 +81,7 @@ app.get('/', function(req, res) {
       console.log("got info");
       if (doc) {
         console.log("user logged in");
+        userActivityDatabase.child(user_id).child("online").set(true); //set online status
         res.sendFile(VIEW_DIR + "mainRoom.html");
       }
       else {
@@ -460,7 +461,7 @@ app.post("/send_room_message", function(req, res) {
     }
   }
 
-  res.send({}); //close the http request
+  res.end(); //close the http request
 });
 
 app.get("/clear_message_notifications/:other_user_id", function(req, res) {
@@ -488,12 +489,22 @@ app.get('/get_user/:user_id/', function(req, res) {
 });
 
 app.get("/ping", function(req, res) {
-  res.send({});
+  res.end();
   var user_id = req.signedCookies.user_id;
   if (user_id) {
     console.log("PING: " + user_id);
     userActivityDatabase.child(user_id).child("lastActive").set(Date.now()); 
+    userActivityDatabase.child(user_id).child("online").set(true);
     firebaseRoot.child("zLookup").child(user_id).set(req.signedCookies.name);
+  }
+});
+
+app.get("/offline", function(req, res) {
+  res.end();
+  var user_id = req.signedCookies.user_id;
+  if (user_id) {
+    console.log("OFFLINE: " + user_id);
+    userActivityDatabase.child(user_id).child("online").set(false);
   }
 });
 
@@ -503,15 +514,9 @@ app.get("/typing/:is_typing/:room_id", function(req, res) {
     var typing = req.params.is_typing == "true";
     var room_id = req.params.room_id;
     if (typing) {
-      //firebaseRoot.child("RoomTyping").child(room_id).push().set(req.signedCookies.user_id);
       firebaseRoot.child("RoomTyping").child(room_id).child(req.signedCookies.user_id).set(true);
     }
     else {
-      /*
-      firebaseRoot.child("RoomTyping").child(room_id).orderByValue().equalTo(req.signedCookies.user_id)
-      .once("child_added", function(snapshot) {
-        snapshot.ref.remove();
-      });*/
       firebaseRoot.child("RoomTyping").child(room_id).child(req.signedCookies.user_id).remove();
     }
   }
@@ -857,7 +862,6 @@ function leaveRoom(user_id, room_id, callback) {
 
   //rm the typing lol
   firebaseRoot.child("RoomTyping").child(room_id).child(user_id).remove();
-  
 }
 
 function bufferTimer(room_id) {
@@ -989,7 +993,7 @@ function checkLogin(_id, callback) {
 
 function userActivityChecker() {
   userActivityDatabase.once("value").then(function(snapshot) {
-    console.log("USER ACTIVITY CHECKER: checking activity of all users");
+    //console.log("USER ACTIVITY CHECKER: checking activity of all users");
     snapshot.forEach(function(childSnapshot) {
       var user_id = childSnapshot.key;
       var activityLog = childSnapshot.val();
@@ -1006,6 +1010,10 @@ function processActivity(user_id, activityLog) {
       console.log("USER ACTIVITY CHECKER: removing user " + user_id);
       leaveRoom(user_id, activityLog.lastRoom);
       userActivityDatabase.child(user_id).child("lastRoom").set(null);
+    }
+    if (activityLog.online && Date.now() - activityLog.lastActive > USER_IDLE) {
+      console.log("USER ACTIVITY CHECKER: user offline - " + user_id);
+      userActivityDatabase.child(user_id).child("online").set(false);
     }
   }
 }

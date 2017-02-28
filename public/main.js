@@ -40,6 +40,11 @@ function logOut() {
 	// leave current room
 	leaveRoomHard();
 
+  //send offline ping
+  var xhr = new XMLHttpRequest();
+  xhr.open("GET", "/offline", true);
+  xhr.send();
+
 	// erase cookies
 	removeCookie("user_id");
 	removeCookie("email");
