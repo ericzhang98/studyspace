@@ -508,7 +508,7 @@ function($scope, $http, $timeout, $window) {
       setInterval(function() {
     
         if (soundMeter.loudDetected != soundMeter.loud) {
-          console.log("changing volume to " + soundMeter.loudDetected);
+          //console.log("changing volume to " + soundMeter.loudDetected);
           soundMeter.loud = soundMeter.loudDetected;
           $scope.$apply();
         }

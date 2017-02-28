@@ -315,35 +315,35 @@
           <h4 ng-cloak ng-if="currRoomChatID ? rooms[currRoomChatID].is_lecture : false" ng-hide="rooms[currRoomChatID].class_id == 'dm_class_id'" class="studymates over-base-text" style="margin-top:2rem"><acc>{{rooms[currRoomChatID].name}}</acc></h4>
 
           <h4 ng-cloak ng-if="currRoomChatID ? !rooms[currRoomChatID].is_lecture : false" ng-hide="rooms[currRoomChatID].class_id == 'dm_class_id'" class="studymates over-base-text" style="margin-top:2rem"><prim>{{rooms[currRoomChatID].name}}</prim></h4>
-
-          <div class="studymates entry" ng-repeat="user_id in rooms[currRoomChatID].users" ng-cloak>
-            
-            <div class="item">
-              <div ng-if="user_id == myID" class="container-user-icon-small {{volumes[user_id].loud ? 'loud-prim' : ''}} over-base-text prim-back">
-                <span ng-cloak>{{users[user_id].name | limitTo:1}}</span>
-              </div>
-              <div ng-if="user_id != myID"class="container-user-icon-small {{volumes[user_id].loud ? 'loud-acc' : ''}} over-base-text acc-back">
-                <span ng-cloak>{{users[user_id].name | limitTo:1}}</span>
-              </div>
-              
+            <div class="studymates entry dropdown-toggle" ng-repeat="user_id in rooms[currRoomChatID].users" ng-cloak>
               <div class="dropdown">
-                <!-- Dropdown for non-me users -->
-                <a ng-if="user_id != myID" class="names dropdown-toggle" data-toggle="dropdown">{{users[user_id].name}}</a>
+                <div class="item">
 
-                <ul ng-if="user_id != myID" class="dropdown-menu">
-                  <li><a ng-click="toggleUserAudio(chatMessage.user_id)">{{muted_user_ids.indexOf(chatMessage.user_id) == -1 ? 'Mute' : 'Unmute'}}</a></li>
-                  <li><a>Block</a></li>
-                  <li><a ng-click="sendRequest(chatMessage.user_id)">{{isFriendsWith(chatMessage.user_id) ? 'Unfriend' : 'Friend'}}</a></li>
-                </ul>
-                
-                <!-- No dropdown if user is me -->
-                <a ng-if="user_id == myID" class="names">{{users[user_id].name}}</a>
+                  <div ng-if="user_id == myID" class="container-user-icon-small dropdown-toggle {{volumes[user_id].loud ? 'loud-prim' : ''}} over-base-text prim-back" data-toggle="dropdown">
+                    <span ng-cloak>{{users[user_id].name | limitTo:1}}</span>
+                  </div>
+
+                  <div ng-if="user_id != myID" class="container-user-icon-small dropdown-toggle {{volumes[user_id].loud ? 'loud-acc' : ''}} over-base-text acc-back" data-toggle="dropdown">
+                    <span ng-cloak>{{users[user_id].name | limitTo:1}}</span>
+                  </div>
+                  
+                  <!-- Dropdown for non-me users -->
+                  <a ng-if="user_id != myID" class="names">{{users[user_id].name}}</a>
+
+                  <ul ng-if="user_id != myID" class="dropdown-menu">
+                    <li><a ng-click="toggleUserAudio(user_id)">{{muted_user_ids.indexOf(user_id) == -1 ? 'Mute' : 'Unmute'}}</a></li>
+                    <li><a>Block</a></li>
+                    <li><a ng-click="sendRequest(user_id)">{{isFriendsWith(user_id) ? 'Unfriend' : 'Friend'}}</a></li>
+                  </ul>
+                  
+                  <!-- No dropdown if user is me -->
+                  <a ng-if="user_id == myID" class="names">{{users[user_id].name}}</a>
+
+                </div>
 
               </div>
-                            
-            </div>
-          </div>
 
+            </div>
           
 
 
