@@ -19,6 +19,7 @@ main {
   padding-top: 5rem;
   padding-bottom: 5rem;
   background: #ecf0f1;
+  height: calc(100vh - 10rem);
 }
 
 .jumbotron-splash .container {
