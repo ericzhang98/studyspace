@@ -309,16 +309,19 @@
           <span ng-cloak>{{currTyping}}</span>
           <br>-->
 
-          <h4 ng-cloak ng-if="currRoomChatID ? rooms[currRoomChatID].is_lecture : false" ng-hide="rooms[currRoomChatID].class_id == 'dm_class_id'" class="studymates over-base-text" style="margin-top:2rem">In <acc>{{rooms[currRoomChatID].name}}</acc></h4>
+          <h4 ng-cloak ng-if="currRoomChatID ? rooms[currRoomChatID].is_lecture : false" ng-hide="rooms[currRoomChatID].class_id == 'dm_class_id'" class="studymates over-base-text" style="margin-top:2rem"><acc>{{rooms[currRoomChatID].name}}</acc></h4>
 
-          <h4 ng-cloak ng-if="currRoomChatID ? !rooms[currRoomChatID].is_lecture : false" ng-hide="rooms[currRoomChatID].class_id == 'dm_class_id'" class="studymates over-base-text" style="margin-top:2rem">In <prim>{{rooms[currRoomChatID].name}}</prim></h4>
+          <h4 ng-cloak ng-if="currRoomChatID ? !rooms[currRoomChatID].is_lecture : false" ng-hide="rooms[currRoomChatID].class_id == 'dm_class_id'" class="studymates over-base-text" style="margin-top:2rem"><prim>{{rooms[currRoomChatID].name}}</prim></h4>
 
           <div class="studymates entry" ng-repeat="user_id in rooms[currRoomChatID].users" ng-cloak>
             <div class="item">
-              <div class="container-user-icon over-base-text {{user_id != myID ? 'acc-back' : 'prim-back'}}">
+              <div ng-if="user_id == myID" class="container-user-icon-small {{volumes[user_id] ? 'loud-prim' : ''}} over-base-text prim-back">
                 <span ng-cloak>{{users[user_id].name | limitTo:1}}</span>
               </div>
-              <div class="names {{volumes[user_id] ? 'prim-text' : 'over-base-text'}}">{{users[user_id].name}}</div>
+              <div ng-if="user_id != myID"class="container-user-icon-small {{volumes[user_id] ? 'loud-acc' : ''}} over-base-text acc-back">
+                <span ng-cloak>{{users[user_id].name | limitTo:1}}</span>
+              </div>
+              <div class="names">{{users[user_id].name}}</div>
             </div>
           </div>
 

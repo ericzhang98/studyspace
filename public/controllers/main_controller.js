@@ -508,7 +508,7 @@ function($scope, $http, $timeout) {
         }
 
         soundMeter.loudDetected = false;
-      }, 700);
+      }, 200);
     });
   }
 

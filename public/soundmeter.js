@@ -43,7 +43,7 @@ function SoundMeter(context) {
 
     that.instant = Math.sqrt(sum / input.length);
 
-    if (that.instant.toFixed(2) > 0.00) {
+    if (that.instant.toFixed(3) > 0.03) {
       that.loudDetected = true;
     }
   };
