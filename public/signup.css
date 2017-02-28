@@ -1,5 +1,11 @@
 /* signup.css */
 
+:root {
+  --primary-color: #38c9ff;
+  --primary-dark-color: #00b9ff;
+  --accent-color: #ffbb00;
+}
+
 /* General */
 body {
   background: #ecf0f1;
@@ -25,8 +31,7 @@ main.container {
 }
 
 .navbar-site .nav-link:hover {
-  background-color: #333333;
-  color: white;
+  color: black;
 }
 
 /* Sign Up Title */

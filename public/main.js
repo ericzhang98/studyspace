@@ -127,6 +127,10 @@ function doCommand(command) {
 		return msg;
 	}
 
+	else if (command == '/dank') {
+
+	}
+
 	return null;
 }
 
