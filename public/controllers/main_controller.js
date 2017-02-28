@@ -22,12 +22,38 @@ function($scope, $http, $timeout, $window) {
 
   $scope.myName = getSignedCookie("name");
 
+
+  /*************************** ACCOUNT MANAGEMENT *********************/
+  $scope.logout = function() {
+    // leave current room
+    leaveRoom($scope.currRoomCallID);
+
+    //send offline ping
+    var xhr = new XMLHttpRequest();
+    xhr.open("GET", "/offline", true);
+    xhr.send();
+
+    // erase cookies
+    removeCookie("user_id");
+    removeCookie("email");
+    removeCookie("name");
+
+    // go to home
+    window.onbeforeunload = null;
+    window.location.href = "/";
+  }
+  
+  $scope.manageAccount = function() {
+    window.location.href = "/courses";
+  }
+
   /*-------------------------------------------------------------------*/
   /****************************** CHAT ROOM ****************************/
   /*-------------------------------------------------------------------*/
 
   var div = document.getElementById("chat-message-pane");
   var chatInputBox = document.getElementById("chatInputBox");
+  var animation = document.getElementById("loading");
   var lastKey = null;
   var scrollLock = false;
   var currTyping = [];
@@ -294,7 +320,7 @@ function($scope, $http, $timeout, $window) {
     if (lastKey) {
       console.log("see more");
       //show loading UI element
-      document.getElementById("loading").removeAttribute("hidden");
+      animation.removeAttribute("hidden");
       scrollLock = true; //prevent any more seeMoreMessages calls until current finishes
       var messagesSoFar = chatMessageList.length;
       var messagesToAdd = 50;
@@ -332,7 +358,7 @@ function($scope, $http, $timeout, $window) {
           div.scrollTop = previousPosition + (div.scrollHeight - previousHeight);
           scrollLock = false;
           //hide loading UI element
-          document.getElementById("loading").setAttribute("hidden", null);
+          animation.setAttribute("hidden", null);
           //});
           //}, 20);
         }

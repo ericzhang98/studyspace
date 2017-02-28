@@ -33,10 +33,9 @@ angular.module('loginApp', []).controller('loginController', ['$scope', '$http',
         if (user != null) {
           if (user.active) { 
             console.log(LOG + "login succeeded");
-            console.log(document.location.href);
             $scope.emailMessage = "";
             $scope.passwordMessage = "";
-            document.location.href = "/";
+            window.location.href = "/";
           }
           else {
             console.log(LOG + "need to verify account, verify email");

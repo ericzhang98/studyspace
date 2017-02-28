@@ -74,7 +74,7 @@ function($scope, $http) {
     $http.post("/accountsignup", newUser).then(function(res) {
       if (res.data.success) {
         console.log("Create success!");
-        document.location.href = "/";
+        window.location.href = "/";
       }
 
       else {
