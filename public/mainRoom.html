@@ -146,7 +146,7 @@
 
           <!-- OLD FRIENDS -->
           <div>
-            <li class="list-group-item buddy-panel {{ messageNotifications[buddy.user_two_id] > 0 ? 'acc-text base-back bold-text' : 'over-base-text ' + (currRoomChatID == getDMID(buddy.user_two_id) ? 'prim-dark-back' : 'base-back')}}" ng-repeat="buddy in added_buddies_list" ng-click="openDM(buddy.user_two_id, buddy.user_two_name)">
+            <li class="list-group-item buddy-panel {{ messageNotifications[buddy.user_two_id] > 0 ? 'acc-text base-back bold-text' : 'over-base-text ' + (currRoomChatID == getDMID(buddy.user_two_id) ? 'prim-back' : 'base-back')}}" ng-repeat="buddy in added_buddies_list" ng-click="openDM(buddy.user_two_id, buddy.user_two_name)">
 
               <span class="{{buddies_status[buddy.user_two_id] ? (currRoomChatID == getDMID(buddy.user_two_id) ? 'white-text' : 'online-text') : 'invis-text'}}"
                 style="text-align: center; vertical-align: middle; margin-right: 3px;">◕</span>
