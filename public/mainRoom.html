@@ -61,7 +61,7 @@
                 <span ng-cloak>{{myName | limitTo:1}}</span>
               </div>
               
-              <span class="user-name prim-text" ng-cloak>{{myName}}</span>
+              <span class="user-name prim-text" ng-cloak>{{myName.split(" ")[0] + " " + myName.split(" ")[1][0] + "."}}</span>
 
               <button class="btn btn-sm btn-low-key" style="position:absolute; right:16px" onclick="setMode()"> </button>
             </div>
@@ -466,7 +466,15 @@
       </div>
       <div id="no-permissions-alert" class="alert fade in text-center" hidden>
         <a class="close" data-dismiss="alert">×</a>
-        <span>We don't have mic permissions :(<span>
+        <span>Your mic permissions have not been set.<span>
+      </div>
+      <div id="friend-request-alert" class="alert fade in text-center" hidden>
+        <a class="close" data-dismiss="alert">×</a>
+        <span>Friend request sent.<span>
+      </div>
+      <div id="block-alert" class="alert fade in text-center" hidden>
+        <a class="close" data-dismiss="alert">×</a>
+        <span>User blocked. They can't hear you, and you can't hear them.<span>
       </div>
     </div>
 

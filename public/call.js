@@ -27,7 +27,7 @@ function getVoice(callback) {
   navigator.getUserMedia({video: false, audio: true}, function(stream) {
     myStream = stream;
     angular.element(document.getElementById('myBody')).scope().setVolumeListener(myID, myStream);
-    showAlert("voice-connect-alert", 3000);
+    showAlert("voice-connect-alert", 'short');
     if (callback) {
       callback();
     }
@@ -217,7 +217,7 @@ function joinRoomCall(currRoomCallID) {
       isLecturer = (response.is_lecture && response.host_id == myID);
 
       if (response.is_lecture) {
-        showAlert("lecture-alert", 4000);
+        showAlert("lecture-alert");
       }
 
       // if this is a lecture-style room and I am not the lecturer,
@@ -237,7 +237,7 @@ function joinRoomCall(currRoomCallID) {
         //show alert if no audio permissions
         if (myStream == null) {
           console.log("GIVE MIC PERMISSIONS PLZ");
-          showAlert("no-permissions-alert", 4000, false);
+          showAlert("no-permissions-alert", false);
         }
 
         // by default, unmute me

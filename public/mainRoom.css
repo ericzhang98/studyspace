@@ -271,11 +271,11 @@ html, body {
 }
 
 .loud-prim {
-  box-shadow: 0 0 0 3px var(--primary-dark-color), 0 0 0 0px #888;
+  box-shadow: 0 0 0 4px var(--primary-dark-color), 0 0 0 0px #888;
 }
 
 .loud-acc {
-  box-shadow: 0 0 0 3px var(--accent-color), 0 0 0 0px #888;
+  box-shadow: 0 0 0 4px var(--accent-color), 0 0 0 0px #888;
 }
 
 .container-user-icon>span{

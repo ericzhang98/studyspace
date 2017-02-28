@@ -61,7 +61,7 @@ main {
   .jumbotron-splash {
     padding-top: 15rem;
     padding-bottom: 15rem;
-    background-image: url("http://www.hdnicewallpapers.com/Walls/Big/Computers/Laptop_Keypad_Closeup_Wallpaper.jpg");
+    background-image: url("/assets/images/home_background.jpeg");
     /*background-image: url("http://wallpaper-gallery.net/images/apple-laptop-wallpapers/apple-laptop-wallpapers-8.jpg");
     background-image: url("http://wallpapercave.com/wp/ew0V5jf.jpg");
     background-image: url("http://www.siwallpaperhd.com/wp-content/uploads/2016/02/best_study_photography_wallpaper_high_resolution.jpg");*/

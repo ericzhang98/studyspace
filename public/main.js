@@ -3,7 +3,7 @@ var myID = getSignedCookie("user_id");
 var SONG_COMMANDS = ["/raindrop", "/destress", "/420"];
 var OTHER_COMMANDS = ["/gary", "/ord", "/stop", "/dank", "/scrub"];
 var SONG_VOLUMES = {
-	"/raindrop" : 0.3,
+	"/raindrop" : 0.25,
 	"/destress" : 0.3,
 	"/420" : 0.13
 }
@@ -45,8 +45,20 @@ function Room(room_id, room_name, room_host_id, class_id, is_lecture, users, hos
 /*********************************************************************/
 /********************************* MISC ******************************/
 
-function showAlert(alert_id, duration, show_only_once = true) {
-	
+function showAlert(alert_id, durationWord = 'normal', show_only_once = true) {
+
+	var duration;
+	switch (durationWord) {
+		case 'short':
+			duration = 3000;
+			break;
+		case 'long' :
+			duration = 6000;
+			break;
+		default:
+			duration = 4000;
+	}
+
 	$('#' + alert_id).show();
 
 	setTimeout(function() {
