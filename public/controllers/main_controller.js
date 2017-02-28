@@ -512,7 +512,7 @@ function($scope, $http, $timeout, $window) {
         var isLoud = soundMeter.loudDetected;
 
         if (isLoud != wasLoud) {
-          console.log("changing volume to " + isLoud);
+          //console.log("changing volume to " + isLoud);
           $scope.volumes[user_id] = isLoud;
           $scope.$apply();
         }
