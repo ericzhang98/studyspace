@@ -584,7 +584,11 @@ function($scope, $http, $timeout, $window) {
     }
     toggleRemoteStreamAudioEnabled(user_id);
   };
-
+  
+  $scope.classmateDropdown = function() {
+    $('.dropdown-toggle').dropdown('toggle');
+  }
+  
   /*********************************************************************/
   /**************************** PULLING DATA ***************************/
 
