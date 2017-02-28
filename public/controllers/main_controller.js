@@ -1062,8 +1062,8 @@ function($scope, $http, $timeout, $window) {
         buddies_offline.push($scope.added_buddies_list[i]);
       }
     }
-    buddies_online.sort(ezSort);
-    buddies_offline.sort(ezSort);
+    //buddies_online.sort(ezSort);
+    //buddies_offline.sort(ezSort);
     $scope.added_buddies_list = buddies_online.concat(buddies_offline);
   }
   function ezSort(a, b) {
