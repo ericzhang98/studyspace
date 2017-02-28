@@ -496,10 +496,6 @@ function($scope, $http, $timeout, $window) {
   $scope.setVolumeListener = function(user_id, stream) {
     var soundMeter = new SoundMeter(window.audioContext);
 
-    if ($scope.volumes[user_id]) {
-      console.log('already listening to ' + user_id);
-      return;
-    }
     console.log('setting volume listener to ' + user_id);
     soundMeter.connectToSource(stream, function(e) {
       if (e) {
@@ -507,21 +503,21 @@ function($scope, $http, $timeout, $window) {
         return;
       }
 
-      var loudDetected = false;
-
-      // long interval for updating the UI
+      // every 200 seconds, check whether the soundMeter has been loud
+      // update UI if this has changed
       setInterval(function() {
-        var wasLoud = $scope.volumes[user_id];
-        var isLoud = soundMeter.loudDetected;
-
-        if (isLoud != wasLoud) {
-          console.log("changing volume  to " + isLoud);
-          $scope.volumes[user_id] = isLoud;
+    
+        if (soundMeter.loudDetected != soundMeter.loud) {
+          console.log("changing volume to " + soundMeter.loudDetected);
+          soundMeter.loud = soundMeter.loudDetected;
           $scope.$apply();
         }
 
         soundMeter.loudDetected = false;
       }, 200);
+
+      // long interval for updating the UI
+      $scope.volumes[user_id] = soundMeter;
     });
   }
 

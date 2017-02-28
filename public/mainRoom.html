@@ -319,10 +319,10 @@
           <div class="studymates entry" ng-repeat="user_id in rooms[currRoomChatID].users" ng-cloak>
             
             <div class="item">
-              <div ng-if="user_id == myID" class="container-user-icon-small {{volumes[user_id] ? 'loud-prim' : ''}} over-base-text prim-back">
+              <div ng-if="user_id == myID" class="container-user-icon-small {{volumes[user_id].loud ? 'loud-prim' : ''}} over-base-text prim-back">
                 <span ng-cloak>{{users[user_id].name | limitTo:1}}</span>
               </div>
-              <div ng-if="user_id != myID"class="container-user-icon-small {{volumes[user_id] ? 'loud-acc' : ''}} over-base-text acc-back">
+              <div ng-if="user_id != myID"class="container-user-icon-small {{volumes[user_id].loud ? 'loud-acc' : ''}} over-base-text acc-back">
                 <span ng-cloak>{{users[user_id].name | limitTo:1}}</span>
               </div>
               

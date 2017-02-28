@@ -29,6 +29,7 @@ function SoundMeter(context) {
   this.context = context;
   this.instant = 0.0;
   this.script = context.createScriptProcessor(2048, 1, 1);
+  this.loud = false;
   this.loudDetected = false;
   var that = this;
 
