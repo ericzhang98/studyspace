@@ -26,6 +26,9 @@
     <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.4.8/angular-animate.min.js"></script>
     <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.4.8/angular-aria.min.js"></script>
     <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.4.8/angular-messages.min.js"></script>
+    <!-- HTML sanitizer + linkify -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/angular-sanitize/1.6.2/angular-sanitize.min.js"></script>
+
 
     <!-- For mobile scaling -->
     <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -50,24 +53,25 @@
       <div id="layer1">
         <!-- Classes Sidebar -->
         <aside id="classes-sidebar" class="sidebar sidebar-left" role="complementary">
-
           <div class="menu-user">
             <!-- User Quick Info -->
             <div id="user-info" class="container-info-user">
-              <div onclick="changeTheme()" class="container-user-icon white-text prim-back" 
+              <div onclick="changeTheme()" class="container-user-icon over-base-text prim-back" 
                    style='-moz-user-select: -moz-none; -khtml-user-select: none;-webkit-user-select: none;'>
                 <span ng-cloak>{{myName | limitTo:1}}</span>
               </div>
               
-              <span class="user-name prim-text" ng-cloak>{{myName}}</span>
+              <span class="user-name prim-text" ng-cloak>{{myName.split(" ")[0] + " " + myName.split(" ")[1][0] + "."}}</span>
 
-              <button class="btn btn-sm btn-low-key" onclick="setMode()"> </button>
+              <button class="btn btn-sm btn-low-key" style="position:absolute; right:16px" onclick="setMode()"> </button>
             </div>
 
             <!-- Log Out -->
-            <button id="log-out" class="btn btn-low-pri btn-block" onclick="logOut()">Log Out</button>
+            <button id="log-out" class="btn btn-low-pri btn-block"
+              ng-click="logout()">Log Out</button>
             <!-- User Preference -->
-            <a id="preferences" class="btn btn-low-pri btn-block" href="courses">Account</a>
+            <a id="preferences" class="btn btn-low-pri btn-block"
+              href="/courses">Account</a>
 
           </div>
 
@@ -86,15 +90,12 @@
             <!-- Classes/Rooms Dropdown -->
             <div id="classes" class="panel-group menu-classes">
 
-              <div ng-repeat="(class_id, class_obj) in classes" ng-if="class_id != 'dm_class_id'" id="#{{class_id}}" class="panel" href="#{{class_id}}">
+              <div ng-repeat="class_id in my_class_ids track by $index" ng-if="class_id != 'dm_class_id'" id="#{{class_id}}" class="panel" href="#{{class_id}}">
                 <div class="panel-heading">
                   <h4 class="panel-title {{class_id == rooms[currRoomCallID].class_id ? (rooms[currRoomCallID].is_lecture ? 'white-text acc-back' : 'white-text prim-dark-back') : 'color-def-panel-title'}}" data-toggle="collapse" data-target="#{{class_id}}" data-parent="#classes">
                     <span ng-cloak class="class-title">
-                      {{class_obj.name}}
+                      {{classes[class_id].name}}
                     </span>
-                    <!--
-                    <span ng-cloak>{{classes[class_id].num_users}}{{class_obj.rooms_with_tutors.length != 0 ? "*":""}}</span>
-                    -->
                   </h4>
                   <button class="btn btn-add-room" ng-click="createRoom(class_id)">
                     <span class="glyphicon glyphicon-plus"></span>
@@ -137,7 +138,7 @@
             </button> -->
 
           <div ng-repeat="buddy_requests in buddies_list">
-            <li style="border: none" class="list-group-item buddy-panel base-back over-base-text">
+            <li style="border: none" class="list-group-item buddy-req-panel base-back acc-text">
               <span ng-cloak class="room-name">
                 {{buddy_requests.sent_from_name}}
               </span>
@@ -150,11 +151,21 @@
 
           <!-- OLD FRIENDS -->
           <div>
-            <li style="border: none" class="list-group-item base-back buddy-panel {{currRoomChatID == getDMID(buddy.user_two_id) ? 'prim-text' : 'over-base-text'}}" ng-repeat="buddy in added_buddies_list" ng-click="openDM(buddy.user_two_id, buddy.user_two_name)">
+            <li class="list-group-item buddy-panel {{ messageNotifications[buddy.user_two_id] > 0 ? 'acc-text base-back bold-text' : 'over-base-text ' + (currRoomChatID == getDMID(buddy.user_two_id) ? 'prim-back' : 'base-back')}}" ng-repeat="buddy in added_buddies_list" ng-click="openDM(buddy.user_two_id, buddy.user_two_name)">
+
+              <span class="{{buddies_status[buddy.user_two_id] ? (currRoomChatID == getDMID(buddy.user_two_id) ? 'white-text' : 'online-text') : 'invis-text'}}"
+                style="text-align: center; vertical-align: middle">◕</span>
               <span ng-cloak class="room-name">
-                {{buddy.user_two_name}}
+                {{buddy.user_two_name}} 
+                <span ng-if="messageNotifications[buddy.user_two_id] > 0">| {{messageNotifications[buddy.user_two_id]}}</span>
+                <span ng-if="isDank() && buddies_status[buddy.user_two_id]" style="float:right;">༼つ◕_◕༽つ</span>
+                <span ng-if="isDank() && !buddies_status[buddy.user_two_id]" style="float:right;">¯\_(ツ)_/¯</span>
               </span>
             </li>
+          </div>
+
+          <div class="white-text" ng-if="!added_buddies_list || added_buddies_list.length == 0" ng-cloak> 
+            <span style="margin-left: 1.5rem; font-size: 1rem; color: #888888">You don't have any buddies... yet.</span>
           </div>
 
               
@@ -173,7 +184,7 @@
                   <span ng-cloak class="navbar-brand" >{{classes[rooms[currRoomChatID].class_id].name != "" ? 
                     classes[rooms[currRoomChatID].class_id].name + " - ":""}}{{rooms[currRoomChatID].name}}{{rooms[currRoomChatID].is_lecture ? ' (cast by ' + rooms[currRoomChatID].host_name + ')' : ''}}</span>
                 </div>
-                <ul ng-if="rooms[currRoomChatID].class_id != 'dm_class_id'" class="nav navbar-nav navbar-right">
+                <ul class="nav navbar-nav navbar-right">
                   <!--
 <li class="dropdown">
 <a class="dropdown-toggle" data-toggle="dropdown" href="#" style="background-color: inherit;">Rooms <span class="caret"></span></a>
@@ -184,8 +195,12 @@
 </ul>
 </li>
 -->
-                  <li class="nav-link" ng-click="leaveRoom()">
-                    <a href="#">Leave room</a>
+                  <li ng-if="rooms[currRoomChatID].class_id != 'dm_class_id'" class="nav-link" ng-click="leaveRoom()">
+                    <a>Leave</a>
+                  </li>
+
+                  <li ng-if="rooms[currRoomChatID].class_id == 'dm_class_id'" class="nav-link" ng-click="leaveDM()">
+                    <a>Close</a>
                   </li>
                 </ul>
               </div>
@@ -199,7 +214,7 @@
                 <div class="blob blob-4"></div><div class="blob blob-5"></div>
               </div>
               <div class="message" ng-repeat="chatMessage in chatMessageList">
-                <div class="container-user-icon white-text {{chatMessage.user_id != myID ? 'acc-back' : 'prim-back'}}">
+                <div class="container-user-icon over-base-text {{chatMessage.user_id != myID ? 'acc-back' : 'prim-back'}}">
                   <span>{{chatMessage.name | limitTo:1}}</span>
                 </div>
 
@@ -208,22 +223,23 @@
                     <div class="dropdown">
 
                       <!-- Dropdown for non-me users -->
-                      <a ng-if="chatMessage.user_id != myID" class="user-name dropdown-toggle acc-text" data-toggle="dropdown" href="#">{{chatMessage.name.split(" ")[0] + " " + chatMessage.name.split(" ")[1][0]}} </a>
+                      <a ng-if="chatMessage.user_id != myID" class="user-name dropdown-toggle acc-text" data-toggle="dropdown">{{chatMessage.name.split(" ")[0] + " " + chatMessage.name.split(" ")[1][0] + "."}} </a>
                       <ul ng-if="chatMessage.user_id != myID" class="dropdown-menu">
-                        <li><a href="#" ng-click="toggleUserAudio(chatMessage.user_id)">{{muted_user_ids.indexOf(chatMessage.user_id) == -1 ? 'Mute' : 'Unmute'}}</a></li>
-                        <li><a href="#">Block</a></li>
-<li><a href="#">{{isFriendsWith(chatMessage.user_id) ? 'Unfriend' : 'Friend'}}</a></li>
+                        <li><a ng-click="toggleUserAudio(chatMessage.user_id)">{{muted_user_ids.indexOf(chatMessage.user_id) == -1 ? 'Mute' : 'Unmute'}}</a></li>
+                        <li><a>Block</a></li>
+                        <li><a ng-click="toggleIsFriend(chatMessage.user_id)">{{isFriendsWith(chatMessage.user_id) != -1 ? 'Unfriend' : 'Friend'}}</a></li>
 
 <!--<li><a href="#">Friend</a></li>-->
                       </ul>
 
                       <!-- No dropdown if user is me -->
-                      <a ng-if="chatMessage.user_id == myID" class="user-name prim-text">{{chatMessage.name.split(" ")[0] + " " + chatMessage.name.split(" ")[1][0]}}</a>
+                      <a ng-if="chatMessage.user_id == myID" class="user-name prim-text">{{chatMessage.name.split(" ")[0] + " " + chatMessage.name.split(" ")[1][0] + "."}}</a>
 
                     </div>
                     <span class="dateTime">{{timeAgo(chatMessage)}}</span>
                   </header>
-                  <p class="message-body">{{chatMessage.text}}</p>
+                  <p class="message-body" ng-bind-html="chatMessage.text |
+                  linky:'_blank'"></p>
                 </div>
               </div>
                 
@@ -239,7 +255,7 @@
                       <span ng-class="muteBtnClass"></span>
                     </button>
                   </span>
-                  <input ng-cloak type="text" class="form-control input-message" id="chatInputBox" 
+                  <input maxlength="200" ng-cloak type="text" class="form-control input-message" id="chatInputBox" 
                          ng-model="chatInput" placeholder="Type a message..."
                          autocomplete="off" ng-keydown="keypress($event)">
                 </div>
@@ -254,7 +270,7 @@
 
         <!-- Classmates Sidebar -->
         <aside id="classmates-sidebar" class="sidebar sidebar-right" role="complementary">
-<!--          
+          <!--
           <h3>Buddies</h3>   
           <div class="container-search">
             <input class="form-control" ng-model="friend.name">
@@ -298,19 +314,51 @@
             </table>
           </div> 
 -->
+          <!--
           <span>TEMP FOR ERIC</span>
           <br>
           <span>CURRENTLY TYPING:</span>
           <span ng-cloak>{{currTyping}}</span>
-          <br>
-          <h3 ng-cloak ng-if="currRoomChatID" class="studymates">StudyMates</h3>
-          <div class="studymates names" ng-repeat="user_id in rooms[currRoomChatID].users" ng-cloak>
-             <div>{{users[user_id].name}}</div>
-          </div>
+          <br>-->
+
+          <h4 ng-cloak ng-if="currRoomChatID ? rooms[currRoomChatID].is_lecture : false" ng-hide="rooms[currRoomChatID].class_id == 'dm_class_id'" class="studymates over-base-text"><acc>{{rooms[currRoomChatID].name}}</acc></h4>
+
+          <h4 ng-cloak ng-if="currRoomChatID ? !rooms[currRoomChatID].is_lecture : false" ng-hide="rooms[currRoomChatID].class_id == 'dm_class_id'" class="studymates" style="margin-top:2rem"><prim>{{rooms[currRoomChatID].name}}</prim></h4>
+            <div class="studymates entry over-base-text dropdown-toggle" ng-repeat="user_id in rooms[currRoomChatID].users" ng-cloak>
+
+              <div class="dropdown">
+                <div class="item">
+
+                  <div ng-if="user_id == myID" class="container-user-icon-small {{volumes[user_id].loud ? 'loud-prim' : ''}} over-base-text prim-back" data-toggle="dropdown">
+                    <span ng-cloak>{{users[user_id].name | limitTo:1}}</span>
+                  </div>
+
+                  <div ng-if="user_id != myID" class="container-user-icon-small {{volumes[user_id].loud ? 'loud-acc' : ''}} over-base-text acc-back">
+                    <span ng-cloak>{{users[user_id].name | limitTo:1}}</span>
+                  </div>
+                  
+                  <!-- Dropdown for non-me users -->
+                  <a ng-if="user_id != myID" class="names dropdown-toggle" data-toggle="dropdown">{{users[user_id].name}}</a>
+
+                  <ul ng-if="user_id != myID" class="dropdown-menu">
+                    <li><a ng-click="toggleUserAudio(user_id)">{{muted_user_ids.indexOf(user_id) == -1 ? 'Mute' : 'Unmute'}}</a></li>
+                    <li><a>Block</a></li>
+                    <li><a ng-click="sendRequest(user_id)">{{isFriendsWith(user_id) ? 'Unfriend' : 'Friend'}}</a></li>
+                  </ul>
+                  
+                  <!-- No dropdown if user is me -->
+                  <a ng-if="user_id == myID" class="names">{{users[user_id].name}}</a>
+
+                </div>
+
+              </div>
+
+            </div>
+          
 
 
         </aside><!-- End Classmates Sidebar -->
-
+        
         <!-- Create Room Modal -->
         <div id="modal-create-room" class="modal modal-create-room-container" role="dialog">
           <div class="modal-dialog">
@@ -354,7 +402,7 @@
                 <button id="close-add-class" class="btn close" data-dismiss="modal" aria-label="Close">
                   <span class="glyphicon glyphicon-remove" aria-hidden="true"></span>
                 </button>
-                <h1 class="title" style="margin-bottom: 5px;">Add a class</h1>
+                <h1 class="title">Add a class</h1>
               </header>
               <div class="main form-container">
 
@@ -382,15 +430,18 @@
 
               <!-- Current courses -->
               <div class="classes-container">
+                <h4 class="title" style="margin-bottom: 20px;">Current classes</h4>
                 <span class="classes" ng-repeat="class in tempClasses">
-                  <button class="btn btn-hi-pri"
+                  <button class="btn btn-cancel"
                     ng-click="removeClass(class.class_id)">
                     {{class.class_name}}
-                    <span class="glyphicon glyphicon-remove" aria-hidden="true"></span>
+                    <!--<span class="glyphicon glyphicon-remove" aria-hidden="true"></span>-->
                   </button>
                 </span>
+                <p style="font-size: 1rem; margin-top: 15px;" ng-if="tempClasses.length == 0">You don't have any classes. Must be nice.</p>
+                <p style="font-size: 1rem; margin-top: 15px;" ng-if="tempClasses && tempClasses.length != 0">(click to remove)</p>
                 <br>
-                <button class="btn btn-hi-pri save-btn" ng-click="saveChanges()" style="margin-bottom: 20px">Save</button>
+                <button class="btn btn-hi-pri save-btn" style="margin-top: 30px; width: 30%" ng-click="saveChanges()" style="margin-bottom: 20px">Save</button>
               </div>
 
             </div>
@@ -411,6 +462,27 @@
       <div id="lecture-alert" class="alert fade in text-center" hidden>
         <a class="close" data-dismiss="alert">×</a>
         <span>In casts, only the host can be heard.</span>
+      </div>
+      <div id="course-change-alert" class="alert fade in text-center" hidden>
+        <a class="close" data-dismiss="alert">×</a>
+        <span>Course changes were successfully applied.</span>
+      </div>
+      <div id="no-permissions-alert" class="alert fade in text-center" hidden>
+        <a class="close" data-dismiss="alert">×</a>
+        <span>Your mic permissions have not been set.<span>
+      </div>
+      <div id="buddy-request-alert" class="alert fade in text-center" hidden>
+        <a class="close" data-dismiss="alert">×</a>
+        <span>Buddy request sent.<span>
+      </div>
+      <div id="block-alert" class="alert fade in text-center" hidden>
+        <a class="close" data-dismiss="alert">×</a>
+        <span>User blocked. They can't hear you, and you can't hear them.<span>
+      </div>
+      <div id="no-connection-alert" class="alert fade in text-center" hidden>
+        <a class="close" data-dismiss="alert">×</a>
+        <span>Oops! Can't connect to server. Please check your internet
+          connection and try refreshing the page.<span>
       </div>
     </div>
 
@@ -525,5 +597,6 @@
   <script src="theme.js"></script>
   <script src="main.js"></script>
   <script src="call.js"></script>
+  <script src="soundmeter.js"></script>
 
 </html>

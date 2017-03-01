@@ -6,11 +6,12 @@ angular
 
 function autoCompleteController ($scope, $http) {
     // Global Variables
-    var userClasses = []; // list of class_ids of classes user is enrolled in
+    $scope.userClasses = []; // list of class_ids of classes user is enrolled in
     var allClassesNameToID = {}; // name: class_id dictionary for all available classes
 
     // Send requests to populate the two fields above
     getAllClasses();
+    getPrivacySettings();
 
     // list of states to be displayed
     $scope.querySearch = querySearch;
@@ -18,14 +19,13 @@ function autoCompleteController ($scope, $http) {
     // If enter is pressed inside the dropdown
     $("#class-dropdown").keypress(function(event) {
         if(event.which == 13) {
-
             var className = $("#input-0").val().toUpperCase();
 
             if (verifyClass(className)) {
 
                 var class_id = allClassesNameToID[className];
                 // Make sure the user isn't already in the class
-                if($.inArray(class_id, userClasses) == -1) {
+                if($.inArray(class_id, $scope.userClasses) == -1) {
                     console.log("ADD " + class_id)
                     addClass(class_id);
                 } else {
@@ -43,13 +43,13 @@ function autoCompleteController ($scope, $http) {
     // adds classID to list of user's classes and updates the UI to reflect this
     function addClass(classID) {
         console.log("adding class with ID " + classID);
-        userClasses.push(classID);
+        $scope.userClasses.push(classID);
         displayClasses();
     }
 
     // return to main
     function cancelChanges() {
-        document.location.href = "/";
+        window.location.href = "/";
     }
 
     // filter function for search query
@@ -64,20 +64,20 @@ function autoCompleteController ($scope, $http) {
     function displayClasses() {
         var htmlString = "";
         var classNames = new Array();
-        userClasses.forEach(function(class_id, index) {
+        $scope.userClasses.forEach(function(class_id, index) {
             classNames.push(getNameOfClass(class_id))
         })
         //classNames.sort();
         classNames.forEach(function(className, index) {
-            htmlString += '<div class="school-class"><button class="btn btn-hi-pri">' 
-            + className + '<span class="x-button" aria-hidden="true">&times;</span></button></div>';
+            htmlString += '<div class="school-class"><button class="btn btn-cancel" style="font-size:1.2rem">' 
+            + className + '</button></div>';
         });
         $("#school-classes").html(htmlString);
 
         // Add a listener to the new html
         $(".school-class").each(function(index, element) {
             $(this).click(function() {
-                removeClass(userClasses[index]);
+                removeClass($scope.userClasses[index]);
             })
         });
     }
@@ -115,10 +115,29 @@ function autoCompleteController ($scope, $http) {
         }
     }
 
+    function getPrivacySettings() {
+      var xhr = new XMLHttpRequest();
+      xhr.open('GET', "/get_privacy_settings", true);
+      xhr.send();
+
+      xhr.onreadystatechange = function(e) {
+        if (xhr.readyState == 4 && xhr.status == 200) {
+          var response = JSON.parse(xhr.responseText);
+          if (response.anon_status != null) {
+            if(response.anon_status) {
+              $("#anon-checkbox").prop("checked", true);
+            }
+            else {
+              $("#anon-checkbox").prop("checked", false);
+            }
+          }
+        }
+      }
+    }
+
     // populates userClasses list with ids of all classes they are enrolled in
     // calls displayClasses afterward to reflect changes
     function getUserClasses() {
-
         console.log("Getting my classes...")
         var xhr = new XMLHttpRequest();
         xhr.open('GET', "/get_my_classes", true); // responds with class_ids
@@ -132,11 +151,11 @@ function autoCompleteController ($scope, $http) {
             if (response.class_ids != null) {
 
                 // set userClasses to equal this list
-                userClasses = response.class_ids;
+                $scope.userClasses = response.class_ids;
                 
                 // update the UI
                 displayClasses();
-                console.log(userClasses);
+                console.log($scope.userClasses);
             }
           }
         }
@@ -147,25 +166,44 @@ function autoCompleteController ($scope, $http) {
     }
 
     function removeClass(className) {
-        var index = $.inArray(className, userClasses);
-        console.log("Removing index " + index);
+        var index = $.inArray(className, $scope.userClasses);
         if(index == -1) {
             console.log("Cannot remove class, className " + className + " not found!")
         }
-        userClasses.splice(index, 1);
+        $scope.userClasses.splice(index, 1);
         displayClasses();
     }
 
     // Server stuff
     function saveChanges() {
+        processPassword();
+        processClasses();
+        processPrivacy();
+    }
+
+    function processPrivacy() {
+        var anon = $("#anon-checkbox").prop("checked");
+        $http.post('/update_privacy', {anon: anon}).then(function(res) {
+            if(res.data.success) {
+                console.log("Anonymous status updated")
+            }
+            else {
+                console.log("Anonymous status not changed, error")
+            }
+        });
+    }
+
+    function processPassword() {
+        var currPass = $("#curr-pass-input").val();
         var newPass = $("#new-pass-input").val();
-        var hashedCurrPass = Sha1.hash($("#curr-pass-input").val());
+        var confirmPass = $("#confirm-pass-input").val();
+        var hashedCurrPass = Sha1.hash(currPass);
         var hashedNewPass = Sha1.hash(newPass);
-        var hashedConfirmPass = Sha1.hash($("#confirm-pass-input").val());
+        var hashedConfirmPass = Sha1.hash(confirmPass);
         // empty the input boxes after getting the data
         $(".password-input").val("");
 
-        if (hashedCurrPass && hashedNewPass && hashedConfirmPass) {
+        if (currPass && newPass && confirmPass) {
           if (hashedNewPass === hashedConfirmPass) {
             if (newPass.length >= 6) {
                 var passToServerObject = {
@@ -189,8 +227,10 @@ function autoCompleteController ($scope, $http) {
                 console.log("Passwords don't match");
           }
         }
+    }
 
-        $http.post('/enroll', {class_ids: userClasses});
+    function processClasses() {
+        $http.post('/enroll', {class_ids: $scope.userClasses});
     }
 
     function verifyClass(className) {

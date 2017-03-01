@@ -1,7 +1,7 @@
 //Room app -- firebase must be initialized already
 var chatDatabase = null;
 var typingDatabase = null;
-var myApp = angular.module("mainApp", ["ngMaterial"]);
+var myApp = angular.module("mainApp", ["ngMaterial", "ngSanitize"]);
 
 // list of message objects with: email, name, roomID, text, timeSent
 var chatMessageList = [];
@@ -11,8 +11,8 @@ var USER_PING_PERIOD = 15*1000;
 
 /* Main controller -------------------------------------*/
 
-myApp.controller("MainController", ["$scope", "$http", "$timeout",
-function($scope, $http, $timeout) {
+myApp.controller("MainController", ["$scope", "$http", "$timeout", "$window",
+function($scope, $http, $timeout, $window) {
   console.log("Hell yeah");
 
   // general vars
@@ -22,12 +22,38 @@ function($scope, $http, $timeout) {
 
   $scope.myName = getSignedCookie("name");
 
+
+  /*************************** ACCOUNT MANAGEMENT *********************/
+  $scope.logout = function() {
+    // leave current room
+    leaveRoom($scope.currRoomCallID);
+
+    //send offline ping
+    var xhr = new XMLHttpRequest();
+    xhr.open("GET", "/offline", true);
+    xhr.send();
+
+    // erase cookies
+    removeCookie("user_id");
+    removeCookie("email");
+    removeCookie("name");
+
+    // go to home
+    window.onbeforeunload = null;
+    window.location.href = "/";
+  }
+  
+  $scope.manageAccount = function() {
+    window.location.href = "/courses";
+  }
+
   /*-------------------------------------------------------------------*/
   /****************************** CHAT ROOM ****************************/
   /*-------------------------------------------------------------------*/
 
   var div = document.getElementById("chat-message-pane");
   var chatInputBox = document.getElementById("chatInputBox");
+  var animation = document.getElementById("loading");
   var lastKey = null;
   var scrollLock = false;
   var currTyping = [];
@@ -38,31 +64,47 @@ function($scope, $http, $timeout) {
   // Join a room's chat
   function joinRoomChat(room_id) {
 
+    //leave old room
+    if ($scope.currRoomChatID) {
+      //temp
+      isTyping = false;
+      var temp = new XMLHttpRequest();
+      temp.open("GET", "/typing/false/" + $scope.currRoomChatID, true);
+      temp.send();
+    }
+
     if ($scope.currRoomChatID != room_id) {
       $scope.currRoomChatID = room_id;
 
-      // turn off any pre-existing listeners and control vars
+      // turn off any pre-existing listeners
       if (chatDatabase != null) {
         chatDatabase.off();
       }
-
+      // empty our message list in logic and UI and reset control vars
+      chatMessageList = [];
       lastKey = null;
       scrollLock = false;
-
-      // empty our message list in logic and UI
-      chatMessageList = [];
       updateChatView();
+      $scope.chatInput = "";
 
-      // set up and start new listener
-      chatDatabase = databaseRef.child("RoomMessages").child($scope.currRoomChatID);
-      startChatMessages();
+      // set up and start new listener if room_id isn't null
+      if (room_id) {
+        chatDatabase = databaseRef.child("RoomMessages").child($scope.currRoomChatID);
+        startChatMessages();
+      }
 
-      // empty typing list and listen to who's typing
-      currTyping = [];
+      // empty typing list
       if (typingDatabase != null) {
         typingDatabase.off();
       }
-      startCurrTyping();
+      currTyping = [];
+
+      if (room_id) {
+        typingDatabase = databaseRef.child("RoomTyping").child($scope.currRoomChatID);
+        //setTimeout(
+        startCurrTyping();
+        //], 50); //in case it's a dm, need to wait for other user info?
+      }
     }
   }
   /*********************************************************************/
@@ -73,7 +115,7 @@ function($scope, $http, $timeout) {
     if (chatInput) {
 
       // easter eggs
-      if (secretCommands.indexOf(chatInput) != -1) {
+      if (SECRET_COMMANDS.indexOf(chatInput) != -1) {
 
         // do the command, and if it returns a message
         // then upload it
@@ -84,7 +126,6 @@ function($scope, $http, $timeout) {
 
         else {
           // reset fields     
-          chatInputBox.value = "";
           $scope.chatInput = "";
           chatInputBox.focus();
         }
@@ -97,28 +138,16 @@ function($scope, $http, $timeout) {
     }
   };
 
-  // Send chat when enter key is pressed
-  $scope.keypress = function(e) {
-    if (e.keyCode == 13) {
-      if (chatInputBox.value) {
-        uploadMessage(chatInputBox.value);
-      }
-    }
-  }
-
-  // Send chat when enter key is pressed
   $scope.keypress = function(e) {
     setTimeout(function() {
-      if (chatInputBox.value) {
+      if ($scope.chatInput) {
         if (!isTyping) {
-          console.log("hi");
           $http.get("/typing/true/" + $scope.currRoomChatID);
           isTyping = true;
         }
       }
       else {
         if (isTyping) {
-          console.log("nope");
           $http.get("/typing/false/" + $scope.currRoomChatID);
           isTyping = false;
         }
@@ -128,7 +157,7 @@ function($scope, $http, $timeout) {
 
   // Listen to RoomTyping
   function startCurrTyping() {
-    var typingDatabase = databaseRef.child("RoomTyping").child($scope.currRoomChatID).on("value", function(snapshot) {
+    typingDatabase.on("value", function(snapshot) {
       var val = snapshot.val();
       if (val) {
         currTyping = Object.keys(val);
@@ -144,15 +173,20 @@ function($scope, $http, $timeout) {
 
   function updateCurrTyping() {
     for (var i = currTyping.length-1; i >= 0; i--) {
-      console.log($scope.rooms[$scope.currRoomChatID].users);
+      //console.log($scope.rooms[$scope.currRoomChatID]);
+      /*
       if (!$scope.rooms[$scope.currRoomChatID].users.includes(currTyping[i])) {
         currTyping.splice(i,1);
       }
+      */
     }
     var names = []
     for (var i = 0; i < currTyping.length; i++) {
     	if (currTyping[i] != myID) {
-      	names.push($scope.users[currTyping[i]].name);
+        console.log($scope.users[currTyping[i]]); //if breaking, tell Eric (joinRoom after user info pull)
+        if ($scope.users[currTyping[i]]) {
+      	 names.push($scope.users[currTyping[i]].name);
+        }
     	}
     }
     $scope.currTyping = names;
@@ -168,11 +202,14 @@ function($scope, $http, $timeout) {
 
       // Create the message and pass it on to the server
       var newChatMessage = {text: chatInput, roomID: $scope.currRoomChatID, timeSent: Date.now()};
+      //adjust newChatMessage with whether or not it's a DM
+      if ($scope.rooms[$scope.currRoomChatID].other_user_id) {
+        newChatMessage.other_user_id = $scope.rooms[$scope.currRoomChatID].other_user_id;
+      }
       $http.post("/send_room_message", newChatMessage);
     }
 
     // Reset the local chat UI/logic
-    chatInputBox.value = "";
     $scope.chatInput = "";
     chatInputBox.focus();
   }
@@ -283,7 +320,7 @@ function($scope, $http, $timeout) {
     if (lastKey) {
       console.log("see more");
       //show loading UI element
-      document.getElementById("loading").removeAttribute("hidden");
+      animation.removeAttribute("hidden");
       scrollLock = true; //prevent any more seeMoreMessages calls until current finishes
       var messagesSoFar = chatMessageList.length;
       var messagesToAdd = 50;
@@ -321,7 +358,7 @@ function($scope, $http, $timeout) {
           div.scrollTop = previousPosition + (div.scrollHeight - previousHeight);
           scrollLock = false;
           //hide loading UI element
-          document.getElementById("loading").setAttribute("hidden", null);
+          animation.setAttribute("hidden", null);
           //});
           //}, 20);
         }
@@ -360,6 +397,17 @@ function($scope, $http, $timeout) {
 
   /*********************************************************************/
 
+  $scope.toggleDropdown = function(user_id) {
+    $("#" + user_id + "_dropdown").click(function(e){
+      e.stopPropagation();
+    });
+
+    $("#" + user_id + "_dropdown").show();
+
+    /* Clicks within the dropdown won't make
+       it past the dropdown itself */
+  }
+
   /*-------------------------------------------------------------------*/
   /***************************** CLASSES BAR ***************************/
   /*-------------------------------------------------------------------*/
@@ -368,14 +416,24 @@ function($scope, $http, $timeout) {
 
   // Scope variables
   $scope.my_class_ids = [];
-  $scope.classes = {}      // class_id : class
+  $scope.classes = {}      // class_id : class, grabbed on initial load
   $scope.class_rooms = {}  // class_id : list of room_ids
-  $scope.rooms = {}        // room_id : room
-  $scope.users = {}        // user_id : user
+  $scope.rooms = {}        // room_id : room, listened to after grabbing classes
+  $scope.users = {}        // user_id : user, info added as u join rooms
   $scope.muted_user_ids = [];
+  $scope.volumes = {"ayy" : "lmao"};      // user_id : int (volume coming from them);
 
   // Initial call to pull data for user / classes / rooms
   getClasses();
+
+  // Grab initial notifictions and start a listener for updates
+  startMessageNotifications();
+
+  //setup activity ping
+  //the client can mess around with this, we need to handle kicking the
+  //client somehow if they stop pinging, it's fine if they can still
+  //listen in on data, but other users must always be aware of prescence
+  pingUserActivity(true);
 
   /*********************************************************************/
   /*************************** ROOM INTERACTION ************************/
@@ -464,14 +522,6 @@ function($scope, $http, $timeout) {
 
       // open up the sidebar panel with this new room
       adjustSidebarToggle(class_id);
-
-      //setup activity ping
-      //the client can mess around with this, we need to handle kicking the
-      //client somehow if they stop pinging, it's fine if they can still
-      //listen in on data, but other users must always be aware of prescence
-      if (!currPing) {
-        pingUserActivity(true);
-      }
     }
 
     // join this room's chat
@@ -479,17 +529,66 @@ function($scope, $http, $timeout) {
 
   };
 
+  // set listener that updates the volumes dict
+  $scope.setVolumeListener = function(user_id, stream) {
+    var soundMeter = new SoundMeter(window.audioContext);
+
+    console.log('setting volume listener to ' + user_id);
+    soundMeter.connectToSource(stream, function(e) {
+      if (e) {
+        alert(e);
+        return;
+      }
+
+      // every 200 seconds, check whether the soundMeter has been loud
+      // update UI if this has changed
+      setInterval(function() {
+    
+        if (soundMeter.loudDetected != soundMeter.loud) {
+          //console.log("changing volume to " + soundMeter.loudDetected);
+          soundMeter.loud = soundMeter.loudDetected;
+          $scope.$apply();
+        }
+
+        soundMeter.loudDetected = false;
+      }, 500);
+
+      // long interval for updating the UI
+      $scope.volumes[user_id] = soundMeter;
+    });
+  }
+
   $scope.leaveRoom = function() {
 
     leaveRoom($scope.currRoomCallID);
-
     $scope.currRoomCallID = null;
-    $scope.currRoomChatID = null;
+
+    joinRoomChat(null); //leave chat room
   }
+
+  $scope.leaveDM = function() {
+    joinRoomChat($scope.currRoomCallID); //join or leave chat room
+  }
+
+  $window.onbeforeunload = function() {
+    //in order to leave DM on window close
+    var temp = new XMLHttpRequest();
+    temp.open("GET", "/typing/false/" + $scope.currRoomChatID, true);
+    temp.send();
+
+    //send offline ping
+    var xhr = new XMLHttpRequest();
+    xhr.open("GET", "/offline", true);
+    xhr.send();
+  };
 
   function pingUserActivity(constant) {
     var xhr = new XMLHttpRequest();
     xhr.open("GET", "/ping", true);
+    xhr.onerror = function(){
+      console.log(xhr.status);
+      showAlert("no-connection-alert", "longaf", false);
+    }
     xhr.send();
     if (constant) {
       currPing = setTimeout(pingUserActivity, USER_PING_PERIOD, true);
@@ -525,14 +624,17 @@ function($scope, $http, $timeout) {
     }
     toggleRemoteStreamAudioEnabled(user_id);
   };
-
+  
+  $scope.classmateDropdown = function() {
+    $('.dropdown-toggle').dropdown('toggle');
+  }
+  
   /*********************************************************************/
   /**************************** PULLING DATA ***************************/
 
   // - gets all class_ids for user
   // - delegates to getClass
   function getClasses() {
-    console.log("Getting class ids...")
     var xhr = new XMLHttpRequest();
     xhr.open('GET', "/get_my_classes", true); // responds with class_ids
     xhr.send();
@@ -546,9 +648,7 @@ function($scope, $http, $timeout) {
           $scope.my_class_ids = response.class_ids;
         }
 
-        $scope.my_class_ids.push("lounge_id");
-
-        console.log("Getting classes info...")
+        $scope.my_class_ids.push('lounge_id');
 
         // Get more data
         for (i = 0; i < $scope.my_class_ids.length; i++) {
@@ -577,7 +677,6 @@ function($scope, $http, $timeout) {
         response.rooms_with_tutors = [];
 
         $scope.classes[class_id] = response;
-        console.log(response);
 
         // update UI
         safeApply();
@@ -612,7 +711,6 @@ function($scope, $http, $timeout) {
     for (i = 0; i < curr_rooms.length; i++) {
       // if this room is not in the new rooms, detach listener
       if (updated_rooms.indexOf(curr_rooms[i]) == -1) {
-        console.log("detaching listener for room with id " + curr_rooms[i]);
         roomsDatabase.child(curr_rooms[i]).off();
       }
     }
@@ -646,14 +744,11 @@ function($scope, $http, $timeout) {
         // how many people are studying for this class now?
         setNumUsers($scope.rooms[room_id].class_id);
 
-        // update the UI
-        console.log("applying in get room, room name is : " + $scope.rooms[room_id].name);
-
         // get room users
-        updateRoomUsers($scope.rooms[room_id]);
+        updateRoomUsers($scope.rooms[room_id], updateCurrTyping);
 
         // update currTyping ppl
-        updateCurrTyping();
+        //updateCurrTyping();
 
         safeApply();
 
@@ -715,20 +810,29 @@ function($scope, $http, $timeout) {
   /*********************************************************************/
   /**************************** BUDDY SYSTEM ***************************/
 
-  console.log("buddies");
-  
-    
+  console.log("buddy system");
   //Saurabh's local check if friends
   $scope.isFriendsWith = function(user_id) {
-    console.log("friends??");
-    for (buddy in $scope.added_buddies_list) {
-      console.log(buddy.user_two_name + " is not a friend");
+    var index;
+    for (index = 0; index < $scope.added_buddies_list.length; ++index) {
+      var buddy = $scope.added_buddies_list[index]; 
       if (buddy.user_two_id == user_id) {
-        return true;
+        return index;
       }
     }
-    console.log("RIP not friends");
-    return false;
+    return -1;
+  }
+
+  $scope.toggleIsFriend = function(user_id) {
+    var index = $scope.isFriendsWith(user_id);
+    if (index > -1) {
+      $scope.deleteFriend(user_id);
+      $scope.added_buddies_list.splice(index, 1);
+      //TODO redirect to home page if in DM with deleted friend
+    }
+    else {
+      $scope.sendRequest(user_id);
+    }
   }
 
   // gets a user's buddy requests, calls a callback on the data,
@@ -744,18 +848,22 @@ function($scope, $http, $timeout) {
   var getBuddies = function(onResponseReceived){
     $http.post('/get_my_buddies').then(function(response){
       if (response.data[0]) {
+        console.log(response.data[0]);
         return onResponseReceived(response.data[0]['buddies']);
       }
     });
   };
-
-  var userExists = function(name, onResponseReceived){  
-    $http.post('/buddy_existing_user', $scope.friend).then(function(response){
-      //console.log(response.data + "RESPONSE");
+  
+  // checks if the user exists, calls a callback on the data
+  // and either returns null or the user object
+  var userExists = function(other_user_id, onResponseReceived){  
+    $http.post('/buddy_existing_user', {other_user_id: other_user_id}).then(function(response){
       return onResponseReceived(response.data);
     });
   };
 
+  // checks if this buddy request already exists, calls a callback
+  // on the data and either returns null or the request
   var buddyRequestExists = function(friend_id, onResponseReceived){
     var data = {"user_id":"user_id placed here",
                 "friend_id":String(friend_id)};
@@ -764,6 +872,8 @@ function($scope, $http, $timeout) {
     });   
   };
 
+  // checks if the two users are already friends, calls a callback
+  // on the data containing the friendship object or null
   var friendshipExists = function(friend_id, friend_name, onResponseReceived){
     var data = {"user_id":"user_id inserted",
                 "friend_id":String(friend_id),
@@ -773,6 +883,7 @@ function($scope, $http, $timeout) {
     });   
   }  
 
+  // deletes a friend and then in the callback calls to update the buddy requests
   var deleteBuddy = function(id, onResponseReceived){
     console.log(id);
     $http.delete('/reject_buddy/' + id).then(function(response){
@@ -781,6 +892,9 @@ function($scope, $http, $timeout) {
       });
     });
   };
+
+  // adds a friendship in the database and deletes the request, and calls 
+  // a callback on the data
   var acceptBuddy = function(data, onResponseReceived){
     console.log(data);
     $http.post('/accept_buddy', data).then(function(response){
@@ -788,43 +902,56 @@ function($scope, $http, $timeout) {
     });      
   }
 
+  // updates the buddy requests list
   getBuddyRequests(function(response){ 
-    console.log(response);
     $scope.buddies_list = response; 
   });
 
+  // gets the users added buddies
   getBuddies(function(response){ 
     $scope.added_buddies_list = response;
-    console.log("got buddies");
-    for (buddy in $scope.added_buddies_list) {
-      console.log("buddy found is " + buddy.user_two_name);
-    }
+    $scope.added_buddies_list.sort(ezSort);
+    /*$scope.buddy_id_list = [];
+
+    var index;
+    for (index = 0; index < $scope.added_buddies_list.length; ++index) {
+      var buddy = $scope.added_buddies_list[index]; 
+      $scope.buddy_id_list.push(buddy.user_two_id);
+    }*/
+
+    setupOnlineNotifications();
   });
 
-  $scope.sendRequest = function(){
-    console.log("request");
-    userExists($scope.friend.name, function(response){
+  // functionality for sending a buddy request
+  $scope.sendRequest = function(other_user_id){
+    console.log("friend request to " + other_user_id);
+    // checks if the user exists, if not exits
+    userExists(other_user_id, function(response){
       console.log(response);
       if(response){
         var friend_id = response.user_id;
         var friend_name = response.name;
         console.log(friend_id);
+        // checks if the buddy request already exists, if it does then exits
         buddyRequestExists(friend_id, function(requestExists){ 
 
           console.log("BUDDY REQUEST EXISTS? " + requestExists);
           console.log(requestExists);
           if(!requestExists || requestExists.length == 0){ 
-            console.log("ARE WE FRIENDS ALREADY");          
+            console.log("ARE WE FRIENDS ALREADY"); 
+            // checks if you're already friends, if you are then exits            
             friendshipExists(friend_id, friend_name, function(friendship){ 
               console.log("FRIENDSHIP? " + friendship);
               if(!friendship || friendship.length == 0){
+                // if we made it here then we send a friend request
                 console.log("Adding friend");
                 var data = {"sent_from_id":"Place user_id here", 
                             "sent_from_name": "user_name",
-                            "other_user_id":String(friend_id),
+                            "sent_to_id":String(friend_id),
                             "sent_to_name": String(friend_name)};
                 $http.post('/send_buddy_request', data).then(function(response){
                   console.log(response.data);
+                  showAlert('buddy-request-alert', false);
                 });  
               }
             });
@@ -888,25 +1015,35 @@ function($scope, $http, $timeout) {
 
     $scope.rooms[dm_room_id] = {
       "name" : other_user_name,
-      "class_id" : "dm_class_id"
+      "class_id" : "dm_class_id",
+      "other_user_id" : other_user_id
     }
 
-    // join the chat
-    joinRoomChat(dm_room_id);
+    //get other user info
+    $http.get('/get_user/' + other_user_id).then(function(response) {
+      $scope.users[response.data.user_id] = response.data;
+      console.log("user info pulled: " + response.data.name + " " + response.data.user_id);
+      // join the chat needs to be on callback b/c of currTyping
+      joinRoomChat(dm_room_id);
+    });
+
+    $http.get("/clear_message_notifications/" + other_user_id);
+    $scope.messageNotifications[other_user_id] = 0;
   };
 
   // getting the list of users in this room
-  function updateRoomUsers(room) {
-    console.log("this is a room " + room);
+  function updateRoomUsers(room, callback=null) {
+    //console.log("this is a room " + room);
     if (room) {
-      console.log("getting new list of users for room: " + room.room_id);
-      console.log($scope.rooms);
+      //console.log("getting new list of users for room: " + room.room_id);
+      //console.log($scope.rooms);
       for (var i = 0; i < room.users.length; i++) {
         if (!(room.users[i] in $scope.users)) {
           var id = room.users[i];
           $http.get('/get_user/' + room.users[i]).then(function(response) {
             $scope.users[response.data.user_id] = response.data;
             console.log("user info pulled: " + response.data.name + " " + response.data.user_id);
+            if (callback){callback();}
           });
       	}
       }
@@ -923,6 +1060,94 @@ function($scope, $http, $timeout) {
     }, 100);
   }
 
+
+  //Message notifications
+  function startMessageNotifications() {
+    //grab all notifs on load
+    $scope.messageNotifications = {};
+    //TODO: test notifications on new buddy accept
+    if (getSignedCookie("user_id")) {
+      databaseRef.child("Notifications").child(getSignedCookie("user_id"))
+        .child("MessageNotifications").once("value", function(snapshot) {
+          var snapshotValue = snapshot.val();
+          if (snapshotValue) {
+            //setup message notifications dictionary
+            var keys = Object.keys(snapshotValue);
+            for (var i = 0; i < keys.length; i++) {
+              $scope.messageNotifications[keys[i]] = snapshotValue[keys[i]];
+            }
+            safeApply();
+          }
+
+          //continuous listener for updates
+          databaseRef.child("Notifications").child(getSignedCookie("user_id"))
+            .child("MessageNotifications").on("child_changed", function(snapshot) {
+              var numMessages = snapshot.val();
+              if (numMessages) {
+                if ($scope.getDMID(snapshot.key) != $scope.currRoomChatID) {
+                  //update msg notifications property if not in current chat
+                  $scope.messageNotifications[snapshot.key] = numMessages
+                  safeApply();
+                }
+                else {
+                  //tell server to set msg notif to zero since we already in DM
+                  $http.get("/clear_message_notifications/" + snapshot.key);
+                  $scope.messageNotifications[snapshot.key] = 0;
+                }
+              }
+          });
+      });
+    }
+  }
+
+  //Check online buddies
+  function setupOnlineNotifications() {
+    $scope.buddies_status= {};
+    var lastOnline = {};
+    for (var i = 0; i < $scope.added_buddies_list.length; i++) {
+      var other_user_id = $scope.added_buddies_list[i].user_two_id;
+      startOnlineListener(other_user_id);
+    }
+  }
+
+  function startOnlineListener(other_user_id) {
+    databaseRef.child("UserActivity").child(other_user_id).child("online")
+      .on("value", function(snapshot) {
+        if (snapshot.val()) {
+          //console.log("buddy online - " + other_user_id);
+        }
+        else if ($scope.buddies_status[other_user_id] == true) {
+          //console.log("buddy offline - " + other_user_id);
+        }
+        $scope.buddies_status[other_user_id] = snapshot.val();
+        adjustBuddyList();
+        safeApply();
+    });
+  }
+
+  function adjustBuddyList() {
+    buddies_online = [];
+    buddies_offline = [];
+    for (var i = 0; i < $scope.added_buddies_list.length; i++) {
+      if ($scope.buddies_status[$scope.added_buddies_list[i].user_two_id]) {
+        buddies_online.push($scope.added_buddies_list[i]);
+      }
+      else {
+        buddies_offline.push($scope.added_buddies_list[i]);
+      }
+    }
+    //buddies_online.sort(ezSort);
+    //buddies_offline.sort(ezSort);
+    $scope.added_buddies_list = buddies_online.concat(buddies_offline);
+  }
+  function ezSort(a, b) {
+    return a.user_two_name.localeCompare(b.user_two_name);
+  }
+
+  $scope.isDank = function() {return getCookie("dank");}
+
+
+>>>>>>> 7a18988c5e70314c759a3426292e3c532f99a40c
   /*********************************************************************/
   /**************************** BLOCK SYSTEM ***************************/
 
@@ -938,9 +1163,7 @@ function($scope, $http, $timeout) {
   var refresh = function(){
     $http.get('/get_blocked_users').then(function(response){
       $scope.block_user_list = response.data;
-      console.log(response.data);
-      console.log(response.data.length);
-      console.log(response.data[0]);
+      //console.log(response.data[0]);
       if(!(response.data[0])){
         return;
       }
@@ -963,6 +1186,7 @@ function($scope, $http, $timeout) {
       onResponseReceived(response.data);
     });
   };
+
   $scope.unblock = function(id){
 
     console.log(id);
@@ -970,7 +1194,9 @@ function($scope, $http, $timeout) {
       refresh();
     });
   }
+
   refresh();
+
   $scope.blockUser = function(){
     getIdFromName($scope.block_user.name, function(response){
       console.log(response);
@@ -979,6 +1205,7 @@ function($scope, $http, $timeout) {
         addBlock(response.user_id, response.email, function(response){
           console.log("XX");
           console.log(response);
+          showAlert('block-alert', false);
           refresh();
         });
       }
@@ -992,10 +1219,18 @@ function($scope, $http, $timeout) {
 
   var allClassesNameToID = null;
   var temp_class_ids = []; // class id's that are going to be displayed
+  //TODO: ERIC -- change temp_class_ids as $scope model for clealiness?
 
   $scope.refreshAddClass = function() {
     //deep copy so we won't copy over temp changes, also has an extra lounge_id
-    temp_class_ids = $scope.my_class_ids.slice(0);
+
+
+    temp_class_ids = $scope.my_class_ids.slice();
+    temp_class_ids.splice(temp_class_ids.indexOf('lounge_id'), 1);
+
+    console.log('LUL ' + $scope.my_class_ids);
+    console.log('LUL ' + temp_class_ids);
+
     //grab all classes if they weren't pulled before
     if (allClassesNameToID == null) {
       getAllClasses();
@@ -1069,7 +1304,34 @@ function($scope, $http, $timeout) {
   $scope.saveChanges = function() {
     $http.post('/enroll', {class_ids: temp_class_ids});
     closeModal("#modal-add-class", "#add-class");
+
     //ISAAC -- call function(temp_class_ids)
+    updateLocalClasses(temp_class_ids);
+  }
+
+  function updateLocalClasses(updated_class_ids) {
+    console.log("UPDATING LOCAL CLASSES")
+    updated_class_ids = updated_class_ids.concat(['lounge_id']);
+    console.log('LUL2 ' + $scope.my_class_ids);
+    console.log('LUL2 ' + updated_class_ids);
+    var noChange = true;
+    updated_class_ids.forEach(function(class_id) {
+      // for classes I've added
+      if ($scope.my_class_ids.indexOf(class_id) == -1) {
+        getClass(class_id);
+        noChange = false;
+      }
+    });
+
+    noChange = noChange && $scope.my_class_ids.length == updated_class_ids.length; 
+
+    $scope.my_class_ids = updated_class_ids;
+    safeApply();
+
+    if (!noChange) {
+      console.log('was changed');
+      showAlert("course-change-alert", false);
+    }
   }
 
   // populates the allClassesNameToID dictionary with all available classes
@@ -1113,25 +1375,6 @@ function($scope, $http, $timeout) {
     for (var name in allClassesNameToID) {
       if (allClassesNameToID[name] == class_id) {
         return name;
-      }
-    }
-  }
-
-  function safeApply(func) {
-    var phase = $scope.$root.$$phase;
-    if (phase != "$apply" && phase != "$digest") {
-      if (func && (typeof(func) == "function")) {
-        $scope.$apply(func);
-      }
-      else {
-        console.log("Succesful apply");
-        $scope.$apply();
-      }
-    }
-    else {
-      console.log("Already applying");
-      if (func && (typeof(func) == "function")) {
-        func();
       }
     }
   }

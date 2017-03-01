@@ -6,8 +6,10 @@ var isLecturer = false;		// am I giving a lecture?
 
 /***** Audio conferencing variables ***************/
 //var peer = new Peer(myID, {host: "localhost", port: "9000", path: '/peerjs'});
-var peer = new Peer(myID, 
-                    {host: "pacific-lake-64902.herokuapp.com", port: "",  path: '/peerjs'});
+//var peer = new Peer(myID, 
+//  {host: "pacific-lake-64902.herokuapp.com", port: "",  path: '/peerjs'});
+var peer = new Peer(myID,
+  {host: "studyspacepeerserver.mybluemix.net", port: "", path: "/peerjs"});
 peer._lastServerId = myID;
 var PEER_PING_PERIOD = 30000;
 var myStream = null;
@@ -24,7 +26,8 @@ getVoice();
 function getVoice(callback) {
   navigator.getUserMedia({video: false, audio: true}, function(stream) {
     myStream = stream;
-    showAlert("voice-connect-alert", 3000);
+    angular.element(document.getElementById('myBody')).scope().setVolumeListener(myID, myStream);
+    showAlert("voice-connect-alert", 'short');
     if (callback) {
       callback();
     }
@@ -160,6 +163,9 @@ function answerCallHelper(call) {
 // just calls addRemoteStream and plays the sound effect
 function establishCall(remoteStream, peer_id) {
 
+  // set up the listener for this peer
+  angular.element(document.getElementById('myBody')).scope().setVolumeListener(peer_id, remoteStream);
+
   // add their stream
   addRemoteStream(remoteStream, peer_id);
 
@@ -211,7 +217,7 @@ function joinRoomCall(currRoomCallID) {
       isLecturer = (response.is_lecture && response.host_id == myID);
 
       if (response.is_lecture) {
-        showAlert("lecture-alert", 4000);
+        showAlert("lecture-alert");
       }
 
       // if this is a lecture-style room and I am not the lecturer,
@@ -228,6 +234,12 @@ function joinRoomCall(currRoomCallID) {
       // if I am a lecturer or this is a normal room
       else {
 
+        //show alert if no audio permissions
+        if (myStream == null) {
+          console.log("GIVE MIC PERMISSIONS PLZ");
+          showAlert("no-permissions-alert", false);
+        }
+
         // by default, unmute me
         setMyStreamAudioEnabled(true);
 
@@ -235,8 +247,10 @@ function joinRoomCall(currRoomCallID) {
         var usersArray = Object.values(response.users);
 
         for (i = 0; i < usersArray.length; i++) {
-          var other_user_id =usersArray[i];
+
+          var other_user_id = usersArray[i];
           console.log("assessing " + other_user_id);
+
           if (other_user_id != myID) {
             startCall(other_user_id);
           }
@@ -252,11 +266,6 @@ function leaveRoom(currRoomCallID) {
   // are we even in a room?
   if (currRoomCallID != null) {
     console.log("leaving room with id " + currRoomCallID);
-
-    //temp
-    var temp = new XMLHttpRequest();
-    temp.open("GET", "/typing/false/" + currRoomCallID, true);
-    temp.send();
 
     // leave our calls
     leaveCalls();
@@ -297,10 +306,12 @@ function addRemoteStream(remoteStream, user_id) {
 function removeRemoteStream(user_id) {
 
   // remove the audio track from the page
-  document.getElementById("myBody").removeChild(myRemoteStreams[user_id]);
+  if (myRemoteStreams[user_id]) {
+    document.getElementById("myBody").removeChild(myRemoteStreams[user_id]);
 
-  // remove the remoteStream from myRemoteStreams
-  delete myRemoteStreams[user_id];
+    // remove the remoteStream from myRemoteStreams
+    delete myRemoteStreams[user_id];
+  }
 }
 
 // - removes all {user_id: call} pairs in myCalls and closes calls
@@ -342,12 +353,14 @@ function setOnBeforeUnload(currRoomCallID) {
   // when the window is about to close
   window.onbeforeunload = function(event) {
     // send request to server to tell them we left
-    leaveRoomHard(currRoomCallID);
+    //leaveRoomHard(currRoomCallID);
+    leaveRoom(currRoomCallID);
   };
 }
 
 // makes sure we leave the room
 function leaveRoomHard(currRoomCallID) {
+  console.log(currRoomCallID);
   if (currRoomCallID != null) {
     var xhr = new XMLHttpRequest();
     xhr.open('GET', "/leave_room/" + currRoomCallID, false);

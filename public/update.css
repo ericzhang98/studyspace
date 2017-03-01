@@ -9,12 +9,26 @@
 /* dark-color-light: #353535 */ /* Our lighter dark color */
 /* accent-color: #e01f4f */
 
+.md-padding {
+  padding: 1px;
+}
+
 .container-settings {
   background: white;
   padding: 4rem; 
   margin: 3rem auto;
   border-radius: 0.5rem;
   width: 50rem;
+}
+
+.container-current-classes {
+  margin-top: 2rem;
+}
+
+.container-current-classes .caption {
+  font-size: 1rem;
+  margin-top: 2rem;
+  margin-bottom: 0;
 }
 
 .password-input {
@@ -43,6 +57,10 @@
   margin-bottom: 3rem;
 }
 
+.nav-link:last-child {
+  margin-right: 0px;
+}
+
 .selected-classes {
   margin-top: 1rem;
 }
@@ -57,100 +75,11 @@ body {
   padding: 1.5rem;
 }
 
-h2, h3 {
-  font-weight: 600;
-}
-
 h2 {
-  margin-top: 0;
-  margin-bottom: 3.5rem;
-  padding-bottom: 3rem;
-  border-bottom: solid 1px #eee;
+  margin-bottom: 3rem;
+  font-weight: 600;
 }
 
 .btn:hover {
   color: #ccc;
 }
-
-/*
-main {
-  background: white;
-  height: 100%;
-}
-*/
-/*
-h1 {
-    margin-bottom: 10px;
-}
-
-li {
-  padding: 10px;
-  width: 100%;
-  border-top: 1px solid gray;
-}
-
-li:first-child {
-  border: none;
-}
-
-li:hover {
-  background-color: gray;
-}
-
-ul {
-  padding: 0;
-  margin: 0;
-}
-#add-class-div {
-    display: inline-block;
-}
-
-#buttons {
-    width: 50%;
-    margin: 4em auto;
-    padding: 10px;
-    text-align: center;
-}
-
-#class-dropdown {
-    background-color: inherit;
-}
-
-#school-classes {
-    margin: 10px auto;
-}
-
-.form-control {
-    margin: 10px auto;
-}
-
-.half {
-    width: 50%;
-}
-
-.main-container {
-    width: 50%;
-    margin: 4em auto;
-    padding: 10px;
-    border: 3px solid #DCDCDC;
-    text-align: center;
-}
-
-.middle {
-    margin: 0 auto;
-}
-
-.school-class {
-    font-size: 1.5em;
-    width: 50%;
-    margin: 10px auto;
-}
-
-.span2 {
-  display: inline-block;
-}
-
-.x-button {
-    margin-left: 8px;
-}
-*/

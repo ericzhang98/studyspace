@@ -5,11 +5,8 @@
 var LOG = "log_in_controller: "
 
 // defining the controller
-angular.module('logInApp', []).controller('LogInCtrl', ['$scope', '$http', function($scope, $http) {
+angular.module('loginApp', []).controller('loginController', ['$scope', '$http', function($scope, $http) {
   console.log(LOG + "started");
-  console.log(getSignedCookie("name"));
-  console.log(getSignedCookie("user_id"));
-  console.log(getSignedCookie("email"));
 
   // - verifyLogin looks for a user with specified info and
   // - calls onResponseReceived when it gets and response
@@ -36,10 +33,9 @@ angular.module('logInApp', []).controller('LogInCtrl', ['$scope', '$http', funct
         if (user != null) {
           if (user.active) { 
             console.log(LOG + "login succeeded");
-            console.log(document.location.href);
             $scope.emailMessage = "";
             $scope.passwordMessage = "";
-            document.location.href = "/";
+            window.location.href = "/";
           }
           else {
             console.log(LOG + "need to verify account, verify email");
