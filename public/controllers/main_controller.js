@@ -585,6 +585,10 @@ function($scope, $http, $timeout, $window) {
   function pingUserActivity(constant) {
     var xhr = new XMLHttpRequest();
     xhr.open("GET", "/ping", true);
+    xhr.onerror = function(){
+      console.log(xhr.status);
+      showAlert("no-connection-alert", "longaf", false);
+    }
     xhr.send();
     if (constant) {
       currPing = setTimeout(pingUserActivity, USER_PING_PERIOD, true);

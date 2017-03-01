@@ -71,7 +71,7 @@
               ng-click="logout()">Log Out</button>
             <!-- User Preference -->
             <a id="preferences" class="btn btn-low-pri btn-block"
-              ng-click="manageAccount()">Account</a>
+              href="/courses">Account</a>
 
           </div>
 
@@ -462,7 +462,7 @@
       </div>
       <div id="course-change-alert" class="alert fade in text-center" hidden>
         <a class="close" data-dismiss="alert">×</a>
-        <span>Your course changes were successfully applied.</span>
+        <span>Course changes were successfully applied.</span>
       </div>
       <div id="no-permissions-alert" class="alert fade in text-center" hidden>
         <a class="close" data-dismiss="alert">×</a>
@@ -475,6 +475,11 @@
       <div id="block-alert" class="alert fade in text-center" hidden>
         <a class="close" data-dismiss="alert">×</a>
         <span>User blocked. They can't hear you, and you can't hear them.<span>
+      </div>
+      <div id="no-connection-alert" class="alert fade in text-center" hidden>
+        <a class="close" data-dismiss="alert">×</a>
+        <span>Oops! Can't connect to server. Please check your internet
+          connection and try refreshing the page.<span>
       </div>
     </div>
 

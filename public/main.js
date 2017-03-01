@@ -55,6 +55,9 @@ function showAlert(alert_id, durationWord = 'normal', show_only_once = true) {
 		case 'long' :
 			duration = 6000;
 			break;
+    case "longaf" :
+      duration = 20000;
+      break;
 		default:
 			duration = 4000;
 	}
