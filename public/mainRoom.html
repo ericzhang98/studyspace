@@ -119,7 +119,10 @@
 
           <!-- BUDDIES -->
           <div class="container-title">
-            <span class="title">Buddies</span>
+            <button id="button-add-buddy" class="btn container-title" ng-click="openBuddyRequest()" >
+              <span class="title">Buddies</span>
+              <span class="glyphicon glyphicon-plus"></span>
+            </button>
           </div>
 
           <!-- REQUESTS -->
@@ -435,12 +438,12 @@
             <!-- Auto complete -->
             <div>
               <md-content id="class-dropdown" class="md-padding">
-                <form>
+               k  <form>
                   <md-autocomplete
                      md-search-text="searchText"
                      md-items="item in querySearch(searchText)"
                      md-item-text="item"
-                     md-min-length="0"
+                     md-min-length=""
                      md-selected-item="selectedItem"
                      md-selected-item-change="processSelection()"
                      md-autoselect="true"
@@ -474,7 +477,7 @@
 
 
     <!--Buddy Request Modal-->
-    <div id="modal-buddy-request" class="modal modal-buddy-request-container" role="dialog">
+    <div id="modal-buddy-request" class="modal create-room-container" role="dialog">
       <div class="modal-dialog">
 
         <!-- Content -->
@@ -483,25 +486,26 @@
             <button id="close-buddy-request" class="btn close" data-dismiss="modal" aria-label="Close">
               <span class="glyphicon glyphicon-remove" aria-hidden="true"></span>
             </button>
-            <h1 class="title prim-dark-text">Name your space</h1>
+            <h1 class="title prim-dark-text">Enter Your Buddy's Email</h1>
           </header>
           <div class="main form-container">
 
             <!-- Class selection -->
             <form role="form" accept-charset="UTF-8" autocomplete="off">
               <div class="form-group">
-                <!--<label for="room_name">Room Name</label>-->
-                <input type="text" class="form-control" maxlength="28" placeholder="Enter your Buddy's Email" id="room_name">
+                <input type="text" class="form-control" maxlength="28" placeholder="name@ucsd.edu" ng-model="friend.name">
               </div>
               
               <div class="btn-container text-center">
-                <button type="submit" class="btn btn-primary btn-block btn-submit-form btn-hi-pri" ng-click="TODOTODOTODO addRoom()">Send Request</button>
+                <button type="submit" class="btn btn-primary btn-block btn-submit-form btn-hi-pri" ng-click=sendRequest()">Send Request</button>
               </div>
             </form>
 
           </div>
         </div>
 
+      </div>
+    </div>
 
 
   </body>
