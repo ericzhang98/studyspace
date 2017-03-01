@@ -1154,7 +1154,6 @@ function($scope, $http, $timeout, $window) {
   $scope.isDank = function() {return getCookie("dank");}
 
 
->>>>>>> 7a18988c5e70314c759a3426292e3c532f99a40c
   /*********************************************************************/
   /**************************** BLOCK SYSTEM ***************************/
 
