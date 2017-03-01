@@ -326,11 +326,11 @@
               <div class="dropdown">
                 <div class="item">
 
-                  <div ng-if="user_id == myID" class="container-user-icon-small {{volumes[user_id].loud ? 'loud-prim' : ''}} over-base-text prim-back" data-toggle="dropdown">
+                  <div ng-if="user_id == myID" class="container-user-icon-small {{volumes[user_id].loud ? 'loud-prim' : ''}} over-base-text prim-back">
                     <span ng-cloak>{{users[user_id].name | limitTo:1}}</span>
                   </div>
 
-                  <div ng-if="user_id != myID" class="container-user-icon-small {{volumes[user_id].loud ? 'loud-acc' : ''}} over-base-text acc-back">
+                  <div ng-if="user_id != myID" class="container-user-icon-small {{volumes[user_id].loud ? 'loud-acc' : ''}} over-base-text {{getRemoteStreamAudioEnabled(user_id) ? 'acc-back' : 'base-back'}}">
                     <span ng-cloak>{{users[user_id].name | limitTo:1}}</span>
                   </div>
                   

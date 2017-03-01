@@ -270,6 +270,7 @@ html, body {
   cursor: default;
 }
 
+
 .loud-prim {
   box-shadow: 0 0 0 4px var(--primary-dark-color), 0 0 0 0px #888;
 }

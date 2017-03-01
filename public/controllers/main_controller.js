@@ -624,6 +624,13 @@ function($scope, $http, $timeout, $window) {
     }
     toggleRemoteStreamAudioEnabled(user_id);
   };
+
+  // - is this person muted?
+  $scope.getRemoteStreamAudioEnabled = function(user_id) {
+    if (myRemoteStreams[user_id]) {
+      return !myRemoteStreams[user_id].muted;
+    }
+  }
   
   $scope.classmateDropdown = function() {
     $('.dropdown-toggle').dropdown('toggle');
