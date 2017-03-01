@@ -439,7 +439,9 @@ html, body {
 }
 
 .studymates {
-  text-align: center
+  /*text-align: center*/
+  padding-left: 1.5rem;
+  margin-bottom: 1.5rem;
 }
 
 .item {

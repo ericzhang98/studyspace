@@ -45,10 +45,10 @@
   </head>
   <body>
 
+    <h2 class="text-center" role="banner">Account Settings</h2>
     <main role="main" class="container">
-      <h2 class="text-center">Account Settings</h2>
-      <ul class="nav nav-tabs" role="tablist">
-        <li class="nav-item active">
+      <ul class="nav nav-pills" role="tablist">
+        <li class="nav-item -active">
           <a class="nav-link prim-dark-text" data-toggle="tab"
             href="#classes-form" role="tab">Classes</a>
         </li>
@@ -65,7 +65,6 @@
       <div class="tab-content">
         <div class="tab-pane active" id="classes-form" role="tabpanel">
           <div id="classes-form" class="container-settings">
-            <h2>Manage Classes</h2>
             <div layout="column" ng-cloak>
               <md-content id="class-dropdown" class="md-padding">
                 <form ng-submit="submitForm()">
@@ -83,10 +82,10 @@
                 </form>
               </md-content>
             </div>
-            <div class="text-center" style="margin-bottom: 20px">
-              <h4 class="title" style="margin-bottom: 5px;">Current classes</h4>
+            <div class="text-center container-current-classes">
+              <h4 class="title">Current classes</h4>
               <div id="school-classes" class="selected-classes"></div>
-              <p style="font-size: 1rem; margin-top: 15px;">(click to remove)</p>
+              <p class="caption">(click to remove)</p>
             </div>
           </div>
         </div>
@@ -117,7 +116,7 @@
         </div>
       </div> <!-- END tab-content div -->
 
-      <div class="btn-container" style="margin-top: 100px">
+      <div class="btn-container">
         <a id="save-button" class="btn btn-hi-pri btn-block" href="/">Apply Changes</a>
         <button id="cancel-button" class="btn btn-cancel btn-block">Cancel</button>
       </div>

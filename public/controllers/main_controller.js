@@ -817,18 +817,29 @@ function($scope, $http, $timeout, $window) {
   /*********************************************************************/
   /**************************** BUDDY SYSTEM ***************************/
 
+  console.log("buddy system");
   //Saurabh's local check if friends
-  $scope.isFriendsWith = function(user_id) {/*
-    console.log("friends??");
-    for (buddy in $scope.added_buddies_list) {
-      console.log(buddy);
-      console.log(buddy.user_two_name + " is not a friend");
+  $scope.isFriendsWith = function(user_id) {
+    var index;
+    for (index = 0; index < $scope.added_buddies_list.length; ++index) {
+      var buddy = $scope.added_buddies_list[index]; 
       if (buddy.user_two_id == user_id) {
-        return true;
+        return index;
       }
     }
-    console.log("RIP not friends");*/
-    return false;
+    return -1;
+  }
+
+  $scope.toggleIsFriend = function(user_id) {
+    var index = $scope.isFriendsWith(user_id);
+    if (index > -1) {
+      $scope.deleteFriend(user_id);
+      $scope.added_buddies_list.splice(index, 1);
+      //TODO redirect to home page if in DM with deleted friend
+    }
+    else {
+      $scope.sendRequest(user_id);
+    }
   }
 
   // gets a user's buddy requests, calls a callback on the data,
@@ -907,6 +918,14 @@ function($scope, $http, $timeout, $window) {
   getBuddies(function(response){ 
     $scope.added_buddies_list = response;
     $scope.added_buddies_list.sort(ezSort);
+    /*$scope.buddy_id_list = [];
+
+    var index;
+    for (index = 0; index < $scope.added_buddies_list.length; ++index) {
+      var buddy = $scope.added_buddies_list[index]; 
+      $scope.buddy_id_list.push(buddy.user_two_id);
+    }*/
+
     setupOnlineNotifications();
   });
 
