@@ -1057,6 +1057,16 @@ function($scope, $http, $timeout, $window) {
     }
   }
 
+  $scope.openBuddyRequest = function() {
+    console.log('open moodal for buddy request');
+    $("#modal-buddy-request").fadeIn(100);
+    //set timeout?
+    setTimeout(function() {
+      $("#buddy-request").removeClass("hide");
+      $("#buddy-request").addClass("fadeInBack");
+    }, 100);
+  }
+
 
   //Message notifications
   function startMessageNotifications() {
@@ -1144,6 +1154,7 @@ function($scope, $http, $timeout, $window) {
   $scope.isDank = function() {return getCookie("dank");}
 
 
+>>>>>>> 7a18988c5e70314c759a3426292e3c532f99a40c
   /*********************************************************************/
   /**************************** BLOCK SYSTEM ***************************/
 
@@ -1259,7 +1270,7 @@ function($scope, $http, $timeout, $window) {
       var class_name = $scope.selectedItem;
       if (verifyClass(class_name)) {
         var class_id = allClassesNameToID[class_name];
-        // Make sure the user isn't already in the class
+        // Make sure the user isn't already in the class.
         if($.inArray(class_id, temp_class_ids) == -1) {
             addClass(class_id);
         } else {

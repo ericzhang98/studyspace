@@ -120,7 +120,10 @@
 
           <!-- BUDDIES -->
           <div class="container-title">
-            <span class="title">Buddies</span>
+            <button id="button-add-buddy" class="btn container-title" ng-click="openBuddyRequest()" >
+              <span class="title">Buddies</span>
+              <span class="glyphicon glyphicon-plus"></span>
+            </button>
           </div>
 
           <!-- REQUESTS -->
@@ -482,6 +485,100 @@
           connection and try refreshing the page.<span>
       </div>
     </div>
+
+
+
+
+
+
+
+    <!-- Misc and standalone divs -->
+    <!-- Add Class Modal -->
+    <div id="modal-add-class" class="modal" role="dialog"
+      ng-controller="AddClassController">
+      <div class="modal-dialog">
+        <!-- Content -->
+        <div id="add-class" class="modal-content modal-add-class-content hide">
+          <header class="modal-header text-center"> 
+            <button id="close-add-class" class="btn close" data-dismiss="modal" aria-label="Close">
+              <span class="glyphicon glyphicon-remove" aria-hidden="true"></span>
+            </button>
+            <h1 class="title" style="margin-bottom: 5px;">Add a class</h1>
+          </header>
+          <div class="main form-container">
+
+            <!-- Auto complete -->
+            <div>
+              <md-content id="class-dropdown" class="md-padding">
+               k  <form>
+                  <md-autocomplete
+                     md-search-text="searchText"
+                     md-items="item in querySearch(searchText)"
+                     md-item-text="item"
+                     md-min-length=""
+                     md-selected-item="selectedItem"
+                     md-selected-item-change="processSelection()"
+                     md-autoselect="true"
+                     placeholder="Enter a Class Code (e.g. 'CSE110')">
+                    <md-item-template>
+                      <span md-highlight-text="searchText" md-highlight-flags="^i">{{item}}</span>
+                    </md-item-template>
+                  </md-autocomplete>
+                </form>
+              </md-content>
+            </div>
+          </div>
+
+          <!-- Current courses -->
+          <div class="classes-container">
+            <span class="classes" ng-repeat="class in currClasses">
+              <button class="btn btn-hi-pri"
+                ng-click="removeClass(class.class_id)">
+                {{class.class_name}}
+                <span class="glyphicon glyphicon-remove" aria-hidden="true"></span>
+              </button>
+            </span>
+            <br>
+            <button class="btn btn-hi-pri save-btn" ng-click="saveChanges()" style="margin-bottom: 20px">Save</button>
+          </div>
+
+
+        </div>
+      </div>
+    </div>
+
+
+    <!--Buddy Request Modal-->
+    <div id="modal-buddy-request" class="modal create-room-container" role="dialog">
+      <div class="modal-dialog">
+
+        <!-- Content -->
+        <div id="buddy-request" class="modal-content modal-buddy-request-content hide">
+          <header class="modal-header text-center"> 
+            <button id="close-buddy-request" class="btn close" data-dismiss="modal" aria-label="Close">
+              <span class="glyphicon glyphicon-remove" aria-hidden="true"></span>
+            </button>
+            <h1 class="title prim-dark-text">Enter Your Buddy's Email</h1>
+          </header>
+          <div class="main form-container">
+
+            <!-- Class selection -->
+            <form role="form" accept-charset="UTF-8" autocomplete="off">
+              <div class="form-group">
+                <input type="text" class="form-control" maxlength="28" placeholder="name@ucsd.edu" ng-model="friend.name">
+              </div>
+              
+              <div class="btn-container text-center">
+                <button type="submit" class="btn btn-primary btn-block btn-submit-form btn-hi-pri" ng-click=sendRequest()">Send Request</button>
+              </div>
+            </form>
+
+          </div>
+        </div>
+
+      </div>
+    </div>
+
 
   </body>
 
