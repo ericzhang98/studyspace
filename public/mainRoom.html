@@ -222,9 +222,9 @@
                       <!-- Dropdown for non-me users -->
                       <a ng-if="chatMessage.user_id != myID" class="user-name dropdown-toggle acc-text" data-toggle="dropdown">{{chatMessage.name.split(" ")[0] + " " + chatMessage.name.split(" ")[1][0] + "."}} </a>
                       <ul ng-if="chatMessage.user_id != myID" class="dropdown-menu">
-                        <li><a ng-click="toggleUserAudio(chatMessage.user_id)">{{muted_user_ids.indexOf(chatMessage.user_id) == -1 ? 'Mute' : 'Unmute'}}</a></li>
+                        <li><a ng-click="toggleUserAudio(chatMessage.user_id)">{{getRemoteStreamAudioEnabled(chatMessage.user_id) ? 'Mute' : 'Unmute'}}</a></li>
                         <li><a>Block</a></li>
-                        <li><a ng-click="toggleIsFriend(chatMessage.user_id)">{{isFriendsWith(chatMessage.user_id) != -1 ? 'Unfriend' : 'Friend'}}</a></li>
+<li><a ng-click="sendRequest(chatMessage.user_id)">{{isFriendsWith(chatMessage.user_id) ? 'Unfriend' : 'Friend'}}</a></li>
 
 <!--<li><a href="#">Friend</a></li>-->
                       </ul>
@@ -318,7 +318,7 @@
           <span ng-cloak>{{currTyping}}</span>
           <br>-->
 
-          <h4 ng-cloak ng-if="currRoomChatID ? rooms[currRoomChatID].is_lecture : false" ng-hide="rooms[currRoomChatID].class_id == 'dm_class_id'" class="studymates over-base-text"><acc>{{rooms[currRoomChatID].name}}</acc></h4>
+          <h4 ng-cloak ng-if="currRoomChatID ? rooms[currRoomChatID].is_lecture : false" ng-hide="rooms[currRoomChatID].class_id == 'dm_class_id'" class="studymates over-base-text" style="margin-top:2rem"><acc>{{rooms[currRoomChatID].name}}</acc></h4>
 
           <h4 ng-cloak ng-if="currRoomChatID ? !rooms[currRoomChatID].is_lecture : false" ng-hide="rooms[currRoomChatID].class_id == 'dm_class_id'" class="studymates" style="margin-top:2rem"><prim>{{rooms[currRoomChatID].name}}</prim></h4>
             <div class="studymates entry over-base-text dropdown-toggle" ng-repeat="user_id in rooms[currRoomChatID].users" ng-cloak>
@@ -338,7 +338,7 @@
                   <a ng-if="user_id != myID" class="names dropdown-toggle" data-toggle="dropdown">{{users[user_id].name}}</a>
 
                   <ul ng-if="user_id != myID" class="dropdown-menu">
-                    <li><a ng-click="toggleUserAudio(user_id)">{{muted_user_ids.indexOf(user_id) == -1 ? 'Mute' : 'Unmute'}}</a></li>
+                    <li><a ng-click="toggleUserAudio(user_id)">{{getRemoteStreamAudioEnabled(user_id) ? 'Mute' : 'Unmute'}}</a></li>
                     <li><a>Block</a></li>
                     <li><a ng-click="sendRequest(user_id)">{{isFriendsWith(user_id) ? 'Unfriend' : 'Friend'}}</a></li>
                   </ul>
