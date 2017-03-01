@@ -9,6 +9,10 @@
 /* dark-color-light: #353535 */ /* Our lighter dark color */
 /* accent-color: #e01f4f */
 
+.md-padding {
+  padding: 1px;
+}
+
 .container-settings {
   background: white;
   padding: 4rem; 
@@ -17,8 +21,14 @@
   width: 50rem;
 }
 
-.tab-content {
-  height: 330px;
+.container-current-classes {
+  margin-top: 2rem;
+}
+
+.container-current-classes .caption {
+  font-size: 1rem;
+  margin-top: 2rem;
+  margin-bottom: 0;
 }
 
 .password-input {
@@ -65,15 +75,9 @@ body {
   padding: 1.5rem;
 }
 
-h2, h3 {
-  font-weight: 600;
-}
-
 h2 {
-  margin-top: 0;
-  margin-bottom: 3.5rem;
-  padding-bottom: 3rem;
-  border-bottom: solid 1px #eee;
+  margin-bottom: 3rem;
+  font-weight: 600;
 }
 
 .btn:hover {
