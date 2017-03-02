@@ -1006,6 +1006,18 @@ function($scope, $http, $timeout, $window) {
     });
   };
 
+  $scope.sendRequestWithEmail = function(other_user_email) {
+    $http.get("/user_id_from_email/" + other_user_email).then(function(response) {
+      if (response.error == null) {
+        var other_user_id = response.data.user_id;
+        $scope.sendRequest(other_user_id);
+      }
+      else {
+        console.log("An account with that email does not exist");
+      }
+    });
+  }
+
   $scope.rejectBuddyRequest = function(id){
     console.log(id);
     deleteBuddy(id, function(response){});
