@@ -1232,10 +1232,10 @@ function($scope, $http, $timeout, $window) {
       }
     });
   }
-  var addBlock = function(blocked_user_id, blocked_user_email, onResponseReceived){
+  
+  var addBlock = function(blocked_user_id, onResponseReceived){
     var data = {
       "blocked_user_id": String(blocked_user_id),
-      "blocked_user_email": blocked_user_email
     }; 
     console.log("ADD");
     $http.post('/add_blocked_user', data).then(function(response){
@@ -1243,16 +1243,9 @@ function($scope, $http, $timeout, $window) {
     });
   };
 
-  $scope.unblock = function(id){
-
-    console.log(id);
-    $http.delete('/remove_block/' + id).then(function(response){
-      refresh();
-    });
-  }
-
   refresh();
 
+  // not used, can delete
   $scope.blockUser = function(){
     getIdFromName($scope.block_user.name, function(response){
       console.log(response);
@@ -1267,8 +1260,21 @@ function($scope, $http, $timeout, $window) {
       }
     });
   }
-
-
+  
+  $scope.blockUserWithId = function(user_id) {
+    console.log("blocking: " + user_id);
+    addBlock(user_id, function(response) {
+      console.log(response);
+      refresh();
+    });
+  }
+  
+  $scope.unblock = function(user_id){
+    console.log("unblocking: " + user_id)
+    $http.delete('/remove_block/' + user_id).then(function(response){
+      refresh();
+    });
+  }
 
 
   /******************ADD CLASS MODAL************************************/
