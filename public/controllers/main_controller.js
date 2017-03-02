@@ -779,8 +779,6 @@ function($scope, $http, $timeout, $window) {
     botDatabase.child(bot_id).child(room_id).on("value", function(snapshot) {
       if (snapshot) {
 
-        console.log('listener for bot with id ' + bot_id);
-
         var hasBot = snapshot.val();
         var index = $scope.rooms[room_id].users.indexOf(bot_id);
 
@@ -793,8 +791,6 @@ function($scope, $http, $timeout, $window) {
           console.log('removing bot with id ' + bot_id);
           $scope.rooms[room_id].users.splice(index, 1);
         }
-
-        console.log($scope.rooms[room_id].users);
 
         // get room users
         updateRoomUsers($scope.rooms[room_id]);
