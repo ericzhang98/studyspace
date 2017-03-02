@@ -6,10 +6,10 @@ var isLecturer = false;		// am I giving a lecture?
 
 /***** Audio conferencing variables ***************/
 //var peer = new Peer(myID, {host: "localhost", port: "9000", path: '/peerjs'});
-//var peer = new Peer(myID, 
-//  {host: "pacific-lake-64902.herokuapp.com", port: "",  path: '/peerjs'});
-var peer = new Peer(myID,
-  {host: "studyspacepeerserver.mybluemix.net", port: "", path: "/peerjs"});
+var peer = new Peer(myID, 
+  {host: "pacific-lake-64902.herokuapp.com", port: "",  path: '/peerjs'});
+//var peer = new Peer(myID,
+//  {host: "studyspacepeerserver.mybluemix.net", port: "", path: "/peerjs"});
 peer._lastServerId = myID;
 var PEER_PING_PERIOD = 30000;
 var myStream = null;
