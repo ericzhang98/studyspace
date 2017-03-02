@@ -119,7 +119,7 @@ function($scope, $http, $timeout, $window) {
 
         // do the command, and if it returns a message
         // then upload it
-        var msg = doCommand(chatInput)
+        var msg = doCommand(chatInput, $scope.currRoomChatID)
         if (msg) {
           uploadMessage(msg);
         }
@@ -760,6 +760,44 @@ function($scope, $http, $timeout, $window) {
         safeApply();
 
 
+        for (var i = 0; i < bot_ids.length; i++) {
+
+          addBotToRoom(room_id, bot_ids[i]);
+        }
+      }
+    });
+  }
+
+  $scope.isBot = function(user_id) {
+    return bot_ids.indexOf(user_id) != -1;
+  }
+
+  function addBotToRoom(room_id, bot_id) {
+
+    botDatabase.child(bot_id).child(room_id).off();
+    botDatabase.child(bot_id).child(room_id).on("value", function(snapshot) {
+      if (snapshot) {
+
+        console.log('listener for bot with id ' + bot_id);
+
+        var hasBot = snapshot.val();
+        var index = $scope.rooms[room_id].users.indexOf(bot_id);
+
+        if (hasBot && index == -1) {
+          console.log('adding bot with id ' + bot_id);
+          $scope.rooms[room_id].users.push(bot_id);
+        }
+
+        else if (!hasBot && index != -1) {
+          console.log('removing bot with id ' + bot_id);
+          $scope.rooms[room_id].users.splice(index, 1);
+        }
+
+        console.log($scope.rooms[room_id].users);
+
+        // get room users
+        updateRoomUsers($scope.rooms[room_id]);
+        safeApply();
       }
     });
   }

@@ -13,6 +13,7 @@
   --line-color: #dddddd;
   --accent-color: #262626;
   --border-color: none;
+  --bot-color: #e13dff;
 }
 
 /* General */
@@ -370,6 +371,9 @@ a:hover {
   background-color: var(--base-two-color);
 }
 
+.bot-back {
+  background-color: var(--bot-color);
+}
 
 .online-text {
   color: #59E01B;
@@ -408,6 +412,10 @@ a:hover {
 
 .grey-text {
   color: #666666;
+}
+
+.bot-text {
+  color: var(--bot-color);
 }
 
 .bold-text {

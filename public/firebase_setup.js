@@ -10,4 +10,5 @@ firebase.initializeApp(config);
 var databaseRef = firebase.database().ref(); //root
 var classRoomsDatabase = databaseRef.child("ClassRooms");
 var roomsDatabase = databaseRef.child("RoomInfo");
+var botDatabase = databaseRef.child("Bots");
 /**************************************************/

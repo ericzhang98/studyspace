@@ -58,10 +58,10 @@
             <div id="user-info" class="container-info-user">
               <div onclick="changeTheme()" class="container-user-icon over-base-text prim-back" 
                    style='-moz-user-select: -moz-none; -khtml-user-select: none;-webkit-user-select: none;'>
-                <span ng-cloak>{{myName | limitTo:1}}</span>
+                <span ng-cloak>{{myName.toUpperCase() | limitTo:1}}</span>
               </div>
               
-              <span class="user-name prim-text" ng-cloak>{{myName.split(" ")[0] + " " + myName.split(" ")[1][0] + "."}}</span>
+              <span class="user-name prim-text" ng-cloak>{{myName.split(" ")[0] + " " + myName.split(" ")[1][0]}}</span>
 
               <button class="btn btn-sm btn-low-key" style="position:absolute; right:16px" onclick="setMode()"> </button>
             </div>
@@ -214,8 +214,8 @@
                 <div class="blob blob-4"></div><div class="blob blob-5"></div>
               </div>
               <div class="message" ng-repeat="chatMessage in chatMessageList">
-                <div class="container-user-icon over-base-text {{chatMessage.user_id != myID ? 'acc-back' : 'prim-back'}}">
-                  <span>{{chatMessage.name | limitTo:1}}</span>
+                <div class="container-user-icon over-base-text {{isBot(chatMessage.user_id) ? 'bot-back' :chatMessage.user_id != myID ? 'acc-back' : 'prim-back'}}">
+                  <span>{{chatMessage.name.toUpperCase() | limitTo:1}}</span>
                 </div>
 
                 <div class="message-content">
@@ -223,8 +223,8 @@
                     <div class="dropdown">
 
                       <!-- Dropdown for non-me users -->
-                      <a ng-if="chatMessage.user_id != myID" class="user-name dropdown-toggle acc-text" data-toggle="dropdown">{{chatMessage.name.split(" ")[0] + " " + chatMessage.name.split(" ")[1][0] + "."}} </a>
-                      <ul ng-if="chatMessage.user_id != myID" class="dropdown-menu">
+                      <a ng-if="!isBot(chatMessage.user_id) && chatMessage.user_id != myID" class="user-name dropdown-toggle acc-text" data-toggle="dropdown">{{chatMessage.name.split(" ")[0] + " " + chatMessage.name.split(" ")[1][0]}} </a>
+                      <ul ng-if="!isBot(chatMessage.user_id) && chatMessage.user_id != myID" class="dropdown-menu">
                         <li><a ng-click="toggleUserAudio(chatMessage.user_id)">{{getRemoteStreamAudioEnabled(chatMessage.user_id) ? 'Mute' : 'Unmute'}}</a></li>
                         <li><a>Block</a></li>
 <li><a ng-click="sendRequest(chatMessage.user_id)">{{isFriendsWith(chatMessage.user_id) ? 'Unfriend' : 'Friend'}}</a></li>
@@ -233,7 +233,9 @@
                       </ul>
 
                       <!-- No dropdown if user is me -->
-                      <a ng-if="chatMessage.user_id == myID" class="user-name prim-text">{{chatMessage.name.split(" ")[0] + " " + chatMessage.name.split(" ")[1][0] + "."}}</a>
+                      <a ng-if="!isBot(chatMessage.user_id) && chatMessage.user_id == myID" class="user-name prim-text">{{chatMessage.name.split(" ")[0] + " " + chatMessage.name.split(" ")[1][0]}}</a>
+
+                      <a ng-if="isBot(chatMessage.user_id)" class="user-name bot-text">{{chatMessage.name.split(" ")[0] + " " + chatMessage.name.split(" ")[1][0]}}</a>
 
                     </div>
                     <span class="dateTime">{{timeAgo(chatMessage)}}</span>
@@ -330,11 +332,11 @@
                 <div class="item">
 
                   <div ng-if="user_id == myID" class="container-user-icon-small {{volumes[user_id].loud ? 'loud-prim' : ''}} over-base-text prim-back">
-                    <span ng-cloak>{{users[user_id].name | limitTo:1}}</span>
+                    <span ng-cloak>{{users[user_id].name.toUpperCase() | limitTo:1}}</span>
                   </div>
 
-                  <div ng-if="user_id != myID" class="container-user-icon-small {{volumes[user_id].loud ? 'loud-acc' : ''}} over-base-text {{getRemoteStreamAudioEnabled(user_id) ? 'acc-back' : 'base-back'}}">
-                    <span ng-cloak>{{users[user_id].name | limitTo:1}}</span>
+                  <div ng-if="user_id != myID" class="container-user-icon-small {{volumes[user_id].loud ? 'loud-acc' : ''}} over-base-text {{isBot(user_id) ? 'bot-back' : getRemoteStreamAudioEnabled(user_id) ? 'acc-back' : 'base-back'}}">
+                    <span ng-cloak>{{users[user_id].name.toUpperCase() | limitTo:1}}</span>
                   </div>
                   
                   <!-- Dropdown for non-me users -->

@@ -1,7 +1,7 @@
 /***** General variables **************************/
 var myID = getSignedCookie("user_id");
 var SONG_COMMANDS = ["/raindrop", "/destress", "/420"];
-var OTHER_COMMANDS = ["/gary", "/ord", "/stop", "/dank", "/scrub"];
+var OTHER_COMMANDS = ["/gary", "/ord", "/stop", "/dank", "/scrub", "/nogary", "/noord"];
 var SONG_VOLUMES = {
 	"/raindrop" : 0.25,
 	"/destress" : 0.3,
@@ -13,6 +13,7 @@ var garyisms = ["That's a professionalism deduction.", "Don't touch the bananas,
 "Only handle it once.", "This isn't worth my time.", "What does 'DTF' mean?"];
 var ordisms = ["Keep it simple, students.", "Start early, start often.", 
 "If a simple boy from the midwest can do it, so can you.", "Think like a compiler."];
+var bot_ids = ["gary_bot", "ord_bot"];
 
 var currSongAudio = null;
 document.getElementById('join_room_audio').volume = 0.4;
@@ -76,7 +77,7 @@ function showAlert(alert_id, durationWord = 'normal', show_only_once = true) {
 /*********************************************************************/
 /***************************** EASTER EGGS ***************************/
 
-function doCommand(command) {
+function doCommand(command, currRoomChatID) {
 
 	// if it's a song
 	if (SONG_COMMANDS.indexOf(command) != -1) {
@@ -109,25 +110,28 @@ function doCommand(command) {
 	}
 
 	else if (command == "/gary") {
-		if (garyisms.length == 0) {
-			return "Gary says: I'm all out of things to say. Come back later.";
-		}
-
-		var index = Math.floor(Math.random()*garyisms.length);
-		var msg = "Gary says: " + garyisms[index];
-		garyisms.splice(index, 1);
-		return msg;
+		var xhr = new XMLHttpRequest();
+    xhr.open('GET', "/add_bot/gary_bot/" + currRoomChatID, true); // responds with class_ids
+    xhr.send();
 	}
 
-	else if (command == "/ord") {
-		if (ordisms.length == 0) {
-			return "Ord says: I'm all out of things to say. Come back later.";
-		}
+	else if (command == "/nogary") {
+		var xhr = new XMLHttpRequest();
+    xhr.open('GET', "/remove_bot/gary_bot/" + currRoomChatID, true); // responds with class_ids
+    xhr.send();
+	}
 
-		var index = Math.floor(Math.random()*ordisms.length);
-		var msg = "Ord says: " + ordisms[index];
-		ordisms.splice(index, 1);
-		return msg;
+
+	else if (command == "/ord") {
+		var xhr = new XMLHttpRequest();
+    xhr.open('GET', "/add_bot/ord_bot/" + currRoomChatID, true); // responds with class_ids
+    xhr.send();
+	}
+
+	else if (command == "/noord") {
+		var xhr = new XMLHttpRequest();
+    xhr.open('GET', "/remove_bot/ord_bot/" + currRoomChatID, true); // responds with class_ids
+    xhr.send();
 	}
 
 	else if (command == "/dank") {
