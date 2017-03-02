@@ -469,17 +469,37 @@ app.get("/clear_message_notifications/:other_user_id", function(req, res) {
   res.end();
 });
 
-// get a user from a user_id
+app.post("/play_command", function(req, res) {
+  var user_id = req.signedCookies.user_id;
+  var url = req.body.url;
+  console.log(url);
+  res.end();
+});
+
+// get a user from a user_id (responds with just name and user_id)
 app.get('/get_user/:user_id/', function(req, res) {
   var user = req.params.user_id;
   db.users.findOne({user_id: user}, function(err, doc) {
     if (doc) {
-      //console.log("Sending user object for user: " + user);
       res.json({name: doc.name, user_id: doc.user_id}); 
     }
     else {
-      //console.log("User with id: " + user_id + " could not be found.");
-      res.json({success: false})
+      res.json({error: "Could not get user"});
+    }
+  });
+});
+
+//get a user from an email (responds with just user_id)
+app.get("/user_id_from_email/:email/", function(req, res) {
+  var email = req.params.email;
+  db.users.findOne({email: email}, function(err, doc) {
+    if (doc) {
+      console.log("email is valid");
+      res.send({user_id: doc.user_id});
+    }
+    else {
+      console.log("email is not valid");
+      res.send({error: "Could not find user"});
     }
   });
 });
@@ -932,7 +952,7 @@ function tutorInRoom(room) {
 
 //send any error messages back to client
 function sendVerifyError(res) {
-  res.json({success:false}); //add anything needed to json
+  res.json({error: "Verify email failed"}); //add anything needed to json
 }
 
 //generate a token of random chars

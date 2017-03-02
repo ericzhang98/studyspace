@@ -503,11 +503,14 @@
             <!-- Class selection -->
             <form role="form" accept-charset="UTF-8" autocomplete="off">
               <div class="form-group">
-                <input type="text" class="form-control" maxlength="28" placeholder="name@ucsd.edu" ng-model="friend.name">
+                <input type="text" class="form-control" maxlength="28"
+                placeholder="name@ucsd.edu" ng-model="other_user_email">
               </div>
               
               <div class="btn-container text-center">
-                <button type="submit" class="btn btn-primary btn-block btn-submit-form btn-hi-pri" ng-click=sendRequest()>Send Request</button>
+                <button type="submit" class="btn btn-primary btn-block
+                  btn-submit-form btn-hi-pri"
+                  ng-click=sendRequestWithEmail(other_user_email)>Send Request</button>
               </div>
             </form>
 
