@@ -160,6 +160,16 @@ html, body {
   padding-top: 0.2rem;
 }
 
+.system-message {
+  white-space: pre-wrap;
+  color: var(--over-base-two-color);
+  font-size: 1rem;
+  font-style: italic;
+  margin-bottom: 0;
+  padding-top: 0.1rem;
+  opacity: .5;
+}
+
 .form-message-container {
   position: absolute;
   background: white;

@@ -74,6 +74,7 @@ function($scope, $http, $timeout, $window) {
     }
 
     if ($scope.currRoomChatID != room_id) {
+
       $scope.currRoomChatID = room_id;
 
       // turn off any pre-existing listeners
@@ -121,7 +122,7 @@ function($scope, $http, $timeout, $window) {
         // then upload it
         var msg = doCommand(chatInput, $scope.currRoomChatID)
         if (msg) {
-          uploadMessage(msg);
+          uploadMessage(msg);å
         }
 
         else {

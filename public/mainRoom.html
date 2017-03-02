@@ -214,16 +214,16 @@
                 <div class="blob blob-4"></div><div class="blob blob-5"></div>
               </div>
               <div class="message" ng-repeat="chatMessage in chatMessageList">
-                <div class="container-user-icon over-base-text {{isBot(chatMessage.user_id) ? 'bot-back' :chatMessage.user_id != myID ? 'acc-back' : 'prim-back'}}">
+                <div ng-if="chatMessage.user_id != 'system_id'" class="container-user-icon over-base-text {{isBot(chatMessage.user_id) ? 'bot-back' :chatMessage.user_id != myID ? 'acc-back' : 'prim-back'}}">
                   <span>{{chatMessage.name.toUpperCase() | limitTo:1}}</span>
                 </div>
 
-                <div class="message-content">
+                <div ng-if="chatMessage.user_id != 'system_id'" class="message-content">
                   <header class="message-header">
                     <div class="dropdown">
 
                       <!-- Dropdown for non-me users -->
-                      <a ng-if="!isBot(chatMessage.user_id) && chatMessage.user_id != myID" class="user-name dropdown-toggle acc-text" data-toggle="dropdown">{{chatMessage.name.split(" ")[0] + " " + chatMessage.name.split(" ")[1][0]}} </a>
+                      <a ng-if="!isBot(chatMessage.user_id) && chatMessage.user_id != myID" class="user-name dropdown-toggle acc-text" data-toggle="dropdown">{{chatMessage.name.split(" ")[0]}} </a>
                       <ul ng-if="!isBot(chatMessage.user_id) && chatMessage.user_id != myID" class="dropdown-menu">
                         <li><a ng-click="toggleUserAudio(chatMessage.user_id)">{{getRemoteStreamAudioEnabled(chatMessage.user_id) ? 'Mute' : 'Unmute'}}</a></li>
                         <li><a>Block</a></li>
@@ -233,15 +233,18 @@
                       </ul>
 
                       <!-- No dropdown if user is me -->
-                      <a ng-if="!isBot(chatMessage.user_id) && chatMessage.user_id == myID" class="user-name prim-text">{{chatMessage.name.split(" ")[0] + " " + chatMessage.name.split(" ")[1][0]}}</a>
+                      <a ng-if="chatMessage.user_id == myID" class="user-name prim-text">{{chatMessage.name.split(" ")[0]}}</a>
 
-                      <a ng-if="isBot(chatMessage.user_id)" class="user-name bot-text">{{chatMessage.name.split(" ")[0] + " " + chatMessage.name.split(" ")[1][0]}}</a>
-
+                      <a ng-if="isBot(chatMessage.user_id)" class="user-name bot-text">{{chatMessage.name.split(" ")[0]}}</a>
                     </div>
                     <span class="dateTime">{{timeAgo(chatMessage)}}</span>
                   </header>
                   <p class="message-body" ng-bind-html="chatMessage.text |
                   linky:'_blank'"></p>
+                </div>
+
+                <div ng-if="chatMessage.user_id == 'system_id'">
+                  <p class="system-message">{{chatMessage.text}}</p>
                 </div>
               </div>
                 
