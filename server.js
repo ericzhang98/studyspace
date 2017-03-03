@@ -1158,8 +1158,8 @@ function processActivity(user_id, activityLog) {
 
 /*---- SSL CHALLENGE ----*/
 //studyspace.me
-app.get("/.well-known/acme-challenge/6pLN2BAfmar5mH9FefGgKcel-HoCvFmT2CE38yvc-Mc", function(req, res) {
-  res.send("6pLN2BAfmar5mH9FefGgKcel-HoCvFmT2CE38yvc-Mc.WvFBmKbVDiPXkv3XZvi2IVS2S4FvtRxc1OiZTIPqJls");
+app.get("/.well-known/acme-challenge/FPQsAzH1lcooEHIeB4STVrH_NzwS1_Q0Yc17I3uiaI8", function(req, res) {
+  res.send("FPQsAzH1lcooEHIeB4STVrH_NzwS1_Q0Yc17I3uiaI8.WvFBmKbVDiPXkv3XZvi2IVS2S4FvtRxc1OiZTIPqJls");
 })
 
 //www.studyspace.me
