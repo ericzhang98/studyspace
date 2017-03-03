@@ -26,6 +26,18 @@ $(document).ready(function() {
     closeModal("#modal-create-room", "#create-room");
   });
 
+  /* Create Room Modal */
+  $("#btn-buddy-request").click(function() {
+    $("#modal-buddy-request").fadeIn(100);
+    setTimeout(function() {
+      $("#buddy-request").removeClass("hide");
+      $("#buddy-request").addClass("fadeInBack");
+    }, 100);
+  });
+  $("#close-buddy-request").click(function() {
+    closeModal("#modal-buddy-request", "#buddy-request");
+  });
+
   /* Add Class Modal */
   $("#btn-add-class").click(function() {
     $("#modal-add-class").fadeIn(100);

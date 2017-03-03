@@ -1008,6 +1008,7 @@ function($scope, $http, $timeout, $window) {
       if (response.error == null) {
         var other_user_id = response.data.user_id;
         $scope.sendRequest(other_user_id);
+        closeModal("#modal-buddy-request", "#buddy-request");
       }
       else {
         console.log("An account with that email does not exist");
