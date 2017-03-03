@@ -65,6 +65,10 @@
   margin-top: 1rem;
 }
 
+.tab-content {
+  height: 40rem;
+}
+
 /* General */
 html, body {
   background: #ecf0f1;

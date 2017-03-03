@@ -223,7 +223,7 @@
                     <div class="dropdown">
 
                       <!-- Dropdown for non-me users -->
-                      <a ng-if="!isBot(chatMessage.user_id) && chatMessage.user_id != myID" class="user-name dropdown-toggle acc-text" data-toggle="dropdown">{{chatMessage.name.split(" ")[0]}} </a>
+                      <a ng-if="!isBot(chatMessage.user_id) && chatMessage.user_id != myID" class="user-name dropdown-toggle acc-text" data-toggle="dropdown">{{chatMessage.name.split(" ")[0]}} {{isTutor(chatMessage.user_id, currRoomChatID) ? "*" : ""}}</a>
                       <ul ng-if="!isBot(chatMessage.user_id) && chatMessage.user_id != myID" class="dropdown-menu">
                         <li><a ng-click="toggleUserAudio(chatMessage.user_id)">{{getRemoteStreamAudioEnabled(chatMessage.user_id) ? 'Mute' : 'Unmute'}}</a></li>
                         
@@ -237,7 +237,7 @@
                       </ul>
 
                       <!-- No dropdown if user is me -->
-                      <a ng-if="chatMessage.user_id == myID" class="user-name prim-text">{{chatMessage.name.split(" ")[0]}}</a>
+                      <a ng-if="chatMessage.user_id == myID" class="user-name prim-text">{{chatMessage.name.split(" ")[0]}} {{isTutor(chatMessage.user_id, currRoomChatID) ? "*" : ""}}</a>
 
                       <a ng-if="isBot(chatMessage.user_id)" class="user-name bot-text">{{chatMessage.name.split(" ")[0]}}</a>
                     </div>
@@ -347,7 +347,7 @@
                   </div>
                   
                   <!-- Dropdown for non-me users -->
-                  <a ng-if="user_id != myID" class="names dropdown-toggle" data-toggle="dropdown">{{users[user_id].name}}</a>
+                  <a ng-if="user_id != myID" class="names dropdown-toggle" data-toggle="dropdown">{{users[user_id].name}} {{isTutor(user_id, currRoomChatID) ? "*" : ""}}</a>
 
                   <ul ng-if="user_id != myID" class="dropdown-menu">
                     <li><a ng-click="toggleUserAudio(user_id)">{{getRemoteStreamAudioEnabled(user_id) ? 'Mute' : 'Unmute'}}</a></li>
@@ -356,7 +356,7 @@
                   </ul>
                   
                   <!-- No dropdown if user is me -->
-                  <a ng-if="user_id == myID" class="names">{{users[user_id].name}}</a>
+                  <a ng-if="user_id == myID" class="names">{{users[user_id].name}} {{isTutor(user_id, currRoomChatID) ? "*" : ""}}</a>
 
                 </div>
 
