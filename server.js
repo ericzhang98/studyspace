@@ -1156,6 +1156,19 @@ function processActivity(user_id, activityLog) {
 
 /*------------------------------------------------------------------------*/
 
+/*---- SSL CHALLENGE ----*/
+//studyspace.me
+app.get("/.well-known/acme-challenge/FPQsAzH1lcooEHIeB4STVrH_NzwS1_Q0Yc17I3uiaI8", function(req, res) {
+  res.send("FPQsAzH1lcooEHIeB4STVrH_NzwS1_Q0Yc17I3uiaI8.WvFBmKbVDiPXkv3XZvi2IVS2S4FvtRxc1OiZTIPqJls");
+})
+
+//www.studyspace.me
+app.get("/.well-known/acme-challenge/RgAtJ60qe2Pbcfxii-OTGCTp8QirL1ur3TqZhP4BMWE", function(req, res) {
+  res.send("RgAtJ60qe2Pbcfxii-OTGCTp8QirL1ur3TqZhP4BMWE.WvFBmKbVDiPXkv3XZvi2IVS2S4FvtRxc1OiZTIPqJls");
+})
+
+
+
 
 app.listen(process.env.PORT || 3000);
 userActivityChecker();
