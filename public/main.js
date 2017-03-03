@@ -1,7 +1,7 @@
 /***** General variables **************************/
 var myID = getSignedCookie("user_id");
 var SONG_COMMANDS = ["/raindrop", "/destress", "/420"];
-var OTHER_COMMANDS = ["/gary", "/ord", "/stop", "/dank", "/scrub", "/nogary", "/noord"];
+var OTHER_COMMANDS = ["/gary", "/ord", "/stop", "/dank", "/scrub", "/nogary", "/noord", "/help"];
 var SONG_VOLUMES = {
 	"/raindrop" : 0.25,
 	"/destress" : 0.3,
@@ -131,6 +131,12 @@ function doCommand(command, currRoomChatID) {
 	else if (command == "/noord") {
 		var xhr = new XMLHttpRequest();
     xhr.open('GET', "/remove_bot/ord_bot/" + currRoomChatID, true); // responds with class_ids
+    xhr.send();
+	}
+
+	else if (command == "/help") {
+		var xhr = new XMLHttpRequest();
+    xhr.open('GET', "/help/" + currRoomChatID, true); // responds with class_ids
     xhr.send();
 	}
 

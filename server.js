@@ -744,16 +744,16 @@ app.post("/update_privacy", function(req, res) {
 /*************************************************************************************/
 /**************************************** BOTS ***************************************/
 
-
+var BOT_IDS = ["gary_bot", "ord_bot"];
 var GARY_MSGS = ["That's a professionalism deduction.", "Don't touch the bananas, please.",
 "Only handle it once.", "This isn't worth my time.", "What does 'DTF' mean?", "So few students in class today..."];
 var ORD_MSGS = ["Keep it simple, students.", "Start early, start often.", 
 "If a simple boy from the midwest can do it, so can you.", "Think like a compiler."];
+var BOT_MSGS_IMMUTE = {'gary_bot' : GARY_MSGS, 'ord_bot' : ORD_MSGS};
 
 var garyMessages = [];
 var ordMessages = [];
 var botMessages = {'gary_bot' : garyMessages, 'ord_bot' : ordMessages};
-var botMessagesImmutable = {'gary_bot' : GARY_MSGS, 'ord_bot' : ORD_MSGS};
 var roomBotListeners = {} // room_id + bot_id to list of listeners
 
 function getBotMessageText(bot_id, type = null) {
@@ -770,7 +770,7 @@ function getBotMessageText(bot_id, type = null) {
   var messageBank = botMessages[bot_id];
   // if it's empty, repopulate it
   if (messageBank.length == 0) {
-    messageBank = botMessages[bot_id] = botMessagesImmutable[bot_id].slice();
+    messageBank = botMessages[bot_id] = BOT_MSGS_IMMUTE[bot_id].slice();
   } 
 
   // get a random message, remove it from the list, and return it
@@ -796,7 +796,7 @@ app.get('/add_bot/:bot_id/:room_id', function(req, res) {
   // have the bot send its initial message
   sendBotMessage(room_id, bot_id, 'hello');
 
-  if (roomBotListeners[room_id + bot_id]) {
+  /*if (roomBotListeners[room_id + bot_id]) {
     roomMessagesDatabase.child(room_id).off("child_added", roomBotListeners[room_id + bot_id]);
   }
 
@@ -806,7 +806,7 @@ app.get('/add_bot/:bot_id/:room_id', function(req, res) {
     if (msg.indexOf('help') == 0) {
       sendBotMessage(room_id, bot_id);
     }
-  });
+  });*/
 
   res.end();
 })
@@ -819,13 +819,29 @@ app.get('/remove_bot/:bot_id/:room_id', function(req, res) {
   // remove the bot
   botDatabase.child(bot_id).child(room_id).set(false);
 
-  roomMessagesDatabase.child(room_id).off("child_added", roomBotListeners[room_id + bot_id]);
+  //roomMessagesDatabase.child(room_id).off("child_added", roomBotListeners[room_id + bot_id]);
 
   // send leave message
   sendBotMessage(room_id, bot_id, 'bye');
 
   res.end();
 })
+
+app.get('/help/:room_id', function (req, res) {
+  var room_id = req.params.room_id;
+  for (i = 0; i < BOT_IDS.length; i ++) {
+    checkSendBotMessage(room_id, BOT_IDS[i]);
+  }
+  res.end();
+})
+
+function checkSendBotMessage(room_id, bot_id) {
+  botDatabase.child(bot_id).child(room_id).once("value", function(snapshot) {
+    if (snapshot.val()) {
+      sendBotMessage(room_id, bot_id);
+    }
+  })
+}
 
 /*************************************************************************************/
 
