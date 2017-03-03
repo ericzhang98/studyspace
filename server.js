@@ -1157,8 +1157,8 @@ function processActivity(user_id, activityLog) {
 /*------------------------------------------------------------------------*/
 
 /*---- SSL CHALLENGE ----*/
-app.get("/.well-known/acme-challenge/1yLbqQFcFLY4Y9D6_SE4QKROo_iXvOjtjRvBDkbt-uw", function(req, res) {
-  res.send("1yLbqQFcFLY4Y9D6_SE4QKROo_iXvOjtjRvBDkbt-uw.WvFBmKbVDiPXkv3XZvi2IVS2S4FvtRxc1OiZTIPqJls");
+app.get("/.well-known/acme-challenge/RgAtJ60qe2Pbcfxii-OTGCTp8QirL1ur3TqZhP4BMWE", function(req, res) {
+  res.send("RgAtJ60qe2Pbcfxii-OTGCTp8QirL1ur3TqZhP4BMWE.WvFBmKbVDiPXkv3XZvi2IVS2S4FvtRxc1OiZTIPqJls");
 })
 
 
