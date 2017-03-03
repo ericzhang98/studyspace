@@ -850,7 +850,8 @@ function($scope, $http, $timeout, $window) {
   }
 
   $scope.isTutor = function(user_id, room_chat_id) {
-    return $scope.classes[$scope.rooms[room_chat_id].class_id].tutor_ids.indexOf(user_id) != -1;
+    return $scope.classes[$scope.rooms[room_chat_id].class_id].tutor_ids &&
+    $scope.classes[$scope.rooms[room_chat_id].class_id].tutor_ids.indexOf(user_id) != -1;
   }
 
   /*********************************************************************/
