@@ -1156,6 +1156,11 @@ function processActivity(user_id, activityLog) {
 
 /*------------------------------------------------------------------------*/
 
+/*---- SSL CHALLENGE ----*/
+app.get("/.well-known/acme-challenge/PbdG5DWX2bnw_KFIaB7Qwrj6qY6zC8by4AYxaUYnsBg", function(req, res) {
+  res.send("PbdG5DWX2bnw_KFIaB7Qwrj6qY6zC8by4AYxaUYnsBg.WvFBmKbVDiPXkv3XZvi2IVS2S4FvtRxc1OiZTIPqJls");
+})
+
 
 app.listen(process.env.PORT || 3000);
 userActivityChecker();
