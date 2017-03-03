@@ -790,23 +790,15 @@ app.get('/add_bot/:bot_id/:room_id', function(req, res) {
   var bot_id = req.params.bot_id;
   var room_id = req.params.room_id;
 
-  // indicate that this bot is present in this room
-  botDatabase.child(bot_id).child(room_id).set(true);
+  botDatabase.child(bot_id).child(room_id).once("value", function(snapshot) {
+    if (!snapshot.val()) {
+      // indicate that this bot is present in this room
+      botDatabase.child(bot_id).child(room_id).set(true);
 
-  // have the bot send its initial message
-  sendBotMessage(room_id, bot_id, 'hello');
-
-  /*if (roomBotListeners[room_id + bot_id]) {
-    roomMessagesDatabase.child(room_id).off("child_added", roomBotListeners[room_id + bot_id]);
-  }
-
-  roomBotListeners[room_id + bot_id] = roomMessagesDatabase.child(room_id).limitToLast(1).on('child_added', function(snapshot) {
-
-    var msg = snapshot.val().text;
-    if (msg.indexOf('help') == 0) {
-      sendBotMessage(room_id, bot_id);
+      // have the bot send its initial message
+      sendBotMessage(room_id, bot_id, 'hello');
     }
-  });*/
+  });
 
   res.end();
 })
@@ -816,13 +808,15 @@ app.get('/remove_bot/:bot_id/:room_id', function(req, res) {
   var bot_id = req.params.bot_id;
   var room_id = req.params.room_id;
 
-  // remove the bot
-  botDatabase.child(bot_id).child(room_id).set(false);
+  botDatabase.child(bot_id).child(room_id).once("value", function(snapshot) {
+    if (snapshot.val()) {
+      // remove the bot
+      botDatabase.child(bot_id).child(room_id).set(false);
 
-  //roomMessagesDatabase.child(room_id).off("child_added", roomBotListeners[room_id + bot_id]);
-
-  // send leave message
-  sendBotMessage(room_id, bot_id, 'bye');
+      // send leave message
+      sendBotMessage(room_id, bot_id, 'bye');
+    }
+  })
 
   res.end();
 })
