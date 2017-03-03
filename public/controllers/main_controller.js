@@ -626,11 +626,15 @@ function($scope, $http, $timeout, $window) {
     toggleRemoteStreamAudioEnabled(user_id);
   };
 
+  $scope.getRemoteStreamExists = function(user_id) {
+    return myRemoteStreams[user_id];
+  }
+
   // - is this person muted?
   $scope.getRemoteStreamAudioEnabled = function(user_id) {
     if (myRemoteStreams[user_id]) {
       return !myRemoteStreams[user_id].muted;
-    }
+    } 
   }
   
   $scope.classmateDropdown = function() {
@@ -857,9 +861,14 @@ function($scope, $http, $timeout, $window) {
   /*********************************************************************/
   /**************************** BUDDY SYSTEM ***************************/
 
-  console.log("buddy system");
   //Saurabh's local check if friends
   $scope.isFriendsWith = function(user_id) {
+
+    // empty buddies null check
+    if (!$scope.added_buddies_list) {
+      return false;
+    }
+
     var index;
     for (index = 0; index < $scope.added_buddies_list.length; ++index) {
       var buddy = $scope.added_buddies_list[index]; 
