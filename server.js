@@ -1,6 +1,6 @@
 // server.js will be our website's server that handles communication
 // between the front-end and the database
-var deployment = false; //currently just whether or not to use HTTPS
+var deployment = true; //currently just whether or not to use HTTPS
 
 /* SETUP ---------------------------------------------------------------*/
 
@@ -1158,6 +1158,7 @@ function processActivity(user_id, activityLog) {
 
 /*---- SSL CHALLENGE ----*/
 //studyspace.me
+/*
 app.get("/.well-known/acme-challenge/FPQsAzH1lcooEHIeB4STVrH_NzwS1_Q0Yc17I3uiaI8", function(req, res) {
   res.send("FPQsAzH1lcooEHIeB4STVrH_NzwS1_Q0Yc17I3uiaI8.WvFBmKbVDiPXkv3XZvi2IVS2S4FvtRxc1OiZTIPqJls");
 })
@@ -1166,6 +1167,7 @@ app.get("/.well-known/acme-challenge/FPQsAzH1lcooEHIeB4STVrH_NzwS1_Q0Yc17I3uiaI8
 app.get("/.well-known/acme-challenge/RgAtJ60qe2Pbcfxii-OTGCTp8QirL1ur3TqZhP4BMWE", function(req, res) {
   res.send("RgAtJ60qe2Pbcfxii-OTGCTp8QirL1ur3TqZhP4BMWE.WvFBmKbVDiPXkv3XZvi2IVS2S4FvtRxc1OiZTIPqJls");
 })
+/*
 
 
 
