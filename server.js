@@ -928,13 +928,13 @@ function joinRoom(user_id, room_id, callback) {
           userActivityDatabase.child(user_id).child("lastRoom").set(room_id);
           userActivityDatabase.child(user_id).child("lastActive").set(Date.now());
 
-          db.users.findOne({user_id: user_id}, function (err, doc) {
+          /*db.users.findOne({user_id: user_id}, function (err, doc) {
             if (doc) {
               var newChatMessage = new ChatMessage("system", 
                 "system@email.com", doc.name.split(" ")[0] + " joined the room.", room_id, Date.now(), 'system_id');
               roomMessagesDatabase.child(room_id).push().set(newChatMessage);
             }
-          });
+          });*/
         }
         else {
           if (callback) {
@@ -981,13 +981,13 @@ function leaveRoom(user_id, room_id, callback) {
         }
       });
 
-      db.users.findOne({user_id: user_id}, function (err, doc) {
+      /*db.users.findOne({user_id: user_id}, function (err, doc) {
         if (doc) {
           var newChatMessage = new ChatMessage("system", 
             "system@email.com", doc.name.split(" ")[0] + " left the room.", room_id, Date.now(), 'system_id');
           roomMessagesDatabase.child(room_id).push().set(newChatMessage);
         }
-      });
+      });*/
     }
     else {
       console.log("FIREBASE: ERROR - room or user no longer exists");

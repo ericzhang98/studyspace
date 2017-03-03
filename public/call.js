@@ -13,7 +13,7 @@ var peer = new Peer(myID,
 peer._lastServerId = myID;
 var PEER_PING_PERIOD = 30000;
 var myStream = null;
-var myCalls = [];
+var myCalls = {};         // Dictionary from user_id to call
 var myRemoteStreams = {}; // Dictionary from user.id to audio track
 navigator.getUserMedia = navigator.getUserMedia || navigator.webkitGetUserMedia || navigator.mozGetUserMedia;
 
@@ -99,7 +99,7 @@ function startCallHelper(other_user_id) {
   console.log("sent call to user with id: " + call.peer)
 
   // reference to the call so we can close it
-  myCalls.push(call);
+  myCalls[other_user_id] = (call);
 
   console.log("outgoing stream id: " + myStream.id)
 
@@ -142,7 +142,7 @@ function answerCallHelper(call) {
   call.answer(myStream); 
 
   // reference to the call so we can close it
-  myCalls.push(call);
+  myCalls[call.peer] = (call);
 
   console.log("outgoing stream id: " + myStream.id)
   call.on('stream', function(remoteStream) {
@@ -237,7 +237,7 @@ function joinRoomCall(currRoomCallID) {
         //show alert if no audio permissions
         if (myStream == null) {
           console.log("GIVE MIC PERMISSIONS PLZ");
-          showAlert("no-permissions-alert", false);
+          showAlert("no-permissions-alert", 'normal', false);
         }
 
         // by default, unmute me
@@ -317,10 +317,10 @@ function removeRemoteStream(user_id) {
 // - removes all {user_id: call} pairs in myCalls and closes calls
 // - removes all {call.id: audio} pairs myRemoteStreams and removes audio tracks
 function leaveCalls() {
-  for (var i = 0; i < myCalls.length; i++) {
-    myCalls[i].close();
+  for (user_id in myCalls) {
+    myCalls[user_id].close();
   }
-  myCalls = [];
+  myCalls = {};
 }
 /*********************************************************************/
 /********************** MUTING / UNMUTING AUDIO **********************/
