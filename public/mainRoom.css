@@ -545,6 +545,7 @@ html, body {
 video {
   position: relative;
   height: 12rem;
+  width: 15.8rem; /* Approximation, so that before video loads thing isn't crazy big*/
   margin: 2rem;
   margin-bottom: 0rem;
 
@@ -569,12 +570,12 @@ video:hover {
 }
 
 .acc-border {
-  border: solid 1px var(--accent-color);
+  border: solid 2px var(--accent-color);
   border-radius: 1.5rem;
 }
 
 .prim-border {
-  border: solid 1px var(--primary-color);
+  border: solid 2px var(--primary-color);
   border-radius: 1.5rem;
 }
 

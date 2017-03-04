@@ -54,12 +54,12 @@
         <div id="video-row">
           <div ng-repeat="user_id in rooms[currRoomChatID].users">
             <div ng-if="user_id == myID" class="video-container">
-              <video class="prim-border" autoplay ng-src="{{userStreamSources[user_id]}}" ng-click="setMyStreamVideoEnabled(!getVideoEnabled())"></video>
+              <video id="{{user_id}}_video" class="prim-border" autoplay muted ng-src="{{userStreamSources[user_id]}}" ng-click="setMyStreamVideoEnabled(!getVideoEnabled())"></video>
               <p class="video-name">{{user_id == myID ? 'You' : users[user_id].name}}</p>
             </div>
 
             <div ng-if="user_id != myID" class="video-container">
-              <video class="acc-border" autoplay ng-src="{{userStreamSources[user_id]}}"></video>
+              <video id="{{user_id}}_video" class="acc-border" autoplay ng-src="{{userStreamSources[user_id]}}"></video>
               <p class="video-name">{{user_id == myID ? 'You' : users[user_id].name}}</p>
             </div>
           </div>

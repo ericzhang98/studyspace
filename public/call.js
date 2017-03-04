@@ -274,6 +274,8 @@ function leaveRoom(currRoomCallID) {
     // leave our calls
     leaveCalls();
 
+    //angular.element(document.getElementById('myBody')).scope().userStreamSources = {};
+
     // send request to server to tell them we left
     var xhr = new XMLHttpRequest();
     xhr.open('GET', "/leave_room/" + currRoomCallID, true);
@@ -288,20 +290,16 @@ function leaveRoom(currRoomCallID) {
 function addRemoteStream(remoteStream, user_id) {
 
   // create a new audio element and make it play automatically
-  var media = document.createElement('video');
-
-  if (user_id == myID) {
-    media.muted = true;
-  }
+  /*var media = document.createElement('video');
 
   media.autoplay = true;
 
   // set the source
-  media.src = window.URL.createObjectURL(remoteStream); 
+  media.src = window.URL.createObjectURL(remoteStream); */
 
   // store the element in myRemoteStreams
-  myRemoteStreams[user_id] = media;
-  angular.element(document.getElementById('myBody')).scope().userStreamSources[user_id] = media.src;
+  //myRemoteStreams[user_id] = media;
+  angular.element(document.getElementById('myBody')).scope().userStreamSources[user_id] = window.URL.createObjectURL(remoteStream);
   angular.element(document.getElementById('myBody')).scope().$apply();
 
   // if I am the lecturer, I want everyone else muted by default
@@ -331,16 +329,16 @@ function addRemoteStream(remoteStream, user_id) {
 function removeRemoteStream(user_id) {
 
   // remove the audio track from the page
-  if (myRemoteStreams[user_id]) {
+  //if (myRemoteStreams[user_id]) {
     //document.getElementById("video-layer").removeChild(myRemoteStreams[user_id]);
     //document.getElementById("video-row").removeChild(document.getElementById(user_id + "-video-container"));
 
     // remove the remoteStream from myRemoteStreams
-    delete myRemoteStreams[user_id];
-    // delete angular.element(document.getElementById('myBody')).scope().userStreamSources[user_id];
+    //delete myRemoteStreams[user_id];
+    delete angular.element(document.getElementById('myBody')).scope().userStreamSources[user_id];
+
     // document.getElementById("video-row").removeChild(document.getElementById(user_id + "-video-container"));
-    //angular.element(document.getElementById('myBody')).scope().$apply();
-  }
+  //}
 }
 
 // - removes all {user_id: call} pairs in myCalls and closes calls
@@ -386,10 +384,12 @@ function setMyStreamVideoEnabled(enabled, direct = true) {
 
 // - toggle audio from another person
 function toggleRemoteStreamAudioEnabled(user_id) {
-  if (myRemoteStreams[user_id] != null) {
+  //if (myRemoteStreams[user_id] != null) {
     console.log("toggling remote audio to " + !(myRemoteStreams[user_id].muted));
+    //myRemoteStreams[user_id].muted = !(myRemoteStreams[user_id].muted);
+    document.getElementById(user_id + "_video").muted = !document.getElementById(user_id + "_video").muted;
     myRemoteStreams[user_id].muted = !(myRemoteStreams[user_id].muted);
-  }
+  //}
 }
 /*********************************************************************/
 /******************************* MISC ********************************/
