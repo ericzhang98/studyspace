@@ -926,7 +926,7 @@ function joinRoom(user_id, room_id, callback) {
               }
             });
           }
-          userActivityDatabase.child(user_id).child("lastRoom").set(room_id);
+          userActivityDatabase.child(user_id).child("lastRooms").push().set(room_id);
           userActivityDatabase.child(user_id).child("lastActive").set(Date.now());
 
           /*db.users.findOne({user_id: user_id}, function (err, doc) {
@@ -1146,10 +1146,13 @@ function userActivityChecker() {
 function processActivity(user_id, activityLog) {
   if (activityLog) {
     //if the user is in a room and hasn't pinged within the last minute, rm them from room
-    if (activityLog.lastRoom && Date.now() - activityLog.lastActive > USER_IDLE) {
+    if (activityLog.lastRooms && Date.now() - activityLog.lastActive > USER_IDLE) {
       //console.log("USER ACTIVITY CHECKER: removing user " + user_id);
-      leaveRoom(user_id, activityLog.lastRoom);
-      userActivityDatabase.child(user_id).child("lastRoom").set(null);
+      var lastRooms = Object.keys(activityLog.lastRooms).map((k) => activityLog.lastRooms[k]);
+      for (var i = 0;  i < lastRooms.length; i++) {
+        leaveRoom(user_id, lastRooms[i]);
+      }
+      userActivityDatabase.child(user_id).child("lastRooms").set(null);
     }
     if (activityLog.online && Date.now() - activityLog.lastActive > USER_IDLE) {
       //console.log("USER ACTIVITY CHECKER: user offline - " + user_id);
@@ -1158,6 +1161,7 @@ function processActivity(user_id, activityLog) {
   }
 }
 
+/*
 //rm user from last room when they sign on
 function checkSingleUserActivity(user_id) {
   userActivityDatabase.child(user_id).once("value").then(function(snapshot) {
@@ -1168,6 +1172,7 @@ function checkSingleUserActivity(user_id) {
     }
   });
 }
+*/
 
 
 /*------------------------------------------------------------------------*/
