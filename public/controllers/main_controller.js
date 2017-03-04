@@ -1,6 +1,7 @@
 //Room app -- firebase must be initialized already
 var chatDatabase = null;
 var typingDatabase = null;
+var songDatabase = null;
 var myApp = angular.module("mainApp", ["ngMaterial", "ngSanitize"]);
 
 // list of message objects with: email, name, roomID, text, timeSent
@@ -107,6 +108,23 @@ function($scope, $http, $timeout, $window) {
         startCurrTyping();
         //], 50); //in case it's a dm, need to wait for other user info?
       }
+
+      if (songDatabase != null) {
+        songDatabase.off();
+      }
+      if (room_id) {
+        songDatabase = databaseRef.child("RoomSong").child(room_id);
+        songDatabase.on("value", function(snapshot) {
+          var url = snapshot.val();
+          if (url) {
+            playSong(url);
+          }
+          else {
+            var player = document.getElementById("iframePlayer");
+            player.src = "";
+          }
+        });
+      }
     }
   }
   /*********************************************************************/
@@ -127,14 +145,23 @@ function($scope, $http, $timeout, $window) {
           // reset fields     
           $scope.chatInput = "";
           chatInputBox.focus();
+          if (chatInput === "/stop") {
+            var player = document.getElementById("iframePlayer");
+            if (player.src !== "") {
+              console.log("was playing, but now stop");
+              player.src = "";
+              $http.post("/broadcast_song/", {room_id: $scope.currRoomChatID, url: null});
+            }
+            console.log("stop on controller");
+          }
         }
       }
       else if (chatInput.indexOf("/play") == 0) {
         var split = chatInput.split(" ");
         if (split[1]) {
           var url = split[1];
-          broadcastSong(url);
-
+          //playSong(url);
+          $http.post("/broadcast_song/", {room_id: $scope.currRoomChatID, url: url});
         }
         else {
           console.log("Please put in a valid URL");
@@ -602,6 +629,7 @@ function($scope, $http, $timeout, $window) {
       showAlert("no-connection-alert", "longaf", false);
     }
     xhr.send();
+    console.log("pinging");
     if (constant) {
       currPing = setTimeout(pingUserActivity, USER_PING_PERIOD, true);
     }
@@ -888,7 +916,7 @@ function($scope, $http, $timeout, $window) {
 
     // empty buddies null check
     if (!$scope.added_buddies_list) {
-      return false;
+      return -1;
     }
 
     var index;

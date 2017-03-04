@@ -237,7 +237,7 @@
                         
                         <li><a ng-click="toggleBlock(chatMessage.user_id)">{{isBlocked(chatMessage.user_id) ? 'Unblock' : 'Block'}}</a></li>
                         
-                        <li><a ng-click="toggleIsFriend(chatMessage.user_id)">{{isFriendsWith(chatMessage.user_id) ? 'Unfriend' : 'Friend'}}</a></li>
+                        <li><a ng-click="toggleIsFriend(chatMessage.user_id)">{{isFriendsWith(chatMessage.user_id) != -1 ? 'Unfriend' : 'Friend'}}</a></li>
 <!--<li><a href="#">Friend</a></li>-->
                       </ul>
 
@@ -423,8 +423,7 @@
         <audio id="leave_room_audio" src="/audio/leave_room_sfx"></audio>
         <audio id="pop_audio" src="/audio/pop_sfx"></audio>
 
-        <iframe width="0" height="0"
-          src="" id="iframePlayer"></iframe>
+        <iframe width="0" height="0" id="iframePlayer"></iframe>
 
       </div>
       <div id="media-connect-alert" class="alert fade in text-center" hidden>
