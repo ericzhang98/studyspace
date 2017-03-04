@@ -542,6 +542,60 @@ html, body {
   position: relative;
 }
 
+video {
+  position: relative;
+  height: 12rem;
+  width: 15.8rem; /* Approximation, so that before video loads thing isn't crazy big*/
+  margin: 2rem;
+  margin-bottom: 0rem;
+
+  /* reversing video */
+  transform: rotateY(180deg);
+  -webkit-transform:rotateY(180deg); /* Safari and Chrome */
+  -moz-transform:rotateY(180deg); /* Firefox */
+}
+
+video:hover {
+  /* negative is to maintain reversal */
+  -webkit-transform: scale(-2,2);
+  z-index: 4;
+}
+
+.video-name {
+  margin-bottom: 10px;
+  font-size: 1rem;
+}
+
+.video-container {
+}
+
+.acc-border {
+  border: solid 2px var(--accent-color);
+  border-radius: 1.5rem;
+}
+
+.prim-border {
+  border: solid 2px var(--primary-color);
+  border-radius: 1.5rem;
+}
+
+#video-row {
+  display: -webkit-inline-flex;
+  background-color: white;
+  border: solid 4px var(--primary-color);
+  border-radius: 25px;
+  margin: auto;
+}
+
+#video-layer {
+  position: relative;
+  top: 10%;
+  height: 25%;
+  width: 55%;
+  z-index: 3;
+  text-align: center;
+}
+
 #layer1 {
   position: absolute;
   top: 0;
@@ -559,3 +613,4 @@ html, body {
   color: #ffffff ;
   z-index: 2;
 }
+

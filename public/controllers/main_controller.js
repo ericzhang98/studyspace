@@ -627,14 +627,16 @@ function($scope, $http, $timeout, $window) {
   };
 
   $scope.getRemoteStreamExists = function(user_id) {
-    return myRemoteStreams[user_id];
+    return document.getElementById(user_id + "_video")
+    //return myRemoteStreams[user_id];
   }
 
   // - is this person muted?
   $scope.getRemoteStreamAudioEnabled = function(user_id) {
-    if (myRemoteStreams[user_id]) {
-      return !myRemoteStreams[user_id].muted;
-    } 
+    //if (myRemoteStreams[user_id]) {
+      //return !myRemoteStreams[user_id].muted;
+      return !document.getElementById(user_id + "_video").muted;
+    //} 
   }
   
   $scope.classmateDropdown = function() {
@@ -1303,6 +1305,34 @@ function($scope, $http, $timeout, $window) {
     });
   }
 
+  /** VIDEO LUL *************************************/
+  $scope.viewVideo = false;
+  $scope.userStreamSources = {};
+
+  $scope.toggleViewVideo = function() {
+    $scope.viewVideo = !$scope.viewVideo;
+
+    // if we closed video, turn my video off
+    if (!$scope.viewVideo) {
+      setMyStreamVideoEnabled(false, false);
+    }
+
+    // if we opened video and we were showing before, turn my video off
+    if ($scope.viewVideo && showVideo) {
+      setMyStreamVideoEnabled(true);
+    }
+  }
+
+  $scope.setMyStreamVideoEnabled = function(enabled, direct = true) {
+    setMyStreamVideoEnabled(enabled, direct);
+  }
+
+  $scope.getVideoEnabled = function(user_id = myID) {
+    if (user_id == myID) {
+      return myStream && myStream.getVideoTracks()[0].enabled;
+    }
+    //return $scope.userStreams[user_id] && $scope.userStreams[user_id].getVideoTracks()[0].enabled;
+  }
 
   /******************ADD CLASS MODAL************************************/
 
