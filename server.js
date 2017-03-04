@@ -80,8 +80,6 @@ app.get('/', function(req, res) {
       if (doc) {
         userActivityDatabase.child(user_id).child("online").set(true); //set online status
         console.log("USER ONLINE: " + user_id);
-        //check user activity -- lolllll
-        checkSingleUserActivity(user_id);
         res.sendFile(VIEW_DIR + "mainRoom.html");
       }
       else {
@@ -965,21 +963,25 @@ function leaveRoom(user_id, room_id, callback) {
   roomInfoDatabase.child(room_id).child("users").once("value").then(function(snapshot) {
     if (snapshot.val()) {
       var users = [];
+      var removed = false; //temp jank xD
       snapshot.forEach(function(childSnapshot) {
         users.push(childSnapshot.val());
       });
       snapshot.forEach(function(childSnapshot) {
         var key = childSnapshot.key;
         var value = childSnapshot.val();
-        if (value == user_id) {
-          //rm the user
-          childSnapshot.ref.remove(function(err) {
-            if (users.length == 1) {
-              //if last user left, set last_active_time and check for delete conditions after delay
-              setTimeout(bufferTimer, MAX_IDLE, room_id);
-              snapshot.ref.parent.child("last_active_time").set(Date.now());
-            }
-          });
+        if (!removed) {
+          if (value == user_id) {
+            //rm the user
+            childSnapshot.ref.remove(function(err) {
+              if (users.length == 1) {
+                //if last user left, set last_active_time and check for delete conditions after delay
+                setTimeout(bufferTimer, MAX_IDLE, room_id);
+                snapshot.ref.parent.child("last_active_time").set(Date.now());
+              }
+            });
+            removed = true;
+          }
         }
       });
 

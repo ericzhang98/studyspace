@@ -24,7 +24,7 @@ getVoice();
 
 // Grab user media (voice)
 function getVoice(callback) {
-  navigator.getUserMedia({video: false, audio: true}, function(stream) {
+  navigator.getUserMedia({video: true, audio: true}, function(stream) {
     myStream = stream;
     angular.element(document.getElementById('myBody')).scope().setVolumeListener(myID, myStream);
     showAlert("voice-connect-alert", 'short');

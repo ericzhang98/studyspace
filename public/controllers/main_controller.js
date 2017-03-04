@@ -746,9 +746,18 @@ function($scope, $http, $timeout, $window) {
 
       if (room) {
 
+        var roomUniqueUsers = [];
+        //rm duplicate users
+        if (room.users) {
+          roomUniqueUsers = Object.values(room.users);
+          roomUniqueUsers = roomUniqueUsers.filter(function(element, index, self) {
+            return index == self.indexOf(element);
+          });
+        }
+
         // update the room
         $scope.rooms[room_id] = new Room(room_id, room.name, room.host_id, room.class_id, 
-                                         room.is_lecture, room.users? Object.values(room.users) : [], room.host_name ? room.host_name : "Unknown host");
+                                         room.is_lecture, roomUniqueUsers, room.host_name ? room.host_name : "Unknown host");
 
         // are there tutors in here?
         detectTutors($scope.rooms[room_id]);
