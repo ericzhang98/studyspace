@@ -50,7 +50,7 @@
 
   <body id="myBody" ng-controller="MainController">
     <div id="overlay">
-      <div ng-hide="!viewVideo || !currRoomChatID || rooms[currRoomChatID].class_id == 'dm_class_id'" id="video-layer" class="container">
+      <div ng-cloak ng-hide="!viewVideo || !currRoomChatID || rooms[currRoomChatID].class_id == 'dm_class_id'" id="video-layer" class="container">
         <div id="video-row">
           <div ng-repeat="user_id in rooms[currRoomChatID].users">
             <div ng-if="user_id == myID" class="video-container">
@@ -258,7 +258,7 @@
                     <button id="mute-button" class="btn btn-mute text-center" type="button" ng-click="toggleMic()"> 
                       <span ng-class="muteBtnClass"></span>
                     </button>
-                    <button class="btn" ng-cloak ng-if="currRoomChatID" ng-hide="rooms[currRoomChatID].class_id == 'dm_class_id'" ng-click="toggleViewVideo()">See Video</button>
+                    <button class="btn text-center btn-vid" ng-cloak ng-if="currRoomChatID" ng-hide="rooms[currRoomChatID].class_id == 'dm_class_id'" ng-click="toggleViewVideo()">See Video</button>
                   </span>
                   <input maxlength="200" ng-cloak type="text" class="form-control input-message" id="chatInputBox" 
                          ng-model="chatInput" placeholder="Type a message..."
