@@ -353,8 +353,8 @@ function setOnBeforeUnload(currRoomCallID) {
   // when the window is about to close
   window.onbeforeunload = function(event) {
     // send request to server to tell them we left
-    //leaveRoomHard(currRoomCallID);
-    leaveRoom(currRoomCallID);
+    leaveRoomHard(currRoomCallID);
+    //leaveRoom(currRoomCallID);
   };
 }
 
