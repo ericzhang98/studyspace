@@ -31,7 +31,7 @@ function getMedia(callback) {
     setMyStreamVideoEnabled(false);
     addRemoteStream(myStream, myID);
     angular.element(document.getElementById('myBody')).scope().setVolumeListener(myID, myStream);
-    showAlert("voice-connect-alert", 'short');
+    showAlert("media-connect-alert", 'short');
     if (callback) {
       callback();
     }
@@ -375,9 +375,11 @@ function setMyStreamAudioEnabled(enabled) {
 function setMyStreamVideoEnabled(enabled, direct = true) {
   if (myStream) {
     myStream.getVideoTracks()[0].enabled = enabled;
-
     if (direct) {
       showVideo = enabled;
+    }
+    if (enabled) {
+      showAlert('video-alert', 'long');
     }
   }
 }
@@ -385,10 +387,10 @@ function setMyStreamVideoEnabled(enabled, direct = true) {
 // - toggle audio from another person
 function toggleRemoteStreamAudioEnabled(user_id) {
   //if (myRemoteStreams[user_id] != null) {
-    console.log("toggling remote audio to " + !(myRemoteStreams[user_id].muted));
+    //console.log("toggling remote audio to " + !(myRemoteStreams[user_id].muted));
     //myRemoteStreams[user_id].muted = !(myRemoteStreams[user_id].muted);
     document.getElementById(user_id + "_video").muted = !document.getElementById(user_id + "_video").muted;
-    myRemoteStreams[user_id].muted = !(myRemoteStreams[user_id].muted);
+    //myRemoteStreams[user_id].muted = !(myRemoteStreams[user_id].muted);
   //}
 }
 /*********************************************************************/
