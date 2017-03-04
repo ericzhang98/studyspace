@@ -1007,7 +1007,7 @@ function($scope, $http, $timeout, $window) {
                             "sent_to_name": String(friend_name)};
                 $http.post('/send_buddy_request', data).then(function(response){
                   console.log(response.data);
-                  showAlert('buddy-request-alert', false);
+                  showAlert('buddy-request-alert', 'normal', false);
                 });  
               }
             });
@@ -1247,6 +1247,7 @@ function($scope, $http, $timeout, $window) {
       onResponseReceived(response.data);
     });    
   }
+
   var refresh = function(){
     blockedUsers = {};
     $http.get('/get_blocked_users').then(function(response){
@@ -1259,6 +1260,10 @@ function($scope, $http, $timeout, $window) {
       for (var i = 0; i < response.data.length; i++){
         var obj = response.data[i];
         blockedUsers['blocked_user_list'].push(obj['blocked_user_id']);
+
+        if (myCalls[obj['blocked_user_id']]) {
+          myCalls[obj['blocked_user_id']].close();
+        }
       }
     });
   }
@@ -1273,26 +1278,11 @@ function($scope, $http, $timeout, $window) {
   };
 
   refresh();
-
-  // not used, can delete
-  $scope.blockUser = function(){
-    getIdFromName($scope.block_user.name, function(response){
-      console.log(response);
-      if(response){
-        console.log(response.user_id);
-        addBlock(response.user_id, response.email, function(response){
-          console.log("XX");
-          console.log(response);
-          showAlert('block-alert', false);
-          refresh();
-        });
-      }
-    });
-  }
   
   $scope.blockUserWithId = function(user_id) {
     console.log("blocking: " + user_id);
     addBlock(user_id, function(response) {
+      showAlert('block-alert', 'normal', false);
       refresh();
     });
   }
@@ -1420,7 +1410,7 @@ function($scope, $http, $timeout, $window) {
 
     if (!noChange) {
       console.log('was changed');
-      showAlert("course-change-alert", false);
+      showAlert("course-change-alert", 'normal', false);
     }
   }
 

@@ -80,6 +80,8 @@ app.get('/', function(req, res) {
       if (doc) {
         userActivityDatabase.child(user_id).child("online").set(true); //set online status
         console.log("USER ONLINE: " + user_id);
+        //check user activity -- lolllll
+        checkSingleUserActivity(user_id);
         res.sendFile(VIEW_DIR + "mainRoom.html");
       }
       else {
@@ -929,13 +931,13 @@ function joinRoom(user_id, room_id, callback) {
           userActivityDatabase.child(user_id).child("lastRoom").set(room_id);
           userActivityDatabase.child(user_id).child("lastActive").set(Date.now());
 
-          db.users.findOne({user_id: user_id}, function (err, doc) {
+          /*db.users.findOne({user_id: user_id}, function (err, doc) {
             if (doc) {
               var newChatMessage = new ChatMessage("system", 
                 "system@email.com", doc.name.split(" ")[0] + " joined the room.", room_id, Date.now(), 'system_id');
               roomMessagesDatabase.child(room_id).push().set(newChatMessage);
             }
-          });
+          });*/
         }
         else {
           if (callback) {
@@ -982,13 +984,13 @@ function leaveRoom(user_id, room_id, callback) {
         }
       });
 
-      db.users.findOne({user_id: user_id}, function (err, doc) {
+      /*db.users.findOne({user_id: user_id}, function (err, doc) {
         if (doc) {
           var newChatMessage = new ChatMessage("system", 
             "system@email.com", doc.name.split(" ")[0] + " left the room.", room_id, Date.now(), 'system_id');
           roomMessagesDatabase.child(room_id).push().set(newChatMessage);
         }
-      });
+      });*/
     }
     else {
       console.log("FIREBASE: ERROR - room or user no longer exists");
@@ -1154,11 +1156,23 @@ function processActivity(user_id, activityLog) {
   }
 }
 
+//rm user from last room when they sign on
+function checkSingleUserActivity(user_id) {
+  userActivityDatabase.child(user_id).once("value").then(function(snapshot) {
+    var activityLog = snapshot.val();
+    if (activityLog && activityLog.lastRoom) {
+      leaveRoom(user_id, activityLog.lastRoom);
+      userActivityDatabase.child(user_id).child("lastRoom").set(null);
+    }
+  });
+}
+
 
 /*------------------------------------------------------------------------*/
 
 /*---- SSL CHALLENGE ----*/
 //studyspace.me
+/*
 app.get("/.well-known/acme-challenge/FPQsAzH1lcooEHIeB4STVrH_NzwS1_Q0Yc17I3uiaI8", function(req, res) {
   res.send("FPQsAzH1lcooEHIeB4STVrH_NzwS1_Q0Yc17I3uiaI8.WvFBmKbVDiPXkv3XZvi2IVS2S4FvtRxc1OiZTIPqJls");
 })
@@ -1167,6 +1181,7 @@ app.get("/.well-known/acme-challenge/FPQsAzH1lcooEHIeB4STVrH_NzwS1_Q0Yc17I3uiaI8
 app.get("/.well-known/acme-challenge/RgAtJ60qe2Pbcfxii-OTGCTp8QirL1ur3TqZhP4BMWE", function(req, res) {
   res.send("RgAtJ60qe2Pbcfxii-OTGCTp8QirL1ur3TqZhP4BMWE.WvFBmKbVDiPXkv3XZvi2IVS2S4FvtRxc1OiZTIPqJls");
 })
+*/
 
 
 

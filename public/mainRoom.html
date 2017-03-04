@@ -126,17 +126,6 @@
             </button>
           </div>
 
-          <!-- REQUESTS -->
-          <!--<div ng-cloak ng-repeat="buddy_request in buddies_list">
-              
-            <span>{{buddy_request.sent_from_name}}</span>
-            <button class="btn">
-              <span class="glyphicon glyphicon-ok" ng-click="acceptBuddy(buddy_request)"></span>
-            </button>
-            <button class="btn-danger">
-              <span class="glyphicon glyphicon-remove" ng-click="rejectBuddyRequest(buddy_request._id)"></span>
-            </button> -->
-
           <div ng-repeat="buddy_requests in buddies_list">
             <li style="border: none" class="list-group-item buddy-req-panel base-back acc-text">
               <span ng-cloak class="room-name">
@@ -183,18 +172,8 @@
                 <div class="navbar-header">
                   <span ng-cloak class="navbar-brand" >{{classes[rooms[currRoomChatID].class_id].name != "" ? 
                     classes[rooms[currRoomChatID].class_id].name + " | ":""}}{{rooms[currRoomChatID].name}}{{rooms[currRoomChatID].is_lecture ? ' (cast by ' + rooms[currRoomChatID].host_name + ')' : ''}}</span>
-                </div>
+              </div>
                 <ul class="nav navbar-nav navbar-right">
-                  <!--
-<li class="dropdown">
-<a class="dropdown-toggle" data-toggle="dropdown" href="#" style="background-color: inherit;">Rooms <span class="caret"></span></a>
-<ul class="dropdown-menu" id="room-list">
-<li ng-repeat="room_id in class_rooms[rooms[currRoomChatID].class_id]" ng-click="joinRoom(room_id, rooms[room_id].class_id)">
-<a href="#">{{rooms[room_id].name}}</a>
-</li>
-</ul>
-</li>
--->
                   <li ng-if="rooms[currRoomChatID].class_id != 'dm_class_id'" class="nav-link" ng-click="leaveRoom()">
                     <a>Leave</a>
                   </li>
@@ -223,7 +202,7 @@
                     <div class="dropdown">
 
                       <!-- Dropdown for non-me users -->
-                      <a ng-if="!isBot(chatMessage.user_id) && chatMessage.user_id != myID" class="user-name dropdown-toggle acc-text" data-toggle="dropdown">{{chatMessage.name.split(" ")[0]}} {{isTutor(chatMessage.user_id, currRoomChatID) ? "*" : ""}}</a>
+                      <a ng-if="!isBot(chatMessage.user_id) && chatMessage.user_id != myID" class="user-name dropdown-toggle acc-text" data-toggle="dropdown">{{chatMessage.name.split(" ")[0]}} {{isTutor(chatMessage.user_id, currRoomChatID) ? "(tutor)" : ""}}</a>
                       <ul ng-if="!isBot(chatMessage.user_id) && chatMessage.user_id != myID" class="dropdown-menu">
                         <li><a ng-if="getRemoteStreamExists(chatMessage.user_id)" ng-click="toggleUserAudio(chatMessage.user_id)">{{getRemoteStreamAudioEnabled(chatMessage.user_id) ? 'Mute' : 'Unmute'}}</a></li>
                         
@@ -234,7 +213,7 @@
                       </ul>
 
                       <!-- No dropdown if user is me -->
-                      <a ng-if="chatMessage.user_id == myID" class="user-name prim-text">{{chatMessage.name.split(" ")[0]}} {{isTutor(chatMessage.user_id, currRoomChatID) ? "*" : ""}}</a>
+                      <a ng-if="chatMessage.user_id == myID" class="user-name prim-text">{{chatMessage.name.split(" ")[0]}} {{isTutor(chatMessage.user_id, currRoomChatID) ? "(tutor)" : ""}}</a>
 
                       <a ng-if="isBot(chatMessage.user_id)" class="user-name bot-text">{{chatMessage.name.split(" ")[0]}}</a>
                     </div>
@@ -276,56 +255,6 @@
 
         <!-- Classmates Sidebar -->
         <aside id="classmates-sidebar" class="sidebar sidebar-right" role="complementary">
-          <!--
-          <h3>Buddies</h3>   
-          <div class="container-search">
-            <input class="form-control" ng-model="friend.name">
-            <button class="btn btn-primary" ng-click="sendRequest()">Send Request</button>
-            <table class="table">
-              <tbody ng-cloak>   
-                <tr ng-repeat="buddy_requests in buddies_list">
-                  <td></td>
-                  <td>{{buddy_requests.sent_from_name}}</td>
-                  <td><button class="btn" ng-click="acceptBuddy(buddy_requests)">Accept Request</button></td>
-                  <td><button class="btn btn-danger" ng-click="rejectBuddyRequest(buddy_requests._id)">Reject Request</button></td>
-                </tr>
-              </tbody>
-            </table>
-            Friends
-            <table class="table">
-              <tbody ng-cloak>   
-                <tr ng-repeat="buddy in added_buddies_list">
-                  <td></td>
-                  <td>{{buddy.user_two_name}}</td>
-                  <td><button class="btn btn-danger" ng-click="deleteFriend(buddy.user_two_id)">Remove Friend</button></td>
-                  <td><button class="btn btn-danger" ng-click="openDM(buddy.user_two_id, buddy.user_two_name)">Open DM</button></td>
-                </tr>
-              </tbody>
-            </table>
-            <table class="table">
-              <thead>
-                <tr>
-                  <th>Block User</th>
-                  <th><input class="form-control" ng-model="block_user.name"></th>
-                  <th><button class="btn btn-primary" ng-click="blockUser()">Block User</button></th>
-                </tr>
-              </thead>
-              <tbody ng-cloak>
-                <tr ng-repeat="block_user in block_user_list">
-                  <td></td>
-                  <td>{{block_user.blocked_user_email}}</td>
-                  <td><button class="btn btn-danger" ng-click="unblock(block_user._id)">Unblock</button></td>
-                </tr>
-              </tbody>
-            </table>
-          </div> 
--->
-          <!--
-          <span>TEMP FOR ERIC</span>
-          <br>
-          <span>CURRENTLY TYPING:</span>
-          <span ng-cloak>{{currTyping}}</span>
-          <br>-->
 
           <h4 ng-cloak ng-if="currRoomChatID ? rooms[currRoomChatID].is_lecture : false" ng-hide="rooms[currRoomChatID].class_id == 'dm_class_id'" class="studymates over-base-text" style="margin-top:2rem"><acc>{{rooms[currRoomChatID].name}}</acc></h4>
 
@@ -344,7 +273,7 @@
                   </div>
                   
                   <!-- Dropdown for non-me users -->
-                  <a ng-if="user_id != myID" class="names dropdown-toggle" data-toggle="dropdown">{{users[user_id].name}} {{isTutor(user_id, currRoomChatID) ? "*" : ""}}</a>
+                  <a ng-if="user_id != myID" class="names dropdown-toggle" data-toggle="dropdown">{{users[user_id].name.split(" ")[0]}} {{isTutor(user_id, currRoomChatID) ? "(tutor)" : ""}}</a>
 
                   <ul ng-if="user_id != myID" class="dropdown-menu">
                     <li><a ng-click="toggleUserAudio(user_id)">{{getRemoteStreamAudioEnabled(user_id) ? 'Mute' : 'Unmute'}}</a></li>
@@ -353,7 +282,7 @@
                   </ul>
                   
                   <!-- No dropdown if user is me -->
-                  <a ng-if="user_id == myID" class="names">{{users[user_id].name}} {{isTutor(user_id, currRoomChatID) ? "*" : ""}}</a>
+                  <a ng-if="user_id == myID" class="names">{{users[user_id].name.split(" ")[0]}} {{isTutor(user_id, currRoomChatID) ? "(tutor)" : ""}}</a>
 
                 </div>
 
