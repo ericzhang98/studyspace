@@ -539,6 +539,15 @@ app.get("/typing/:is_typing/:room_id", function(req, res) {
   }
 });
 
+app.post("/broadcast_song/", function(req, res) {
+  res.send();
+  if (req.signedCookies.user_id) {
+    var room_id = req.body.room_id;
+    var url = req.body.url;
+    firebaseRoot.child("RoomSong").child(room_id).set(url);
+  }
+});
+
 /*************************************************************************************/
 /********************************* SIGNUP AND LOGIN **********************************/
 
