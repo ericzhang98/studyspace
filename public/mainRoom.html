@@ -50,9 +50,26 @@
 
   <body id="myBody" ng-controller="MainController">
     <div id="overlay">
+      <div ng-cloak ng-hide="!viewVideo || !currRoomChatID || rooms[currRoomChatID].class_id == 'dm_class_id'" id="video-layer" class="container">
+        <div id="video-row">
+          <div ng-repeat="user_id in rooms[currRoomChatID].users">
+            <div ng-if="user_id == myID" class="video-container">
+              <video id="{{user_id}}_video" class="prim-border" autoplay muted ng-src="{{userStreamSources[user_id]}}" ng-click="setMyStreamVideoEnabled(!getVideoEnabled())"></video>
+              <p class="video-name">{{user_id == myID ? 'You' : users[user_id].name}}</p>
+            </div>
+
+            <div ng-if="user_id != myID" class="video-container">
+              <video id="{{user_id}}_video" class="acc-border" autoplay ng-src="{{userStreamSources[user_id]}}"></video>
+              <p class="video-name">{{user_id == myID ? 'You' : users[user_id].name}}</p>
+            </div>
+          </div>
+        </div>
+      </div>
+
       <div id="layer1">
         <!-- Classes Sidebar -->
         <aside id="classes-sidebar" class="sidebar sidebar-left" role="complementary">
+
           <div class="menu-user">
             <!-- User Quick Info -->
             <div id="user-info" class="container-info-user">
@@ -192,7 +209,7 @@
                 <div class="blob blob-2"></div><div class="blob blob-3"></div>
                 <div class="blob blob-4"></div><div class="blob blob-5"></div>
               </div>
-              <div class="message" ng-repeat="chatMessage in chatMessageList">
+              <div id="messages-container" class="message" ng-repeat="chatMessage in chatMessageList">
                 <div ng-if="chatMessage.user_id != 'system_id'" class="container-user-icon over-base-text {{isBot(chatMessage.user_id) ? 'bot-back' :chatMessage.user_id != myID ? 'acc-back' : 'prim-back'}}">
                   <span>{{chatMessage.name.toUpperCase() | limitTo:1}}</span>
                 </div>
@@ -208,7 +225,7 @@
                         
                         <li><a ng-click="toggleBlock(chatMessage.user_id)">{{isBlocked(chatMessage.user_id) ? 'Unblock' : 'Block'}}</a></li>
                         
-                        <li><a ng-click="sendRequest(chatMessage.user_id)">{{isFriendsWith(chatMessage.user_id) ? 'Unfriend' : 'Friend'}}</a></li>
+                        <li><a ng-click="toggleIsFriend(chatMessage.user_id)">{{isFriendsWith(chatMessage.user_id) ? 'Unfriend' : 'Friend'}}</a></li>
 <!--<li><a href="#">Friend</a></li>-->
                       </ul>
 
@@ -239,6 +256,7 @@
                     <button id="mute-button" class="btn btn-mute text-center" type="button" ng-click="toggleMic()"> 
                       <span ng-class="muteBtnClass"></span>
                     </button>
+                    <button class="btn text-center btn-vid" ng-cloak ng-if="currRoomChatID" ng-hide="rooms[currRoomChatID].class_id == 'dm_class_id'" ng-click="toggleViewVideo()">See Video</button>
                   </span>
                   <input maxlength="200" ng-cloak type="text" class="form-control input-message" id="chatInputBox" 
                          ng-model="chatInput" placeholder="Type a message..."
@@ -253,12 +271,13 @@
           </div>
         </main>   
 
-        <!-- Classmates Sidebar -->
+        <!-- In-Room Sidebar -->
         <aside id="classmates-sidebar" class="sidebar sidebar-right" role="complementary">
 
           <h4 ng-cloak ng-if="currRoomChatID ? rooms[currRoomChatID].is_lecture : false" ng-hide="rooms[currRoomChatID].class_id == 'dm_class_id'" class="studymates over-base-text" style="margin-top:2rem"><acc>{{rooms[currRoomChatID].name}}</acc></h4>
 
           <h4 ng-cloak ng-if="currRoomChatID ? !rooms[currRoomChatID].is_lecture : false" ng-hide="rooms[currRoomChatID].class_id == 'dm_class_id'" class="studymates" style="margin-top:2rem"><prim>{{rooms[currRoomChatID].name}}</prim></h4>
+
             <div class="studymates entry over-base-text dropdown-toggle" ng-repeat="user_id in rooms[currRoomChatID].users" ng-cloak>
 
               <div class="dropdown">
@@ -278,7 +297,7 @@
                   <ul ng-if="user_id != myID" class="dropdown-menu">
                     <li><a ng-click="toggleUserAudio(user_id)">{{getRemoteStreamAudioEnabled(user_id) ? 'Mute' : 'Unmute'}}</a></li>
                     <li><a>Block</a></li>
-                    <li><a ng-click="sendRequest(user_id)">{{isFriendsWith(user_id) ? 'Unfriend' : 'Friend'}}</a></li>
+                    <li><a ng-click="toggleIsFriend(user_id)">{{isFriendsWith(user_id) ? 'Unfriend' : 'Friend'}}</a></li>
                   </ul>
                   
                   <!-- No dropdown if user is me -->
