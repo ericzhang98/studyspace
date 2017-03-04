@@ -50,9 +50,12 @@
 
   <body id="myBody" ng-controller="MainController">
     <div id="overlay">
+      <div ng-hide="!viewVideo" id="video-layer" class="container">
+      </div>
       <div id="layer1">
         <!-- Classes Sidebar -->
         <aside id="classes-sidebar" class="sidebar sidebar-left" role="complementary">
+
           <div class="menu-user">
             <!-- User Quick Info -->
             <div id="user-info" class="container-info-user">
@@ -192,7 +195,7 @@
                 <div class="blob blob-2"></div><div class="blob blob-3"></div>
                 <div class="blob blob-4"></div><div class="blob blob-5"></div>
               </div>
-              <div class="message" ng-repeat="chatMessage in chatMessageList">
+              <div id="messages-container" class="message" ng-repeat="chatMessage in chatMessageList">
                 <div ng-if="chatMessage.user_id != 'system_id'" class="container-user-icon over-base-text {{isBot(chatMessage.user_id) ? 'bot-back' :chatMessage.user_id != myID ? 'acc-back' : 'prim-back'}}">
                   <span>{{chatMessage.name.toUpperCase() | limitTo:1}}</span>
                 </div>
@@ -242,6 +245,7 @@
                     <button id="mute-button" class="btn btn-mute text-center" type="button" ng-click="toggleMic()"> 
                       <span ng-class="muteBtnClass"></span>
                     </button>
+                    <button class="btn btn-mute text-center" ng-click="toggleViewVideo()">Video</button
                   </span>
                   <input maxlength="200" ng-cloak type="text" class="form-control input-message" id="chatInputBox" 
                          ng-model="chatInput" placeholder="Type a message..."
@@ -256,7 +260,7 @@
           </div>
         </main>   
 
-        <!-- Classmates Sidebar -->
+        <!-- In-Room Sidebar -->
         <aside id="classmates-sidebar" class="sidebar sidebar-right" role="complementary">
 
           <h4 ng-cloak ng-if="currRoomChatID ? rooms[currRoomChatID].is_lecture : false" ng-hide="rooms[currRoomChatID].class_id == 'dm_class_id'" class="studymates over-base-text" style="margin-top:2rem"><acc>{{rooms[currRoomChatID].name}}</acc></h4>

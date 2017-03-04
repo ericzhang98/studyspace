@@ -1278,6 +1278,11 @@ function($scope, $http, $timeout, $window) {
     });
   }
 
+  /** VIDEO LUL *************************************/
+  $scope.viewVideo = false;
+  $scope.toggleViewVideo = function() {
+    $scope.viewVideo = !$scope.viewVideo;
+  }
 
   /******************ADD CLASS MODAL************************************/
 

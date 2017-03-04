@@ -15,6 +15,7 @@ var PEER_PING_PERIOD = 30000;
 var myStream = null;
 var myCalls = {};         // Dictionary from user_id to call
 var myRemoteStreams = {}; // Dictionary from user.id to audio track
+var videoContainers = []
 navigator.getUserMedia = navigator.getUserMedia || navigator.webkitGetUserMedia || navigator.mozGetUserMedia;
 
 // Grab user media immediately
@@ -24,7 +25,7 @@ getVoice();
 
 // Grab user media (voice)
 function getVoice(callback) {
-  navigator.getUserMedia({video: false, audio: true}, function(stream) {
+  navigator.getUserMedia({video: true, audio: true}, function(stream) {
     myStream = stream;
     angular.element(document.getElementById('myBody')).scope().setVolumeListener(myID, myStream);
     showAlert("voice-connect-alert", 'short');
@@ -284,7 +285,7 @@ function leaveRoom(currRoomCallID) {
 function addRemoteStream(remoteStream, user_id) {
 
   // create a new audio element and make it play automatically
-  var audio = document.createElement('audio');
+  var audio = document.createElement('video');
   audio.autoplay = true;
 
   // set the source
@@ -299,7 +300,25 @@ function addRemoteStream(remoteStream, user_id) {
   }
 
   // add audio stream to the page
-  document.getElementById("myBody").insertBefore(audio, document.getElementById("myDiv"));
+  //document.getElementById("myBody").insertBefore(audio, document.getElementById("myDiv"));
+  container = document.createElement('div');
+  container.className = "video-container";
+  container.id = user_id + "-video-container";
+  if (videoContainers.length == 0) {
+    document.getElementById("video-layer").appendChild(container);
+  } 
+  else {
+    document.getElementById("video-layer").insertBefore(container, videoContainers[videoContainers.length - 1].nextSibling);
+  }
+  
+  videoContainers.push(container);
+
+  /*else {
+    document.getElementById("video-layer").parentNode.appendChild(container);
+  }*/
+  //document.getElementById("video-layer").appendChild(container);
+  container.append(audio);
+  //document.getElementById("video-layer").append(audio);
 }
 
 // - removes the audio track that streaming the remoteStream from call_id
@@ -307,7 +326,8 @@ function removeRemoteStream(user_id) {
 
   // remove the audio track from the page
   if (myRemoteStreams[user_id]) {
-    document.getElementById("myBody").removeChild(myRemoteStreams[user_id]);
+    //document.getElementById("video-layer").removeChild(myRemoteStreams[user_id]);
+    document.getElementById("video-layer").removeChild(document.getElementById(user_id + "-video-container"));
 
     // remove the remoteStream from myRemoteStreams
     delete myRemoteStreams[user_id];

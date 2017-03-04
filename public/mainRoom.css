@@ -542,6 +542,29 @@ html, body {
   position: relative;
 }
 
+video {
+  /*position: absolute;*/
+  height: 90px;
+  margin: 10px;
+  position: static;
+}
+
+.video-container {
+  display: inline-block;
+}
+
+#video-layer {
+  position: relative;
+  top: 35%;
+  height: 20%;
+  width: 50%;
+  z-index: 3;
+  background-color: white;
+  border: solid 2px var(--primary-color);
+  border-radius: 25px;
+  display: flex;
+}
+
 #layer1 {
   position: absolute;
   top: 0;
@@ -559,3 +582,4 @@ html, body {
   color: #ffffff ;
   z-index: 2;
 }
+
