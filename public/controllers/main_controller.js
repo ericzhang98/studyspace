@@ -114,22 +114,32 @@ function($scope, $http, $timeout, $window) {
   // Send chat when send button is pressed
   $scope.sendChatMessage = function(chatInput) {
     if (chatInput) {
-
       // easter eggs
       if (SECRET_COMMANDS.indexOf(chatInput) != -1) {
-
         // do the command, and if it returns a message
         // then upload it
         var msg = doCommand(chatInput, $scope.currRoomChatID)
         if (msg) {
-          uploadMessage(msg);å
+          uploadMessage(msg);
         }
-
         else {
           // reset fields     
           $scope.chatInput = "";
           chatInputBox.focus();
         }
+      }
+      else if (chatInput.indexOf("/play") == 0) {
+        var split = chatInput.split(" ");
+        if (split[1]) {
+          var url = split[1];
+          broadcastSong(url);
+
+        }
+        else {
+          console.log("Please put in a valid URL");
+        }
+        $scope.chatInput = "";
+        chatInputBox.focus();
       }
 
       // regular message
