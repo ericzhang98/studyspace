@@ -15,6 +15,7 @@ myApp.controller("MainController", ["$scope", "$http", "$timeout", "$window",
 function($scope, $http, $timeout, $window) {
   console.log("Hell yeah");
 
+  $scope.videoEnabled = true;
   // general vars
   $scope.myID = getSignedCookie("user_id");
   $scope.currRoomCallID = null;
