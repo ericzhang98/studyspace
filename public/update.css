@@ -14,10 +14,8 @@
 }
 
 .container-settings {
-  background: white;
   padding: 4rem; 
-  margin: 3rem auto;
-  border-radius: 0.5rem;
+  margin: 0 auto;
   width: 50rem;
 }
 
@@ -41,7 +39,10 @@
 }
 
 .btn-container {
-  width: 50rem;
+  position: absolute;
+  bottom: 4rem;
+  left: 30rem;
+  right: 30rem;
   margin: 0 auto;
 }
 
@@ -66,7 +67,14 @@
 }
 
 .tab-content {
-  height: 40rem;
+  position: relative;
+  background-color: white;
+  height: 60rem;
+  border-left: 1px solid #ddd;
+  border-right: 1px solid #ddd;
+  border-bottom: 1px solid #ddd;
+  border-bottom-left-radius: 0.5rem;
+  border-bottom-right-radius: 0.5rem;
 }
 
 /* General */
