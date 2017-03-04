@@ -560,11 +560,13 @@ video {
   width: 15.8rem; /* Approximation, so that before video loads thing isn't crazy big*/
   margin: 2rem;
   margin-bottom: 0rem;
+  background:;
 
   /* reversing video */
   transform: rotateY(180deg);
   -webkit-transform:rotateY(180deg); /* Safari and Chrome */
   -moz-transform:rotateY(180deg); /* Firefox */
+  background-image: url("/assets/images/gary.jpg");
 }
 
 video:hover {

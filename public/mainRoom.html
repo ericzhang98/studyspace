@@ -64,10 +64,8 @@
             </div>
           </div>
         </div>
-
-         <!--<button id="toggle-my-video-btn" class="btn" ng-cloak ng-if="currRoomChatID" ng-hide="rooms[currRoomChatID].class_id == 'dm_class_id'" ng-click="setMyStreamVideoEnabled(!getVideoEnabled())">{{getVideoEnabled() ? 'Turn off video' : 'Turn on video'}}</button>
-          -->
       </div>
+
       <div id="layer1">
         <!-- Classes Sidebar -->
         <aside id="classes-sidebar" class="sidebar sidebar-left" role="complementary">
@@ -258,7 +256,7 @@
                     <button id="mute-button" class="btn btn-mute text-center" type="button" ng-click="toggleMic()"> 
                       <span ng-class="muteBtnClass"></span>
                     </button>
-                    <button class="btn text-center btn-vid" ng-cloak ng-if="currRoomChatID" ng-hide="rooms[currRoomChatID].class_id == 'dm_class_id'" ng-click="toggleViewVideo()">See Video</button>
+                    <button class="btn text-center btn-vid" type="button" ng-cloak ng-if="currRoomChatID" ng-hide="rooms[currRoomChatID].class_id == 'dm_class_id'" ng-click="toggleViewVideo()">See Video</button>
                   </span>
                   <input maxlength="200" ng-cloak type="text" class="form-control input-message" id="chatInputBox" 
                          ng-model="chatInput" placeholder="Type a message..."
@@ -409,6 +407,9 @@
         <audio id="join_room_audio" src="/audio/join_room_sfx"></audio>
         <audio id="leave_room_audio" src="/audio/leave_room_sfx"></audio>
         <audio id="pop_audio" src="/audio/pop_sfx"></audio>
+
+        <iframe width="0" height="0"
+          src="" id="iframePlayer"></iframe>
 
       </div>
       <div id="voice-connect-alert" class="alert fade in text-center" hidden>

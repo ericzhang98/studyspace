@@ -163,4 +163,51 @@ function stopSong() {
 		currSongAudio = null;
 	}
 }
+
+function playSong(url) {
+  console.log(url);
+  var player = document.getElementById("iframePlayer");
+  //player.src = "https://www.youtube.com/embed/S-sJp1FfG7Q?rel=0&autoplay=1";
+  //player.src = "https://www.youtube.com/v/S-sJp1FfG7Q?rel=0&autoplay=1";
+
+  //youtube url format #1
+  //  https://www.youtube.com/watch?v=S-sJp1FfG7Q
+  if (url.indexOf("youtube.com") != -1) {
+    console.log("youtube.com url!");
+    var youtubeDirtyId = url.split("/watch?v=")[1];
+    //clean up the dirty id
+    var youtubeCleanId = null;
+    if (youtubeDirtyId) {
+      youtubeCleanId = youtubeDirtyId.split("?")[0];
+      youtubeCleanId = youtubeCleanId.split("&")[0];
+    }
+    if (youtubeCleanId) {
+      var fullUrl = "https://www.youtube.com/embed/" + youtubeCleanId + "?rel=0&autoplay=1";
+      console.log(fullUrl);
+      player.src = fullUrl;
+    }
+  }
+
+  //youtube url format #2
+  //  https://youtu.be/S-sJp1FfG7Q
+  else if (url.indexOf("youtu.be") != -1) {
+    console.log("youtu.be url!");
+    var youtubeArr = url.split("/");
+    if (youtubeArr) {
+      var youtubeDirtyId = youtubeArr[youtubeArr.length-1]; 
+      //clean up the dirty id
+      var youtubeCleanId = null;
+      if (youtubeDirtyId) {
+        youtubeCleanId = youtubeDirtyId.split("?")[0];
+      }
+      if (youtubeCleanId) {
+        var fullUrl = "https://www.youtube.com/embed/" + youtubeCleanId + "?rel=0&autoplay=1";
+        console.log(fullUrl);
+        player.src = fullUrl;
+      }
+    }
+  }
+
+}
+
 /*********************************************************************/
