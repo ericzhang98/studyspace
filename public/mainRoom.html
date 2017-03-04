@@ -256,7 +256,10 @@
                     <button id="mute-button" class="btn btn-mute text-center" type="button" ng-click="toggleMic()"> 
                       <span ng-class="muteBtnClass"></span>
                     </button>
-                    <button class="btn text-center btn-vid" type="button" ng-cloak ng-if="currRoomChatID" ng-hide="rooms[currRoomChatID].class_id == 'dm_class_id'" ng-click="toggleViewVideo()">See Video</button>
+                    <button class="btn text-center btn-vid" type="button" ng-cloak ng-if="currRoomChatID" ng-hide="rooms[currRoomChatID].class_id == 'dm_class_id'" ng-click="toggleViewVideo()">
+                      <!--See Video-->
+                      <span class="glyphicon glyphicon-facetime-video"></span>
+                    </button>
                   </span>
                   <input maxlength="200" ng-cloak type="text" class="form-control input-message" id="chatInputBox" 
                          ng-model="chatInput" placeholder="Type a message..."

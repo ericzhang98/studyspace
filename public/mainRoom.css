@@ -205,10 +205,16 @@ html, body {
 
 .input-group .btn-vid {
   height: 4.5rem;
+  width: 4.5rem;
+  font-size: 1.5rem;
   border: solid 2px var(--over-base-two-color);
   border-left: none;
   background-color: var(--base-two-color);
   color: var(--over-base-two-color);
+}
+
+.btn-vid span {
+  margin-right: -0.3rem;
 }
 
 .input-group-btn>.btn+.btn {
