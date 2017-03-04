@@ -877,7 +877,7 @@ function($scope, $http, $timeout, $window) {
 
     // empty buddies null check
     if (!$scope.added_buddies_list) {
-      return false;
+      return -1;
     }
 
     var index;
