@@ -203,6 +203,14 @@ html, body {
   font-size: 2rem;
 }
 
+.input-group .btn-vid {
+  height: 4.5rem;
+  border: solid 2px var(--over-base-two-color);
+  border-left: none;
+  background-color: var(--base-two-color);
+  color: var(--over-base-two-color);
+}
+
 .input-group .input-message {
   font-size: 1.5rem;
   border-bottom: none;
