@@ -146,9 +146,10 @@ app.post('/add_blocked_user', function(req, res) {
 });
 
 app.delete('/remove_block/:id', function(req, res){
-
-  var id = req.params.id;
-  db.blocked_users.remove({user_id: id}, function(err, doc){
+  var id = req.signedCookies.user_id;
+  var toblock_id = req.params.id;
+  console.log("removing id: " + id);
+  db.blocked_users.remove({user_id: id, blocked_user_id: toblock_id}, function(err, doc){
     res.json(doc);
   });
 });
@@ -925,7 +926,7 @@ function joinRoom(user_id, room_id, callback) {
               }
             });
           }
-          userActivityDatabase.child(user_id).child("lastRoom").set(room_id);
+          userActivityDatabase.child(user_id).child("lastRooms").push().set(room_id);
           userActivityDatabase.child(user_id).child("lastActive").set(Date.now());
 
           /*db.users.findOne({user_id: user_id}, function (err, doc) {
@@ -963,21 +964,25 @@ function leaveRoom(user_id, room_id, callback) {
   roomInfoDatabase.child(room_id).child("users").once("value").then(function(snapshot) {
     if (snapshot.val()) {
       var users = [];
+      var removed = false; //temp jank xD
       snapshot.forEach(function(childSnapshot) {
         users.push(childSnapshot.val());
       });
       snapshot.forEach(function(childSnapshot) {
         var key = childSnapshot.key;
         var value = childSnapshot.val();
-        if (value == user_id) {
-          //rm the user
-          childSnapshot.ref.remove(function(err) {
-            if (users.length == 1) {
-              //if last user left, set last_active_time and check for delete conditions after delay
-              setTimeout(bufferTimer, MAX_IDLE, room_id);
-              snapshot.ref.parent.child("last_active_time").set(Date.now());
-            }
-          });
+        if (!removed) {
+          if (value == user_id) {
+            //rm the user
+            childSnapshot.ref.remove(function(err) {
+              if (users.length == 1) {
+                //if last user left, set last_active_time and check for delete conditions after delay
+                setTimeout(bufferTimer, MAX_IDLE, room_id);
+                snapshot.ref.parent.child("last_active_time").set(Date.now());
+              }
+            });
+            removed = true;
+          }
         }
       });
 
@@ -1141,10 +1146,13 @@ function userActivityChecker() {
 function processActivity(user_id, activityLog) {
   if (activityLog) {
     //if the user is in a room and hasn't pinged within the last minute, rm them from room
-    if (activityLog.lastRoom && Date.now() - activityLog.lastActive > USER_IDLE) {
+    if (activityLog.lastRooms && Date.now() - activityLog.lastActive > USER_IDLE) {
       //console.log("USER ACTIVITY CHECKER: removing user " + user_id);
-      leaveRoom(user_id, activityLog.lastRoom);
-      userActivityDatabase.child(user_id).child("lastRoom").set(null);
+      var lastRooms = Object.keys(activityLog.lastRooms).map((k) => activityLog.lastRooms[k]);
+      for (var i = 0;  i < lastRooms.length; i++) {
+        leaveRoom(user_id, lastRooms[i]);
+      }
+      userActivityDatabase.child(user_id).child("lastRooms").set(null);
     }
     if (activityLog.online && Date.now() - activityLog.lastActive > USER_IDLE) {
       //console.log("USER ACTIVITY CHECKER: user offline - " + user_id);
@@ -1153,11 +1161,25 @@ function processActivity(user_id, activityLog) {
   }
 }
 
+/*
+//rm user from last room when they sign on
+function checkSingleUserActivity(user_id) {
+  userActivityDatabase.child(user_id).once("value").then(function(snapshot) {
+    var activityLog = snapshot.val();
+    if (activityLog && activityLog.lastRoom) {
+      leaveRoom(user_id, activityLog.lastRoom);
+      userActivityDatabase.child(user_id).child("lastRoom").set(null);
+    }
+  });
+}
+*/
+
 
 /*------------------------------------------------------------------------*/
 
 /*---- SSL CHALLENGE ----*/
 //studyspace.me
+/*
 app.get("/.well-known/acme-challenge/FPQsAzH1lcooEHIeB4STVrH_NzwS1_Q0Yc17I3uiaI8", function(req, res) {
   res.send("FPQsAzH1lcooEHIeB4STVrH_NzwS1_Q0Yc17I3uiaI8.WvFBmKbVDiPXkv3XZvi2IVS2S4FvtRxc1OiZTIPqJls");
 })
@@ -1166,6 +1188,7 @@ app.get("/.well-known/acme-challenge/FPQsAzH1lcooEHIeB4STVrH_NzwS1_Q0Yc17I3uiaI8
 app.get("/.well-known/acme-challenge/RgAtJ60qe2Pbcfxii-OTGCTp8QirL1ur3TqZhP4BMWE", function(req, res) {
   res.send("RgAtJ60qe2Pbcfxii-OTGCTp8QirL1ur3TqZhP4BMWE.WvFBmKbVDiPXkv3XZvi2IVS2S4FvtRxc1OiZTIPqJls");
 })
+*/
 
 
 

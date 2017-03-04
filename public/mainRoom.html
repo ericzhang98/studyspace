@@ -189,9 +189,9 @@
             <nav id="class-navigation" class="navbar navbar-room white-text {{rooms[currRoomChatID].is_lecture ? 'acc-back' : 'prim-dark-back'}}">
               <div class="container-fluid">
                 <div class="navbar-header">
-                  <span ng-cloak class="navbar-brand">{{classes[rooms[currRoomChatID].class_id].name != "" ? 
-                    classes[rooms[currRoomChatID].class_id].name + " - ":""}}{{rooms[currRoomChatID].name}}{{rooms[currRoomChatID].is_lecture ? ' (cast by ' + rooms[currRoomChatID].host_name + ')' : ''}}</span>
-                </div>
+                  <span ng-cloak class="navbar-brand" >{{classes[rooms[currRoomChatID].class_id].name != "" ? 
+                    classes[rooms[currRoomChatID].class_id].name + " | ":""}}{{rooms[currRoomChatID].name}}{{rooms[currRoomChatID].is_lecture ? ' (cast by ' + rooms[currRoomChatID].host_name + ')' : ''}}</span>
+              </div>
                 <ul class="nav navbar-nav navbar-right">
                   <li ng-if="rooms[currRoomChatID].class_id != 'dm_class_id'" class="nav-link" ng-click="leaveRoom()">
                     <a>Leave</a>
@@ -225,12 +225,9 @@
                       <ul ng-if="!isBot(chatMessage.user_id) && chatMessage.user_id != myID" class="dropdown-menu">
                         <li><a ng-if="getRemoteStreamExists(chatMessage.user_id)" ng-click="toggleUserAudio(chatMessage.user_id)">{{getRemoteStreamAudioEnabled(chatMessage.user_id) ? 'Mute' : 'Unmute'}}</a></li>
                         
-                        <li><a ng-click="blockUserWithId(chatMessage.user_id)">Block</a></li>
+                        <li><a ng-click="toggleBlock(chatMessage.user_id)">{{isBlocked(chatMessage.user_id) ? 'Unblock' : 'Block'}}</a></li>
                         
                         <li><a ng-click="sendRequest(chatMessage.user_id)">{{isFriendsWith(chatMessage.user_id) ? 'Unfriend' : 'Friend'}}</a></li>
-                        
-                        <li><a ng-click="unblock(chatMessage.user_id)">Unblock lol</a></li>
-
 <!--<li><a href="#">Friend</a></li>-->
                       </ul>
 
