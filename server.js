@@ -146,9 +146,10 @@ app.post('/add_blocked_user', function(req, res) {
 });
 
 app.delete('/remove_block/:id', function(req, res){
-
-  var id = req.params.id;
-  db.blocked_users.remove({user_id: id}, function(err, doc){
+  var id = req.signedCookies.user_id;
+  var toblock_id = req.params.id;
+  console.log("removing id: " + id);
+  db.blocked_users.remove({user_id: id, blocked_user_id: toblock_id}, function(err, doc){
     res.json(doc);
   });
 });

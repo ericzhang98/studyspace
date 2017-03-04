@@ -1229,6 +1229,25 @@ function($scope, $http, $timeout, $window) {
   /**************************** BLOCK SYSTEM ***************************/
 
   var blockedUsers = {};
+  
+  $scope.toggleBlock = function(user_id) {
+    if (!$scope.isBlocked(user_id)) {
+      $scope.blockUserWithId(user_id);
+    } else {
+      $scope.unblock(user_id);
+    }
+  }
+    
+  $scope.isBlocked = function(user_id) {
+    if (blockedUsers['blocked_user_list']) {
+      var bUsers = blockedUsers['blocked_user_list'];
+
+      if (bUsers.indexOf(user_id) != -1) {
+        return true;
+      }
+    }
+    return false;
+  }
 
   var getIdFromName = function(name, onResponseReceived){
     var email = {"email": String(name)};
@@ -1239,16 +1258,15 @@ function($scope, $http, $timeout, $window) {
   }
 
   var refresh = function(){
+    blockedUsers = {};
     $http.get('/get_blocked_users').then(function(response){
       $scope.block_user_list = response.data;
-      //console.log(response.data[0]);
       if(!(response.data[0])){
         return;
       }
       blockedUsers['user_id'] = response.data[0]['blocked_user_id'];
       blockedUsers['blocked_user_list'] = [];
       for (var i = 0; i < response.data.length; i++){
-        console.log("1");
         var obj = response.data[i];
         blockedUsers['blocked_user_list'].push(obj['blocked_user_id']);
 
@@ -1263,7 +1281,6 @@ function($scope, $http, $timeout, $window) {
     var data = {
       "blocked_user_id": String(blocked_user_id),
     }; 
-    console.log("ADD");
     $http.post('/add_blocked_user', data).then(function(response){
       onResponseReceived(response.data);
     });
@@ -1274,7 +1291,6 @@ function($scope, $http, $timeout, $window) {
   $scope.blockUserWithId = function(user_id) {
     console.log("blocking: " + user_id);
     addBlock(user_id, function(response) {
-      console.log(response);
       showAlert('block-alert', 'normal', false);
       refresh();
     });
