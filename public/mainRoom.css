@@ -547,22 +547,33 @@ video {
   height: 90px;
   margin: 10px;
   position: static;
+
+  /* reversing video */
+  transform: rotateY(180deg);
+  -webkit-transform:rotateY(180deg); /* Safari and Chrome */
+  -moz-transform:rotateY(180deg); /* Firefox */
 }
 
 .video-container {
-  display: inline-block;
+  /*display: inline-block;*/
+}
+
+#video-row {
+  display: -webkit-inline-flex;
+  background-color: white;
+  border: solid 4px var(--primary-color);
+  border-radius: 25px;
+  margin: auto;
 }
 
 #video-layer {
   position: relative;
-  top: 35%;
-  height: 20%;
-  width: 50%;
+  top: 5%;
+  height: 25%;
+  width: 55%;
   z-index: 3;
-  background-color: white;
-  border: solid 2px var(--primary-color);
-  border-radius: 25px;
   display: flex;
+  text-align:center
 }
 
 #layer1 {

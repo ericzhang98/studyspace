@@ -50,7 +50,8 @@
 
   <body id="myBody" ng-controller="MainController">
     <div id="overlay">
-      <div ng-hide="!viewVideo" id="video-layer" class="container">
+      <div ng-hide="!viewVideo || !currRoomChatID || rooms[currRoomChatID].class_id == 'dm_class_id'" id="video-layer" class="container">
+        <div id="video-row"></div>
       </div>
       <div id="layer1">
         <!-- Classes Sidebar -->
@@ -245,7 +246,7 @@
                     <button id="mute-button" class="btn btn-mute text-center" type="button" ng-click="toggleMic()"> 
                       <span ng-class="muteBtnClass"></span>
                     </button>
-                    <button class="btn btn-mute text-center" ng-click="toggleViewVideo()">Video</button
+                    <button class="btn" ng-cloak ng-if="currRoomChatID" ng-hide="rooms[currRoomChatID].class_id == 'dm_class_id'" ng-click="setMyStreamVideoEnabled(!getMyVideoEnabled())">{{getMyVideoEnabled() ? 'Turn off video' : 'Turn on video'}}</button>
                   </span>
                   <input maxlength="200" ng-cloak type="text" class="form-control input-message" id="chatInputBox" 
                          ng-model="chatInput" placeholder="Type a message..."
@@ -266,6 +267,9 @@
           <h4 ng-cloak ng-if="currRoomChatID ? rooms[currRoomChatID].is_lecture : false" ng-hide="rooms[currRoomChatID].class_id == 'dm_class_id'" class="studymates over-base-text" style="margin-top:2rem"><acc>{{rooms[currRoomChatID].name}}</acc></h4>
 
           <h4 ng-cloak ng-if="currRoomChatID ? !rooms[currRoomChatID].is_lecture : false" ng-hide="rooms[currRoomChatID].class_id == 'dm_class_id'" class="studymates" style="margin-top:2rem"><prim>{{rooms[currRoomChatID].name}}</prim></h4>
+
+          <button class="btn-low-pri" ng-cloak ng-if="currRoomChatID" ng-hide="rooms[currRoomChatID].class_id == 'dm_class_id'" ng-click="toggleViewVideo()">See Video</button>
+
             <div class="studymates entry over-base-text dropdown-toggle" ng-repeat="user_id in rooms[currRoomChatID].users" ng-cloak>
 
               <div class="dropdown">

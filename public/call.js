@@ -16,17 +16,20 @@ var myStream = null;
 var myCalls = {};         // Dictionary from user_id to call
 var myRemoteStreams = {}; // Dictionary from user.id to audio track
 var videoContainers = []
+var showVideo;
 navigator.getUserMedia = navigator.getUserMedia || navigator.webkitGetUserMedia || navigator.mozGetUserMedia;
 
 // Grab user media immediately
-getVoice();
+getMedia();
 
 /*********************** CALLING AND ANSWERING ***********************/
 
 // Grab user media (voice)
-function getVoice(callback) {
+function getMedia(callback) {
   navigator.getUserMedia({video: true, audio: true}, function(stream) {
     myStream = stream;
+    setMyStreamVideoEnabled(false);
+    addRemoteStream(myStream, myID);
     angular.element(document.getElementById('myBody')).scope().setVolumeListener(myID, myStream);
     showAlert("voice-connect-alert", 'short');
     if (callback) {
@@ -88,7 +91,7 @@ function startCall(other_user_id) {
   // myStream not yet set
   else {
     console.log("myStream not yet set");
-    getVoice(startCallHelper(other_user_id));
+    getMedia(startCallHelper(other_user_id));
   }
 }
 
@@ -132,7 +135,7 @@ function answerCall(call) {
   // myStream not yet set
   else {
     console.log("myStream not yet set");
-    getVoice(answerCallHelper(call));
+    getMedia(answerCallHelper(call));
   }
 }
 
@@ -285,19 +288,27 @@ function leaveRoom(currRoomCallID) {
 function addRemoteStream(remoteStream, user_id) {
 
   // create a new audio element and make it play automatically
-  var audio = document.createElement('video');
-  audio.autoplay = true;
+  var media = document.createElement('video');
+
+  if (user_id == myID) {
+    media.muted = true;
+  }
+
+  media.autoplay = true;
 
   // set the source
-  audio.src = window.URL.createObjectURL(remoteStream); 
+  media.src = window.URL.createObjectURL(remoteStream); 
 
   // store the element in myRemoteStreams
-  myRemoteStreams[user_id] = audio;
+  myRemoteStreams[user_id] = media;
 
   // if I am the lecturer, I want everyone else muted by default
   if (isLecturer) {
     toggleRemoteStreamAudioEnabled(user_id);
   }
+
+  angular.element(document.getElementById('myBody')).scope().$apply();
+
 
   // add audio stream to the page
   //document.getElementById("myBody").insertBefore(audio, document.getElementById("myDiv"));
@@ -305,20 +316,15 @@ function addRemoteStream(remoteStream, user_id) {
   container.className = "video-container";
   container.id = user_id + "-video-container";
   if (videoContainers.length == 0) {
-    document.getElementById("video-layer").appendChild(container);
+    document.getElementById("video-row").appendChild(container);
   } 
   else {
-    document.getElementById("video-layer").insertBefore(container, videoContainers[videoContainers.length - 1].nextSibling);
+    document.getElementById("video-row").insertBefore(container, videoContainers[videoContainers.length - 1].nextSibling);
   }
-  
   videoContainers.push(container);
-
-  /*else {
-    document.getElementById("video-layer").parentNode.appendChild(container);
-  }*/
-  //document.getElementById("video-layer").appendChild(container);
-  container.append(audio);
-  //document.getElementById("video-layer").append(audio);
+  container.append(media);
+  //var name = document.createTextNode(angular.element(document.getElementById('myBody')).scope().users[user_id].name);
+  //container.append(name);
 }
 
 // - removes the audio track that streaming the remoteStream from call_id
@@ -327,10 +333,11 @@ function removeRemoteStream(user_id) {
   // remove the audio track from the page
   if (myRemoteStreams[user_id]) {
     //document.getElementById("video-layer").removeChild(myRemoteStreams[user_id]);
-    document.getElementById("video-layer").removeChild(document.getElementById(user_id + "-video-container"));
+    document.getElementById("video-row").removeChild(document.getElementById(user_id + "-video-container"));
 
     // remove the remoteStream from myRemoteStreams
     delete myRemoteStreams[user_id];
+    //angular.element(document.getElementById('myBody')).scope().$apply();
   }
 }
 
@@ -351,11 +358,27 @@ function toggleMyStreamAudioEnabled() {
   myStream.getAudioTracks()[0].enabled = !(myStream.getAudioTracks()[0].enabled);
 }
 
+// - toggle my video
+/*function toggleMyStreamVideoEnabled() {
+  setMyStreamVideoEnabled(!(myStream.getVideoTracks()[0].enabled));
+}*/
+
 // - set my audio
 function setMyStreamAudioEnabled(enabled) {
   if (myStream) {
     //console.log("setting my audio to " + enabled);
     myStream.getAudioTracks()[0].enabled = enabled;
+  }
+}
+
+// - set my video
+function setMyStreamVideoEnabled(enabled, direct = true) {
+  if (myStream) {
+    myStream.getVideoTracks()[0].enabled = enabled;
+
+    if (direct) {
+      showVideo = enabled;
+    }
   }
 }
 

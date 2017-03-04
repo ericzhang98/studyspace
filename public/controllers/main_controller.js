@@ -1280,8 +1280,36 @@ function($scope, $http, $timeout, $window) {
 
   /** VIDEO LUL *************************************/
   $scope.viewVideo = false;
+
   $scope.toggleViewVideo = function() {
     $scope.viewVideo = !$scope.viewVideo;
+
+    // if we closed video, turn my video off
+    if (!$scope.viewVideo) {
+      setMyStreamVideoEnabled(false, false);
+    }
+
+    // if we opened video and we were showing before, turn my video off
+    if ($scope.viewVideo && showVideo) {
+      setMyStreamVideoEnabled(true);
+    }
+  }
+
+  $scope.setMyStreamVideoEnabled = function(enabled, direct = true) {
+    setMyStreamVideoEnabled(enabled, direct);
+  }
+
+  $scope.getMyVideoEnabled = function() {
+    return myStream && myStream.getVideoTracks()[0].enabled;
+  }
+
+  $scope.getRemoteStream = function(user_id) {
+    if (user_id == myID) {
+      return myStream;
+    } 
+    else {
+      return myRemoteStreams[user_id];
+    }
   }
 
   /******************ADD CLASS MODAL************************************/
