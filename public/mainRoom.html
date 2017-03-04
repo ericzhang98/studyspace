@@ -60,7 +60,7 @@
 
             <div ng-if="user_id != myID" class="video-container">
               <video id="{{user_id}}_video" class="acc-border" autoplay ng-src="{{userStreamSources[user_id]}}"></video>
-              <p class="video-name">users[user_id].name</p>
+              <p class="video-name">{{users[user_id].name}}</p>
             </div>
           </div>
 
