@@ -50,7 +50,7 @@
 
   <body id="myBody" ng-controller="MainController">
     <div id="overlay">
-      <div ng-cloak ng-hide="!viewVideo || !currRoomChatID || rooms[currRoomChatID].class_id == 'dm_class_id'" id="video-layer" class="container">
+      <div ng-cloak ng-hide="!viewVideo || !currRoomChatID || rooms[currRoomChatID].class_id == 'dm_class_id'" id="video-layer">
         <div id="video-row">
           <div ng-repeat="user_id in rooms[currRoomChatID].users">
             <div ng-if="user_id == myID" class="video-container">
