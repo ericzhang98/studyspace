@@ -184,6 +184,7 @@ function playSong(url) {
     if (youtubeCleanId) {
       var fullUrl = "https://www.youtube.com/embed/" + youtubeCleanId + "?rel=0&autoplay=1";
       console.log(fullUrl);
+		  stopSong();
       player.src = fullUrl;
     }
   }
@@ -203,6 +204,7 @@ function playSong(url) {
       if (youtubeCleanId) {
         var fullUrl = "https://www.youtube.com/embed/" + youtubeCleanId + "?rel=0&autoplay=1";
         console.log(fullUrl);
+		    stopSong();
         player.src = fullUrl;
       }
     }
