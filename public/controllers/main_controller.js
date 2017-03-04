@@ -1280,6 +1280,7 @@ function($scope, $http, $timeout, $window) {
 
   /** VIDEO LUL *************************************/
   $scope.viewVideo = false;
+  $scope.userStreamSources = {};
 
   $scope.toggleViewVideo = function() {
     $scope.viewVideo = !$scope.viewVideo;
@@ -1299,8 +1300,11 @@ function($scope, $http, $timeout, $window) {
     setMyStreamVideoEnabled(enabled, direct);
   }
 
-  $scope.getMyVideoEnabled = function() {
-    return myStream && myStream.getVideoTracks()[0].enabled;
+  $scope.getVideoEnabled = function(user_id = myID) {
+    if (user_id == myID) {
+      return myStream && myStream.getVideoTracks()[0].enabled;
+    }
+    //return $scope.userStreams[user_id] && $scope.userStreams[user_id].getVideoTracks()[0].enabled;
   }
 
   $scope.getRemoteStream = function(user_id) {

@@ -301,18 +301,18 @@ function addRemoteStream(remoteStream, user_id) {
 
   // store the element in myRemoteStreams
   myRemoteStreams[user_id] = media;
+  angular.element(document.getElementById('myBody')).scope().userStreamSources[user_id] = media.src;
+  angular.element(document.getElementById('myBody')).scope().$apply();
 
   // if I am the lecturer, I want everyone else muted by default
   if (isLecturer) {
     toggleRemoteStreamAudioEnabled(user_id);
   }
 
-  angular.element(document.getElementById('myBody')).scope().$apply();
-
 
   // add audio stream to the page
   //document.getElementById("myBody").insertBefore(audio, document.getElementById("myDiv"));
-  container = document.createElement('div');
+  /*container = document.createElement('div');
   container.className = "video-container";
   container.id = user_id + "-video-container";
   if (videoContainers.length == 0) {
@@ -322,7 +322,7 @@ function addRemoteStream(remoteStream, user_id) {
     document.getElementById("video-row").insertBefore(container, videoContainers[videoContainers.length - 1].nextSibling);
   }
   videoContainers.push(container);
-  container.append(media);
+  container.append(media);*/
   //var name = document.createTextNode(angular.element(document.getElementById('myBody')).scope().users[user_id].name);
   //container.append(name);
 }
@@ -333,10 +333,12 @@ function removeRemoteStream(user_id) {
   // remove the audio track from the page
   if (myRemoteStreams[user_id]) {
     //document.getElementById("video-layer").removeChild(myRemoteStreams[user_id]);
-    document.getElementById("video-row").removeChild(document.getElementById(user_id + "-video-container"));
+    //document.getElementById("video-row").removeChild(document.getElementById(user_id + "-video-container"));
 
     // remove the remoteStream from myRemoteStreams
     delete myRemoteStreams[user_id];
+    // delete angular.element(document.getElementById('myBody')).scope().userStreamSources[user_id];
+    // document.getElementById("video-row").removeChild(document.getElementById(user_id + "-video-container"));
     //angular.element(document.getElementById('myBody')).scope().$apply();
   }
 }
