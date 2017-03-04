@@ -52,15 +52,27 @@
     <div id="overlay">
       <div ng-cloak ng-hide="!viewVideo || !currRoomChatID || rooms[currRoomChatID].class_id == 'dm_class_id'" id="video-layer" class="container">
         <div id="video-row">
-          <div ng-repeat="user_id in rooms[currRoomChatID].users">
+          <div ng-if="!rooms[currRoomChatID].is_lecture" ng-repeat="user_id in rooms[currRoomChatID].users">
             <div ng-if="user_id == myID" class="video-container">
               <video id="{{user_id}}_video" class="prim-border" autoplay muted ng-src="{{userStreamSources[user_id]}}" ng-click="setMyStreamVideoEnabled(!getVideoEnabled())"></video>
-              <p class="video-name">{{user_id == myID ? 'You' : users[user_id].name}}</p>
+              <p class="video-name">You</p>
             </div>
 
             <div ng-if="user_id != myID" class="video-container">
               <video id="{{user_id}}_video" class="acc-border" autoplay ng-src="{{userStreamSources[user_id]}}"></video>
-              <p class="video-name">{{user_id == myID ? 'You' : users[user_id].name}}</p>
+              <p class="video-name">users[user_id].name</p>
+            </div>
+          </div>
+
+          <div ng-if="rooms[currRoomChatID].is_lecture">
+            <div ng-if="rooms[currRoomChatID].host_id == myID" class="video-container">
+              <video id="{{rooms[currRoomChatID].host_id}}_video" class="prim-border" autoplay muted ng-src="{{userStreamSources[rooms[currRoomChatID].host_id]}}" ng-click="setMyStreamVideoEnabled(!getVideoEnabled())"></video>
+              <p class="video-name">You</p>
+            </div>
+
+            <div ng-if="rooms[currRoomChatID].host_id != myID" class="video-container">
+              <video id="{{rooms[currRoomChatID].host_id}}_video" class="acc-border" autoplay ng-src="{{userStreamSources[rooms[currRoomChatID].host_id]}}"></video>
+              <p class="video-name">{{users[rooms[currRoomChatID].host_id].name}}</p>
             </div>
           </div>
         </div>
@@ -412,9 +424,9 @@
           src="" id="iframePlayer"></iframe>
 
       </div>
-      <div id="voice-connect-alert" class="alert fade in text-center" hidden>
+      <div id="media-connect-alert" class="alert fade in text-center" hidden>
         <a class="close" data-dismiss="alert">×</a>
-        <span>Voice connected</span>
+        <span>Media connected</span>
       </div>
       <div id="lecture-alert" class="alert fade in text-center" hidden>
         <a class="close" data-dismiss="alert">×</a>
@@ -434,7 +446,11 @@
       </div>
       <div id="block-alert" class="alert fade in text-center" hidden>
         <a class="close" data-dismiss="alert">×</a>
-        <span>User blocked. They can't hear you, and you can't hear them.<span>
+        <span>User blocked. Now they can't hear you, and you can't hear them.<span>
+      </div>
+      <div id="video-alert" class="alert fade in text-center" hidden>
+        <a class="close" data-dismiss="alert">×</a>
+        <span>If you can't see yourself, no one else can either.<span>
       </div>
       <div id="no-connection-alert" class="alert fade in text-center" hidden>
         <a class="close" data-dismiss="alert">×</a>
