@@ -617,7 +617,7 @@ function($scope, $http, $timeout, $window) {
 
     //send offline ping
     var xhr = new XMLHttpRequest();
-    xhr.open("GET", "/offline", true);
+    xhr.open("GET", "/offline", false);
     xhr.send();
   };
 
