@@ -596,20 +596,17 @@ video:hover {
   border-radius: 1.5rem;
 }
 
-#video-row {
-  margin: 0 auto;
+#video-layer {
+  position: relative;
+  top: 10%;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 3;
+  text-align: center;
   display: -webkit-inline-flex;
   background-color: white;
   border: solid 4px var(--primary-color);
   border-radius: 25px;
-}
-
-#video-layer {
-  position: relative;
-  top: 10%;
-  height: 25%;
-  z-index: 3;
-  text-align: center;
 }
 
 #layer1 {
