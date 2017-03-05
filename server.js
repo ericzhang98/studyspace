@@ -1,6 +1,6 @@
 // server.js will be our website's server that handles communication
 // between the front-end and the database
-var deployment = false; //currently just whether or not to use HTTPS
+var deployment = true; //currently just whether or not to use HTTPS
 
 /* SETUP ---------------------------------------------------------------*/
 
