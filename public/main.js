@@ -1,7 +1,7 @@
 /***** General variables **************************/
 var myID = getSignedCookie("user_id");
 var SONG_COMMANDS = ["/raindrop", "/destress", "/420"];
-var OTHER_COMMANDS = ["/gary", "/ord", "/stop", "/dank", "/scrub", "/nogary", "/noord", "/speak", "/ramble"];
+var OTHER_COMMANDS = ["/gary", "/ord", "/stop", "/dank", "/scrub", "/nogary", "/noord", "/speak", "/ramble", "/easter"];
 var SONG_VOLUMES = {
 	"/raindrop" : 0.25,
 	"/destress" : 0.3,
@@ -155,10 +155,14 @@ function doCommand(command, currRoomChatID) {
   }
 
   else if (command == "/easter") {
-  	var string = "Try some of the following: "
+  	var string = "Try some of the following: \n"
   	for (var i = 0; i < SECRET_COMMANDS.length; i++) {
-  		string += " SECRET_COMMANDS[i] " + "\n";
+  		if (SECRET_COMMANDS[i] != "/easter") {
+  			string += SECRET_COMMANDS[i] + "\n";
+  		}
   	}
+
+  	return string;
   }
 
 	return null;
