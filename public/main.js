@@ -154,6 +154,13 @@ function doCommand(command, currRoomChatID) {
     removeCookie("dank");
   }
 
+  else if (command == "/easter") {
+  	var string = "Try some of the following: "
+  	for (var i = 0; i < SECRET_COMMANDS.length; i++) {
+  		string += " SECRET_COMMANDS[i] " + "\n";
+  	}
+  }
+
 	return null;
 }
 
