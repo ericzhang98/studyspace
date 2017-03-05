@@ -8,7 +8,7 @@ var myApp = angular.module("mainApp", ["ngMaterial", "ngSanitize"]);
 var chatMessageList = [];
 var CONCAT_TIME = 60*1000; // 1 minute
 var currPing = null;
-var USER_PING_PERIOD = 15*1000;
+var USER_PING_PERIOD = 10*1000;
 
 /* Main controller -------------------------------------*/
 
