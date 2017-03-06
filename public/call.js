@@ -99,27 +99,33 @@ function startCall(other_user_id) {
 function startCallHelper(other_user_id) {
 
   var call = peer.call(other_user_id, myStream);
+  
+  if (!call) {
+    console.log("sent call to user with id: " + call.peer)
 
-  console.log("sent call to user with id: " + call.peer)
+      // reference to the call so we can close it
+      myCalls[other_user_id] = (call);
 
-  // reference to the call so we can close it
-  myCalls[other_user_id] = (call);
+    console.log("outgoing stream id: " + myStream.id)
 
-  console.log("outgoing stream id: " + myStream.id)
+      call.on('stream', function(remoteStream) {
+        console.log("incoming stream id: " + remoteStream.id)
 
-  call.on('stream', function(remoteStream) {
-    console.log("incoming stream id: " + remoteStream.id)
+        establishCall(remoteStream, call.peer);
+      });
 
-    establishCall(remoteStream, call.peer);
-  });
+    // used for onClose
+    var call_id = call.id;
 
-  // used for onClose
-  var call_id = call.id;
+    call.on('close', function() {
+      console.log("call closed");
+      destablishCall(call.peer);
+    });
+  }
+  else {
+    console.log("You have two windows open, call should already be set in one");
+  }
 
-  call.on('close', function() {
-    console.log("call closed");
-    destablishCall(call.peer);
-  });
 }
 
 // - ensures myStream is set, delegates to answerCallHelper()

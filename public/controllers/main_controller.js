@@ -8,7 +8,7 @@ var myApp = angular.module("mainApp", ["ngMaterial", "ngSanitize"]);
 var chatMessageList = [];
 var CONCAT_TIME = 60*1000; // 1 minute
 var currPing = null;
-var USER_PING_PERIOD = 15*1000;
+var USER_PING_PERIOD = 10*1000;
 
 /* Main controller -------------------------------------*/
 
@@ -30,10 +30,12 @@ function($scope, $http, $timeout, $window) {
     // leave current room
     leaveRoom($scope.currRoomCallID);
 
+    /*
     //send offline ping
     var xhr = new XMLHttpRequest();
     xhr.open("GET", "/offline", true);
     xhr.send();
+    */
 
     // erase cookies
     removeCookie("user_id");
@@ -615,10 +617,12 @@ function($scope, $http, $timeout, $window) {
     temp.open("GET", "/typing/false/" + $scope.currRoomChatID, true);
     temp.send();
 
+    /*
     //send offline ping
     var xhr = new XMLHttpRequest();
     xhr.open("GET", "/offline", false);
     xhr.send();
+    */
   };
 
   function pingUserActivity(constant) {
