@@ -127,6 +127,10 @@ function($scope, $http, $timeout, $window) {
           }
         });
       }
+      else {
+        var player = document.getElementById("iframePlayer");
+        player.src = "";
+      }
     }
   }
   /*********************************************************************/
@@ -159,14 +163,26 @@ function($scope, $http, $timeout, $window) {
         }
       }
       else if (chatInput.indexOf("/play") == 0) {
-        var split = chatInput.split(" ");
-        if (split[1]) {
-          var url = split[1];
-          //playSong(url);
-          $http.post("/broadcast_song/", {room_id: $scope.currRoomChatID, url: url});
+        //if url detected, send it directly to broadcast
+        if (chatInput.indexOf("youtube.com") != -1 || chatInput.indexOf("youtu.be") != -1) {
+          var split = chatInput.split(" ");
+          if (split[1]) {
+            var url = split[1];
+            $http.post("/broadcast_song/", {room_id: $scope.currRoomChatID, url: url});
+          }
+          else {
+            console.log("Please put in a valid URL");
+          }
         }
         else {
-          console.log("Please put in a valid URL");
+          var query = chatInput.substring(6);
+          if (query.length > 0) {
+            console.log("querying youtube and playing first result");
+            $http.get("/youtube_search/" + query).then(function(response) {
+              var url = "www.youtube.com/watch?v=" + response.data.youtube_video_id;
+              $http.post("/broadcast_song/", {room_id: $scope.currRoomChatID, url: url});
+            });
+          }
         }
         $scope.chatInput = "";
         chatInputBox.focus();

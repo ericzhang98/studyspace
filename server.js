@@ -1,6 +1,6 @@
 // server.js will be our website's server that handles communication
 // between the front-end and the database
-var deployment = true; //currently just whether or not to use HTTPS
+var deployment = false; //currently just whether or not to use HTTPS
 
 /* SETUP ---------------------------------------------------------------*/
 
@@ -45,6 +45,13 @@ var botDatabase = firebaseRoot.child("Bots");
 
 var favicon = require("serve-favicon");
 app.use(favicon(__dirname + "/public/assets/images/favicon.ico"));
+
+var youtubeSearch = require("youtube-search");
+var opts = {
+  maxResults: 1,
+  key: "AIzaSyCFalKOCAsmO9yLwf424Jg2eEXz9U5ESLE"
+}
+
 
 // - app configuration
 var forceSsl = function (req, res, next) {
@@ -468,13 +475,6 @@ app.get("/clear_message_notifications/:other_user_id", function(req, res) {
   res.end();
 });
 
-app.post("/play_command", function(req, res) {
-  var user_id = req.signedCookies.user_id;
-  var url = req.body.url;
-  console.log(url);
-  res.end();
-});
-
 // get a user from a user_id (responds with just name and user_id)
 app.get('/get_user/:user_id/', function(req, res) {
   var user = req.params.user_id;
@@ -540,11 +540,22 @@ app.get("/typing/:is_typing/:room_id", function(req, res) {
 });
 
 app.post("/broadcast_song/", function(req, res) {
-  res.send();
+  res.end();
   if (req.signedCookies.user_id) {
     var room_id = req.body.room_id;
     var url = req.body.url;
     firebaseRoot.child("RoomSong").child(room_id).set(url);
+  }
+});
+
+app.get("/youtube_search/:query", function(req, res) {
+  if (req.signedCookies.user_id) {
+    var query = req.params.query;
+    youtubeSearch(query, opts, function(err, results) {
+      if (err) {return console.log(err)}
+      var youtube_video_id = results[0].id;
+      res.send({youtube_video_id: youtube_video_id});
+    });
   }
 });
 
