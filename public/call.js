@@ -100,7 +100,7 @@ function startCallHelper(other_user_id) {
 
   var call = peer.call(other_user_id, myStream);
   
-  if (!call) {
+  if (call) {
     console.log("sent call to user with id: " + call.peer)
 
       // reference to the call so we can close it

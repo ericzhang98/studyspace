@@ -50,8 +50,8 @@
 
   <body id="myBody" ng-controller="MainController">
     <div id="overlay">
-      <div ng-cloak ng-hide="!viewVideo || !currRoomChatID || rooms[currRoomChatID].class_id == 'dm_class_id'" id="video-layer">
-        <div ng-if="!rooms[currRoomChatID].is_lecture" ng-repeat="user_id in rooms[currRoomChatID].users">
+      <div ng-cloak ng-hide="!viewVideo || !currRoomCallID" id="video-layer">
+        <div ng-if="!rooms[currRoomCallID].is_lecture" ng-repeat="user_id in rooms[currRoomCallID].users">
           <div ng-if="user_id == myID" class="video-container">
             <video id="{{user_id}}_video" class="prim-border" autoplay muted ng-src="{{userStreamSources[user_id]}}" ng-click="setMyStreamVideoEnabled(!getVideoEnabled())"></video>
             <p class="video-name">You</p>
@@ -63,15 +63,15 @@
           </div>
         </div>
 
-        <div ng-if="rooms[currRoomChatID].is_lecture">
-          <div ng-if="rooms[currRoomChatID].host_id == myID" class="video-container">
-            <video id="{{rooms[currRoomChatID].host_id}}_video" class="prim-border" autoplay muted ng-src="{{userStreamSources[rooms[currRoomChatID].host_id]}}" ng-click="setMyStreamVideoEnabled(!getVideoEnabled())"></video>
+        <div ng-if="rooms[currRoomCallID].is_lecture">
+          <div ng-if="rooms[currRoomCallID].host_id == myID" class="video-container">
+            <video id="{{rooms[currRoomCallID].host_id}}_video" class="prim-border" autoplay muted ng-src="{{userStreamSources[rooms[currRoomCallID].host_id]}}" ng-click="setMyStreamVideoEnabled(!getVideoEnabled())"></video>
             <p class="video-name">You</p>
           </div>
 
-          <div ng-if="rooms[currRoomChatID].host_id != myID" class="video-container">
-            <video id="{{rooms[currRoomChatID].host_id}}_video" class="acc-border" autoplay ng-src="{{userStreamSources[rooms[currRoomChatID].host_id]}}"></video>
-            <p class="video-name">{{users[rooms[currRoomChatID].host_id].name}}</p>
+          <div ng-if="rooms[currRoomCallID].host_id != myID" class="video-container">
+            <video id="{{rooms[currRoomCallID].host_id}}_video" class="acc-border" autoplay ng-src="{{userStreamSources[rooms[currRoomCallID].host_id]}}"></video>
+            <p class="video-name">{{users[rooms[currRoomCallID].host_id].name}}</p>
           </div>
           </div>
       </div>
