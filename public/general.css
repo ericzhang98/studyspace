@@ -403,11 +403,20 @@ a:hover {
   color: #ffffff;
 }
 
+.white-back {
+  background-color:  #ffffff;
+}
+
 .prim-dark-text {
   color: var(--primary-dark-color);
 }
+
 .over-base-text {
   color: var(--over-base-color);
+}
+
+.over-base-two-text {
+  color: var(--over-base-two-color);
 }
 
 .grey-text {

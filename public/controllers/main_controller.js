@@ -1,6 +1,8 @@
 //Room app -- firebase must be initialized already
 var chatDatabase = null;
 var typingDatabase = null;
+var chatPinnedDatabase = null
+
 var songDatabase = null;
 var myApp = angular.module("mainApp", ["ngMaterial", "ngSanitize"]);
 
@@ -63,6 +65,7 @@ function($scope, $http, $timeout, $window) {
   var currTyping = [];
   var isTyping = false;
   var loadingOverallAnimation = document.getElementById("loading-overall");
+  $scope.chatPinnedMessageList = [];
 
   /************************* JOINING A CHATROOM ************************/
 
@@ -88,6 +91,8 @@ function($scope, $http, $timeout, $window) {
       }
       // empty our message list in logic and UI and reset control vars
       chatMessageList = [];
+      $scope.chatPinnedMessageList = [];
+      $scope.showPinnedMessages = false;
       lastKey = null;
       scrollLock = false;
       updateChatView();
@@ -96,6 +101,7 @@ function($scope, $http, $timeout, $window) {
       // set up and start new listener if room_id isn't null
       if (room_id) {
         chatDatabase = databaseRef.child("RoomMessages").child($scope.currRoomChatID);
+        chatPinnedDatabase = databaseRef.child("RoomPinnedMessages").child($scope.currRoomChatID);
         startChatMessages();
       }
 
@@ -322,16 +328,77 @@ function($scope, $http, $timeout, $window) {
     toggleMyStreamAudioEnabled();
   }
   /*********************************************************************/
+  /** PIN LUL *************************************/
+
+  $scope.showPinnedMessages = false;
+
+  $scope.pinChatMessage = function(key, user_id, name, time_sent) {
+
+    $http.post("/pin_message/", {
+      "room_id": $scope.currRoomChatID, 
+      "chat_message_key": key, 
+      "user_id": user_id, 
+      "name": name, 
+      "time_sent": time_sent, 
+      "concat_text": getConcatenatedMessageText(key)});
+  }
+
+  function getConcatenatedMessageText(chatMessageKey) {
+    var concat_text;
+    chatMessageList.forEach(function(message) {
+      if (message.key == chatMessageKey) {
+        concat_text = message.text;
+      }
+    })
+
+    /*
+    var concat_array = concat_text.split("\n");
+    var concat_text_parsed = "";
+    concat_array.forEach(function(line) {
+      concat_text_parsed += line + "%0A";
+    })*/
+    //var concat_text_parsed = encodeURI(concat_text);
+    var concat_text_parsed = concat_text;
+    console.log("text is " + concat_text_parsed);
+    return concat_text_parsed;
+  }
+
+  $scope.togglePinnedMessages = function() {
+    $scope.showPinnedMessages = !$scope.showPinnedMessages;
+  }
+
+  $scope.isPinned = function(key) {
+    var contains = false;
+    $scope.chatPinnedMessageList.forEach(function(message) {
+      if (message.key == key) {
+        contains = true;
+      }
+    })
+    return contains;
+  }
+
   /************************** DISPLAYING CHATS *************************/
 
   // Set up listener for chat messages
   function startChatMessages() {
     loadingOverallAnimation.removeAttribute("hidden");
+    chatPinnedDatabase.on("child_added", function(snapshot) {
+      var snapshotValue = snapshot.val();
+      console.log("pin message: " + snapshotValue.text);
+      if ($scope.chatPinnedMessageList.indexOf(snapshotValue) == -1) {
+        $scope.chatPinnedMessageList.push(snapshotValue);
+      }
+      updateChatView();
+    })
+
     chatDatabase.limitToLast(50).on("child_added", function(snapshot) {
       var snapshotValue = snapshot.val();
+      snapshotValue.key = snapshot.key;
+
       if (lastKey == null) {
         lastKey = snapshot.key;
       }
+
       chatMessageList.push(snapshotValue);
       var shouldScroll = false;
       //only auto-scroll if near bottom

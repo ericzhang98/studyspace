@@ -103,6 +103,49 @@ html, body {
   padding-right: 2rem;
 }
 
+.pinned-messages-container {
+  z-index: 10;
+  position: absolute;
+  top: 15%;
+  left: 10%;
+  max-height: calc(70% - 5rem);
+
+  overflow: auto;
+  width: 80%;
+  background-color: var(--primary-dark-color);
+  border: solid 4px var(--over-base-color);
+  border-radius: 25px;
+  word-wrap: break-word;
+}
+
+.pinned-messages-header {
+  padding-top: .5rem;
+  padding-bottom: .5rem;
+  text-align: center;
+  background-color: var(--over-base-color);
+  color: var(--base-color);
+  font-weight: 800;
+  width: 100%;
+  border-style: hidden;
+}
+
+.pinned-messages-container .message {
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-pack: justify;
+  -ms-flex-pack: justify;
+  justify-content: space-between;
+  padding-left: 0;
+  list-style: none;
+  padding-top: 1.5rem;
+  padding-bottom: 1.5rem;
+  border-bottom: solid 1px var(--over-base-color);
+  cursor: default;
+  padding-left: 2rem;
+  padding-right: 2rem;
+}
+
 .message-pane .message {
   display: -webkit-box;
   display: -ms-flexbox;
@@ -212,6 +255,24 @@ html, body {
   border-left: none;
   background-color: var(--base-two-color);
   color: var(--over-base-two-color);
+}
+
+.btn-pin {
+  vertical-align: top;
+  height: 1rem;
+  font-size: 1rem;
+  border: none;
+  background-color: var(--base-two-color);
+  color: var(--accent-color);
+}
+
+.btn-pin-navbar {
+  height: 4.5rem;
+  width: 4.5rem;
+  font-size: 1.5rem;
+  border: none;
+  background-color: transparent;
+  color: white;
 }
 
 .btn-vid span {
