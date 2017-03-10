@@ -71,7 +71,8 @@
 .blob {
     width: 2rem;
     height: 2rem;
-    background: rgba(230,230,230,0.85);
+    /*background: rgba(230,230,230,0.85);*/
+    background: var(--over-base-color);
     border-radius: 50%;
     position: absolute;
     left: calc(50% - 1rem);

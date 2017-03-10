@@ -45,7 +45,7 @@
     <script type="text/javascript" src="toggleMenu.js"></script>
 
     <!-- Title -->
-    <title>Main Room</title>
+    <title>Studyspace</title>
   </head>
 
   <body id="myBody" ng-controller="MainController">
@@ -74,6 +74,13 @@
             <p class="video-name">{{users[rooms[currRoomCallID].host_id].name}}</p>
           </div>
           </div>
+      </div>
+
+
+      <div id="loading-overall" class="loading-overall" hidden> 
+        <div class="blob blob-0"></div><div class="blob blob-1"></div>
+        <div class="blob blob-2"></div><div class="blob blob-3"></div>
+        <div class="blob blob-4"></div><div class="blob blob-5"></div>
       </div>
 
       <div id="layer1">
@@ -239,7 +246,7 @@
 
             <!-- MESSAGE PANE -->
             <div id="chat-message-pane" class="message-pane" scroll scroll-event="scrollevent">
-              <div id="loading" hidden> 
+              <div id="loading-messages" hidden> 
                 <div class="blob blob-0"></div><div class="blob blob-1"></div>
                 <div class="blob blob-2"></div><div class="blob blob-3"></div>
                 <div class="blob blob-4"></div><div class="blob blob-5"></div>
