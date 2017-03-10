@@ -198,6 +198,9 @@
                 <div class="navbar-header">
                   <span ng-cloak class="navbar-brand" >{{classes[rooms[currRoomChatID].class_id].name != "" ? 
                     classes[rooms[currRoomChatID].class_id].name + " | ":""}}{{rooms[currRoomChatID].name}}{{rooms[currRoomChatID].is_lecture ? ' (cast by ' + rooms[currRoomChatID].host_name + ')' : ''}}</span>
+                    <button ng-if="rooms[currRoomChatID].host_id == 'mainhost'" class="btn btn-pin-navbar white-text" ng-click="togglePinnedMessages()" >
+                        <span class="glyphicon glyphicon-pushpin"></span>
+                      </button>
               </div>
                 <ul class="nav navbar-nav navbar-right">
                   <li ng-if="rooms[currRoomChatID].class_id != 'dm_class_id'" class="nav-link" ng-click="leaveRoom()">
@@ -211,6 +214,29 @@
               </div>
             </nav>
 
+            <div ng-if="showPinnedMessages" class="pinned-messages-container">
+              <div class="pinned-messages-header" type="button">Pinboard</div>
+              <div class="message white-back" ng-if="chatPinnedMessageList.length == 0">
+                <p> There are no pinned messages.</p>
+              </div>
+              <div class="message" ng-repeat="chatMessage in chatPinnedMessageList">
+                <div ng-if="chatMessage.user_id != 'system_id'" class="container-user-icon white-back {{isBot(chatMessage.user_id) ? 'bot-back' :chatMessage.user_id != myID ? 'acc-text' : 'prim-text'}}">
+                  <span>{{chatMessage.name.toUpperCase() | limitTo:1}}</span>
+                </div>
+
+                <div class="message-content">
+                  <header class="message-header">
+                    <div class="dropdown">
+                      <a class="user-name white-text">{{chatMessage.name.split(" ")[0]}} {{isTutor(chatMessage.user_id, currRoomChatID) ? "(tutor)" : ""}}</a>
+                    </div>
+                    <span class="dateTime">{{timeAgo(chatMessage)}}</span>
+                  </header>
+                  <p class="message-body" ng-bind-html="chatMessage.text |
+                    linky:'_blank'"></p>
+                </div>
+              </div>
+            </div>
+
             <!-- MESSAGE PANE -->
             <div id="chat-message-pane" class="message-pane" scroll scroll-event="scrollevent">
               <div id="loading" hidden> 
@@ -218,6 +244,7 @@
                 <div class="blob blob-2"></div><div class="blob blob-3"></div>
                 <div class="blob blob-4"></div><div class="blob blob-5"></div>
               </div>
+
               <div id="messages-container" class="message" ng-repeat="chatMessage in chatMessageList">
                 <div ng-if="chatMessage.user_id != 'system_id'" class="container-user-icon over-base-text {{isBot(chatMessage.user_id) ? 'bot-back' :chatMessage.user_id != myID ? 'acc-back' : 'prim-back'}}">
                   <span>{{chatMessage.name.toUpperCase() | limitTo:1}}</span>
@@ -235,13 +262,16 @@
                         <li><a ng-click="toggleBlock(chatMessage.user_id)">{{isBlocked(chatMessage.user_id) ? 'Unblock' : 'Block'}}</a></li>
                         
                         <li><a ng-click="toggleIsFriend(chatMessage.user_id)">{{isFriendsWith(chatMessage.user_id) != -1 ? 'Unfriend' : 'Friend'}}</a></li>
-<!--<li><a href="#">Friend</a></li>-->
                       </ul>
 
                       <!-- No dropdown if user is me -->
                       <a ng-if="chatMessage.user_id == myID" class="user-name prim-text">{{chatMessage.name.split(" ")[0]}} {{isTutor(chatMessage.user_id, currRoomChatID) ? "(tutor)" : ""}}</a>
 
                       <a ng-if="isBot(chatMessage.user_id)" class="user-name bot-text">{{chatMessage.name.split(" ")[0]}}</a>
+
+                      <button ng-if="rooms[currRoomChatID].host_id == 'mainhost' && !isPinned(chatMessage.key) && chatMessage.user_id == myID" class="btn btn-pin" ng-click="pinChatMessage(chatMessage.key, chatMessage.user_id, chatMessage.name, chatMessage.timeSent)">
+                        <span class="glyphicon glyphicon-pushpin"></span>
+                      </button>
                     </div>
                     <span class="dateTime">{{timeAgo(chatMessage)}}</span>
                   </header>

@@ -40,6 +40,7 @@ var firebaseRoot = firebase.database().ref();
 var classRoomsDatabase = firebaseRoot.child("ClassRooms");
 var roomInfoDatabase = firebaseRoot.child("RoomInfo");
 var roomMessagesDatabase = firebaseRoot.child("RoomMessages");
+var roomPinnedMessagesDatabase = firebaseRoot.child("RoomPinnedMessages");
 var userActivityDatabase = firebaseRoot.child("UserActivity");
 var botDatabase = firebaseRoot.child("Bots");
 
@@ -433,6 +434,49 @@ app.get('/leave_room/:room_id/', function(req, res) {
     res.send({error: "invalid_user_id"});
   }
 });
+
+app.post("/pin_message/", function(req, res) {
+  var room_id = req.body.room_id;
+  var chat_message_key = req.body.chat_message_key;
+  var user_id = req.body.user_id;
+  var name = req.body.name;
+  var time_sent = req.body.time_sent;
+  var concat_text = req.body.concat_text;
+  roomPinnedMessagesDatabase.child(room_id).transaction(function(pinnedMessages) {
+    if (pinnedMessages) {
+
+      already_pinned = false;
+
+      pinnedMessages.forEach(function(message) {
+        if (message.key == chat_message_key) {
+          already_pinned = true;
+        }
+      })
+
+      if (!already_pinned) {
+        console.log("pinning message with concat_text " + concat_text);
+        pinnedMessages.push({
+          "key": chat_message_key, 
+          "user_id": user_id, 
+          "name": name,
+          "timeSent": parseInt(time_sent),
+          "text": concat_text});
+      }
+    }
+
+    else {
+      pinnedMessages = [{
+          "key": chat_message_key, 
+          "user_id": user_id, 
+          "name": name,
+          "timeSent": parseInt(time_sent),
+          "text": concat_text}];
+    }
+    return pinnedMessages;
+  });
+  //roomMessagesDatabase.child(room_id).child(chat_message_key).child("pinned").set("true");
+  res.end();
+})
 
 /* POST data: {chatMessage} - post chat message to firebase in respective room
  * Returns: nothing */
