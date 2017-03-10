@@ -199,7 +199,7 @@ function($scope, $http, $timeout, $window) {
           seeMoreMessages(1000, function(){
           var results = []
           for(var i = chatMessageList.length-1; i >= 0; i--) {
-            if (chatMessageList[i].text.includes(query)) {
+            if (chatMessageList[i].text.includes(query)|| chatMessageList[i].name.includes(query)) {
               //results.push($scope.chatMessageList[i]);
               results.unshift(chatMessageList[i]);
             }
