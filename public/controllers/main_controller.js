@@ -92,6 +92,11 @@ function($scope, $http, $timeout, $window) {
       chatMessageList = [];
       $scope.chatPinnedMessageList = [];
       $scope.showPinnedMessages = false;
+
+      if ($scope.viewVideo) {
+        $scope.toggleViewVideo();
+      }
+
       lastKey = null;
       scrollLock = false;
       updateChatView();
