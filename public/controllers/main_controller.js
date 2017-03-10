@@ -4,8 +4,6 @@ var typingDatabase = null;
 var songDatabase = null;
 var myApp = angular.module("mainApp", ["ngMaterial", "ngSanitize"]);
 
-// list of message objects with: email, name, roomID, text, timeSent
-var chatMessageList = [];
 var CONCAT_TIME = 60*1000; // 1 minute
 var currPing = null;
 var USER_PING_PERIOD = 10*1000;
@@ -55,13 +53,16 @@ function($scope, $http, $timeout, $window) {
   /****************************** CHAT ROOM ****************************/
   /*-------------------------------------------------------------------*/
 
+  // list of message objects with: email, name, roomID, text, timeSent
+  var chatMessageList = [];
   var div = document.getElementById("chat-message-pane");
   var chatInputBox = document.getElementById("chatInputBox");
-  var animation = document.getElementById("loading");
+  var loadingMessagesAnimation = document.getElementById("loading-messages");
   var lastKey = null;
   var scrollLock = false;
   var currTyping = [];
   var isTyping = false;
+  var loadingOverallAnimation = document.getElementById("loading-overall");
 
   /************************* JOINING A CHATROOM ************************/
 
@@ -188,6 +189,41 @@ function($scope, $http, $timeout, $window) {
         chatInputBox.focus();
       }
 
+      //find command
+      else if (chatInput.indexOf("#") == 0) {
+        console.log("search");
+        var query = chatInput.substring(1);
+        if (query.length > 0) {
+          console.log(query);
+          loadingOverallAnimation.removeAttribute("hidden");
+          seeMoreMessages(1000, function(){
+          var results = []
+          for(var i = chatMessageList.length-1; i >= 0; i--) {
+            if (chatMessageList[i].text.includes(query)) {
+              //results.push($scope.chatMessageList[i]);
+              results.unshift(chatMessageList[i]);
+            }
+          }
+          console.log(results);
+          $scope.chatMessageList = results;
+          scrollLock = true;
+          loadingOverallAnimation.setAttribute("hidden", null);
+          $timeout(scrollDown);
+          });
+        }
+        else {
+          loadingOverallAnimation.removeAttribute("hidden");
+          //maximum jank
+          setTimeout(function(){
+          $scope.chatMessageList = chatMessageList;
+          scrollLock = false;
+          loadingOverallAnimation.setAttribute("hidden", null);
+          $timeout(scrollDown);
+          }, 1);
+        }
+        $scope.chatInput = "";
+      }
+
       // regular message
       else {
         uploadMessage(chatInput);
@@ -263,7 +299,7 @@ function($scope, $http, $timeout, $window) {
       if ($scope.rooms[$scope.currRoomChatID].other_user_id) {
         newChatMessage.other_user_id = $scope.rooms[$scope.currRoomChatID].other_user_id;
       }
-      $http.post("/send_room_message", newChatMessage);
+      $http.post("/send_room_message", newChatMessage).then(scrollDown);
     }
 
     // Reset the local chat UI/logic
@@ -290,6 +326,7 @@ function($scope, $http, $timeout, $window) {
 
   // Set up listener for chat messages
   function startChatMessages() {
+    loadingOverallAnimation.removeAttribute("hidden");
     chatDatabase.limitToLast(50).on("child_added", function(snapshot) {
       var snapshotValue = snapshot.val();
       if (lastKey == null) {
@@ -306,6 +343,7 @@ function($scope, $http, $timeout, $window) {
         //setTimeout(scrollDown, 10); //scroll again upon ui update in 10ms
         scrollDown(); //scroll down immediately to ensure continuous position
       }
+      loadingOverallAnimation.setAttribute("hidden", null);
     });
   }
 
@@ -364,7 +402,7 @@ function($scope, $http, $timeout, $window) {
     if(currentScroll <= 200 && currentScroll < lastScroll) {
       //don't call seeMore if still processing past one
       if (!scrollLock) { 
-        seeMoreMessages();
+        seeMoreMessages(300);
       }
     }
     lastScroll = currentScroll;
@@ -372,15 +410,14 @@ function($scope, $http, $timeout, $window) {
 
   // View more messages -- queries last number of msgs from Firebase and
   // updates chat view, then scrolls to correct place to maintain position
-  function seeMoreMessages() {
+  function seeMoreMessages(messagesToAdd=50, callback) {
     //check if a lastKey is ready, signifying that og msgs have finished
-    if (lastKey) {
+    if (lastKey && lastKey != "DONE") {
       console.log("see more");
       //show loading UI element
-      animation.removeAttribute("hidden");
+      loadingMessagesAnimation.removeAttribute("hidden");
       scrollLock = true; //prevent any more seeMoreMessages calls until current finishes
       var messagesSoFar = chatMessageList.length;
-      var messagesToAdd = 50;
       //query db for past number of messages
       chatDatabase.limitToLast(messagesToAdd+1).orderByKey().endAt(lastKey)
         .once("value", function(snapshot) {
@@ -398,7 +435,7 @@ function($scope, $http, $timeout, $window) {
             chatMessageList = moreMessagesArray.concat(chatMessageList); //combine with og msgs
           }
           else {
-            lastKey = null; //otherwise don't pull anymore
+            lastKey = "DONE"; //otherwise don't pull anymore
           }
 
           //keep track of height diff, update view, and then scroll by diff
@@ -415,11 +452,16 @@ function($scope, $http, $timeout, $window) {
           div.scrollTop = previousPosition + (div.scrollHeight - previousHeight);
           scrollLock = false;
           //hide loading UI element
-          animation.setAttribute("hidden", null);
           //});
           //}, 20);
+          
         }
+        loadingMessagesAnimation.setAttribute("hidden", null);
+        if (callback){callback();}
       });
+    }
+    else {
+      if (callback){callback();}
     }
   }
 

@@ -627,3 +627,8 @@ video:hover {
   z-index: 2;
 }
 
+.loading-overall {
+  position: relative;
+  top: 50%;
+  z-index: 2000;
+}
