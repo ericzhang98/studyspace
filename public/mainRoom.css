@@ -112,8 +112,8 @@ html, body {
 
   overflow: auto;
   width: 80%;
-  background-color: var(--primary-dark-color);
-  border: solid 4px var(--over-base-color);
+  background-color: white;
+  border: solid 4px var(--primary-color);
   border-radius: 25px;
   word-wrap: break-word;
 }
@@ -122,8 +122,8 @@ html, body {
   padding-top: .5rem;
   padding-bottom: .5rem;
   text-align: center;
-  background-color: var(--over-base-color);
-  color: var(--base-color);
+  background-color: var(--primary-color);
+  color: white;
   font-weight: 800;
   width: 100%;
   border-style: hidden;
@@ -140,7 +140,7 @@ html, body {
   list-style: none;
   padding-top: 1.5rem;
   padding-bottom: 1.5rem;
-  border-bottom: solid 1px var(--over-base-color);
+  border-bottom: solid 1px var(--base-color);
   cursor: default;
   padding-left: 2rem;
   padding-right: 2rem;
@@ -199,6 +199,14 @@ html, body {
 .message-content .message-body {
   white-space: pre-wrap;
   color: var(--over-base-two-color);
+  font-size: 1.5rem;
+  margin-bottom: 0;
+  padding-top: 0.2rem;
+}
+
+.message-content .pinned-message-body {
+  white-space: pre-wrap;
+  color: black;
   font-size: 1.5rem;
   margin-bottom: 0;
   padding-top: 0.2rem;
@@ -267,9 +275,8 @@ html, body {
 }
 
 .btn-pin-navbar {
-  height: 4.5rem;
-  width: 4.5rem;
-  font-size: 1.5rem;
+  margin-top: 1rem;
+  font-size: 1.3rem;
   border: none;
   background-color: transparent;
   color: white;

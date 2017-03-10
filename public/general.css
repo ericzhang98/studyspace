@@ -403,6 +403,10 @@ a:hover {
   color: #ffffff;
 }
 
+.black-text {
+  color: black;
+}
+
 .white-back {
   background-color:  #ffffff;
 }
@@ -417,6 +421,10 @@ a:hover {
 
 .over-base-two-text {
   color: var(--over-base-two-color);
+}
+
+.base-two-text {
+  color: var(--base-two-color);
 }
 
 .grey-text {

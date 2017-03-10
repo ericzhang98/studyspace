@@ -227,18 +227,18 @@
                 <p> There are no pinned messages.</p>
               </div>
               <div class="message" ng-repeat="chatMessage in chatPinnedMessageList">
-                <div ng-if="chatMessage.user_id != 'system_id'" class="container-user-icon white-back {{isBot(chatMessage.user_id) ? 'bot-back' :chatMessage.user_id != myID ? 'acc-text' : 'prim-text'}}">
+                <div ng-if="chatMessage.user_id != 'system_id'" class="container-user-icon over-base-text {{isBot(chatMessage.user_id) ? 'bot-back' :chatMessage.user_id != myID ? 'acc-back' : 'prim-back'}}">
                   <span>{{chatMessage.name.toUpperCase() | limitTo:1}}</span>
                 </div>
 
                 <div class="message-content">
                   <header class="message-header">
                     <div class="dropdown">
-                      <a class="user-name white-text">{{chatMessage.name.split(" ")[0]}} {{isTutor(chatMessage.user_id, currRoomChatID) ? "(tutor)" : ""}}</a>
+                      <a class="user-name black-text">{{chatMessage.name.split(" ")[0]}} {{isTutor(chatMessage.user_id, currRoomChatID) ? "(tutor)" : ""}}</a>
                     </div>
-                    <span class="dateTime">{{timeAgo(chatMessage)}}</span>
+                    <span class="black-text" style="font-size: 1.2rem">{{timeAgo(chatMessage)}}</span>
                   </header>
-                  <p class="message-body" ng-bind-html="chatMessage.text |
+                  <p class="pinned-message-body" ng-bind-html="chatMessage.text |
                     linky:'_blank'"></p>
                 </div>
               </div>
