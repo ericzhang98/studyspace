@@ -1717,6 +1717,7 @@ function($scope, $http, $timeout, $window) {
   function createFilterFor(query) {
     var uppercaseQuery = query.toUpperCase();
     return function filterFn(thisClass) {
+      thisClass = thisClass.replace(/\s+/g, '');
       return (thisClass.toUpperCase().indexOf(uppercaseQuery) === 0);
     };
   }
