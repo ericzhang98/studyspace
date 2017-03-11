@@ -66,9 +66,9 @@ function($scope, $http, $timeout, $window) {
   var isTyping = false;
   var loadingOverallAnimation = document.getElementById("loading-overall");
   $scope.chatPinnedMessageList = [];
-  $scope.queryHighlight = "lol";
+  $scope.queryHighlight = null;
   $scope.searchMode = true;
-  var searchDiv = null;
+  var searchId = null;
 
   /************************* JOINING A CHATROOM ************************/
 
@@ -207,13 +207,16 @@ function($scope, $http, $timeout, $window) {
       else if (chatInput.indexOf("#") == 0) {
         console.log("search");
         var query = chatInput.substring(1);
+        //search mode
         if (query.length > 0) {
           console.log(query);
+          $scope.searchMode = true;
           loadingOverallAnimation.removeAttribute("hidden");
           seeMoreMessages(1000, function(){
           var results = []
           for(var i = chatMessageList.length-1; i >= 0; i--) {
-            if (chatMessageList[i].text.includes(query)|| chatMessageList[i].name.includes(query)) {
+            if (chatMessageList[i].text.toLowerCase().includes(query.toLowerCase()) 
+              || chatMessageList[i].name.toLowerCase().includes(query.toLowerCase())) {
               //results.push($scope.chatMessageList[i]);
               results.unshift(chatMessageList[i]);
             }
@@ -225,7 +228,9 @@ function($scope, $http, $timeout, $window) {
           $timeout(scrollDown);
           });
         }
+        //return to normal
         else {
+          $scope.searchMode = false;
           loadingOverallAnimation.removeAttribute("hidden");
           //maximum jank to let animation start
           setTimeout(function(){
@@ -247,9 +252,40 @@ function($scope, $http, $timeout, $window) {
 
   $scope.messageClicked = function(event) {
     console.log("clicked");
-    console.log(event.target.offsetTop);
-    searchDiv = event.target;
+    //return to normal with div selection
+    var searchDiv = event.currentTarget;
+    $scope.searchMode = false;
+    loadingOverallAnimation.removeAttribute("hidden");
+    //maximum jank to let animation start
+    setTimeout(function(){
+      $scope.chatMessageList = chatMessageList;
+      scrollLock = false;
+      loadingOverallAnimation.setAttribute("hidden", null);
+      $timeout(function() {
+        console.log(searchDiv.offsetTop);
+        div.scrollTop = searchDiv.offsetTop;
+      }, 100);
+    }, 1);
+
+    /*
+    //return to normal with id selection
+    searchId = event.currentTarget.id;
+    $scope.searchMode = false;
+    loadingOverallAnimation.removeAttribute("hidden");
+    //maximum jank to let animation start
+    setTimeout(function(){
+      $scope.chatMessageList = chatMessageList;
+      scrollLock = false;
+      loadingOverallAnimation.setAttribute("hidden", null);
+      //scroll to where div is
+      $timeout(function() {  
+        var searchDiv = document.getElementById(searchId);
+        div.scrollTop = searchDiv.offsetTop;
+      }, 100);
+    }, 1);
+    */
   };
+
 
   $scope.keypress = function(e) {
     setTimeout(function() {
@@ -513,7 +549,9 @@ function($scope, $http, $timeout, $window) {
           console.log("pulled more messages + 1: " + (Object.keys(snapshotValue).length));
           //var messageArray = Object.values(snapshotValueObject)
           var moreMessagesArray = Object.keys(snapshotValue).map(function(key) {
-            return snapshotValue[key];
+            var eachValue = snapshotValue[key];
+            eachValue.key = key;
+            return eachValue;
           });
           moreMessagesArray.pop(); //remove extra messsage b/c lastKey inclusive
 
@@ -1690,6 +1728,24 @@ function($scope, $http, $timeout, $window) {
     }
   }
 
+
+  function generateToken(num) {
+    var token = "";
+    var possible = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
+
+    if (num && num > 0) {
+      for(var i = 0; i < num; i++ ) {
+        token += possible.charAt(Math.floor(Math.random() * possible.length));
+      }
+    }
+    else {
+      for(var i = 0; i < 10; i++ ) {
+        token += possible.charAt(Math.floor(Math.random() * possible.length));
+      }
+    }
+    return token;
+  }
+
 }]);
 
 
@@ -1702,5 +1758,13 @@ myApp.directive("scroll", function ($window) {
     link : function(scope, element, attrs) {
       $("#"+attrs.id).scroll(function($e) { scope.scrollEvent != null ?  scope.scrollEvent()($e) : null })
     }
+  }
+});
+
+myApp.filter('highlight', function($sce) {
+  return function(text, phrase) {
+    if (phrase) text = text.replace(new RegExp('('+phrase+')', 'gi'),
+      '<span class="highlighted">$1</span>')
+      return $sce.trustAsHtml(text)
   }
 });
