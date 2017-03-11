@@ -236,7 +236,7 @@
                   <div class="message-content">
                     <header class="message-header">
                       <div class="dropdown">
-                        <a class="user-name acc-text">{{chatMessage.name.split(" ")[0]}} {{isTutor(chatMessage.user_id, currRoomChatID) ? "(tutor)" : ""}}</a>
+                        <a class="user-name acc-text">{{chatMessage.name}} {{isTutor(chatMessage.user_id, currRoomChatID) ? "(tutor)" : ""}}</a>
                       </div>
                       <span class="black-text" style="font-size: 1.2rem">{{timeAgo(chatMessage)}}</span>
                     </header>
@@ -268,7 +268,7 @@
                     <div class="dropdown">
 
                       <!-- Dropdown for non-me users -->
-                      <a ng-if="!isBot(chatMessage.user_id) && chatMessage.user_id != myID" class="user-name dropdown-toggle acc-text" data-toggle="dropdown">{{chatMessage.name.split(" ")[0]}} {{isTutor(chatMessage.user_id, currRoomChatID) ? "(tutor)" : ""}}</a>
+                      <a ng-if="!isBot(chatMessage.user_id) && chatMessage.user_id != myID" class="user-name dropdown-toggle acc-text" data-toggle="dropdown">{{chatMessage.name}} {{isTutor(chatMessage.user_id, currRoomChatID) ? "(tutor)" : ""}}</a>
                       <ul ng-if="!isBot(chatMessage.user_id) && chatMessage.user_id != myID" class="dropdown-menu">
                         <li><a ng-if="getRemoteStreamExists(chatMessage.user_id)" ng-click="toggleUserAudio(chatMessage.user_id)">{{getRemoteStreamAudioEnabled(chatMessage.user_id) ? 'Mute' : 'Unmute'}}</a></li>
                         
@@ -278,9 +278,9 @@
                       </ul>
 
                       <!-- No dropdown if user is me -->
-                      <a ng-if="chatMessage.user_id == myID" class="user-name prim-text">{{chatMessage.name.split(" ")[0]}} {{isTutor(chatMessage.user_id, currRoomChatID) ? "(tutor)" : ""}}</a>
+                      <a ng-if="chatMessage.user_id == myID" class="user-name prim-text">{{chatMessage.name}} {{isTutor(chatMessage.user_id, currRoomChatID) ? "(tutor)" : ""}}</a>
 
-                      <a ng-if="isBot(chatMessage.user_id)" class="user-name bot-text">{{chatMessage.name.split(" ")[0]}}</a>
+                      <a ng-if="isBot(chatMessage.user_id)" class="user-name bot-text">{{chatMessage.name}}</a>
 
                       <button ng-if="rooms[currRoomChatID].host_id == 'mainhost' && !isPinned(chatMessage.key) && chatMessage.user_id == myID" class="btn btn-pin" ng-click="pinChatMessage(chatMessage.key, chatMessage.user_id, chatMessage.name, chatMessage.timeSent)">
                         <span class="glyphicon glyphicon-pushpin"></span>
@@ -350,7 +350,7 @@
                   </div>
                   
                   <!-- Dropdown for non-me users -->
-                  <a ng-if="user_id != myID" class="names dropdown-toggle" data-toggle="dropdown">{{users[user_id].name.split(" ")[0]}} {{isTutor(user_id, currRoomChatID) ? "(tutor)" : ""}}</a>
+                  <a ng-if="user_id != myID" class="names dropdown-toggle" data-toggle="dropdown">{{users[user_id].name}} {{isTutor(user_id, currRoomChatID) ? "(tutor)" : ""}}</a>
 
                   <ul ng-if="user_id != myID" class="dropdown-menu">
                     <li><a ng-click="toggleUserAudio(user_id)">{{getRemoteStreamAudioEnabled(user_id) ? 'Mute' : 'Unmute'}}</a></li>
@@ -359,7 +359,7 @@
                   </ul>
                   
                   <!-- No dropdown if user is me -->
-                  <a ng-if="user_id == myID" class="names">{{users[user_id].name.split(" ")[0]}} {{isTutor(user_id, currRoomChatID) ? "(tutor)" : ""}}</a>
+                  <a ng-if="user_id == myID" class="names">{{users[user_id].name}} {{isTutor(user_id, currRoomChatID) ? "(tutor)" : ""}}</a>
 
                 </div>
                 </a>
