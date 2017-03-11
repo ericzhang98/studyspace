@@ -138,7 +138,7 @@
             </li>
           </div>
 
-          <!-- OLD FRIENDS -->
+          <!-- CURRENT FRIENDS -->
           <div>
             <li class="list-group-item buddy-panel {{ messageNotifications[buddy.user_two_id] > 0 ? 'acc-text base-back bold-text' : 'over-base-text ' + (currRoomChatID == getDMID(buddy.user_two_id) ? 'prim-back' : 'base-back')}}" ng-repeat="buddy in added_buddies_list" ng-click="openDM(buddy.user_two_id, buddy.user_two_name)">
 
@@ -262,7 +262,10 @@
             <div class="studymates entry over-base-text dropdown-toggle" ng-repeat="user_id in rooms[currRoomChatID].users" ng-cloak>
 
               <div class="dropdown">
+
                 <div class="item">
+                  
+                  
 
                   <div ng-if="user_id == myID" class="container-user-icon-small {{volumes[user_id].loud ? 'loud-prim' : ''}} over-base-text prim-back">
                     <span ng-cloak>{{users[user_id].name.toUpperCase() | limitTo:1}}</span>
@@ -285,6 +288,7 @@
                   <a ng-if="user_id == myID" class="names">{{users[user_id].name.split(" ")[0]}} {{isTutor(user_id, currRoomChatID) ? "(tutor)" : ""}}</a>
 
                 </div>
+                </a>
 
               </div>
 

@@ -641,6 +641,11 @@ function($scope, $http, $timeout, $window) {
     $('.dropdown-toggle').dropdown('toggle');
   }
   
+  $('.item').click(function(e){
+    e.stopPropagation();
+    $('.dropdown-toggle').dropdown('toggle');
+  });
+  
   /*********************************************************************/
   /**************************** PULLING DATA ***************************/
 
