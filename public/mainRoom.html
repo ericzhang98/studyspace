@@ -171,7 +171,7 @@
             </li>
           </div>
 
-          <!-- OLD FRIENDS -->
+          <!-- CURRENT FRIENDS -->
           <div>
             <li class="list-group-item buddy-panel {{ messageNotifications[buddy.user_two_id] > 0 ? 'acc-text base-back bold-text' : 'over-base-text ' + (currRoomChatID == getDMID(buddy.user_two_id) ? 'prim-back' : 'base-back')}}" ng-repeat="buddy in added_buddies_list" ng-click="openDM(buddy.user_two_id, buddy.user_two_name)">
 
@@ -205,11 +205,12 @@
                 <div class="navbar-header">
                   <span ng-cloak class="navbar-brand" >{{classes[rooms[currRoomChatID].class_id].name != "" ? 
                     classes[rooms[currRoomChatID].class_id].name + " | ":""}}{{rooms[currRoomChatID].name}}{{rooms[currRoomChatID].is_lecture ? ' (cast by ' + rooms[currRoomChatID].host_name + ')' : ''}}</span>
-                    <button ng-if="rooms[currRoomChatID].host_id == 'mainhost'" class="btn btn-pin-navbar white-text" ng-click="togglePinnedMessages()" >
-                        <span class="glyphicon glyphicon-pushpin"></span>
-                      </button>
               </div>
                 <ul class="nav navbar-nav navbar-right">
+                  <li ng-if="rooms[currRoomChatID].host_id == 'mainhost'" class="nav-link link-pin" ng-click="togglePinnedMessages()">
+                    <span class="glyphicon glyphicon-pushpin"></span>
+                  </li>
+
                   <li ng-if="rooms[currRoomChatID].class_id != 'dm_class_id'" class="nav-link" ng-click="leaveRoom()">
                     <a>Leave</a>
                   </li>
@@ -226,20 +227,22 @@
               <div class="message white-back" ng-if="chatPinnedMessageList.length == 0">
                 <p> There are no pinned messages.</p>
               </div>
-              <div class="message" ng-repeat="chatMessage in chatPinnedMessageList">
-                <div ng-if="chatMessage.user_id != 'system_id'" class="container-user-icon over-base-text {{isBot(chatMessage.user_id) ? 'bot-back' :chatMessage.user_id != myID ? 'acc-back' : 'prim-back'}}">
-                  <span>{{chatMessage.name.toUpperCase() | limitTo:1}}</span>
-                </div>
+              <div class="pinned-messages-content">
+                <div class="message" ng-repeat="chatMessage in chatPinnedMessageList">
+                  <div ng-if="chatMessage.user_id != 'system_id'" class="container-user-icon over-base-text {{isBot(chatMessage.user_id) ? 'bot-back' :chatMessage.user_id != myID ? 'acc-text' : 'prim-text'}}">
+                    <span>{{chatMessage.name.toUpperCase() | limitTo:1}}</span>
+                  </div>
 
-                <div class="message-content">
-                  <header class="message-header">
-                    <div class="dropdown">
-                      <a class="user-name black-text">{{chatMessage.name.split(" ")[0]}} {{isTutor(chatMessage.user_id, currRoomChatID) ? "(tutor)" : ""}}</a>
-                    </div>
-                    <span class="black-text" style="font-size: 1.2rem">{{timeAgo(chatMessage)}}</span>
-                  </header>
-                  <p class="pinned-message-body" ng-bind-html="chatMessage.text |
-                    linky:'_blank'"></p>
+                  <div class="message-content">
+                    <header class="message-header">
+                      <div class="dropdown">
+                        <a class="user-name acc-text">{{chatMessage.name.split(" ")[0]}} {{isTutor(chatMessage.user_id, currRoomChatID) ? "(tutor)" : ""}}</a>
+                      </div>
+                      <span class="black-text" style="font-size: 1.2rem">{{timeAgo(chatMessage)}}</span>
+                    </header>
+                    <p class="pinned-message-body" ng-bind-html="chatMessage.text |
+                      linky:'_blank'"></p>
+                  </div>
                 </div>
               </div>
             </div>
@@ -330,7 +333,10 @@
             <div class="studymates entry over-base-text dropdown-toggle" ng-repeat="user_id in rooms[currRoomChatID].users" ng-cloak>
 
               <div class="dropdown">
+
                 <div class="item">
+                  
+                  
 
                   <div ng-if="user_id == myID" class="container-user-icon-small {{volumes[user_id].loud ? 'loud-prim' : ''}} over-base-text prim-back">
                     <span ng-cloak>{{users[user_id].name.toUpperCase() | limitTo:1}}</span>
@@ -346,13 +352,14 @@
                   <ul ng-if="user_id != myID" class="dropdown-menu">
                     <li><a ng-click="toggleUserAudio(user_id)">{{getRemoteStreamAudioEnabled(user_id) ? 'Mute' : 'Unmute'}}</a></li>
                     <li><a>Block</a></li>
-                    <li><a ng-click="toggleIsFriend(user_id)">{{isFriendsWith(user_id) ? 'Unfriend' : 'Friend'}}</a></li>
+                    <li><a ng-click="toggleIsFriend(user_id)">{{isFriendsWith(user_id) != -1 ? 'Unfriend' : 'Friend'}}</a></li>
                   </ul>
                   
                   <!-- No dropdown if user is me -->
                   <a ng-if="user_id == myID" class="names">{{users[user_id].name.split(" ")[0]}} {{isTutor(user_id, currRoomChatID) ? "(tutor)" : ""}}</a>
 
                 </div>
+                </a>
 
               </div>
 

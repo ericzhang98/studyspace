@@ -417,6 +417,11 @@ function($scope, $http, $timeout, $window) {
       }
       loadingOverallAnimation.setAttribute("hidden", null);
     });
+
+    //slight jank, but it's cool
+    setTimeout(function() {
+      loadingOverallAnimation.setAttribute("hidden", null);
+    }, 500);
   }
 
   // Update the chat view display
@@ -815,6 +820,11 @@ function($scope, $http, $timeout, $window) {
   $scope.classmateDropdown = function() {
     $('.dropdown-toggle').dropdown('toggle');
   }
+  
+  $('.item').click(function(e){
+    e.stopPropagation();
+    $('.dropdown-toggle').dropdown('toggle');
+  });
   
   /*********************************************************************/
   /**************************** PULLING DATA ***************************/
