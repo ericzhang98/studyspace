@@ -289,7 +289,7 @@
                     <span class="dateTime">{{timeAgo(chatMessage)}}</span>
                   </header>
                   <p class="message-body" ng-bind-html="chatMessage.text |
-                  linky:'_blank' | highlight:queryHighlight"></p>
+                  linky:'_blank' | highlight:searchQuery"></p>
                 </div>
 
                 <div ng-if="chatMessage.user_id == 'system_id'">

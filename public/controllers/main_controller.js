@@ -66,7 +66,7 @@ function($scope, $http, $timeout, $window) {
   var isTyping = false;
   var loadingOverallAnimation = document.getElementById("loading-overall");
   $scope.chatPinnedMessageList = [];
-  $scope.queryHighlight = null;
+  $scope.searchQuery = null;
   $scope.searchMode = true;
   var searchId = null;
 
@@ -211,6 +211,7 @@ function($scope, $http, $timeout, $window) {
         if (query.length > 0) {
           console.log(query);
           $scope.searchMode = true;
+          $scope.searchQuery = query;
           loadingOverallAnimation.removeAttribute("hidden");
           seeMoreMessages(1000, function(){
           var results = []
@@ -231,6 +232,7 @@ function($scope, $http, $timeout, $window) {
         //return to normal
         else {
           $scope.searchMode = false;
+          $scope.searchQuery = null;
           loadingOverallAnimation.removeAttribute("hidden");
           //maximum jank to let animation start
           setTimeout(function(){
@@ -1761,6 +1763,7 @@ myApp.directive("scroll", function ($window) {
   }
 });
 
+//highlight directive
 myApp.filter('highlight', function($sce) {
   return function(text, phrase) {
     if (phrase) text = text.replace(new RegExp('('+phrase+')', 'gi'),
