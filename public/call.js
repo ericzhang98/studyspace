@@ -251,7 +251,7 @@ function joinRoomCall(currRoomCallID) {
         }
 
         // by default, unmute me
-        setMyStreamAudioEnabled(true);
+        //setMyStreamAudioEnabled(true);
 
         // call everyone
         var usersArray = Object.values(response.users);
