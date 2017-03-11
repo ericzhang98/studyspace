@@ -860,7 +860,7 @@ function($scope, $http, $timeout, $window) {
   $scope.getRemoteStreamAudioEnabled = function(user_id) {
     //if (myRemoteStreams[user_id]) {
       //return !myRemoteStreams[user_id].muted;
-      return !document.getElementById(user_id + "_video").muted;
+      return document.getElementById(user_id + "_video") && !document.getElementById(user_id + "_video").muted;
     //} 
   }
   
