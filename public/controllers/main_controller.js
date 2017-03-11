@@ -66,6 +66,7 @@ function($scope, $http, $timeout, $window) {
   var isTyping = false;
   var loadingOverallAnimation = document.getElementById("loading-overall");
   $scope.chatPinnedMessageList = [];
+  $scope.queryHighlight = "lol";
 
   /************************* JOINING A CHATROOM ************************/
 
@@ -224,7 +225,7 @@ function($scope, $http, $timeout, $window) {
         }
         else {
           loadingOverallAnimation.removeAttribute("hidden");
-          //maximum jank
+          //maximum jank to let animation start
           setTimeout(function(){
           $scope.chatMessageList = chatMessageList;
           scrollLock = false;
