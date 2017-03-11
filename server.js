@@ -40,11 +40,19 @@ var firebaseRoot = firebase.database().ref();
 var classRoomsDatabase = firebaseRoot.child("ClassRooms");
 var roomInfoDatabase = firebaseRoot.child("RoomInfo");
 var roomMessagesDatabase = firebaseRoot.child("RoomMessages");
+var roomPinnedMessagesDatabase = firebaseRoot.child("RoomPinnedMessages");
 var userActivityDatabase = firebaseRoot.child("UserActivity");
 var botDatabase = firebaseRoot.child("Bots");
 
 var favicon = require("serve-favicon");
 app.use(favicon(__dirname + "/public/assets/images/favicon.ico"));
+
+var youtubeSearch = require("youtube-search");
+var opts = {
+  maxResults: 1,
+  key: "AIzaSyCFalKOCAsmO9yLwf424Jg2eEXz9U5ESLE"
+}
+
 
 // - app configuration
 var forceSsl = function (req, res, next) {
@@ -80,8 +88,6 @@ app.get('/', function(req, res) {
       if (doc) {
         userActivityDatabase.child(user_id).child("online").set(true); //set online status
         console.log("USER ONLINE: " + user_id);
-        //check user activity -- lolllll
-        checkSingleUserActivity(user_id);
         res.sendFile(VIEW_DIR + "mainRoom.html");
       }
       else {
@@ -429,6 +435,49 @@ app.get('/leave_room/:room_id/', function(req, res) {
   }
 });
 
+app.post("/pin_message/", function(req, res) {
+  var room_id = req.body.room_id;
+  var chat_message_key = req.body.chat_message_key;
+  var user_id = req.body.user_id;
+  var name = req.body.name;
+  var time_sent = req.body.time_sent;
+  var concat_text = req.body.concat_text;
+  roomPinnedMessagesDatabase.child(room_id).transaction(function(pinnedMessages) {
+    if (pinnedMessages) {
+
+      already_pinned = false;
+
+      pinnedMessages.forEach(function(message) {
+        if (message.key == chat_message_key) {
+          already_pinned = true;
+        }
+      })
+
+      if (!already_pinned) {
+        console.log("pinning message with concat_text " + concat_text);
+        pinnedMessages.push({
+          "key": chat_message_key, 
+          "user_id": user_id, 
+          "name": name,
+          "timeSent": parseInt(time_sent),
+          "text": concat_text});
+      }
+    }
+
+    else {
+      pinnedMessages = [{
+          "key": chat_message_key, 
+          "user_id": user_id, 
+          "name": name,
+          "timeSent": parseInt(time_sent),
+          "text": concat_text}];
+    }
+    return pinnedMessages;
+  });
+  //roomMessagesDatabase.child(room_id).child(chat_message_key).child("pinned").set("true");
+  res.end();
+})
+
 /* POST data: {chatMessage} - post chat message to firebase in respective room
  * Returns: nothing */
 app.post("/send_room_message", function(req, res) {
@@ -467,13 +516,6 @@ app.get("/clear_message_notifications/:other_user_id", function(req, res) {
     firebaseRoot.child("Notifications").child(req.signedCookies.user_id).child("MessageNotifications")
       .child(other_user_id).set(0);
   }
-  res.end();
-});
-
-app.post("/play_command", function(req, res) {
-  var user_id = req.signedCookies.user_id;
-  var url = req.body.url;
-  console.log(url);
   res.end();
 });
 
@@ -538,6 +580,26 @@ app.get("/typing/:is_typing/:room_id", function(req, res) {
     else {
       firebaseRoot.child("RoomTyping").child(room_id).child(req.signedCookies.user_id).remove();
     }
+  }
+});
+
+app.post("/broadcast_song/", function(req, res) {
+  res.end();
+  if (req.signedCookies.user_id) {
+    var room_id = req.body.room_id;
+    var url = req.body.url;
+    firebaseRoot.child("RoomSong").child(room_id).set(url);
+  }
+});
+
+app.get("/youtube_search/:query", function(req, res) {
+  if (req.signedCookies.user_id) {
+    var query = req.params.query;
+    youtubeSearch(query, opts, function(err, results) {
+      if (err) {return console.log(err)}
+      var youtube_video_id = results[0].id;
+      res.send({youtube_video_id: youtube_video_id});
+    });
   }
 });
 
@@ -928,7 +990,7 @@ function joinRoom(user_id, room_id, callback) {
               }
             });
           }
-          userActivityDatabase.child(user_id).child("lastRoom").set(room_id);
+          userActivityDatabase.child(user_id).child("lastRooms").push().set(room_id);
           userActivityDatabase.child(user_id).child("lastActive").set(Date.now());
 
           /*db.users.findOne({user_id: user_id}, function (err, doc) {
@@ -966,21 +1028,25 @@ function leaveRoom(user_id, room_id, callback) {
   roomInfoDatabase.child(room_id).child("users").once("value").then(function(snapshot) {
     if (snapshot.val()) {
       var users = [];
+      var removed = false; //temp jank xD
       snapshot.forEach(function(childSnapshot) {
         users.push(childSnapshot.val());
       });
       snapshot.forEach(function(childSnapshot) {
         var key = childSnapshot.key;
         var value = childSnapshot.val();
-        if (value == user_id) {
-          //rm the user
-          childSnapshot.ref.remove(function(err) {
-            if (users.length == 1) {
-              //if last user left, set last_active_time and check for delete conditions after delay
-              setTimeout(bufferTimer, MAX_IDLE, room_id);
-              snapshot.ref.parent.child("last_active_time").set(Date.now());
-            }
-          });
+        if (!removed) {
+          if (value == user_id) {
+            //rm the user
+            childSnapshot.ref.remove(function(err) {
+              if (users.length == 1) {
+                //if last user left, set last_active_time and check for delete conditions after delay
+                setTimeout(bufferTimer, MAX_IDLE, room_id);
+                snapshot.ref.parent.child("last_active_time").set(Date.now());
+              }
+            });
+            removed = true;
+          }
         }
       });
 
@@ -1138,16 +1204,20 @@ function userActivityChecker() {
       processActivity(user_id, activityLog);
     });
   });
+  console.log("checking user activity");
   setTimeout(userActivityChecker, USER_IDLE);
 }
 
 function processActivity(user_id, activityLog) {
   if (activityLog) {
     //if the user is in a room and hasn't pinged within the last minute, rm them from room
-    if (activityLog.lastRoom && Date.now() - activityLog.lastActive > USER_IDLE) {
+    if (activityLog.lastRooms && Date.now() - activityLog.lastActive > USER_IDLE) {
       //console.log("USER ACTIVITY CHECKER: removing user " + user_id);
-      leaveRoom(user_id, activityLog.lastRoom);
-      userActivityDatabase.child(user_id).child("lastRoom").set(null);
+      var lastRooms = Object.keys(activityLog.lastRooms).map((k) => activityLog.lastRooms[k]);
+      for (var i = 0;  i < lastRooms.length; i++) {
+        leaveRoom(user_id, lastRooms[i]);
+      }
+      userActivityDatabase.child(user_id).child("lastRooms").set(null);
     }
     if (activityLog.online && Date.now() - activityLog.lastActive > USER_IDLE) {
       //console.log("USER ACTIVITY CHECKER: user offline - " + user_id);
@@ -1156,6 +1226,7 @@ function processActivity(user_id, activityLog) {
   }
 }
 
+/*
 //rm user from last room when they sign on
 function checkSingleUserActivity(user_id) {
   userActivityDatabase.child(user_id).once("value").then(function(snapshot) {
@@ -1166,6 +1237,7 @@ function checkSingleUserActivity(user_id) {
     }
   });
 }
+*/
 
 
 /*------------------------------------------------------------------------*/

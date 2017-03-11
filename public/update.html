@@ -36,9 +36,9 @@
     <!-- Custom JavaScript -->
     <script type="text/javascript" src="cookies.js"></script>
     <script type="text/javascript" src="theme.js"></script>
-    <script type="text/javascript" src="update.js"></script>
     <script type="text/javascript" src="sha1.js"></script>
     <script type="text/javascript" src="cookies.js"></script>
+    <script type="text/javascript" src="controllers/update_controller.js"></script>
 
     <!-- Title -->
     <title>Account Settings</title>
@@ -47,7 +47,7 @@
 
     <h2 class="text-center" role="banner">Account Settings</h2>
     <main role="main" class="container">
-      <ul class="nav nav-pills" role="tablist">
+      <ul class="nav nav-tabs" role="tablist">
         <li class="nav-item active">
           <a class="nav-link prim-dark-text" data-toggle="tab"
             href="#classes-form" role="tab">Classes</a>
@@ -114,12 +114,12 @@
             </div>
           </div>
         </div>
-      </div> <!-- END tab-content div -->
 
-      <div class="btn-container">
-        <a id="save-button" class="btn btn-hi-pri btn-block" href="/">Apply Changes</a>
-        <button id="cancel-button" class="btn btn-cancel btn-block">Cancel</button>
-      </div>
+        <div class="btn-container">
+          <a id="save-button" class="btn btn-hi-pri btn-block" href="/">Apply Changes</a>
+          <button id="cancel-button" class="btn btn-cancel btn-block">Cancel</button>
+        </div>
+      </div> <!-- END tab-content div -->
     </main>
   </body>
 </html>

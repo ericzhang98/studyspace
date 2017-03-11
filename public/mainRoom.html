@@ -45,14 +45,48 @@
     <script type="text/javascript" src="toggleMenu.js"></script>
 
     <!-- Title -->
-    <title>Main Room</title>
+    <title>Studyspace</title>
   </head>
 
   <body id="myBody" ng-controller="MainController">
     <div id="overlay">
+      <div ng-cloak ng-hide="!viewVideo || !currRoomCallID" id="video-layer">
+        <div ng-if="!rooms[currRoomCallID].is_lecture" ng-repeat="user_id in rooms[currRoomCallID].users">
+          <div ng-if="user_id == myID" class="video-container">
+            <video id="{{user_id}}_video" class="prim-border" autoplay muted ng-src="{{userStreamSources[user_id]}}" ng-click="setMyStreamVideoEnabled(!getVideoEnabled())"></video>
+            <p class="video-name">You</p>
+          </div>
+
+          <div ng-if="user_id != myID" class="video-container">
+            <video id="{{user_id}}_video" class="acc-border" autoplay ng-src="{{userStreamSources[user_id]}}"></video>
+            <p class="video-name">{{users[user_id].name}}</p>
+          </div>
+        </div>
+
+        <div ng-if="rooms[currRoomCallID].is_lecture">
+          <div ng-if="rooms[currRoomCallID].host_id == myID" class="video-container">
+            <video id="{{rooms[currRoomCallID].host_id}}_video" class="prim-border" autoplay muted ng-src="{{userStreamSources[rooms[currRoomCallID].host_id]}}" ng-click="setMyStreamVideoEnabled(!getVideoEnabled())"></video>
+            <p class="video-name">You</p>
+          </div>
+
+          <div ng-if="rooms[currRoomCallID].host_id != myID" class="video-container">
+            <video id="{{rooms[currRoomCallID].host_id}}_video" class="acc-border" autoplay ng-src="{{userStreamSources[rooms[currRoomCallID].host_id]}}"></video>
+            <p class="video-name">{{users[rooms[currRoomCallID].host_id].name}}</p>
+          </div>
+          </div>
+      </div>
+
+
+      <div id="loading-overall" class="loading-overall" hidden> 
+        <div class="blob blob-0"></div><div class="blob blob-1"></div>
+        <div class="blob blob-2"></div><div class="blob blob-3"></div>
+        <div class="blob blob-4"></div><div class="blob blob-5"></div>
+      </div>
+
       <div id="layer1">
         <!-- Classes Sidebar -->
         <aside id="classes-sidebar" class="sidebar sidebar-left" role="complementary">
+
           <div class="menu-user">
             <!-- User Quick Info -->
             <div id="user-info" class="container-info-user">
@@ -62,7 +96,6 @@
               </div>
               
               <span class="user-name prim-text" ng-cloak>{{myName.split(" ")[0] + " " + myName.split(" ")[1][0]}}</span>
-
               <button class="btn btn-sm btn-low-key" style="position:absolute; right:16px" onclick="setMode()"> </button>
             </div>
 
@@ -172,6 +205,9 @@
                 <div class="navbar-header">
                   <span ng-cloak class="navbar-brand" >{{classes[rooms[currRoomChatID].class_id].name != "" ? 
                     classes[rooms[currRoomChatID].class_id].name + " | ":""}}{{rooms[currRoomChatID].name}}{{rooms[currRoomChatID].is_lecture ? ' (cast by ' + rooms[currRoomChatID].host_name + ')' : ''}}</span>
+                    <button ng-if="rooms[currRoomChatID].host_id == 'mainhost'" class="btn btn-pin-navbar white-text" ng-click="togglePinnedMessages()" >
+                        <span class="glyphicon glyphicon-pushpin"></span>
+                      </button>
               </div>
                 <ul class="nav navbar-nav navbar-right">
                   <li ng-if="rooms[currRoomChatID].class_id != 'dm_class_id'" class="nav-link" ng-click="leaveRoom()">
@@ -185,14 +221,38 @@
               </div>
             </nav>
 
+            <div ng-if="showPinnedMessages" class="pinned-messages-container">
+              <div class="pinned-messages-header" type="button">Pinboard</div>
+              <div class="message white-back" ng-if="chatPinnedMessageList.length == 0">
+                <p> There are no pinned messages.</p>
+              </div>
+              <div class="message" ng-repeat="chatMessage in chatPinnedMessageList">
+                <div ng-if="chatMessage.user_id != 'system_id'" class="container-user-icon over-base-text {{isBot(chatMessage.user_id) ? 'bot-back' :chatMessage.user_id != myID ? 'acc-back' : 'prim-back'}}">
+                  <span>{{chatMessage.name.toUpperCase() | limitTo:1}}</span>
+                </div>
+
+                <div class="message-content">
+                  <header class="message-header">
+                    <div class="dropdown">
+                      <a class="user-name black-text">{{chatMessage.name.split(" ")[0]}} {{isTutor(chatMessage.user_id, currRoomChatID) ? "(tutor)" : ""}}</a>
+                    </div>
+                    <span class="black-text" style="font-size: 1.2rem">{{timeAgo(chatMessage)}}</span>
+                  </header>
+                  <p class="pinned-message-body" ng-bind-html="chatMessage.text |
+                    linky:'_blank'"></p>
+                </div>
+              </div>
+            </div>
+
             <!-- MESSAGE PANE -->
             <div id="chat-message-pane" class="message-pane" scroll scroll-event="scrollevent">
-              <div id="loading" hidden> 
+              <div id="loading-messages" hidden> 
                 <div class="blob blob-0"></div><div class="blob blob-1"></div>
                 <div class="blob blob-2"></div><div class="blob blob-3"></div>
                 <div class="blob blob-4"></div><div class="blob blob-5"></div>
               </div>
-              <div class="message" ng-repeat="chatMessage in chatMessageList">
+
+              <div id="messages-container" class="message" ng-repeat="chatMessage in chatMessageList">
                 <div ng-if="chatMessage.user_id != 'system_id'" class="container-user-icon over-base-text {{isBot(chatMessage.user_id) ? 'bot-back' :chatMessage.user_id != myID ? 'acc-back' : 'prim-back'}}">
                   <span>{{chatMessage.name.toUpperCase() | limitTo:1}}</span>
                 </div>
@@ -208,14 +268,17 @@
                         
                         <li><a ng-click="toggleBlock(chatMessage.user_id)">{{isBlocked(chatMessage.user_id) ? 'Unblock' : 'Block'}}</a></li>
                         
-                        <li><a ng-click="sendRequest(chatMessage.user_id)">{{isFriendsWith(chatMessage.user_id) ? 'Unfriend' : 'Friend'}}</a></li>
-<!--<li><a href="#">Friend</a></li>-->
+                        <li><a ng-click="toggleIsFriend(chatMessage.user_id)">{{isFriendsWith(chatMessage.user_id) != -1 ? 'Unfriend' : 'Friend'}}</a></li>
                       </ul>
 
                       <!-- No dropdown if user is me -->
                       <a ng-if="chatMessage.user_id == myID" class="user-name prim-text">{{chatMessage.name.split(" ")[0]}} {{isTutor(chatMessage.user_id, currRoomChatID) ? "(tutor)" : ""}}</a>
 
                       <a ng-if="isBot(chatMessage.user_id)" class="user-name bot-text">{{chatMessage.name.split(" ")[0]}}</a>
+
+                      <button ng-if="rooms[currRoomChatID].host_id == 'mainhost' && !isPinned(chatMessage.key) && chatMessage.user_id == myID" class="btn btn-pin" ng-click="pinChatMessage(chatMessage.key, chatMessage.user_id, chatMessage.name, chatMessage.timeSent)">
+                        <span class="glyphicon glyphicon-pushpin"></span>
+                      </button>
                     </div>
                     <span class="dateTime">{{timeAgo(chatMessage)}}</span>
                   </header>
@@ -239,6 +302,10 @@
                     <button id="mute-button" class="btn btn-mute text-center" type="button" ng-click="toggleMic()"> 
                       <span ng-class="muteBtnClass"></span>
                     </button>
+                    <button class="btn text-center btn-vid" type="button" ng-cloak ng-if="currRoomChatID" ng-hide="rooms[currRoomChatID].class_id == 'dm_class_id'" ng-click="toggleViewVideo()">
+                      <!--See Video-->
+                      <span class="glyphicon glyphicon-facetime-video"></span>
+                    </button>
                   </span>
                   <input maxlength="200" ng-cloak type="text" class="form-control input-message" id="chatInputBox" 
                          ng-model="chatInput" placeholder="Type a message..."
@@ -253,12 +320,13 @@
           </div>
         </main>   
 
-        <!-- Classmates Sidebar -->
+        <!-- In-Room Sidebar -->
         <aside id="classmates-sidebar" class="sidebar sidebar-right" role="complementary">
 
           <h4 ng-cloak ng-if="currRoomChatID ? rooms[currRoomChatID].is_lecture : false" ng-hide="rooms[currRoomChatID].class_id == 'dm_class_id'" class="studymates over-base-text" style="margin-top:2rem"><acc>{{rooms[currRoomChatID].name}}</acc></h4>
 
           <h4 ng-cloak ng-if="currRoomChatID ? !rooms[currRoomChatID].is_lecture : false" ng-hide="rooms[currRoomChatID].class_id == 'dm_class_id'" class="studymates" style="margin-top:2rem"><prim>{{rooms[currRoomChatID].name}}</prim></h4>
+
             <div class="studymates entry over-base-text dropdown-toggle" ng-repeat="user_id in rooms[currRoomChatID].users" ng-cloak>
 
               <div class="dropdown">
@@ -281,7 +349,7 @@
                   <ul ng-if="user_id != myID" class="dropdown-menu">
                     <li><a ng-click="toggleUserAudio(user_id)">{{getRemoteStreamAudioEnabled(user_id) ? 'Mute' : 'Unmute'}}</a></li>
                     <li><a>Block</a></li>
-                    <li><a ng-click="sendRequest(user_id)">{{isFriendsWith(user_id) ? 'Unfriend' : 'Friend'}}</a></li>
+                    <li><a ng-click="toggleIsFriend(user_id)">{{isFriendsWith(user_id) ? 'Unfriend' : 'Friend'}}</a></li>
                   </ul>
                   
                   <!-- No dropdown if user is me -->
@@ -393,10 +461,12 @@
         <audio id="leave_room_audio" src="/audio/leave_room_sfx"></audio>
         <audio id="pop_audio" src="/audio/pop_sfx"></audio>
 
+        <iframe width="0" height="0" id="iframePlayer"></iframe>
+
       </div>
-      <div id="voice-connect-alert" class="alert fade in text-center" hidden>
+      <div id="media-connect-alert" class="alert fade in text-center" hidden>
         <a class="close" data-dismiss="alert">×</a>
-        <span>Voice connected</span>
+        <span>Media connected</span>
       </div>
       <div id="lecture-alert" class="alert fade in text-center" hidden>
         <a class="close" data-dismiss="alert">×</a>
@@ -416,7 +486,11 @@
       </div>
       <div id="block-alert" class="alert fade in text-center" hidden>
         <a class="close" data-dismiss="alert">×</a>
-        <span>User blocked. They can't hear you, and you can't hear them.<span>
+        <span>User blocked. Now they can't hear you, and you can't hear them.<span>
+      </div>
+      <div id="video-alert" class="alert fade in text-center" hidden>
+        <a class="close" data-dismiss="alert">×</a>
+        <span>If you can't see yourself, no one else can either.<span>
       </div>
       <div id="no-connection-alert" class="alert fade in text-center" hidden>
         <a class="close" data-dismiss="alert">×</a>

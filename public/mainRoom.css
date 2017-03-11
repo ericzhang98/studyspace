@@ -4,6 +4,7 @@
 html, body {
   margin: 0;
   height: 100%;
+  overflow: hidden;
 }
 
 .sidebar,
@@ -102,6 +103,49 @@ html, body {
   padding-right: 2rem;
 }
 
+.pinned-messages-container {
+  z-index: 10;
+  position: absolute;
+  top: 15%;
+  left: 10%;
+  max-height: calc(70% - 5rem);
+
+  overflow: auto;
+  width: 80%;
+  background-color: white;
+  border: solid 4px var(--primary-color);
+  border-radius: 25px;
+  word-wrap: break-word;
+}
+
+.pinned-messages-header {
+  padding-top: .5rem;
+  padding-bottom: .5rem;
+  text-align: center;
+  background-color: var(--primary-color);
+  color: white;
+  font-weight: 800;
+  width: 100%;
+  border-style: hidden;
+}
+
+.pinned-messages-container .message {
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-pack: justify;
+  -ms-flex-pack: justify;
+  justify-content: space-between;
+  padding-left: 0;
+  list-style: none;
+  padding-top: 1.5rem;
+  padding-bottom: 1.5rem;
+  border-bottom: solid 1px var(--base-color);
+  cursor: default;
+  padding-left: 2rem;
+  padding-right: 2rem;
+}
+
 .message-pane .message {
   display: -webkit-box;
   display: -ms-flexbox;
@@ -160,6 +204,14 @@ html, body {
   padding-top: 0.2rem;
 }
 
+.message-content .pinned-message-body {
+  white-space: pre-wrap;
+  color: black;
+  font-size: 1.5rem;
+  margin-bottom: 0;
+  padding-top: 0.2rem;
+}
+
 .system-message {
   white-space: pre-wrap;
   color: var(--over-base-two-color);
@@ -201,6 +253,41 @@ html, body {
   margin-right: -0.4rem;
   margin-top: 0.2rem;
   font-size: 2rem;
+}
+
+.input-group .btn-vid {
+  height: 4.5rem;
+  width: 4.5rem;
+  font-size: 1.5rem;
+  border: solid 2px var(--over-base-two-color);
+  border-left: none;
+  background-color: var(--base-two-color);
+  color: var(--over-base-two-color);
+}
+
+.btn-pin {
+  vertical-align: top;
+  height: 1rem;
+  font-size: 1rem;
+  border: none;
+  background-color: var(--base-two-color);
+  color: var(--accent-color);
+}
+
+.btn-pin-navbar {
+  margin-top: 1rem;
+  font-size: 1.3rem;
+  border: none;
+  background-color: transparent;
+  color: white;
+}
+
+.btn-vid span {
+  margin-right: -0.3rem;
+}
+
+.input-group-btn>.btn+.btn {
+  margin-left: 0;
 }
 
 .input-group .input-message {
@@ -542,6 +629,55 @@ html, body {
   position: relative;
 }
 
+video {
+  position: relative;
+  height: 12rem;
+  width: 15.8rem; /* Approximation, so that before video loads thing isn't crazy big*/
+  margin: 2rem;
+  margin-bottom: 0rem;
+  background:;
+
+  /* reversing video */
+  transform: rotateY(180deg);
+  -webkit-transform:rotateY(180deg); /* Safari and Chrome */
+  -moz-transform:rotateY(180deg); /* Firefox */
+  background-image: url("/assets/images/gary.jpg");
+}
+
+video:hover {
+  /* negative is to maintain reversal */
+  -webkit-transform: scale(-2,2);
+  z-index: 4;
+}
+
+.video-name {
+  margin-bottom: 10px;
+  font-size: 1rem;
+}
+
+.acc-border {
+  border: solid 2px var(--accent-color);
+  border-radius: 1.5rem;
+}
+
+.prim-border {
+  border: solid 2px var(--primary-color);
+  border-radius: 1.5rem;
+}
+
+#video-layer {
+  position: relative;
+  top: 10%;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 3;
+  text-align: center;
+  display: -webkit-inline-flex;
+  background-color: white;
+  border: solid 4px var(--primary-color);
+  border-radius: 25px;
+}
+
 #layer1 {
   position: absolute;
   top: 0;
@@ -558,4 +694,10 @@ html, body {
   background-color: var(--accent-color);
   color: #ffffff ;
   z-index: 2;
+}
+
+.loading-overall {
+  position: relative;
+  top: 50%;
+  z-index: 2000;
 }

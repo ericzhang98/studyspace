@@ -1,7 +1,7 @@
 /***** General variables **************************/
 var myID = getSignedCookie("user_id");
 var SONG_COMMANDS = ["/raindrop", "/destress", "/420"];
-var OTHER_COMMANDS = ["/gary", "/ord", "/stop", "/dank", "/scrub", "/nogary", "/noord", "/speak", "/ramble"];
+var OTHER_COMMANDS = ["/gary", "/ord", "/stop", "/dank", "/scrub", "/nogary", "/noord", "/speak", "/ramble", "/easter"];
 var SONG_VOLUMES = {
 	"/raindrop" : 0.25,
 	"/destress" : 0.3,
@@ -154,6 +154,17 @@ function doCommand(command, currRoomChatID) {
     removeCookie("dank");
   }
 
+  else if (command == "/easter") {
+  	var string = "Try some of the following: \n"
+  	for (var i = 0; i < SECRET_COMMANDS.length; i++) {
+  		if (SECRET_COMMANDS[i] != "/easter") {
+  			string += SECRET_COMMANDS[i] + "\n";
+  		}
+  	}
+
+  	return string;
+  }
+
 	return null;
 }
 
@@ -163,4 +174,51 @@ function stopSong() {
 		currSongAudio = null;
 	}
 }
+
+function playSong(url) {
+  console.log(url);
+  var player = document.getElementById("iframePlayer");
+  //embed format
+  //player.src = "https://www.youtube.com/embed/S-sJp1FfG7Q?rel=0&autoplay=1";
+
+  //youtube url format #1
+  //  https://www.youtube.com/watch?v=S-sJp1FfG7Q
+  if (url.indexOf("youtube.com") != -1) {
+    var youtubeDirtyId = url.split("/watch?v=")[1];
+    //clean up the dirty id
+    var youtubeCleanId = null;
+    if (youtubeDirtyId) {
+      youtubeCleanId = youtubeDirtyId.split("?")[0];
+      youtubeCleanId = youtubeCleanId.split("&")[0];
+    }
+    if (youtubeCleanId) {
+      var fullUrl = "https://www.youtube.com/embed/" + youtubeCleanId + "?rel=0&autoplay=1";
+      console.log(fullUrl);
+		  stopSong();
+      player.src = fullUrl;
+    }
+  }
+
+  //youtube url format #2
+  //  https://youtu.be/S-sJp1FfG7Q
+  else if (url.indexOf("youtu.be") != -1) {
+    var youtubeArr = url.split("/");
+    if (youtubeArr) {
+      var youtubeDirtyId = youtubeArr[youtubeArr.length-1]; 
+      //clean up the dirty id
+      var youtubeCleanId = null;
+      if (youtubeDirtyId) {
+        youtubeCleanId = youtubeDirtyId.split("?")[0];
+      }
+      if (youtubeCleanId) {
+        var fullUrl = "https://www.youtube.com/embed/" + youtubeCleanId + "?rel=0&autoplay=1";
+        console.log(fullUrl);
+		    stopSong();
+        player.src = fullUrl;
+      }
+    }
+  }
+
+}
+
 /*********************************************************************/

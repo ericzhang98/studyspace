@@ -15,19 +15,23 @@ var PEER_PING_PERIOD = 30000;
 var myStream = null;
 var myCalls = {};         // Dictionary from user_id to call
 var myRemoteStreams = {}; // Dictionary from user.id to audio track
+var videoContainers = []
+var showVideo;
 navigator.getUserMedia = navigator.getUserMedia || navigator.webkitGetUserMedia || navigator.mozGetUserMedia;
 
 // Grab user media immediately
-getVoice();
+getMedia();
 
 /*********************** CALLING AND ANSWERING ***********************/
 
 // Grab user media (voice)
-function getVoice(callback) {
-  navigator.getUserMedia({video: false, audio: true}, function(stream) {
+function getMedia(callback) {
+  navigator.getUserMedia({video: true, audio: true}, function(stream) {
     myStream = stream;
+    setMyStreamVideoEnabled(false);
+    addRemoteStream(myStream, myID);
     angular.element(document.getElementById('myBody')).scope().setVolumeListener(myID, myStream);
-    showAlert("voice-connect-alert", 'short');
+    showAlert("media-connect-alert", 'short');
     if (callback) {
       callback();
     }
@@ -87,7 +91,7 @@ function startCall(other_user_id) {
   // myStream not yet set
   else {
     console.log("myStream not yet set");
-    getVoice(startCallHelper(other_user_id));
+    getMedia(startCallHelper(other_user_id));
   }
 }
 
@@ -95,27 +99,33 @@ function startCall(other_user_id) {
 function startCallHelper(other_user_id) {
 
   var call = peer.call(other_user_id, myStream);
+  
+  if (call) {
+    console.log("sent call to user with id: " + call.peer)
 
-  console.log("sent call to user with id: " + call.peer)
+      // reference to the call so we can close it
+      myCalls[other_user_id] = (call);
 
-  // reference to the call so we can close it
-  myCalls[other_user_id] = (call);
+    console.log("outgoing stream id: " + myStream.id)
 
-  console.log("outgoing stream id: " + myStream.id)
+      call.on('stream', function(remoteStream) {
+        console.log("incoming stream id: " + remoteStream.id)
 
-  call.on('stream', function(remoteStream) {
-    console.log("incoming stream id: " + remoteStream.id)
+        establishCall(remoteStream, call.peer);
+      });
 
-    establishCall(remoteStream, call.peer);
-  });
+    // used for onClose
+    var call_id = call.id;
 
-  // used for onClose
-  var call_id = call.id;
+    call.on('close', function() {
+      console.log("call closed");
+      destablishCall(call.peer);
+    });
+  }
+  else {
+    console.log("You have two windows open, call should already be set in one");
+  }
 
-  call.on('close', function() {
-    console.log("call closed");
-    destablishCall(call.peer);
-  });
 }
 
 // - ensures myStream is set, delegates to answerCallHelper()
@@ -131,7 +141,7 @@ function answerCall(call) {
   // myStream not yet set
   else {
     console.log("myStream not yet set");
-    getVoice(answerCallHelper(call));
+    getMedia(answerCallHelper(call));
   }
 }
 
@@ -270,6 +280,8 @@ function leaveRoom(currRoomCallID) {
     // leave our calls
     leaveCalls();
 
+    //angular.element(document.getElementById('myBody')).scope().userStreamSources = {};
+
     // send request to server to tell them we left
     var xhr = new XMLHttpRequest();
     xhr.open('GET', "/leave_room/" + currRoomCallID, true);
@@ -284,34 +296,55 @@ function leaveRoom(currRoomCallID) {
 function addRemoteStream(remoteStream, user_id) {
 
   // create a new audio element and make it play automatically
-  var audio = document.createElement('audio');
-  audio.autoplay = true;
+  /*var media = document.createElement('video');
+
+  media.autoplay = true;
 
   // set the source
-  audio.src = window.URL.createObjectURL(remoteStream); 
+  media.src = window.URL.createObjectURL(remoteStream); */
 
   // store the element in myRemoteStreams
-  myRemoteStreams[user_id] = audio;
+  //myRemoteStreams[user_id] = media;
+  angular.element(document.getElementById('myBody')).scope().userStreamSources[user_id] = window.URL.createObjectURL(remoteStream);
+  angular.element(document.getElementById('myBody')).scope().$apply();
 
   // if I am the lecturer, I want everyone else muted by default
   if (isLecturer) {
     toggleRemoteStreamAudioEnabled(user_id);
   }
 
+
   // add audio stream to the page
-  document.getElementById("myBody").insertBefore(audio, document.getElementById("myDiv"));
+  //document.getElementById("myBody").insertBefore(audio, document.getElementById("myDiv"));
+  /*container = document.createElement('div');
+  container.className = "video-container";
+  container.id = user_id + "-video-container";
+  if (videoContainers.length == 0) {
+    document.getElementById("video-row").appendChild(container);
+  } 
+  else {
+    document.getElementById("video-row").insertBefore(container, videoContainers[videoContainers.length - 1].nextSibling);
+  }
+  videoContainers.push(container);
+  container.append(media);*/
+  //var name = document.createTextNode(angular.element(document.getElementById('myBody')).scope().users[user_id].name);
+  //container.append(name);
 }
 
 // - removes the audio track that streaming the remoteStream from call_id
 function removeRemoteStream(user_id) {
 
   // remove the audio track from the page
-  if (myRemoteStreams[user_id]) {
-    document.getElementById("myBody").removeChild(myRemoteStreams[user_id]);
+  //if (myRemoteStreams[user_id]) {
+    //document.getElementById("video-layer").removeChild(myRemoteStreams[user_id]);
+    //document.getElementById("video-row").removeChild(document.getElementById(user_id + "-video-container"));
 
     // remove the remoteStream from myRemoteStreams
-    delete myRemoteStreams[user_id];
-  }
+    //delete myRemoteStreams[user_id];
+    delete angular.element(document.getElementById('myBody')).scope().userStreamSources[user_id];
+
+    // document.getElementById("video-row").removeChild(document.getElementById(user_id + "-video-container"));
+  //}
 }
 
 // - removes all {user_id: call} pairs in myCalls and closes calls
@@ -331,6 +364,11 @@ function toggleMyStreamAudioEnabled() {
   myStream.getAudioTracks()[0].enabled = !(myStream.getAudioTracks()[0].enabled);
 }
 
+// - toggle my video
+/*function toggleMyStreamVideoEnabled() {
+  setMyStreamVideoEnabled(!(myStream.getVideoTracks()[0].enabled));
+}*/
+
 // - set my audio
 function setMyStreamAudioEnabled(enabled) {
   if (myStream) {
@@ -339,12 +377,27 @@ function setMyStreamAudioEnabled(enabled) {
   }
 }
 
+// - set my video
+function setMyStreamVideoEnabled(enabled, direct = true) {
+  if (myStream) {
+    myStream.getVideoTracks()[0].enabled = enabled;
+    if (direct) {
+      showVideo = enabled;
+    }
+    if (enabled) {
+      showAlert('video-alert', 'long');
+    }
+  }
+}
+
 // - toggle audio from another person
 function toggleRemoteStreamAudioEnabled(user_id) {
-  if (myRemoteStreams[user_id] != null) {
-    console.log("toggling remote audio to " + !(myRemoteStreams[user_id].muted));
-    myRemoteStreams[user_id].muted = !(myRemoteStreams[user_id].muted);
-  }
+  //if (myRemoteStreams[user_id] != null) {
+    //console.log("toggling remote audio to " + !(myRemoteStreams[user_id].muted));
+    //myRemoteStreams[user_id].muted = !(myRemoteStreams[user_id].muted);
+    document.getElementById(user_id + "_video").muted = !document.getElementById(user_id + "_video").muted;
+    //myRemoteStreams[user_id].muted = !(myRemoteStreams[user_id].muted);
+  //}
 }
 /*********************************************************************/
 /******************************* MISC ********************************/

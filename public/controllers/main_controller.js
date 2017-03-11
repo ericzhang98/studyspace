@@ -1,13 +1,14 @@
 //Room app -- firebase must be initialized already
 var chatDatabase = null;
 var typingDatabase = null;
+var chatPinnedDatabase = null
+
+var songDatabase = null;
 var myApp = angular.module("mainApp", ["ngMaterial", "ngSanitize"]);
 
-// list of message objects with: email, name, roomID, text, timeSent
-var chatMessageList = [];
 var CONCAT_TIME = 60*1000; // 1 minute
 var currPing = null;
-var USER_PING_PERIOD = 15*1000;
+var USER_PING_PERIOD = 10*1000;
 
 /* Main controller -------------------------------------*/
 
@@ -15,6 +16,7 @@ myApp.controller("MainController", ["$scope", "$http", "$timeout", "$window",
 function($scope, $http, $timeout, $window) {
   console.log("Hell yeah");
 
+  $scope.videoEnabled = true;
   // general vars
   $scope.myID = getSignedCookie("user_id");
   $scope.currRoomCallID = null;
@@ -28,10 +30,12 @@ function($scope, $http, $timeout, $window) {
     // leave current room
     leaveRoom($scope.currRoomCallID);
 
+    /*
     //send offline ping
     var xhr = new XMLHttpRequest();
     xhr.open("GET", "/offline", true);
     xhr.send();
+    */
 
     // erase cookies
     removeCookie("user_id");
@@ -51,13 +55,17 @@ function($scope, $http, $timeout, $window) {
   /****************************** CHAT ROOM ****************************/
   /*-------------------------------------------------------------------*/
 
+  // list of message objects with: email, name, roomID, text, timeSent
+  var chatMessageList = [];
   var div = document.getElementById("chat-message-pane");
   var chatInputBox = document.getElementById("chatInputBox");
-  var animation = document.getElementById("loading");
+  var loadingMessagesAnimation = document.getElementById("loading-messages");
   var lastKey = null;
   var scrollLock = false;
   var currTyping = [];
   var isTyping = false;
+  var loadingOverallAnimation = document.getElementById("loading-overall");
+  $scope.chatPinnedMessageList = [];
 
   /************************* JOINING A CHATROOM ************************/
 
@@ -83,6 +91,13 @@ function($scope, $http, $timeout, $window) {
       }
       // empty our message list in logic and UI and reset control vars
       chatMessageList = [];
+      $scope.chatPinnedMessageList = [];
+      $scope.showPinnedMessages = false;
+
+      if ($scope.viewVideo) {
+        $scope.toggleViewVideo();
+      }
+
       lastKey = null;
       scrollLock = false;
       updateChatView();
@@ -91,6 +106,7 @@ function($scope, $http, $timeout, $window) {
       // set up and start new listener if room_id isn't null
       if (room_id) {
         chatDatabase = databaseRef.child("RoomMessages").child($scope.currRoomChatID);
+        chatPinnedDatabase = databaseRef.child("RoomPinnedMessages").child($scope.currRoomChatID);
         startChatMessages();
       }
 
@@ -106,6 +122,27 @@ function($scope, $http, $timeout, $window) {
         startCurrTyping();
         //], 50); //in case it's a dm, need to wait for other user info?
       }
+
+      if (songDatabase != null) {
+        songDatabase.off();
+      }
+      if (room_id) {
+        songDatabase = databaseRef.child("RoomSong").child(room_id);
+        songDatabase.on("value", function(snapshot) {
+          var url = snapshot.val();
+          if (url) {
+            playSong(url);
+          }
+          else {
+            var player = document.getElementById("iframePlayer");
+            player.src = "";
+          }
+        });
+      }
+      else {
+        var player = document.getElementById("iframePlayer");
+        player.src = "";
+      }
     }
   }
   /*********************************************************************/
@@ -114,22 +151,88 @@ function($scope, $http, $timeout, $window) {
   // Send chat when send button is pressed
   $scope.sendChatMessage = function(chatInput) {
     if (chatInput) {
-
       // easter eggs
       if (SECRET_COMMANDS.indexOf(chatInput) != -1) {
-
         // do the command, and if it returns a message
         // then upload it
         var msg = doCommand(chatInput, $scope.currRoomChatID)
         if (msg) {
-          uploadMessage(msg);å
+          uploadMessage(msg);
         }
-
         else {
           // reset fields     
           $scope.chatInput = "";
           chatInputBox.focus();
+          if (chatInput === "/stop") {
+            var player = document.getElementById("iframePlayer");
+            if (player.src !== "") {
+              console.log("was playing, but now stop");
+              player.src = "";
+              $http.post("/broadcast_song/", {room_id: $scope.currRoomChatID, url: null});
+            }
+            console.log("stop on controller");
+          }
         }
+      }
+      else if (chatInput.indexOf("/play") == 0) {
+        //if url detected, send it directly to broadcast
+        if (chatInput.indexOf("youtube.com") != -1 || chatInput.indexOf("youtu.be") != -1) {
+          var split = chatInput.split(" ");
+          if (split[1]) {
+            var url = split[1];
+            $http.post("/broadcast_song/", {room_id: $scope.currRoomChatID, url: url});
+          }
+          else {
+            console.log("Please put in a valid URL");
+          }
+        }
+        else {
+          var query = chatInput.substring(6);
+          if (query.length > 0) {
+            console.log("querying youtube and playing first result");
+            $http.get("/youtube_search/" + query).then(function(response) {
+              var url = "www.youtube.com/watch?v=" + response.data.youtube_video_id;
+              $http.post("/broadcast_song/", {room_id: $scope.currRoomChatID, url: url});
+            });
+          }
+        }
+        $scope.chatInput = "";
+        chatInputBox.focus();
+      }
+
+      //find command
+      else if (chatInput.indexOf("#") == 0) {
+        console.log("search");
+        var query = chatInput.substring(1);
+        if (query.length > 0) {
+          console.log(query);
+          loadingOverallAnimation.removeAttribute("hidden");
+          seeMoreMessages(1000, function(){
+          var results = []
+          for(var i = chatMessageList.length-1; i >= 0; i--) {
+            if (chatMessageList[i].text.includes(query)|| chatMessageList[i].name.includes(query)) {
+              //results.push($scope.chatMessageList[i]);
+              results.unshift(chatMessageList[i]);
+            }
+          }
+          console.log(results);
+          $scope.chatMessageList = results;
+          scrollLock = true;
+          loadingOverallAnimation.setAttribute("hidden", null);
+          $timeout(scrollDown);
+          });
+        }
+        else {
+          loadingOverallAnimation.removeAttribute("hidden");
+          //maximum jank
+          setTimeout(function(){
+          $scope.chatMessageList = chatMessageList;
+          scrollLock = false;
+          loadingOverallAnimation.setAttribute("hidden", null);
+          $timeout(scrollDown);
+          }, 1);
+        }
+        $scope.chatInput = "";
       }
 
       // regular message
@@ -207,7 +310,7 @@ function($scope, $http, $timeout, $window) {
       if ($scope.rooms[$scope.currRoomChatID].other_user_id) {
         newChatMessage.other_user_id = $scope.rooms[$scope.currRoomChatID].other_user_id;
       }
-      $http.post("/send_room_message", newChatMessage);
+      $http.post("/send_room_message", newChatMessage).then(scrollDown);
     }
 
     // Reset the local chat UI/logic
@@ -230,15 +333,77 @@ function($scope, $http, $timeout, $window) {
     toggleMyStreamAudioEnabled();
   }
   /*********************************************************************/
+  /** PIN LUL *************************************/
+
+  $scope.showPinnedMessages = false;
+
+  $scope.pinChatMessage = function(key, user_id, name, time_sent) {
+
+    $http.post("/pin_message/", {
+      "room_id": $scope.currRoomChatID, 
+      "chat_message_key": key, 
+      "user_id": user_id, 
+      "name": name, 
+      "time_sent": time_sent, 
+      "concat_text": getConcatenatedMessageText(key)});
+  }
+
+  function getConcatenatedMessageText(chatMessageKey) {
+    var concat_text;
+    chatMessageList.forEach(function(message) {
+      if (message.key == chatMessageKey) {
+        concat_text = message.text;
+      }
+    })
+
+    /*
+    var concat_array = concat_text.split("\n");
+    var concat_text_parsed = "";
+    concat_array.forEach(function(line) {
+      concat_text_parsed += line + "%0A";
+    })*/
+    //var concat_text_parsed = encodeURI(concat_text);
+    var concat_text_parsed = concat_text;
+    console.log("text is " + concat_text_parsed);
+    return concat_text_parsed;
+  }
+
+  $scope.togglePinnedMessages = function() {
+    $scope.showPinnedMessages = !$scope.showPinnedMessages;
+  }
+
+  $scope.isPinned = function(key) {
+    var contains = false;
+    $scope.chatPinnedMessageList.forEach(function(message) {
+      if (message.key == key) {
+        contains = true;
+      }
+    })
+    return contains;
+  }
+
   /************************** DISPLAYING CHATS *************************/
 
   // Set up listener for chat messages
   function startChatMessages() {
+    loadingOverallAnimation.removeAttribute("hidden");
+    chatPinnedDatabase.on("child_added", function(snapshot) {
+      var snapshotValue = snapshot.val();
+      console.log("pin message: " + snapshotValue.text);
+      if ($scope.chatPinnedMessageList.indexOf(snapshotValue) == -1) {
+        $scope.chatPinnedMessageList.push(snapshotValue);
+      }
+      updateChatView();
+    })
+
     chatDatabase.limitToLast(50).on("child_added", function(snapshot) {
       var snapshotValue = snapshot.val();
+      snapshotValue.key = snapshot.key;
+
       if (lastKey == null) {
         lastKey = snapshot.key;
       }
+
       chatMessageList.push(snapshotValue);
       var shouldScroll = false;
       //only auto-scroll if near bottom
@@ -250,6 +415,7 @@ function($scope, $http, $timeout, $window) {
         //setTimeout(scrollDown, 10); //scroll again upon ui update in 10ms
         scrollDown(); //scroll down immediately to ensure continuous position
       }
+      loadingOverallAnimation.setAttribute("hidden", null);
     });
   }
 
@@ -308,7 +474,7 @@ function($scope, $http, $timeout, $window) {
     if(currentScroll <= 200 && currentScroll < lastScroll) {
       //don't call seeMore if still processing past one
       if (!scrollLock) { 
-        seeMoreMessages();
+        seeMoreMessages(300);
       }
     }
     lastScroll = currentScroll;
@@ -316,15 +482,14 @@ function($scope, $http, $timeout, $window) {
 
   // View more messages -- queries last number of msgs from Firebase and
   // updates chat view, then scrolls to correct place to maintain position
-  function seeMoreMessages() {
+  function seeMoreMessages(messagesToAdd=50, callback) {
     //check if a lastKey is ready, signifying that og msgs have finished
-    if (lastKey) {
+    if (lastKey && lastKey != "DONE") {
       console.log("see more");
       //show loading UI element
-      animation.removeAttribute("hidden");
+      loadingMessagesAnimation.removeAttribute("hidden");
       scrollLock = true; //prevent any more seeMoreMessages calls until current finishes
       var messagesSoFar = chatMessageList.length;
-      var messagesToAdd = 50;
       //query db for past number of messages
       chatDatabase.limitToLast(messagesToAdd+1).orderByKey().endAt(lastKey)
         .once("value", function(snapshot) {
@@ -342,7 +507,7 @@ function($scope, $http, $timeout, $window) {
             chatMessageList = moreMessagesArray.concat(chatMessageList); //combine with og msgs
           }
           else {
-            lastKey = null; //otherwise don't pull anymore
+            lastKey = "DONE"; //otherwise don't pull anymore
           }
 
           //keep track of height diff, update view, and then scroll by diff
@@ -359,11 +524,16 @@ function($scope, $http, $timeout, $window) {
           div.scrollTop = previousPosition + (div.scrollHeight - previousHeight);
           scrollLock = false;
           //hide loading UI element
-          animation.setAttribute("hidden", null);
           //});
           //}, 20);
+          
         }
+        loadingMessagesAnimation.setAttribute("hidden", null);
+        if (callback){callback();}
       });
+    }
+    else {
+      if (callback){callback();}
     }
   }
 
@@ -577,10 +747,12 @@ function($scope, $http, $timeout, $window) {
     temp.open("GET", "/typing/false/" + $scope.currRoomChatID, true);
     temp.send();
 
+    /*
     //send offline ping
     var xhr = new XMLHttpRequest();
-    xhr.open("GET", "/offline", true);
+    xhr.open("GET", "/offline", false);
     xhr.send();
+    */
   };
 
   function pingUserActivity(constant) {
@@ -591,6 +763,7 @@ function($scope, $http, $timeout, $window) {
       showAlert("no-connection-alert", "longaf", false);
     }
     xhr.send();
+    console.log("pinging");
     if (constant) {
       currPing = setTimeout(pingUserActivity, USER_PING_PERIOD, true);
     }
@@ -627,14 +800,16 @@ function($scope, $http, $timeout, $window) {
   };
 
   $scope.getRemoteStreamExists = function(user_id) {
-    return myRemoteStreams[user_id];
+    return document.getElementById(user_id + "_video")
+    //return myRemoteStreams[user_id];
   }
 
   // - is this person muted?
   $scope.getRemoteStreamAudioEnabled = function(user_id) {
-    if (myRemoteStreams[user_id]) {
-      return !myRemoteStreams[user_id].muted;
-    } 
+    //if (myRemoteStreams[user_id]) {
+      //return !myRemoteStreams[user_id].muted;
+      return !document.getElementById(user_id + "_video").muted;
+    //} 
   }
   
   $scope.classmateDropdown = function() {
@@ -751,9 +926,18 @@ function($scope, $http, $timeout, $window) {
 
       if (room) {
 
+        var roomUniqueUsers = [];
+        //rm duplicate users
+        if (room.users) {
+          roomUniqueUsers = Object.values(room.users);
+          roomUniqueUsers = roomUniqueUsers.filter(function(element, index, self) {
+            return index == self.indexOf(element);
+          });
+        }
+
         // update the room
         $scope.rooms[room_id] = new Room(room_id, room.name, room.host_id, room.class_id, 
-                                         room.is_lecture, room.users? Object.values(room.users) : [], room.host_name ? room.host_name : "Unknown host");
+                                         room.is_lecture, roomUniqueUsers, room.host_name ? room.host_name : "Unknown host");
 
         // are there tutors in here?
         detectTutors($scope.rooms[room_id]);
@@ -871,7 +1055,7 @@ function($scope, $http, $timeout, $window) {
 
     // empty buddies null check
     if (!$scope.added_buddies_list) {
-      return false;
+      return -1;
     }
 
     var index;
@@ -1299,6 +1483,34 @@ function($scope, $http, $timeout, $window) {
     });
   }
 
+  /** VIDEO LUL *************************************/
+  $scope.viewVideo = false;
+  $scope.userStreamSources = {};
+
+  $scope.toggleViewVideo = function() {
+    $scope.viewVideo = !$scope.viewVideo;
+
+    // if we closed video, turn my video off
+    if (!$scope.viewVideo) {
+      setMyStreamVideoEnabled(false, false);
+    }
+
+    // if we opened video and we were showing before, turn my video off
+    if ($scope.viewVideo && showVideo) {
+      setMyStreamVideoEnabled(true);
+    }
+  }
+
+  $scope.setMyStreamVideoEnabled = function(enabled, direct = true) {
+    setMyStreamVideoEnabled(enabled, direct);
+  }
+
+  $scope.getVideoEnabled = function(user_id = myID) {
+    if (user_id == myID) {
+      return myStream && myStream.getVideoTracks()[0].enabled;
+    }
+    //return $scope.userStreams[user_id] && $scope.userStreams[user_id].getVideoTracks()[0].enabled;
+  }
 
   /******************ADD CLASS MODAL************************************/
 
