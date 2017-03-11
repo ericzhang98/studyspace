@@ -4,6 +4,7 @@
 html, body {
   margin: 0;
   height: 100%;
+  overflow: hidden;
 }
 
 .sidebar,
@@ -110,9 +111,9 @@ html, body {
   max-height: 50rem;
 
   width: 80%;
-  background-color: var(--primary-dark-color);
-  border: solid 0.2rem var(--over-base-color);
+  border: solid 0.2rem var(--primary-color);
   border-radius: 0.5rem;
+  background-color: white;
   word-wrap: break-word;
 }
 
@@ -125,8 +126,8 @@ html, body {
   padding-top: .5rem;
   padding-bottom: .5rem;
   text-align: center;
-  background-color: var(--over-base-color);
-  color: var(--base-color);
+  background-color: var(--primary-color);
+  color: white;
   font-weight: 800;
   width: 100%;
   height: 3rem;
@@ -149,8 +150,13 @@ html, body {
   padding-right: 2rem;
 }
 
+.pinned-messages-content .message .container-user-icon {
+  border-color: black;
+  color: black;
+}
+
 .pinned-messages-container .message+.message {
-  border-top: solid 1px var(--over-base-color);
+  border-top: solid 1px black;
 }
 
 .message-pane .message {
@@ -211,6 +217,14 @@ html, body {
   padding-top: 0.2rem;
 }
 
+.message-content .pinned-message-body {
+  white-space: pre-wrap;
+  color: black;
+  font-size: 1.5rem;
+  margin-bottom: 0;
+  padding-top: 0.2rem;
+}
+
 .system-message {
   white-space: pre-wrap;
   color: var(--over-base-two-color);
@@ -231,12 +245,7 @@ html, body {
   border-radius: 0.5rem;
 }
 
-.form-message-container .form-message {
-  height: inherit;
-}
-
 .form-message .input-group {
-  height: inherit;
   background-color: var(--base-two-color);
 }
 
@@ -249,7 +258,6 @@ html, body {
 }
 
 .input-group .btn-mute .glyphicon {
-  margin-right: -0.4rem;
   margin-top: 0.2rem;
   font-size: 2rem;
 }
@@ -259,7 +267,6 @@ html, body {
   width: 4.5rem;
   font-size: 1.5rem;
   border: solid 2px var(--over-base-two-color);
-  border-left: none;
   background-color: var(--base-two-color);
   color: var(--over-base-two-color);
 }
@@ -281,9 +288,8 @@ html, body {
 }
 
 .btn-pin-navbar {
-  height: 4.5rem;
-  width: 4.5rem;
-  font-size: 1.5rem;
+  margin-top: 1rem;
+  font-size: 1.3rem;
   border: none;
   background-color: transparent;
   color: white;
@@ -293,14 +299,10 @@ html, body {
   margin-right: -0.3rem;
 }
 
-.input-group-btn>.btn+.btn {
-  margin-left: 0;
-}
-
 .input-group .input-message {
   font-size: 1.5rem;
   border-bottom: none;
-  height: 100%;
+  height: 4.5rem;
   padding-left: 1.5rem;
   padding-right: 1.5rem;
   border-top: solid 2px var(--over-base-two-color);
@@ -703,3 +705,8 @@ video:hover {
   z-index: 2;
 }
 
+.loading-overall {
+  position: relative;
+  top: 50%;
+  z-index: 2000;
+}
