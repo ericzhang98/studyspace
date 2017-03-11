@@ -67,6 +67,7 @@ function($scope, $http, $timeout, $window) {
   var loadingOverallAnimation = document.getElementById("loading-overall");
   $scope.chatPinnedMessageList = [];
   $scope.queryHighlight = "lol";
+  $scope.searchMode = false;
 
   /************************* JOINING A CHATROOM ************************/
 
@@ -243,6 +244,10 @@ function($scope, $http, $timeout, $window) {
     }
   };
 
+  $scope.messageClicked = function() {
+    console.log("clicked");
+  };
+
   $scope.keypress = function(e) {
     setTimeout(function() {
       if ($scope.chatInput) {
@@ -258,7 +263,7 @@ function($scope, $http, $timeout, $window) {
         }
       }
     }, 10);
-  }
+  };
 
   // Listen to RoomTyping
   function startCurrTyping() {
