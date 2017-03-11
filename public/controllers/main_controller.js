@@ -417,6 +417,11 @@ function($scope, $http, $timeout, $window) {
       }
       loadingOverallAnimation.setAttribute("hidden", null);
     });
+
+    //slight jank, but it's cool
+    setTimeout(function() {
+      loadingOverallAnimation.setAttribute("hidden", null);
+    }, 500);
   }
 
   // Update the chat view display
