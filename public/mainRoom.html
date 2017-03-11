@@ -258,7 +258,7 @@
 
               <div id="messages-container" class="message"
                 ng-repeat="chatMessage in chatMessageList"
-                ng-click="messageClicked()">
+                ng-click="searchMode && messageClicked($event)">
                 <div ng-if="chatMessage.user_id != 'system_id'" class="container-user-icon over-base-text {{isBot(chatMessage.user_id) ? 'bot-back' :chatMessage.user_id != myID ? 'acc-back' : 'prim-back'}}">
                   <span>{{chatMessage.name.toUpperCase() | limitTo:1}}</span>
                 </div>

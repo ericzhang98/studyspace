@@ -67,7 +67,8 @@ function($scope, $http, $timeout, $window) {
   var loadingOverallAnimation = document.getElementById("loading-overall");
   $scope.chatPinnedMessageList = [];
   $scope.queryHighlight = "lol";
-  $scope.searchMode = false;
+  $scope.searchMode = true;
+  var searchDiv = null;
 
   /************************* JOINING A CHATROOM ************************/
 
@@ -244,8 +245,10 @@ function($scope, $http, $timeout, $window) {
     }
   };
 
-  $scope.messageClicked = function() {
+  $scope.messageClicked = function(event) {
     console.log("clicked");
+    console.log(event.target.offsetTop);
+    searchDiv = event.target;
   };
 
   $scope.keypress = function(e) {
