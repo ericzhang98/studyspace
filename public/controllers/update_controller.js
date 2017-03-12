@@ -16,27 +16,6 @@ function autoCompleteController ($scope, $http) {
     // list of states to be displayed
     $scope.querySearch = querySearch;
 
-    // If enter is pressed inside the dropdown
-    $("#class-dropdown").keypress(function(event) {
-        if(event.which == 13) {
-            var className = $("#input-0").val().toUpperCase();
-
-            if (verifyClass(className)) {
-
-                var class_id = allClassesNameToID[className];
-                // Make sure the user isn't already in the class
-                if($.inArray(class_id, $scope.userClasses) == -1) {
-                    console.log("ADD " + class_id)
-                    addClass(class_id);
-                } else {
-                    console.log("already in class with name " + className + " and id " + class_id);
-                }
-            }
-            else {
-                console.log("could not verify class with name " + className + " and id " + class_id);
-            }
-        }
-    });
     $("#cancel-button").click(cancelChanges)
     $("#save-button").click(saveChanges);
 
@@ -56,6 +35,7 @@ function autoCompleteController ($scope, $http) {
     function createFilterFor(query) {
         var uppercaseQuery = query.toUpperCase();
         return function filterFn(thisClass) {
+            thisClass = thisClass.replace(/\s+/g, '');
             return (thisClass.toUpperCase().indexOf(uppercaseQuery) === 0);
         };
     }
@@ -80,6 +60,10 @@ function autoCompleteController ($scope, $http) {
                 removeClass($scope.userClasses[index]);
             })
         });
+    }
+
+    function emptyDropdown() {
+        $("#input-0").val("");
     }
 
     // returns name of class given class_id
@@ -229,6 +213,28 @@ function autoCompleteController ($scope, $http) {
         }
     }
 
+    // Called when the user presses enter in the dropdown box
+    $scope.processSelection = function processSelection() {
+        var className = $("#input-0").val().toUpperCase();
+        var classIndex = verifyClass(className);
+
+        if (classIndex > -1) {
+
+            var class_id = allClassesNameToID[className];
+            // Make sure the user isn't already in the class
+            if($.inArray(class_id, $scope.userClasses) == -1) {
+                console.log("ADD " + class_id)
+                addClass(class_id);
+                emptyDropdown();
+            } else {
+                console.log("already in class with name " + className + " and id " + class_id);
+            }
+        }
+        else {
+            console.log("could not verify class with name " + className + " and id " + class_id);
+        }
+    }
+
     function processClasses() {
         $http.post('/enroll', {class_ids: $scope.userClasses});
     }
@@ -236,6 +242,6 @@ function autoCompleteController ($scope, $http) {
     function verifyClass(className) {
         console.log("verifying " + className);
         var returnVal = $.inArray(className, Object.keys(allClassesNameToID).map(function(x){ return x.toUpperCase() }));
-        return returnVal > -1;
+        return returnVal;
     }
 }

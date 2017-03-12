@@ -66,9 +66,8 @@ function($scope, $http, $timeout, $window) {
   var isTyping = false;
   var loadingOverallAnimation = document.getElementById("loading-overall");
   $scope.chatPinnedMessageList = [];
-  $scope.queryHighlight = null;
+  $scope.searchQuery = null;
   $scope.searchMode = true;
-  var searchId = null;
 
   /************************* JOINING A CHATROOM ************************/
 
@@ -105,6 +104,9 @@ function($scope, $http, $timeout, $window) {
       scrollLock = false;
       updateChatView();
       $scope.chatInput = "";
+
+      $scope.searchQuery = null;
+      $scope.searchMode = false;
 
       // set up and start new listener if room_id isn't null
       if (room_id) {
@@ -203,7 +205,7 @@ function($scope, $http, $timeout, $window) {
         chatInputBox.focus();
       }
 
-      //find command
+      //search command
       else if (chatInput.indexOf("#") == 0) {
         console.log("search");
         var query = chatInput.substring(1);
@@ -211,6 +213,7 @@ function($scope, $http, $timeout, $window) {
         if (query.length > 0) {
           console.log(query);
           $scope.searchMode = true;
+          $scope.searchQuery = query;
           loadingOverallAnimation.removeAttribute("hidden");
           seeMoreMessages(1000, function(){
           var results = []
@@ -221,7 +224,6 @@ function($scope, $http, $timeout, $window) {
               results.unshift(chatMessageList[i]);
             }
           }
-          console.log(results);
           $scope.chatMessageList = results;
           scrollLock = true;
           loadingOverallAnimation.setAttribute("hidden", null);
@@ -231,6 +233,7 @@ function($scope, $http, $timeout, $window) {
         //return to normal
         else {
           $scope.searchMode = false;
+          $scope.searchQuery = null;
           loadingOverallAnimation.removeAttribute("hidden");
           //maximum jank to let animation start
           setTimeout(function(){
@@ -251,39 +254,24 @@ function($scope, $http, $timeout, $window) {
   };
 
   $scope.messageClicked = function(event) {
-    console.log("clicked");
-    //return to normal with div selection
-    var searchDiv = event.currentTarget;
-    $scope.searchMode = false;
-    loadingOverallAnimation.removeAttribute("hidden");
-    //maximum jank to let animation start
-    setTimeout(function(){
-      $scope.chatMessageList = chatMessageList;
-      scrollLock = false;
-      loadingOverallAnimation.setAttribute("hidden", null);
-      $timeout(function() {
-        console.log(searchDiv.offsetTop);
-        div.scrollTop = searchDiv.offsetTop;
-      }, 100);
-    }, 1);
-
-    /*
-    //return to normal with id selection
-    searchId = event.currentTarget.id;
-    $scope.searchMode = false;
-    loadingOverallAnimation.removeAttribute("hidden");
-    //maximum jank to let animation start
-    setTimeout(function(){
-      $scope.chatMessageList = chatMessageList;
-      scrollLock = false;
-      loadingOverallAnimation.setAttribute("hidden", null);
-      //scroll to where div is
-      $timeout(function() {  
-        var searchDiv = document.getElementById(searchId);
-        div.scrollTop = searchDiv.offsetTop;
-      }, 100);
-    }, 1);
-    */
+    if ($scope.searchMode) {
+      //return to normal with div selection
+      var searchDiv = event.currentTarget;
+      console.log(searchDiv.offsetTop);
+      $scope.searchMode = false;
+      loadingOverallAnimation.removeAttribute("hidden");
+      //maximum jank to let animation start
+      setTimeout(function(){
+        $scope.chatMessageList = chatMessageList;
+        safeApply();
+        scrollLock = false;
+        loadingOverallAnimation.setAttribute("hidden", null);
+        $timeout(function() {
+          console.log(searchDiv.offsetTop);
+          div.scrollTop = searchDiv.offsetTop;
+        });
+      }, 1);
+    }
   };
 
 
@@ -535,7 +523,6 @@ function($scope, $http, $timeout, $window) {
   function seeMoreMessages(messagesToAdd=50, callback) {
     //check if a lastKey is ready, signifying that og msgs have finished
     if (lastKey && lastKey != "DONE") {
-      console.log("see more");
       //show loading UI element
       loadingMessagesAnimation.removeAttribute("hidden");
       scrollLock = true; //prevent any more seeMoreMessages calls until current finishes
@@ -1715,6 +1702,7 @@ function($scope, $http, $timeout, $window) {
   function createFilterFor(query) {
     var uppercaseQuery = query.toUpperCase();
     return function filterFn(thisClass) {
+      thisClass = thisClass.replace(/\s+/g, '');
       return (thisClass.toUpperCase().indexOf(uppercaseQuery) === 0);
     };
   }
@@ -1761,6 +1749,7 @@ myApp.directive("scroll", function ($window) {
   }
 });
 
+//highlight directive
 myApp.filter('highlight', function($sce) {
   return function(text, phrase) {
     if (phrase) text = text.replace(new RegExp('('+phrase+')', 'gi'),
