@@ -70,10 +70,12 @@
                 <form ng-submit="submitForm()">
                   <md-autocomplete
                       md-selected-item="selectedItem"
+                      md-selected-item-change="processSelection()"
                       md-search-text="searchText"
                       md-items="item in querySearch(searchText)"
                       md-item-text="item"
                       md-min-length="0"
+                      md-autoselect="true"
                       placeholder="Enter a Class Code (e.g. 'CSE110')">
                     <md-item-template>
                       <span md-highlight-text="searchText" md-highlight-flags="^i">{{item}}</span>
