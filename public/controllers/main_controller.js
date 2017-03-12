@@ -259,6 +259,7 @@ function($scope, $http, $timeout, $window) {
       var searchDiv = event.currentTarget;
       console.log(searchDiv.offsetTop);
       $scope.searchMode = false;
+      $scope.searchQuery = null;
       loadingOverallAnimation.removeAttribute("hidden");
       //maximum jank to let animation start
       setTimeout(function(){
