@@ -172,6 +172,7 @@ html, body {
   padding-bottom: 1.5rem;
   border-bottom: solid 1px var(--line-color);
   cursor: default;
+  outline-style: none;
 }
 
 .message-pane .message:last-child {
