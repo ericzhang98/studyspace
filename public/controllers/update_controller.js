@@ -33,10 +33,12 @@ function autoCompleteController ($scope, $http) {
 
     // filter function for search query
     function createFilterFor(query) {
-        var uppercaseQuery = query.toUpperCase();
         return function filterFn(thisClass) {
+            var uppercaseQuery = query.toUpperCase();
+            pass = (thisClass.toUpperCase().indexOf(uppercaseQuery) === 0);
             thisClass = thisClass.replace(/\s+/g, '');
-            return (thisClass.toUpperCase().indexOf(uppercaseQuery) === 0);
+            pass = pass || (thisClass.toUpperCase().indexOf(uppercaseQuery) === 0);
+            return pass;
         };
     }
 

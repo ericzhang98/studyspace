@@ -1715,10 +1715,12 @@ function($scope, $http, $timeout, $window) {
   }
   // filter function for search query to make it case-insensitive
   function createFilterFor(query) {
-    var uppercaseQuery = query.toUpperCase();
     return function filterFn(thisClass) {
-      thisClass = thisClass.replace(/\s+/g, '');
-      return (thisClass.toUpperCase().indexOf(uppercaseQuery) === 0);
+        var uppercaseQuery = query.toUpperCase();
+        pass = (thisClass.toUpperCase().indexOf(uppercaseQuery) === 0);
+        thisClass = thisClass.replace(/\s+/g, '');
+        pass = pass || (thisClass.toUpperCase().indexOf(uppercaseQuery) === 0);
+        return pass;
     };
   }
 
