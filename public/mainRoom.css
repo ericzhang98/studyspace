@@ -179,6 +179,7 @@ html, body {
   padding-bottom: 1.5rem;
   border-bottom: solid 1px var(--line-color);
   cursor: default;
+  outline: 0 !important;
 }
 
 .message-pane .message:last-child {
@@ -733,6 +734,6 @@ video {
 }
 
 .highlighted {
-  background: #fff2a8;
-  color: #353535;
+  background-color: var(--primary-color);
+  color: black;
 }

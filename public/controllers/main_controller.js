@@ -68,7 +68,6 @@ function($scope, $http, $timeout, $window) {
   $scope.chatPinnedMessageList = [];
   $scope.searchQuery = null;
   $scope.searchMode = true;
-  var searchId = null;
 
   /************************* JOINING A CHATROOM ************************/
 
@@ -105,6 +104,9 @@ function($scope, $http, $timeout, $window) {
       scrollLock = false;
       updateChatView();
       $scope.chatInput = "";
+
+      $scope.searchQuery = null;
+      $scope.searchMode = false;
 
       // set up and start new listener if room_id isn't null
       if (room_id) {
@@ -203,7 +205,7 @@ function($scope, $http, $timeout, $window) {
         chatInputBox.focus();
       }
 
-      //find command
+      //search command
       else if (chatInput.indexOf("#") == 0) {
         console.log("search");
         var query = chatInput.substring(1);
@@ -222,7 +224,6 @@ function($scope, $http, $timeout, $window) {
               results.unshift(chatMessageList[i]);
             }
           }
-          console.log(results);
           $scope.chatMessageList = results;
           scrollLock = true;
           loadingOverallAnimation.setAttribute("hidden", null);
@@ -253,39 +254,25 @@ function($scope, $http, $timeout, $window) {
   };
 
   $scope.messageClicked = function(event) {
-    console.log("clicked");
-    //return to normal with div selection
-    var searchDiv = event.currentTarget;
-    $scope.searchMode = false;
-    loadingOverallAnimation.removeAttribute("hidden");
-    //maximum jank to let animation start
-    setTimeout(function(){
-      $scope.chatMessageList = chatMessageList;
-      scrollLock = false;
-      loadingOverallAnimation.setAttribute("hidden", null);
-      $timeout(function() {
-        console.log(searchDiv.offsetTop);
-        div.scrollTop = searchDiv.offsetTop;
-      }, 100);
-    }, 1);
-
-    /*
-    //return to normal with id selection
-    searchId = event.currentTarget.id;
-    $scope.searchMode = false;
-    loadingOverallAnimation.removeAttribute("hidden");
-    //maximum jank to let animation start
-    setTimeout(function(){
-      $scope.chatMessageList = chatMessageList;
-      scrollLock = false;
-      loadingOverallAnimation.setAttribute("hidden", null);
-      //scroll to where div is
-      $timeout(function() {  
-        var searchDiv = document.getElementById(searchId);
-        div.scrollTop = searchDiv.offsetTop;
-      }, 100);
-    }, 1);
-    */
+    if ($scope.searchMode) {
+      //return to normal with div selection
+      var searchDiv = event.currentTarget;
+      console.log(searchDiv.offsetTop);
+      $scope.searchMode = false;
+      $scope.searchQuery = null;
+      loadingOverallAnimation.removeAttribute("hidden");
+      //maximum jank to let animation start
+      setTimeout(function(){
+        $scope.chatMessageList = chatMessageList;
+        safeApply();
+        scrollLock = false;
+        loadingOverallAnimation.setAttribute("hidden", null);
+        $timeout(function() {
+          console.log(searchDiv.offsetTop);
+          div.scrollTop = searchDiv.offsetTop;
+        });
+      }, 1);
+    }
   };
 
 
@@ -537,7 +524,6 @@ function($scope, $http, $timeout, $window) {
   function seeMoreMessages(messagesToAdd=50, callback) {
     //check if a lastKey is ready, signifying that og msgs have finished
     if (lastKey && lastKey != "DONE") {
-      console.log("see more");
       //show loading UI element
       loadingMessagesAnimation.removeAttribute("hidden");
       scrollLock = true; //prevent any more seeMoreMessages calls until current finishes
@@ -1715,9 +1701,12 @@ function($scope, $http, $timeout, $window) {
   }
   // filter function for search query to make it case-insensitive
   function createFilterFor(query) {
-    var uppercaseQuery = query.toUpperCase();
     return function filterFn(thisClass) {
-      return (thisClass.toUpperCase().indexOf(uppercaseQuery) === 0);
+        var uppercaseQuery = query.toUpperCase();
+        pass = (thisClass.toUpperCase().indexOf(uppercaseQuery) === 0);
+        thisClass = thisClass.replace(/\s+/g, '');
+        pass = pass || (thisClass.toUpperCase().indexOf(uppercaseQuery) === 0);
+        return pass;
     };
   }
 
