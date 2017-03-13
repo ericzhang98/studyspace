@@ -130,8 +130,15 @@ html, body {
   color: white;
   font-weight: 800;
   width: 100%;
-  height: 3rem;
+  height: 4rem;
   border-style: hidden;
+  font-size: 2rem;
+}
+
+.pinned-messages-header .glyphicon-remove {
+  float: right;
+  top: 0.2rem;
+  right: 0.5rem;
 }
 
 .pinned-messages-container .message {
@@ -674,6 +681,13 @@ video:hover {
   border-radius: 0.5rem;
 }
 
+video {
+  margin-left: 3rem;
+  margin-left: 3rem;
+  margin-right: 3rem;
+  margin-top: 3rem;
+}
+
 #video-layer {
   position: relative;
   top: 10%;
@@ -685,6 +699,13 @@ video:hover {
   background-color: white;
   border: solid 2px var(--primary-color);
   border-radius: 1rem;
+}
+
+#video-layer .glyphicon-remove {
+  position: absolute;
+  right: 0.5rem;
+  top: 0.5rem;
+  font-size: 2rem;
 }
 
 #layer1 {

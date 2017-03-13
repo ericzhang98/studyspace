@@ -51,6 +51,7 @@
   <body id="myBody" ng-controller="MainController">
     <div id="overlay">
       <div ng-cloak ng-hide="!viewVideo || !currRoomCallID" id="video-layer">
+        <span class="glyphicon glyphicon-remove" aria-hidden="true" ng-click="toggleViewVideo()"></span>
         <div ng-if="!rooms[currRoomCallID].is_lecture" ng-repeat="user_id in rooms[currRoomCallID].users">
           <div ng-if="user_id == myID" class="video-container">
             <video id="{{user_id}}_video" class="prim-border" autoplay muted ng-src="{{userStreamSources[user_id]}}" ng-click="setMyStreamVideoEnabled(!getVideoEnabled())"></video>
@@ -217,13 +218,15 @@
 
                   <li ng-if="rooms[currRoomChatID].class_id == 'dm_class_id'" class="nav-link" ng-click="leaveDM()">
                     <a>Close</a>
-                  </li>
                 </ul>
+                  </li>
               </div>
             </nav>
 
             <div ng-if="showPinnedMessages" class="pinned-messages-container">
-              <div class="pinned-messages-header" type="button">Pinboard</div>
+              <div class="pinned-messages-header">Pinboard <span class="glyphicon glyphicon-remove" aria-hidden="true" ng-click="togglePinnedMessages()" position="relative"></span></div>
+              
+
               <div class="message white-back" ng-if="chatPinnedMessageList.length == 0">
                 <p> There are no pinned messages.</p>
               </div>
