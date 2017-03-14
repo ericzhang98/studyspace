@@ -737,3 +737,17 @@ video {
   background-color: var(--primary-color);
   color: black;
 }
+
+.whiteboard-container {
+  z-index: 10;
+  position: absolute;
+  top: 10%;
+  left: 10%;
+  height: calc(80% - 5rem);
+
+  width: 80%;
+  border: solid 0.2rem var(--primary-color);
+  border-radius: 0.5rem;
+  background-color: white;
+  word-wrap: break-word;
+}

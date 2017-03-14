@@ -208,6 +208,12 @@
                     classes[rooms[currRoomChatID].class_id].name + " | ":""}}{{rooms[currRoomChatID].name}}{{rooms[currRoomChatID].is_lecture ? ' (cast by ' + rooms[currRoomChatID].host_name + ')' : ''}}</span>
               </div>
                 <ul class="nav navbar-nav navbar-right">
+
+                  <li ng-if="rooms[currRoomChatID].host_id == 'mainhost'"
+                  class="nav-link link-pin" ng-click="toggleWhiteboard()">
+                    <span>whiteboard</span>
+                  </li>
+
                   <li ng-if="rooms[currRoomChatID].host_id == 'mainhost'" class="nav-link link-pin" ng-click="togglePinnedMessages()">
                     <span class="glyphicon glyphicon-pushpin"></span>
                   </li>
@@ -223,10 +229,9 @@
               </div>
             </nav>
 
+            <!-- Pinboard -->
             <div ng-if="showPinnedMessages" class="pinned-messages-container">
               <div class="pinned-messages-header">Pinboard <span class="glyphicon glyphicon-remove" aria-hidden="true" ng-click="togglePinnedMessages()" position="relative"></span></div>
-              
-
               <div class="message white-back" ng-if="chatPinnedMessageList.length == 0">
                 <p> There are no pinned messages.</p>
               </div>
@@ -249,6 +254,10 @@
                 </div>
               </div>
             </div>
+
+            <!-- Whiteboard -->
+            <iframe class="whiteboard-container" id="whiteboard" hidden>
+            </iframe>
 
             <!-- MESSAGE PANE -->
             <div id="chat-message-pane" class="message-pane" scroll
