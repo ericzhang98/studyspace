@@ -256,8 +256,14 @@
             </div>
 
             <!-- Whiteboard -->
-            <iframe class="whiteboard-container" id="whiteboard" hidden>
-            </iframe>
+            <div class="whiteboard-container" id="whiteboard-container" hidden>
+              <div class="whiteboard-header">Whiteboard
+                <span class="glyphicon glyphicon-remove" aria-hidden="true"
+                  ng-click="toggleWhiteboard()" position="relative"></span>
+              </div>
+              <iframe class="whiteboard-content" id="whiteboard">
+              </iframe>
+            </div>
 
             <!-- MESSAGE PANE -->
             <div id="chat-message-pane" class="message-pane" scroll

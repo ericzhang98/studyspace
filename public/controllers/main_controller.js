@@ -152,7 +152,7 @@ function($scope, $http, $timeout, $window) {
       if (room_id) {
         $scope.showWhiteboard = false;
         whiteboard.removeAttribute("src");
-        whiteboard.setAttribute("hidden", null);
+        whiteboardContainer.setAttribute("hidden", null);
       }
     }
   }
@@ -424,19 +424,19 @@ function($scope, $http, $timeout, $window) {
 
 
   /*whiteboard*/
+  var whiteboard = document.getElementById("whiteboard");
+  var whiteboardContainer = document.getElementById("whiteboard-container");
   $scope.toggleWhiteboard = function() {
     if ($scope.showWhiteboard) {
       $scope.showWhiteboard = false;
       console.log("hide");
-      var whiteboard = document.getElementById("whiteboard");
       whiteboard.setAttribute("src", "whiteboard.html#" + $scope.currRoomCallID);
-      whiteboard.setAttribute("hidden", null);
+      whiteboardContainer.setAttribute("hidden", null);
     }
     else {
       $scope.showWhiteboard = true;
-      var whiteboard = document.getElementById("whiteboard");
       whiteboard.setAttribute("src", "whiteboard.html#" + $scope.currRoomCallID);
-      whiteboard.removeAttribute("hidden");
+      whiteboardContainer.removeAttribute("hidden");
     }
   }
 
