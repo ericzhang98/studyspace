@@ -209,7 +209,7 @@
               </div>
                 <ul class="nav navbar-nav navbar-right">
 
-                  <li class="nav-link link-pin" ng-click="toggleWhiteboard()">
+                  <li ng-if="rooms[currRoomChatID].class_id != 'dm_class_id'" class="nav-link link-pin" ng-click="toggleWhiteboard()">
                     <span class="glyphicon glyphicon-pencil"></span>
                   </li>
 
