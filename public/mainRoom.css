@@ -75,6 +75,7 @@ html, body {
 }
 
 .navbar-room .nav-link {
+  outline: 0 !important;
   margin-right: 0;
 }
 
@@ -754,7 +755,6 @@ video {
 
 .whiteboard-content {
   position: absolute;
-  top: 10%;
   height: 95%;
   width: 100%;
   border: transparent;
@@ -771,4 +771,10 @@ video {
   height: 4rem;
   border-style: hidden;
   font-size: 2rem;
+}
+
+.whiteboard-header .glyphicon-remove {
+  float: right;
+  top: 0.2rem;
+  right: 0.5rem;
 }

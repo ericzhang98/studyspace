@@ -209,9 +209,8 @@
               </div>
                 <ul class="nav navbar-nav navbar-right">
 
-                  <li ng-if="rooms[currRoomChatID].host_id == 'mainhost'"
-                  class="nav-link link-pin" ng-click="toggleWhiteboard()">
-                    <span>whiteboard</span>
+                  <li class="nav-link link-pin" ng-click="toggleWhiteboard()">
+                    <span class="glyphicon glyphicon-pencil"></span>
                   </li>
 
                   <li ng-if="rooms[currRoomChatID].host_id == 'mainhost'" class="nav-link link-pin" ng-click="togglePinnedMessages()">
