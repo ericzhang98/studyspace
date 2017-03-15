@@ -743,10 +743,10 @@ video {
   z-index: 10;
   position: absolute;
   top: 10%;
-  left: 10%;
+  left: 5%;
   height: calc(85% - 5rem);
 
-  width: 80%;
+  width: 90%;
   border: solid 0.2rem var(--primary-color);
   border-radius: 0.5rem;
   background-color: white;
