@@ -77,6 +77,10 @@ html, body {
 .navbar-room .nav-link {
   outline: 0 !important;
   margin-right: 0;
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
 }
 
 .navbar-room .navbar-nav>li>a {
