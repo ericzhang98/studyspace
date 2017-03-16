@@ -13,7 +13,14 @@
           var link = "studyspace_" + window.location.hash;
           var aww = new AwwBoard('#aww-wrapper', {
             apiKey: "86e9392a-3a91-47c1-9f63-105ce15c7dbe",
-            menuOrder: ["colors", "sizes", "tools"],
+            menuItems: {
+              undoItem: {
+                style: {background: "darkgray", padding: "10px"},
+                onclick: function(){ aww.doUndo(); }, 
+                content: makeButton("assets/images/undo.png")
+              }
+            },
+            menuOrder: ["colors", "sizes", "tools", "undoItem"],
             boardLink: link
           });
         }
@@ -23,6 +30,15 @@
         console.log(document.body.scrollHeight-100);
         aww.doResize();
         */
+
+        function makeButton(src) {
+          var btnImg = document.createElement('img');
+          btnImg.setAttribute('src', src);
+          btnImg.setAttribute('width', '24px');
+          btnImg.setAttribute('height', '24px');
+          btnImg.style.userSelect = "none";
+          return btnImg;
+        }
       </script>
   </body>
 </html>
