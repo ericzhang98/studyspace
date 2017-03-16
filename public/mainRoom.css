@@ -120,7 +120,7 @@ html, body {
 
 .pinned-messages-content {
   overflow-y: auto;
-  max-height: 46.6rem;
+  max-height: 45.5rem;
 }
 
 .pinned-messages-header {
