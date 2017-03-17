@@ -1353,7 +1353,7 @@ function($scope, $http, $timeout, $window) {
   };
 
   // getting the list of users in this room
-  function updateRoomUsers(room, callback=null) {
+  function updateRoomUsers(room, callback) {
     ////console.log("this is a room " + room);
     if (room) {
       ////console.log("getting new list of users for room: " + room.room_id);
@@ -1564,11 +1564,17 @@ function($scope, $http, $timeout, $window) {
     }
   }
 
-  $scope.setMyStreamVideoEnabled = function(enabled, direct = true) {
+  $scope.setMyStreamVideoEnabled = function(enabled, direct) {
+    if (direct == undefined) {
+      direct = true;
+    }
     setMyStreamVideoEnabled(enabled, direct);
   }
 
-  $scope.getVideoEnabled = function(user_id = myID) {
+  $scope.getVideoEnabled = function(user_id) {
+    if (user_id == undefined) {
+      user_id = myID;
+    }
     if (user_id == myID) {
       return myStream && myStream.getVideoTracks()[0].enabled;
     }
