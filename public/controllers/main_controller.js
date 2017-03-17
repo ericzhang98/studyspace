@@ -545,7 +545,7 @@ function($scope, $http, $timeout, $window) {
 
   // View more messages -- queries last number of msgs from Firebase and
   // updates chat view, then scrolls to correct place to maintain position
-  function seeMoreMessages(messagesToAdd=50, callback) {
+  function seeMoreMessages(messagesToAdd, callback) {
     //check if a lastKey is ready, signifying that og msgs have finished
     if (lastKey && lastKey != "DONE") {
       //show loading UI element
