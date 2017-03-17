@@ -1,4 +1,4 @@
-//Room app -- firebase must be initialized already
+//Main App Controller
 var chatDatabase = null;
 var typingDatabase = null;
 var chatPinnedDatabase = null
@@ -10,8 +10,8 @@ var CONCAT_TIME = 60*1000; // 1 minute
 var currPing = null;
 var USER_PING_PERIOD = 10*1000;
 
-/* Main controller -------------------------------------*/
 
+/* Main controller -------------------------------------*/
 myApp.controller("MainController", ["$scope", "$http", "$timeout", "$window",
 function($scope, $http, $timeout, $window) {
   //console.log("Hell yeah");
@@ -1748,7 +1748,7 @@ function($scope, $http, $timeout, $window) {
     }
   }
 
-
+  //token generator
   function generateToken(num) {
     var token = "";
     var possible = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
@@ -1772,9 +1772,8 @@ function($scope, $http, $timeout, $window) {
 
 }]);
 
-
 //helper directive for scrolling listener
-myApp.directive("scroll", function ($window) {
+myApp.directive("scroll", ["$window", function ($window) {
   return {
     scope: {
       scrollEvent: '&'
@@ -1783,13 +1782,13 @@ myApp.directive("scroll", function ($window) {
       $("#"+attrs.id).scroll(function($e) { scope.scrollEvent != null ?  scope.scrollEvent()($e) : null })
     }
   }
-});
+}]);
 
-//highlight directive
-myApp.filter('highlight', function($sce) {
+//highlight filter 
+myApp.filter('highlight', ["$sce", function($sce) {
   return function(text, phrase) {
     if (phrase) text = text.replace(new RegExp('('+phrase+')', 'gi'),
       '<span class="highlighted">$1</span>')
       return $sce.trustAsHtml(text)
   }
-});
+}]);

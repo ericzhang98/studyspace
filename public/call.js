@@ -378,7 +378,10 @@ function setMyStreamAudioEnabled(enabled) {
 }
 
 // - set my video
-function setMyStreamVideoEnabled(enabled, direct = true) {
+function setMyStreamVideoEnabled(enabled, direct) {
+  if (direct == undefined) {
+    direct = true;
+  }
   if (myStream) {
     myStream.getVideoTracks()[0].enabled = enabled;
     if (direct) {
