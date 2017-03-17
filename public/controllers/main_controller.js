@@ -28,7 +28,7 @@ function($scope, $http, $timeout, $window) {
   /*************************** ACCOUNT MANAGEMENT *********************/
   $scope.logout = function() {
     // leave current room
-    leaveRoom($scope.currRoomCallID);
+    leaveRoomHard($scope.currRoomCallID);
 
     /*
     //send offline ping
@@ -148,6 +148,12 @@ function($scope, $http, $timeout, $window) {
         var player = document.getElementById("iframePlayer");
         player.src = "";
       }
+
+      if (room_id) {
+        $scope.showWhiteboard = false;
+        whiteboard.removeAttribute("src");
+        whiteboardContainer.setAttribute("hidden", null);
+      }
     }
   }
   /*********************************************************************/
@@ -259,6 +265,7 @@ function($scope, $http, $timeout, $window) {
       var searchDiv = event.currentTarget;
       //console.log(searchDiv.offsetTop);
       $scope.searchMode = false;
+      $scope.searchQuery = null;
       loadingOverallAnimation.removeAttribute("hidden");
       //maximum jank to let animation start
       setTimeout(function(){
@@ -413,6 +420,24 @@ function($scope, $http, $timeout, $window) {
       }
     })
     return contains;
+  }
+
+
+  /*whiteboard*/
+  var whiteboard = document.getElementById("whiteboard");
+  var whiteboardContainer = document.getElementById("whiteboard-container");
+  $scope.toggleWhiteboard = function() {
+    if ($scope.showWhiteboard) {
+      $scope.showWhiteboard = false;
+      console.log("hide");
+      whiteboard.setAttribute("src", "whiteboard.html#" + $scope.currRoomCallID);
+      whiteboardContainer.setAttribute("hidden", null);
+    }
+    else {
+      $scope.showWhiteboard = true;
+      whiteboard.setAttribute("src", "whiteboard.html#" + $scope.currRoomCallID);
+      whiteboardContainer.removeAttribute("hidden");
+    }
   }
 
   /************************** DISPLAYING CHATS *************************/
@@ -1699,10 +1724,12 @@ function($scope, $http, $timeout, $window) {
   }
   // filter function for search query to make it case-insensitive
   function createFilterFor(query) {
-    var uppercaseQuery = query.toUpperCase();
     return function filterFn(thisClass) {
-      thisClass = thisClass.replace(/\s+/g, '');
-      return (thisClass.toUpperCase().indexOf(uppercaseQuery) === 0);
+        var uppercaseQuery = query.toUpperCase();
+        pass = (thisClass.toUpperCase().indexOf(uppercaseQuery) === 0);
+        thisClass = thisClass.replace(/\s+/g, '');
+        pass = pass || (thisClass.toUpperCase().indexOf(uppercaseQuery) === 0);
+        return pass;
     };
   }
 
@@ -1732,6 +1759,10 @@ function($scope, $http, $timeout, $window) {
     }
     return token;
   }
+
+  $scope.whiteboardURL = function() {
+    return "whiteboard.html#" + $scope.currRoomCallID;
+  };
 
 }]);
 
