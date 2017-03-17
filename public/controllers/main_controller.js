@@ -28,7 +28,7 @@ function($scope, $http, $timeout, $window) {
   /*************************** ACCOUNT MANAGEMENT *********************/
   $scope.logout = function() {
     // leave current room
-    leaveRoom($scope.currRoomCallID);
+    leaveRoomHard($scope.currRoomCallID);
 
     /*
     //send offline ping
