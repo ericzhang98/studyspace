@@ -176,7 +176,7 @@ function stopSong() {
 }
 
 function playSong(url) {
-  console.log(url);
+  //console.log(url);
   var player = document.getElementById("iframePlayer");
   //embed format
   //player.src = "https://www.youtube.com/embed/S-sJp1FfG7Q?rel=0&autoplay=1";
@@ -193,7 +193,7 @@ function playSong(url) {
     }
     if (youtubeCleanId) {
       var fullUrl = "https://www.youtube.com/embed/" + youtubeCleanId + "?rel=0&autoplay=1";
-      console.log(fullUrl);
+      //console.log(fullUrl);
 		  stopSong();
       player.src = fullUrl;
     }
@@ -212,7 +212,7 @@ function playSong(url) {
       }
       if (youtubeCleanId) {
         var fullUrl = "https://www.youtube.com/embed/" + youtubeCleanId + "?rel=0&autoplay=1";
-        console.log(fullUrl);
+        //console.log(fullUrl);
 		    stopSong();
         player.src = fullUrl;
       }

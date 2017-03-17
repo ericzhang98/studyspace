@@ -36,13 +36,13 @@ function getMedia(callback) {
       callback();
     }
   }, function(err) {
-    console.log('Failed to get local stream', err);
+    //console.log('Failed to get local stream', err);
   });
 }
 
 // Respond to open
 peer.on('open', function() {
-  console.log('My peer ID is: ' + peer.id);
+  //console.log('My peer ID is: ' + peer.id);
   //setup heartbeat ping after 5 seconds (wait for socket to finish httpr)
   setTimeout(pingPeerServer, 5000, true);
 });
@@ -58,11 +58,11 @@ peer.on('call', function(call) {
 });
 
 peer.on("disconnected", function() {
-  console.log("DISCONNECTED");
+  //console.log("DISCONNECTED");
 });
 
 peer.on("error", function(err) {
-  console.log(err);
+  //console.log(err);
 });
 
 //pings peer server, pass in true for constant 30 sec ping
@@ -75,7 +75,7 @@ function pingPeerServer(constant) {
 
 // - ensures myStream is set, delegates to startCallHelper()
 function startCall(other_user_id) {
-  console.log("calling " + other_user_id);
+  //console.log("calling " + other_user_id);
 
   // do not send out calls to users that we've blocked
   if (me.block_list.indexOf(other_user_id) != -1) {
@@ -84,13 +84,13 @@ function startCall(other_user_id) {
 
   // myStream already set
   if (myStream != null) {
-    console.log("myStream already set");
+    //console.log("myStream already set");
     startCallHelper(other_user_id);
   }		
 
   // myStream not yet set
   else {
-    console.log("myStream not yet set");
+    //console.log("myStream not yet set");
     getMedia(startCallHelper(other_user_id));
   }
 }
@@ -101,15 +101,15 @@ function startCallHelper(other_user_id) {
   var call = peer.call(other_user_id, myStream);
   
   if (call) {
-    console.log("sent call to user with id: " + call.peer)
+    //console.log("sent call to user with id: " + call.peer)
 
       // reference to the call so we can close it
       myCalls[other_user_id] = (call);
 
-    console.log("outgoing stream id: " + myStream.id)
+    //console.log("outgoing stream id: " + myStream.id)
 
       call.on('stream', function(remoteStream) {
-        console.log("incoming stream id: " + remoteStream.id)
+        //console.log("incoming stream id: " + remoteStream.id)
 
         establishCall(remoteStream, call.peer);
       });
@@ -118,29 +118,29 @@ function startCallHelper(other_user_id) {
     var call_id = call.id;
 
     call.on('close', function() {
-      console.log("call closed");
+      //console.log("call closed");
       destablishCall(call.peer);
     });
   }
   else {
-    console.log("You have two windows open, call should already be set in one");
+    //console.log("You have two windows open, call should already be set in one");
   }
 
 }
 
 // - ensures myStream is set, delegates to answerCallHelper()
 function answerCall(call) {
-  console.log("received call from user with id: " + call.peer)
+  //console.log("received call from user with id: " + call.peer)
 
   // myStream already set
   if (myStream != null) {
-    console.log("myStream already set");
+    //console.log("myStream already set");
     answerCallHelper(call);
   } 
 
   // myStream not yet set
   else {
-    console.log("myStream not yet set");
+    //console.log("myStream not yet set");
     getMedia(answerCallHelper(call));
   }
 }
@@ -154,9 +154,9 @@ function answerCallHelper(call) {
   // reference to the call so we can close it
   myCalls[call.peer] = (call);
 
-  console.log("outgoing stream id: " + myStream.id)
+  //console.log("outgoing stream id: " + myStream.id)
   call.on('stream', function(remoteStream) {
-    console.log("incoming stream id: " + remoteStream.id)	
+    //console.log("incoming stream id: " + remoteStream.id)	
 
     establishCall(remoteStream, call.peer);
   });
@@ -165,7 +165,7 @@ function answerCallHelper(call) {
   var call_id = call.id;
 
   call.on('close', function() {
-    console.log("call closed");
+    //console.log("call closed");
     destablishCall(call.peer);
   });
 }
@@ -200,7 +200,7 @@ function destablishCall(peer_id) {
 // - calls all user_id's
 function joinRoomCall(currRoomCallID) {
 
-  console.log("joining room call with id " + currRoomCallID);
+  //console.log("joining room call with id " + currRoomCallID);
 
   // send request to server
   var xhr = new XMLHttpRequest();
@@ -214,9 +214,9 @@ function joinRoomCall(currRoomCallID) {
       var response = JSON.parse(xhr.responseText);
 
       // room no longer exists
-      console.log(response);
+      //console.log(response);
       if (response.room_id == null) {
-        console.log("room does not exist");
+        //console.log("room does not exist");
         return;
       }
 
@@ -246,7 +246,7 @@ function joinRoomCall(currRoomCallID) {
 
         //show alert if no audio permissions
         if (myStream == null) {
-          console.log("GIVE MIC PERMISSIONS PLZ");
+          //console.log("GIVE MIC PERMISSIONS PLZ");
           showAlert("no-permissions-alert", 'normal', false);
         }
 
@@ -259,7 +259,7 @@ function joinRoomCall(currRoomCallID) {
         for (i = 0; i < usersArray.length; i++) {
 
           var other_user_id = usersArray[i];
-          console.log("assessing " + other_user_id);
+          //console.log("assessing " + other_user_id);
 
           if (other_user_id != myID) {
             startCall(other_user_id);
@@ -275,7 +275,7 @@ function leaveRoom(currRoomCallID) {
 
   // are we even in a room?
   if (currRoomCallID != null) {
-    console.log("leaving room with id " + currRoomCallID);
+    //console.log("leaving room with id " + currRoomCallID);
 
     // leave our calls
     leaveCalls();
@@ -360,7 +360,7 @@ function leaveCalls() {
 
 // - toggle my own audio
 function toggleMyStreamAudioEnabled() {
-  //console.log("toggling my audio to " + !(myStream.getAudioTracks()[0].enabled));
+  ////console.log("toggling my audio to " + !(myStream.getAudioTracks()[0].enabled));
   myStream.getAudioTracks()[0].enabled = !(myStream.getAudioTracks()[0].enabled);
 }
 
@@ -372,7 +372,7 @@ function toggleMyStreamAudioEnabled() {
 // - set my audio
 function setMyStreamAudioEnabled(enabled) {
   if (myStream) {
-    //console.log("setting my audio to " + enabled);
+    ////console.log("setting my audio to " + enabled);
     myStream.getAudioTracks()[0].enabled = enabled;
   }
 }
@@ -393,7 +393,7 @@ function setMyStreamVideoEnabled(enabled, direct = true) {
 // - toggle audio from another person
 function toggleRemoteStreamAudioEnabled(user_id) {
   //if (myRemoteStreams[user_id] != null) {
-    //console.log("toggling remote audio to " + !(myRemoteStreams[user_id].muted));
+    ////console.log("toggling remote audio to " + !(myRemoteStreams[user_id].muted));
     //myRemoteStreams[user_id].muted = !(myRemoteStreams[user_id].muted);
     if (document.getElementById(user_id + "_video")) {
       document.getElementById(user_id + "_video").muted = !document.getElementById(user_id + "_video").muted;
@@ -415,7 +415,7 @@ function setOnBeforeUnload(currRoomCallID) {
 
 // makes sure we leave the room
 function leaveRoomHard(currRoomCallID) {
-  console.log(currRoomCallID);
+  //console.log(currRoomCallID);
   if (currRoomCallID != null) {
     var xhr = new XMLHttpRequest();
     xhr.open('GET', "/leave_room/" + currRoomCallID, false);

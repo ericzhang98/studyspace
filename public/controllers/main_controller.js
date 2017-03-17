@@ -14,7 +14,7 @@ var USER_PING_PERIOD = 10*1000;
 
 myApp.controller("MainController", ["$scope", "$http", "$timeout", "$window",
 function($scope, $http, $timeout, $window) {
-  console.log("Hell yeah");
+  //console.log("Hell yeah");
 
   $scope.videoEnabled = true;
   // general vars
@@ -171,11 +171,11 @@ function($scope, $http, $timeout, $window) {
           if (chatInput === "/stop") {
             var player = document.getElementById("iframePlayer");
             if (player.src !== "") {
-              console.log("was playing, but now stop");
+              //console.log("was playing, but now stop");
               player.src = "";
               $http.post("/broadcast_song/", {room_id: $scope.currRoomChatID, url: null});
             }
-            console.log("stop on controller");
+            //console.log("stop on controller");
           }
         }
       }
@@ -188,13 +188,13 @@ function($scope, $http, $timeout, $window) {
             $http.post("/broadcast_song/", {room_id: $scope.currRoomChatID, url: url});
           }
           else {
-            console.log("Please put in a valid URL");
+            //console.log("Please put in a valid URL");
           }
         }
         else {
           var query = chatInput.substring(6);
           if (query.length > 0) {
-            console.log("querying youtube and playing first result");
+            //console.log("querying youtube and playing first result");
             $http.get("/youtube_search/" + query).then(function(response) {
               var url = "www.youtube.com/watch?v=" + response.data.youtube_video_id;
               $http.post("/broadcast_song/", {room_id: $scope.currRoomChatID, url: url});
@@ -207,11 +207,11 @@ function($scope, $http, $timeout, $window) {
 
       //search command
       else if (chatInput.indexOf("#") == 0) {
-        console.log("search");
+        //console.log("search");
         var query = chatInput.substring(1);
         //search mode
         if (query.length > 0) {
-          console.log(query);
+          //console.log(query);
           $scope.searchMode = true;
           $scope.searchQuery = query;
           loadingOverallAnimation.removeAttribute("hidden");
@@ -257,7 +257,7 @@ function($scope, $http, $timeout, $window) {
     if ($scope.searchMode) {
       //return to normal with div selection
       var searchDiv = event.currentTarget;
-      console.log(searchDiv.offsetTop);
+      //console.log(searchDiv.offsetTop);
       $scope.searchMode = false;
       loadingOverallAnimation.removeAttribute("hidden");
       //maximum jank to let animation start
@@ -267,7 +267,7 @@ function($scope, $http, $timeout, $window) {
         scrollLock = false;
         loadingOverallAnimation.setAttribute("hidden", null);
         $timeout(function() {
-          console.log(searchDiv.offsetTop);
+          //console.log(searchDiv.offsetTop);
           div.scrollTop = searchDiv.offsetTop;
         });
       }, 1);
@@ -310,7 +310,7 @@ function($scope, $http, $timeout, $window) {
 
   function updateCurrTyping() {
     for (var i = currTyping.length-1; i >= 0; i--) {
-      //console.log($scope.rooms[$scope.currRoomChatID]);
+      ////console.log($scope.rooms[$scope.currRoomChatID]);
       /*
       if (!$scope.rooms[$scope.currRoomChatID].users.includes(currTyping[i])) {
         currTyping.splice(i,1);
@@ -320,7 +320,7 @@ function($scope, $http, $timeout, $window) {
     var names = []
     for (var i = 0; i < currTyping.length; i++) {
     	if (currTyping[i] != myID) {
-        console.log($scope.users[currTyping[i]]); //if breaking, tell Eric (joinRoom after user info pull)
+        //console.log($scope.users[currTyping[i]]); //if breaking, tell Eric (joinRoom after user info pull)
         if ($scope.users[currTyping[i]]) {
       	 names.push($scope.users[currTyping[i]].name);
         }
@@ -335,7 +335,7 @@ function($scope, $http, $timeout, $window) {
     // If we're in a valid room
     if ($scope.currRoomChatID) {
 
-      console.log("Sending chat with: " + chatInput);
+      //console.log("Sending chat with: " + chatInput);
 
       // Create the message and pass it on to the server
       var newChatMessage = {text: chatInput, roomID: $scope.currRoomChatID, timeSent: Date.now()};
@@ -354,7 +354,7 @@ function($scope, $http, $timeout, $window) {
   $scope.muteBtnClass = ['glyphicon', 'glyphicon-volume-up'];
   // Toggle the mute button image
   $scope.toggleMic = function() {
-    console.log("toggling mute image");
+    //console.log("toggling mute image");
     if ($scope.muteBtnClass[1] == 'glyphicon-volume-up') {
       $scope.muteBtnClass.pop();
       $scope.muteBtnClass.push('glyphicon-volume-off');
@@ -397,7 +397,7 @@ function($scope, $http, $timeout, $window) {
     })*/
     //var concat_text_parsed = encodeURI(concat_text);
     var concat_text_parsed = concat_text;
-    console.log("text is " + concat_text_parsed);
+    //console.log("text is " + concat_text_parsed);
     return concat_text_parsed;
   }
 
@@ -422,7 +422,7 @@ function($scope, $http, $timeout, $window) {
     loadingOverallAnimation.removeAttribute("hidden");
     chatPinnedDatabase.on("child_added", function(snapshot) {
       var snapshotValue = snapshot.val();
-      console.log("pin message: " + snapshotValue.text);
+      //console.log("pin message: " + snapshotValue.text);
       if ($scope.chatPinnedMessageList.indexOf(snapshotValue) == -1) {
         $scope.chatPinnedMessageList.push(snapshotValue);
       }
@@ -496,7 +496,7 @@ function($scope, $http, $timeout, $window) {
       }
     }
     else {
-      console.log("Already applying");
+      //console.log("Already applying");
       if (func && (typeof(func) == "function")) {
         func();
       }
@@ -506,8 +506,8 @@ function($scope, $http, $timeout, $window) {
   // Scroll event listener -- see more messages if scroll within 200px of top
   var lastScroll = 0;
   $scope.scrollevent = function() {
-    //console.log("Scroll top: " + div.scrollTop);
-    //console.log("CURRENT HEIGHT: " + div.scrollHeight);
+    ////console.log("Scroll top: " + div.scrollTop);
+    ////console.log("CURRENT HEIGHT: " + div.scrollHeight);
     var currentScroll = div.scrollTop;
     if(currentScroll <= 200 && currentScroll < lastScroll) {
       //don't call seeMore if still processing past one
@@ -533,7 +533,7 @@ function($scope, $http, $timeout, $window) {
         var snapshotValue = snapshot.val();
         if (snapshotValue) {
           lastKey = Object.keys(snapshotValue)[0];
-          console.log("pulled more messages + 1: " + (Object.keys(snapshotValue).length));
+          //console.log("pulled more messages + 1: " + (Object.keys(snapshotValue).length));
           //var messageArray = Object.values(snapshotValueObject)
           var moreMessagesArray = Object.keys(snapshotValue).map(function(key) {
             var eachValue = snapshotValue[key];
@@ -552,14 +552,14 @@ function($scope, $http, $timeout, $window) {
           //keep track of height diff, update view, and then scroll by diff
           var previousHeight = div.scrollHeight;
           var previousPosition = div.scrollTop;
-          //console.log("prev height: " + (previousHeight));
-          //console.log("prev pos: " + (previousPosition));
+          ////console.log("prev height: " + (previousHeight));
+          ////console.log("prev pos: " + (previousPosition));
           updateChatView();
           //setTimeout(function(){
           //$timeout(function(){
           var currHeight = div.scrollHeight;
-          //console.log("curr height: " + currHeight);
-          //console.log("Scroll down by: " + (currHeight - previousHeight));
+          ////console.log("curr height: " + currHeight);
+          ////console.log("Scroll down by: " + (currHeight - previousHeight));
           div.scrollTop = previousPosition + (div.scrollHeight - previousHeight);
           scrollLock = false;
           //hide loading UI element
@@ -649,7 +649,7 @@ function($scope, $http, $timeout, $window) {
   /*************************** ROOM INTERACTION ************************/
 
   $scope.createRoom = function(class_id) {
-    console.log('create room');
+    //console.log('create room');
     creationClassID = class_id;
     $("#modal-create-room").fadeIn(100);
     setTimeout(function() {
@@ -671,14 +671,14 @@ function($scope, $http, $timeout, $window) {
 
     // if class_id is null do nothing
     if (class_id == null) {
-      console.log("no class selected");
+      //console.log("no class selected");
       // TODO: error message
       return;
     }
 
     // if room_name is empty do nothing
     if (room_name.length == 0) {
-      console.log("room name must be between 1 and 28 characters");
+      //console.log("room name must be between 1 and 28 characters");
       // TODO: error message
       return;
     }
@@ -687,8 +687,7 @@ function($scope, $http, $timeout, $window) {
     closeModal("#modal-create-room", "#create-room");
 
     // Send out addRoom request
-    console.log("adding room with class_id: " + class_id + 
-                ", room_name: " + room_name);
+    //console.log("adding room with class_id: " + class_id + ", room_name: " + room_name);
     var xhr = new XMLHttpRequest();
     xhr.open('GET', "/add_room/" + class_id + "/" + 
              room_name + "/" + is_lecture + "/" + time_created + "/" + $scope.myName, true);
@@ -701,7 +700,7 @@ function($scope, $http, $timeout, $window) {
         var response = JSON.parse(xhr.responseText);
 
         if (response.error) {
-          console.log(response.error);
+          //console.log(response.error);
           return;
         }
 
@@ -743,7 +742,7 @@ function($scope, $http, $timeout, $window) {
   $scope.setVolumeListener = function(user_id, stream) {
     var soundMeter = new SoundMeter(window.audioContext);
 
-    console.log('setting volume listener to ' + user_id);
+    //console.log('setting volume listener to ' + user_id);
     soundMeter.connectToSource(stream, function(e) {
       if (e) {
         alert(e);
@@ -755,7 +754,7 @@ function($scope, $http, $timeout, $window) {
       setInterval(function() {
     
         if (soundMeter.loudDetected != soundMeter.loud) {
-          //console.log("changing volume to " + soundMeter.loudDetected);
+          ////console.log("changing volume to " + soundMeter.loudDetected);
           soundMeter.loud = soundMeter.loudDetected;
           $scope.$apply();
         }
@@ -798,11 +797,11 @@ function($scope, $http, $timeout, $window) {
     var xhr = new XMLHttpRequest();
     xhr.open("GET", "/ping", true);
     xhr.onerror = function(){
-      console.log(xhr.status);
+      //console.log(xhr.status);
       showAlert("no-connection-alert", "longaf", false);
     }
     xhr.send();
-    console.log("pinging");
+    //console.log("pinging");
     if (constant) {
       currPing = setTimeout(pingUserActivity, USER_PING_PERIOD, true);
     }
@@ -818,7 +817,7 @@ function($scope, $http, $timeout, $window) {
     $scope.my_class_ids.forEach(function(my_class_id) {
 
       if (my_class_id == class_id && $("#" + my_class_id).is(":hidden")) {
-        //console.log("class with id " + my_class_id + " being set to visible");
+        ////console.log("class with id " + my_class_id + " being set to visible");
         $('#' + my_class_id).collapse('toggle');
       }
     });
@@ -1015,12 +1014,12 @@ function($scope, $http, $timeout, $window) {
         var index = $scope.rooms[room_id].users.indexOf(bot_id);
 
         if (hasBot && index == -1) {
-          console.log('adding bot with id ' + bot_id);
+          //console.log('adding bot with id ' + bot_id);
           $scope.rooms[room_id].users.push(bot_id);
         }
 
         else if (!hasBot && index != -1) {
-          console.log('removing bot with id ' + bot_id);
+          //console.log('removing bot with id ' + bot_id);
           $scope.rooms[room_id].users.splice(index, 1);
         }
 
@@ -1034,7 +1033,7 @@ function($scope, $http, $timeout, $window) {
 
   // Set the number of total users studying for a class at the moment
   function setNumUsers(class_id) {
-    //console.log("setting num users for " + class_id);
+    ////console.log("setting num users for " + class_id);
     $scope.classes[class_id].num_users = 0;
 
     for (i = 0; i < $scope.class_rooms[class_id].length; i++) {
@@ -1132,7 +1131,7 @@ function($scope, $http, $timeout, $window) {
   var getBuddies = function(onResponseReceived){
     $http.post('/get_my_buddies').then(function(response){
       if (response.data[0]) {
-        console.log(response.data[0]);
+        //console.log(response.data[0]);
         return onResponseReceived(response.data[0]['buddies']);
       }
     });
@@ -1169,7 +1168,7 @@ function($scope, $http, $timeout, $window) {
 
   // deletes a friend and then in the callback calls to update the buddy requests
   var deleteBuddy = function(id, onResponseReceived){
-    console.log(id);
+    //console.log(id);
     $http.delete('/reject_buddy/' + id).then(function(response){
       getBuddyRequests(function(response){ 
         $scope.buddies_list = response;
@@ -1180,7 +1179,7 @@ function($scope, $http, $timeout, $window) {
   // adds a friendship in the database and deletes the request, and calls 
   // a callback on the data
   var acceptBuddy = function(data, onResponseReceived){
-    console.log(data);
+    //console.log(data);
     $http.post('/accept_buddy', data).then(function(response){
       return onResponseReceived(response.data);
     });      
@@ -1208,33 +1207,33 @@ function($scope, $http, $timeout, $window) {
 
   // functionality for sending a buddy request
   $scope.sendRequest = function(other_user_id){
-    console.log("friend request to " + other_user_id);
+    //console.log("friend request to " + other_user_id);
     // checks if the user exists, if not exits
     userExists(other_user_id, function(response){
-      console.log(response);
+      //console.log(response);
       if(response){
         var friend_id = response.user_id;
         var friend_name = response.name;
-        console.log(friend_id);
+        //console.log(friend_id);
         // checks if the buddy request already exists, if it does then exits
         buddyRequestExists(friend_id, function(requestExists){ 
 
-          console.log("BUDDY REQUEST EXISTS? " + requestExists);
-          console.log(requestExists);
+          //console.log("BUDDY REQUEST EXISTS? " + requestExists);
+          //console.log(requestExists);
           if(!requestExists || requestExists.length == 0){ 
-            console.log("ARE WE FRIENDS ALREADY"); 
+            //console.log("ARE WE FRIENDS ALREADY"); 
             // checks if you're already friends, if you are then exits            
             friendshipExists(friend_id, friend_name, function(friendship){ 
-              console.log("FRIENDSHIP? " + friendship);
+              //console.log("FRIENDSHIP? " + friendship);
               if(!friendship || friendship.length == 0){
                 // if we made it here then we send a friend request
-                console.log("Adding friend");
+                //console.log("Adding friend");
                 var data = {"sent_from_id":"Place user_id here", 
                             "sent_from_name": "user_name",
                             "sent_to_id":String(friend_id),
                             "sent_to_name": String(friend_name)};
                 $http.post('/send_buddy_request', data).then(function(response){
-                  console.log(response.data);
+                  //console.log(response.data);
                   showAlert('buddy-request-alert', 'normal', false);
                 });  
               }
@@ -1253,13 +1252,13 @@ function($scope, $http, $timeout, $window) {
         closeModal("#modal-buddy-request", "#buddy-request");
       }
       else {
-        console.log("An account with that email does not exist");
+        //console.log("An account with that email does not exist");
       }
     });
   }
 
   $scope.rejectBuddyRequest = function(id){
-    console.log(id);
+    //console.log(id);
     deleteBuddy(id, function(response){});
   };
 
@@ -1279,7 +1278,7 @@ function($scope, $http, $timeout, $window) {
   };
 
   $scope.deleteFriend = function(id){
-    console.log(id);
+    //console.log(id);
     $http.delete('/remove_buddy/' + id).then(function(response){
       getBuddies(function(response){ //TODO:Change this to get buddies for uid
         $scope.added_buddies_list = response;
@@ -1303,7 +1302,7 @@ function($scope, $http, $timeout, $window) {
     // will be "bbbaaa"
     var dm_room_id = $scope.getDMID(other_user_id);
 
-    console.log("entering dm room with id: " + dm_room_id);
+    //console.log("entering dm room with id: " + dm_room_id);
 
     // set up dummy class/room
     $scope.classes["dm_class_id"] = {
@@ -1319,7 +1318,7 @@ function($scope, $http, $timeout, $window) {
     //get other user info
     $http.get('/get_user/' + other_user_id).then(function(response) {
       $scope.users[response.data.user_id] = response.data;
-      console.log("user info pulled: " + response.data.name + " " + response.data.user_id);
+      //console.log("user info pulled: " + response.data.name + " " + response.data.user_id);
       // join the chat needs to be on callback b/c of currTyping
       joinRoomChat(dm_room_id);
     });
@@ -1330,16 +1329,16 @@ function($scope, $http, $timeout, $window) {
 
   // getting the list of users in this room
   function updateRoomUsers(room, callback=null) {
-    //console.log("this is a room " + room);
+    ////console.log("this is a room " + room);
     if (room) {
-      //console.log("getting new list of users for room: " + room.room_id);
-      //console.log($scope.rooms);
+      ////console.log("getting new list of users for room: " + room.room_id);
+      ////console.log($scope.rooms);
       for (var i = 0; i < room.users.length; i++) {
         if (!(room.users[i] in $scope.users)) {
           var id = room.users[i];
           $http.get('/get_user/' + room.users[i]).then(function(response) {
             $scope.users[response.data.user_id] = response.data;
-            console.log("user info pulled: " + response.data.name + " " + response.data.user_id);
+            //console.log("user info pulled: " + response.data.name + " " + response.data.user_id);
             if (callback){callback();}
           });
       	}
@@ -1348,7 +1347,7 @@ function($scope, $http, $timeout, $window) {
   }
 
   $scope.openBuddyRequest = function() {
-    console.log('open moodal for buddy request');
+    //console.log('open moodal for buddy request');
     $("#modal-buddy-request").fadeIn(100);
     //set timeout?
     setTimeout(function() {
@@ -1411,10 +1410,10 @@ function($scope, $http, $timeout, $window) {
     databaseRef.child("UserActivity").child(other_user_id).child("online")
       .on("value", function(snapshot) {
         if (snapshot.val()) {
-          //console.log("buddy online - " + other_user_id);
+          ////console.log("buddy online - " + other_user_id);
         }
         else if ($scope.buddies_status[other_user_id] == true) {
-          //console.log("buddy offline - " + other_user_id);
+          ////console.log("buddy offline - " + other_user_id);
         }
         $scope.buddies_status[other_user_id] = snapshot.val();
         adjustBuddyList();
@@ -1470,7 +1469,7 @@ function($scope, $http, $timeout, $window) {
 
   var getIdFromName = function(name, onResponseReceived){
     var email = {"email": String(name)};
-    console.log(email);
+    //console.log(email);
     $http.post('/get_Id_From_Name', email).then(function(response){
       onResponseReceived(response.data);
     });    
@@ -1508,7 +1507,7 @@ function($scope, $http, $timeout, $window) {
   refresh();
   
   $scope.blockUserWithId = function(user_id) {
-    console.log("blocking: " + user_id);
+    //console.log("blocking: " + user_id);
     addBlock(user_id, function(response) {
       showAlert('block-alert', 'normal', false);
       refresh();
@@ -1516,7 +1515,7 @@ function($scope, $http, $timeout, $window) {
   }
   
   $scope.unblock = function(user_id){
-    console.log("unblocking: " + user_id)
+    //console.log("unblocking: " + user_id)
     $http.delete('/remove_block/' + user_id).then(function(response){
       refresh();
     });
@@ -1564,8 +1563,8 @@ function($scope, $http, $timeout, $window) {
     temp_class_ids = $scope.my_class_ids.slice();
     temp_class_ids.splice(temp_class_ids.indexOf('lounge_id'), 1);
 
-    console.log('LUL ' + $scope.my_class_ids);
-    console.log('LUL ' + temp_class_ids);
+    //console.log('LUL ' + $scope.my_class_ids);
+    //console.log('LUL ' + temp_class_ids);
 
     //grab all classes if they weren't pulled before
     if (allClassesNameToID == null) {
@@ -1593,7 +1592,7 @@ function($scope, $http, $timeout, $window) {
   /* Add, remove, and save */
   //process input to see if the class should be added
   $scope.processSelection = function processSelection() {
-    console.log($scope.selectedItem);
+    //console.log($scope.selectedItem);
     //don't trigger on null (when the selected item changes from a good one)
     if ($scope.selectedItem) {
       var class_name = $scope.selectedItem;
@@ -1604,12 +1603,12 @@ function($scope, $http, $timeout, $window) {
             addClass(class_id);
         } else {
           //TODO: UI for already in class
-          console.log("already in class with name " + class_name+ " and id " + class_id);
+          //console.log("already in class with name " + class_name+ " and id " + class_id);
         }
       }
       else {
         //TODO: UI for class doesn't exist
-        console.log("could not verify class with name " + class_name + " and id " + class_id);
+        //console.log("could not verify class with name " + class_name + " and id " + class_id);
       }
     }
   }
@@ -1621,17 +1620,17 @@ function($scope, $http, $timeout, $window) {
   }
 
   function addClass(class_id) {
-    console.log("UI Adding " + class_id);
+    //console.log("UI Adding " + class_id);
     temp_class_ids.push(class_id);
     displayClasses();
     $scope.searchText = "";
   }
 
   $scope.removeClass = function(class_id) {
-    console.log("UI Removing " + class_id);
+    //console.log("UI Removing " + class_id);
     var index = $.inArray(class_id, temp_class_ids);
     if(index == -1) {
-      console.log("Cannot remove class, class_id" + class_id+ " not found!")
+      //console.log("Cannot remove class, class_id" + class_id+ " not found!")
     }
     temp_class_ids.splice(index, 1);
     displayClasses();
@@ -1646,10 +1645,10 @@ function($scope, $http, $timeout, $window) {
   }
 
   function updateLocalClasses(updated_class_ids) {
-    console.log("UPDATING LOCAL CLASSES")
+    //console.log("UPDATING LOCAL CLASSES")
     updated_class_ids = updated_class_ids.concat(['lounge_id']);
-    console.log('LUL2 ' + $scope.my_class_ids);
-    console.log('LUL2 ' + updated_class_ids);
+    //console.log('LUL2 ' + $scope.my_class_ids);
+    //console.log('LUL2 ' + updated_class_ids);
     var noChange = true;
     updated_class_ids.forEach(function(class_id) {
       // for classes I've added
@@ -1665,7 +1664,7 @@ function($scope, $http, $timeout, $window) {
     safeApply();
 
     if (!noChange) {
-      console.log('was changed');
+      //console.log('was changed');
       showAlert("course-change-alert", 'normal', false);
     }
   }

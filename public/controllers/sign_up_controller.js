@@ -5,7 +5,7 @@ function($scope, $http) {
 
   /* Sign Up Error Checking */
   $scope.signup = function(firstName, lastName, email, password, confirmPassword) {
-    console.log("checking input");
+    //console.log("checking input");
 
     // Name Check
     if (firstName) {
@@ -44,12 +44,12 @@ function($scope, $http) {
       if (password.length >= 6) {
         if (password == confirmPassword) {
           if (firstName && lastName && email ) {
-            console.log("lul");
-            console.log(Sha1.hash(password));
+            //console.log("lul");
+            //console.log(Sha1.hash(password));
             var name = firstName + " " + lastName;
             var newUser = new User(email, Sha1.hash(password), name);
-            console.log("Attempting signup with:");
-            console.log(newUser);
+            //console.log("Attempting signup with:");
+            //console.log(newUser);
             postSignupInfo(newUser);
           }
         }
@@ -73,12 +73,12 @@ function($scope, $http) {
   function postSignupInfo(newUser) {
     $http.post("/accountsignup", newUser).then(function(res) {
       if (res.data.success) {
-        console.log("Create success!");
+        //console.log("Create success!");
         window.location.href = "/";
       }
 
       else {
-        console.log("Failed!");
+        //console.log("Failed!");
         $scope.emailMessage = "(Account already exists)";
         $scope.firstNameMessage = "";
         $scope.lastNameMessage  = "";

@@ -6,12 +6,12 @@ var LOG = "log_in_controller: "
 
 // defining the controller
 angular.module('loginApp', []).controller('loginController', ['$scope', '$http', function($scope, $http) {
-  console.log(LOG + "started");
+  //console.log(LOG + "started");
 
   // - verifyLogin looks for a user with specified info and
   // - calls onResponseReceived when it gets and response
   var verifyLogin = function(loginAttempt, onResponseReceived) {
-    console.log(LOG + "verifyLogin");
+    //console.log(LOG + "verifyLogin");
     $http.post('/accountlogin', loginAttempt).then(function onSuccess(response) {
       onResponseReceived(response.data);
     })
@@ -19,7 +19,7 @@ angular.module('loginApp', []).controller('loginController', ['$scope', '$http',
 
   // - attempts to login
   $scope.attemptLogin = function(email, password) {
-    console.log(LOG + "attemptLogin");
+    //console.log(LOG + "attemptLogin");
     var loginAttempt = {email: email, password: Sha1.hash(password)};
 
     // valid login info
@@ -32,13 +32,13 @@ angular.module('loginApp', []).controller('loginController', ['$scope', '$http',
         // check if user activated account or not
         if (user != null) {
           if (user.active) { 
-            console.log(LOG + "login succeeded");
+            //console.log(LOG + "login succeeded");
             $scope.emailMessage = "";
             $scope.passwordMessage = "";
             window.location.href = "/";
           }
           else {
-            console.log(LOG + "need to verify account, verify email");
+            //console.log(LOG + "need to verify account, verify email");
             $scope.emailMessage = "(Invalid email or password)";
             $scope.passwordMessage = "(Invalid email or password)";
           }
@@ -46,7 +46,7 @@ angular.module('loginApp', []).controller('loginController', ['$scope', '$http',
 
         // login failed 
         else {
-          console.log(LOG + "login failed, user info incorrect");
+          //console.log(LOG + "login failed, user info incorrect");
           $scope.emailMessage = "(Invalid email or password)";
           $scope.passwordMessage = "(Invalid email or password)";
         }
@@ -55,7 +55,7 @@ angular.module('loginApp', []).controller('loginController', ['$scope', '$http',
 
     // invalid login info
     else {
-      console.log(LOG + "login failed, user info invalid");
+      //console.log(LOG + "login failed, user info invalid");
       $scope.emailMessage = "(Field Required)";
       $scope.passwordMessage = "(Field Required)";
     }

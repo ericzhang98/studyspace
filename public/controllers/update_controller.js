@@ -21,7 +21,7 @@ function autoCompleteController ($scope, $http) {
 
     // adds classID to list of user's classes and updates the UI to reflect this
     function addClass(classID) {
-        console.log("adding class with ID " + classID);
+        //console.log("adding class with ID " + classID);
         $scope.userClasses.push(classID);
         displayClasses();
     }
@@ -77,7 +77,7 @@ function autoCompleteController ($scope, $http) {
 
     // populates the allClassesNameToID dictionary with all available classes
     function getAllClasses() {
-        console.log("Getting all classes...")
+        //console.log("Getting all classes...")
         var xhr = new XMLHttpRequest();
         xhr.open('GET', "/get_all_classes", true); // responds with class_ids
         xhr.send();
@@ -122,7 +122,7 @@ function autoCompleteController ($scope, $http) {
     // populates userClasses list with ids of all classes they are enrolled in
     // calls displayClasses afterward to reflect changes
     function getUserClasses() {
-        console.log("Getting my classes...")
+        //console.log("Getting my classes...")
         var xhr = new XMLHttpRequest();
         xhr.open('GET', "/get_my_classes", true); // responds with class_ids
         xhr.send();
@@ -139,7 +139,7 @@ function autoCompleteController ($scope, $http) {
                 
                 // update the UI
                 displayClasses();
-                console.log($scope.userClasses);
+                //console.log($scope.userClasses);
             }
           }
         }
@@ -152,7 +152,7 @@ function autoCompleteController ($scope, $http) {
     function removeClass(className) {
         var index = $.inArray(className, $scope.userClasses);
         if(index == -1) {
-            console.log("Cannot remove class, className " + className + " not found!")
+            //console.log("Cannot remove class, className " + className + " not found!")
         }
         $scope.userClasses.splice(index, 1);
         displayClasses();
@@ -169,10 +169,10 @@ function autoCompleteController ($scope, $http) {
         var anon = $("#anon-checkbox").prop("checked");
         $http.post('/update_privacy', {anon: anon}).then(function(res) {
             if(res.data.success) {
-                console.log("Anonymous status updated")
+                //console.log("Anonymous status updated")
             }
             else {
-                console.log("Anonymous status not changed, error")
+                //console.log("Anonymous status not changed, error")
             }
         });
     }
@@ -196,19 +196,19 @@ function autoCompleteController ($scope, $http) {
                 };
                 $http.post('/resetpassword', passToServerObject).then(function(res) {
                     if(res.data.success) {
-                        console.log("Password successfully changed")
+                        //console.log("Password successfully changed")
                     }
                     else {
-                        console.log("Current password inputted incorrectly, password not changed")
+                        //console.log("Current password inputted incorrectly, password not changed")
                     }
                 });
             }
             else {
-                console.log("Password needs >=6 characters");
+                //console.log("Password needs >=6 characters");
             }
           }
           else {
-                console.log("Passwords don't match");
+                //console.log("Passwords don't match");
           }
         }
     }
@@ -223,15 +223,15 @@ function autoCompleteController ($scope, $http) {
             var class_id = allClassesNameToID[className];
             // Make sure the user isn't already in the class
             if($.inArray(class_id, $scope.userClasses) == -1) {
-                console.log("ADD " + class_id)
+                //console.log("ADD " + class_id)
                 addClass(class_id);
                 emptyDropdown();
             } else {
-                console.log("already in class with name " + className + " and id " + class_id);
+                //console.log("already in class with name " + className + " and id " + class_id);
             }
         }
         else {
-            console.log("could not verify class with name " + className + " and id " + class_id);
+            //console.log("could not verify class with name " + className + " and id " + class_id);
         }
     }
 
@@ -240,7 +240,7 @@ function autoCompleteController ($scope, $http) {
     }
 
     function verifyClass(className) {
-        console.log("verifying " + className);
+        //console.log("verifying " + className);
         var returnVal = $.inArray(className, Object.keys(allClassesNameToID).map(function(x){ return x.toUpperCase() }));
         return returnVal;
     }

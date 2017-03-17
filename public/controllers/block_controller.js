@@ -6,7 +6,7 @@ myApp.controller('blocker',['$scope', '$http', function($scope, $http){
   
   var getIdFromName = function(name, onResponseReceived){
     var email = {"email": String(name)};
-    console.log(email);
+    //console.log(email);
     $http.post('/get_Id_From_Name', email).then(function(response){
 			onResponseReceived(response.data);
 		});    
@@ -21,14 +21,14 @@ myApp.controller('blocker',['$scope', '$http', function($scope, $http){
                 "blocked_user_id": String(blocked_user_id),
                 "blocked_user_email": blocked_user_email
                }; 
-               console.log("ADD");
+               //console.log("ADD");
     $http.post('/add_blocked_user', data).then(function(response){
 			onResponseReceived(response.data);
 		});
   };
   $scope.unblock = function(id){
     
-    console.log(id);
+    //console.log(id);
     $http.delete('/remove_block/' + id).then(function(response){
       refresh();
     });
@@ -36,12 +36,12 @@ myApp.controller('blocker',['$scope', '$http', function($scope, $http){
   refresh();
   $scope.blockUser = function(){
     getIdFromName($scope.block_user.name, function(response){
-      console.log(response);
+      //console.log(response);
       if(response){
-        console.log(response.user_id);
+        //console.log(response.user_id);
         addBlock(response.user_id, response.email, function(response){
-          console.log("XX");
-          console.log(response);
+          //console.log("XX");
+          //console.log(response);
           refresh();
         });
       }

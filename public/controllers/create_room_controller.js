@@ -5,14 +5,14 @@ var LOG = "create_room_controller: "
 
 // defining the controller
 angular.module('createRoomApp', []).controller('CreateRoomCtrl', ['$scope', '$http', function($scope, $http) {
-  console.log(LOG + "started");
+  //console.log(LOG + "started");
 
   $scope.submitAddRoom = function(){}
 
   // - verifyLogin looks for a user with specified info and
   // - calls onResponseReceived when it gets a response
   var verifyLogin = function(loginAttempt, onResponseReceived) {
-    console.log(LOG + "verifyLogin");
+    //console.log(LOG + "verifyLogin");
     $http.post('/accountlogin', loginAttempt).then(function onSuccess(response) {
       onResponseReceived(response.data);
     })
@@ -20,7 +20,7 @@ angular.module('createRoomApp', []).controller('CreateRoomCtrl', ['$scope', '$ht
 
   // - attempts to login
   $scope.attemptLogin = function(email, password) {
-    console.log(LOG + "attemptLogin");
+    //console.log(LOG + "attemptLogin");
     var loginAttempt = {email: email, password: Sha1.hash(password)};
 
     // valid login info
@@ -33,24 +33,24 @@ angular.module('createRoomApp', []).controller('CreateRoomCtrl', ['$scope', '$ht
         // check if user activated account or not
         if (user != null) {
           if (user.active) {
-            console.log(LOG + "login succeeded");
+            //console.log(LOG + "login succeeded");
             document.location.href = "/";
           }
           else {
-            console.log(LOG + "need to verify account, verify email");
+            //console.log(LOG + "need to verify account, verify email");
           }
         }
 
         // login failed 
         else {
-          console.log(LOG + "login failed, user info incorrect");
+          //console.log(LOG + "login failed, user info incorrect");
         }
       });
     } 
 
     // invalid login info
     else {
-      console.log(LOG + "login failed, user info invalid");
+      //console.log(LOG + "login failed, user info invalid");
     }
   }
 

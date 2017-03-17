@@ -51,7 +51,7 @@ function SoundMeter(context) {
 }
 
 SoundMeter.prototype.connectToSource = function(stream, callback) {
-  console.log('SoundMeter connecting');
+  //console.log('SoundMeter connecting');
   try {
     this.mic = this.context.createMediaStreamSource(stream);
     this.mic.connect(this.script);

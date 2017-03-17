@@ -286,6 +286,7 @@ html, body {
   height: 5rem;
   padding-left: 1rem;
   padding-right: 1rem;
+  outline: 0 !important;
 }
 
 .btn-pin-navbar {

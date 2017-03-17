@@ -4,9 +4,9 @@ myApp.controller('buddies',['$scope', '$http', function($scope, $http){
 
   var getBuddyRequests = function(onResponseReceived){
     var data = {"sent_to_id":"user_id inserted"};
-    console.log(data);
+    //console.log(data);
     $http.post('/buddy_requests', data).then(function(response){
-        //console.log(response.data);
+        ////console.log(response.data);
         return onResponseReceived(response.data);
       });
   };
@@ -14,14 +14,14 @@ myApp.controller('buddies',['$scope', '$http', function($scope, $http){
   var getBuddies = function(onResponseReceived){
     var data = {"user_one_id":"user_id goes here"};
     $http.post('/get_added_buddies', data).then(function(response){
-        //console.log(response.data);
+        ////console.log(response.data);
         return onResponseReceived(response.data);
       });
   };
   
   var userExists = function(name, onResponseReceived){  
     $http.post('/buddy_existing_user', $scope.friend).then(function(response){
-      //console.log(response.data + "RESPONSE");
+      ////console.log(response.data + "RESPONSE");
 			return onResponseReceived(response.data);
 		});
   };
@@ -49,14 +49,14 @@ myApp.controller('buddies',['$scope', '$http', function($scope, $http){
 		});
   };
   var acceptBuddy = function(data, onResponseReceived){
-    console.log(data);
+    //console.log(data);
     $http.post('/accept_buddy', data).then(function(response){
 			return onResponseReceived(response.data);
 		});      
   }
   
   getBuddyRequests(function(response){ 
-    console.log(response);
+    //console.log(response);
     $scope.buddies_list = response; 
   });
   
@@ -66,25 +66,25 @@ myApp.controller('buddies',['$scope', '$http', function($scope, $http){
   
 	$scope.sendRequest = function(){
     userExists($scope.friend.name, function(response){
-      console.log(response);
+      //console.log(response);
       if(response){
         var friend_id = response.user_id;
-        console.log(friend_id);
+        //console.log(friend_id);
         buddyRequestExists(friend_id, function(requestExists){ 
                                                          
-          console.log("BUDDY REQUEST EXISTS? " + requestExists);
-          console.log(requestExists);
+          //console.log("BUDDY REQUEST EXISTS? " + requestExists);
+          //console.log(requestExists);
           if(!requestExists || requestExists.length == 0){ 
-             console.log("ARE WE FRIENDS ALREADY");          
+             //console.log("ARE WE FRIENDS ALREADY");          
              friendshipExists(friend_id, function(friendship){ 
-                console.log("FRIENDSHIP? " + friendship);
+                //console.log("FRIENDSHIP? " + friendship);
                 if(!friendship || friendship.length == 0){
                   var data = {"sent_from_id":"Place user_id here", 
                               "sent_from_name": "user_name",
                               "sent_to_id":String(friend_id),
                               "sent_to_name": $scope.friend.name};
                   $http.post('/send_buddy_request', data).then(function(response){
-			              console.log(response.data);
+			              //console.log(response.data);
 		              });  
                 }
              });
@@ -95,12 +95,12 @@ myApp.controller('buddies',['$scope', '$http', function($scope, $http){
 	};
   
   $scope.rejectBuddyRequest = function(id){
-    console.log(id);
+    //console.log(id);
     deleteBuddy(id, function(response){});
 	};
   
   $scope.acceptBuddy = function(requestInfo){
-    //console.log(requestInfo);
+    ////console.log(requestInfo);
     var data = {"user_one_id":String(requestInfo.sent_from_id),
                 "user_one_name":String(requestInfo.sent_from_name),
                 "user_two_id":String(requestInfo.sent_to_id),
@@ -131,7 +131,7 @@ myApp.controller('buddies',['$scope', '$http', function($scope, $http){
 function getCookie(key) {
   var cookieName = key + "=";
   var cookieArray = document.cookie.split(";");
-  console.log("All cookies: " + cookieArray);
+  //console.log("All cookies: " + cookieArray);
   for (var i = 0; i < cookieArray.length; i++) {
     var cookie = cookieArray[i];
     while (cookie.charAt(0) == ' ') {

@@ -282,7 +282,7 @@
 
                       <a ng-if="isBot(chatMessage.user_id)" class="user-name bot-text">{{chatMessage.name}}</a>
 
-                      <button ng-if="rooms[currRoomChatID].host_id == 'mainhost' && !isPinned(chatMessage.key) && chatMessage.user_id == myID" class="btn btn-pin" ng-click="pinChatMessage(chatMessage.key, chatMessage.user_id, chatMessage.name, chatMessage.timeSent)">
+                      <button ng-if="rooms[currRoomChatID].host_id == 'mainhost' && !isPinned(chatMessage.key) && isTutor(myID, currRoomChatID)" class="btn btn-pin" ng-click="pinChatMessage(chatMessage.key, chatMessage.user_id, chatMessage.name, chatMessage.timeSent)">
                         <span class="glyphicon glyphicon-pushpin"></span>
                       </button>
                     </div>
