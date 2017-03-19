@@ -826,7 +826,7 @@ function($scope, $http, $timeout, $window) {
       showAlert("no-connection-alert", "longaf", false);
     }
     xhr.send();
-    //console.log("pinging");
+    //console.log("pinging"); 
     if (constant) {
       currPing = setTimeout(pingUserActivity, USER_PING_PERIOD, true);
     }
