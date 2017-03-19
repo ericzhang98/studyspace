@@ -607,11 +607,11 @@ function($scope, $http, $timeout, $window) {
     var monthDayString = (timeSentDate.getMonth()+1) + "/" + timeSentDate.getDate();
     var hour = timeSentDate.getHours();
     var AMPM = "AM";
-    if (hour > 12) {
+    if (hour >= 12) {
       hour -= 12;
       AMPM = "PM";
     }
-    else if (hour == 0) {
+    if (hour == 0) {
       hour = 12;
     }
 
