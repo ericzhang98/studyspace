@@ -15,7 +15,7 @@ var PEER_PING_PERIOD = 30000;
 var myStream = null;
 var myCalls = {};         // Dictionary from user_id to call
 var myRemoteStreams = {}; // Dictionary from user.id to audio track
-var videoContainers = []
+var videoContainers = [];
 var showVideo;
 navigator.getUserMedia = navigator.getUserMedia || navigator.webkitGetUserMedia || navigator.mozGetUserMedia;
 
