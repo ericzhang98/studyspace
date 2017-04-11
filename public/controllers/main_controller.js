@@ -192,7 +192,6 @@ function($scope, $http, $timeout, $window) {
       else if (chatInput.indexOf("/play") == 0) {
         //if url detected, send it directly to broadcast
         if (chatInput.indexOf("youtube.com") != -1 || chatInput.indexOf("youtu.be") != -1) {
-
           var split = chatInput.split(" ");
           if (split[1]) {
             var url = split[1];
@@ -1776,37 +1775,6 @@ function($scope, $http, $timeout, $window) {
   $scope.whiteboardURL = function() {
     return "whiteboard.html#" + $scope.currRoomCallID;
   };
-
-  //youtube id from url
-  function youtubeIdFromUrl(url) {
-    if (url.indexOf("youtube.com") != -1) {
-      var youtubeDirtyId = url.split("/watch?v=")[1];
-      //clean up the dirty id
-      var youtubeCleanId = null;
-      if (youtubeDirtyId) {
-        youtubeCleanId = youtubeDirtyId.split("?")[0];
-        youtubeCleanId = youtubeCleanId.split("&")[0];
-      }
-      return youtubeCleanId;
-    }
-
-    //youtube url format #2
-    //  https://youtu.be/S-sJp1FfG7Q
-    else if (url.indexOf("youtu.be") != -1) {
-      var youtubeArr = url.split("/");
-      if (youtubeArr) {
-        var youtubeDirtyId = youtubeArr[youtubeArr.length-1]; 
-        var youtubeCleanId = null;
-        if (youtubeDirtyId) {
-          youtubeCleanId = youtubeDirtyId.split("?")[0];
-        }
-        return youtubeCleanId;
-      }
-    }
-    else {
-      return null;
-    }
-  }
 
 }]);
 

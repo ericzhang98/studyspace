@@ -56,6 +56,8 @@ var opts = {
   key: "AIzaSyCFalKOCAsmO9yLwf424Jg2eEXz9U5ESLE"
 }
 
+var request = require("request");
+
 
 // - app configuration
 var forceSsl = function (req, res, next) {
@@ -591,7 +593,54 @@ app.post("/broadcast_song/", function(req, res) {
   if (req.signedCookies.user_id) {
     var room_id = req.body.room_id;
     var url = req.body.url;
-    firebaseRoot.child("RoomSong").child(room_id).set(url);
+    if (url == null) {
+      firebaseRoot.child("RoomSong").child(room_id).set(null);
+    }
+    else {
+      firebaseRoot.child("RoomSong").child(room_id).child("url").set(url);
+    }
+
+    //get video info
+    if (url) {
+      var youtubeDirtyId = url.split("/watch?v=")[1];
+      //clean up the dirty id
+      var youtubeCleanId = null;
+      if (youtubeDirtyId) {
+        youtubeCleanId = youtubeDirtyId.split("?")[0];
+        youtubeCleanId = youtubeCleanId.split("&")[0];
+
+        var snippetPath = "https://www.googleapis.com/youtube/v3/videos?" + "key=" + opts.key 
+          + "&part=snippet" + "&id=" + youtubeCleanId;
+        request.get(snippetPath, function(err, res, body){
+          var info = JSON.parse(body);
+          if (info.items[0]) {
+            var title = info.items[0].snippet.title;
+            console.log(title);
+            firebaseRoot.child("RoomSong").child(room_id).child("title").set(title);
+          }
+        });
+        var contentDetailsPath = "https://www.googleapis.com/youtube/v3/videos?" + "key=" + opts.key 
+          + "&part=contentDetails" + "&id=" + youtubeCleanId;
+        request.get(contentDetailsPath, function(err, res, body) {
+          var info = JSON.parse(body);
+          if (info.items[0]) {
+            var duration = info.items[0].contentDetails.duration;
+            /*
+            var duration_iso8061 = results[0].contentDetails.duration;
+            //parse time into ms
+            var secondsRegex = /(\d+)S/;
+            var minutesRegex = /(\d+)M/;
+            var hoursRegex = /(\d+)H/;
+            var seconds = secondsRegex.exec(duration_iso8061);
+            var minutes = minutesRegex.exec(duration_iso8061);
+            */
+            console.log(duration);
+            firebaseRoot.child("RoomSong").child(room_id).child("duration").set(duration);
+          }
+        });
+
+      }
+    }
   }
 });
 
@@ -600,8 +649,13 @@ app.get("/youtube_search/:query", function(req, res) {
     var query = req.params.query;
     youtubeSearch(query, opts, function(err, results) {
       if (err) {return console.log(err)}
-      var youtube_video_id = results[0].id;
-      res.send({youtube_video_id: youtube_video_id});
+      if (results) {
+        var youtube_video_id = results[0].id;
+        res.send({youtube_video_id: youtube_video_id});
+      }
+      else {
+        res.end();
+      }
     });
   }
 });

@@ -211,7 +211,9 @@
                     classes[rooms[currRoomChatID].class_id].name + " | ":""}}{{rooms[currRoomChatID].name}}{{rooms[currRoomChatID].is_lecture ? ' (cast by ' + rooms[currRoomChatID].host_name + ')' : ''}}</span>
               </div>
                 <ul class="nav navbar-nav navbar-right">
-
+                  <li>
+                    <a>{{currSongTitle}}</a>
+                  </li>
                   <li ng-if="rooms[currRoomChatID].class_id != 'dm_class_id'" class="nav-link link-pin" ng-click="toggleWhiteboard()">
                     <span class="glyphicon glyphicon-pencil"></span>
                   </li>
@@ -226,8 +228,8 @@
 
                   <li ng-if="rooms[currRoomChatID].class_id == 'dm_class_id'" class="nav-link" ng-click="leaveDM()">
                     <a>Close</a>
-                </ul>
                   </li>
+                </ul>
               </div>
             </nav>
 
@@ -570,7 +572,7 @@
   <script src="firebase_setup.js"></script>
 
   <!-- Angular scripts -->
-  <script src="controllers/main_controller.min.js"></script>
+  <script src="controllers/main_controller.js"></script>
 
   <!-- Other -->
   <script src="cookies.js"></script>
