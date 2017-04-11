@@ -72,6 +72,7 @@ html, body {
   border-radius: 0;
   height: 5rem;
   font-weight: 600;
+  overflow-y: scroll;
 }
 
 .navbar-room .nav-link {
