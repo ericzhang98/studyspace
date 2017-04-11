@@ -272,79 +272,81 @@
             </div>
 
             <!-- MESSAGE PANE -->
-            <div id="chat-message-pane" class="message-pane" scroll
-              scroll-event="scrollevent">
-              <div id="loading-messages" hidden> 
-                <div class="blob blob-0"></div><div class="blob blob-1"></div>
-                <div class="blob blob-2"></div><div class="blob blob-3"></div>
-                <div class="blob blob-4"></div><div class="blob blob-5"></div>
-              </div>
-
-              <div class="message"
-                ng-repeat="chatMessage in chatMessageList"
-                ng-click="searchMode && messageClicked($event)">
-                <div ng-if="chatMessage.user_id != 'system_id'" class="container-user-icon over-base-text {{chatMessage.user_id != myID ? 'acc-back' : 'prim-back'}}">
-                  <span>{{chatMessage.name.toUpperCase() | limitTo:1}}</span>
+            <div ng-controller="ChatController">
+              <div id="chat-message-pane" class="message-pane" scroll
+                scroll-event="scrollevent">
+                <div id="loading-messages" hidden> 
+                  <div class="blob blob-0"></div><div class="blob blob-1"></div>
+                  <div class="blob blob-2"></div><div class="blob blob-3"></div>
+                  <div class="blob blob-4"></div><div class="blob blob-5"></div>
                 </div>
 
-                <div ng-if="chatMessage.user_id != 'system_id'" class="message-content">
-                  <header class="message-header">
-                    <div class="dropdown">
+                <div class="message"
+                  ng-repeat="chatMessage in chatMessageList"
+                  ng-click="searchMode && messageClicked($event)">
+                  <div ng-if="chatMessage.user_id != 'system_id'" class="container-user-icon over-base-text {{chatMessage.user_id != myID ? 'acc-back' : 'prim-back'}}">
+                    <span>{{chatMessage.name.toUpperCase() | limitTo:1}}</span>
+                  </div>
 
-                      <!-- Dropdown for non-me users -->
-                      <a ng-if="chatMessage.user_id != myID" class="user-name dropdown-toggle acc-text" data-toggle="dropdown">{{chatMessage.name}} {{isTutor(chatMessage.user_id, currRoomChatID) ? "(tutor)" : ""}}</a>
-                      <ul ng-if="chatMessage.user_id != myID" class="dropdown-menu">
-                        <li><a ng-if="getRemoteStreamExists(chatMessage.user_id)" ng-click="toggleUserAudio(chatMessage.user_id)">{{getRemoteStreamAudioEnabled(chatMessage.user_id) ? 'Mute' : 'Unmute'}}</a></li>
-                        
-                        <li><a ng-click="toggleBlock(chatMessage.user_id)">{{isBlocked(chatMessage.user_id) ? 'Unblock' : 'Block'}}</a></li>
-                        
-                        <li><a ng-click="toggleIsFriend(chatMessage.user_id)">{{isFriendsWith(chatMessage.user_id) != -1 ? 'Unfriend' : 'Friend'}}</a></li>
-                      </ul>
+                  <div ng-if="chatMessage.user_id != 'system_id'" class="message-content">
+                    <header class="message-header">
+                      <div class="dropdown">
 
-                      <!-- No dropdown if user is me -->
-                      <a ng-if="chatMessage.user_id == myID" class="user-name prim-text">{{chatMessage.name}} {{isTutor(chatMessage.user_id, currRoomChatID) ? "(tutor)" : ""}}</a>
+                        <!-- Dropdown for non-me users -->
+                        <a ng-if="chatMessage.user_id != myID" class="user-name dropdown-toggle acc-text" data-toggle="dropdown">{{chatMessage.name}} {{isTutor(chatMessage.user_id, currRoomChatID) ? "(tutor)" : ""}}</a>
+                        <ul ng-if="chatMessage.user_id != myID" class="dropdown-menu">
+                          <li><a ng-if="getRemoteStreamExists(chatMessage.user_id)" ng-click="toggleUserAudio(chatMessage.user_id)">{{getRemoteStreamAudioEnabled(chatMessage.user_id) ? 'Mute' : 'Unmute'}}</a></li>
+                          
+                          <li><a ng-click="toggleBlock(chatMessage.user_id)">{{isBlocked(chatMessage.user_id) ? 'Unblock' : 'Block'}}</a></li>
+                          
+                          <li><a ng-click="toggleIsFriend(chatMessage.user_id)">{{isFriendsWith(chatMessage.user_id) != -1 ? 'Unfriend' : 'Friend'}}</a></li>
+                        </ul>
 
-                      <button ng-if="rooms[currRoomChatID].host_id == 'mainhost' && !isPinned(chatMessage.key) && isTutor(myID, currRoomChatID)" class="btn btn-pin" ng-click="pinChatMessage(chatMessage.key, chatMessage.user_id, chatMessage.name, chatMessage.timeSent)">
-                        <span class="glyphicon glyphicon-pushpin"></span>
+                        <!-- No dropdown if user is me -->
+                        <a ng-if="chatMessage.user_id == myID" class="user-name prim-text">{{chatMessage.name}} {{isTutor(chatMessage.user_id, currRoomChatID) ? "(tutor)" : ""}}</a>
+
+                        <button ng-if="rooms[currRoomChatID].host_id == 'mainhost' && !isPinned(chatMessage.key) && isTutor(myID, currRoomChatID)" class="btn btn-pin" ng-click="pinChatMessage(chatMessage.key, chatMessage.user_id, chatMessage.name, chatMessage.timeSent)">
+                          <span class="glyphicon glyphicon-pushpin"></span>
+                        </button>
+                      </div>
+                      <span class="dateTime">{{timeAgo(chatMessage)}}</span>
+                    </header>
+                    <p class="message-body" ng-bind-html="chatMessage.text |
+                    linky:'_blank' | highlight:searchQuery"></p>
+                  </div>
+
+                  <div ng-if="chatMessage.user_id == 'system_id'">
+                    <p class="system-message">{{chatMessage.text}}</p>
+                  </div>
+                </div>
+                  
+              </div> 
+              <!-- END MESSAGE PANE -->
+
+              <!-- MESSAGE INPUT -->
+              <footer id="message-box" class="form-message-container">
+                <form class="form-message" ng-submit="sendChatMessage(chatInput)">
+                  <div class="input-group">
+                    <span class="input-group-btn">
+                      <button id="mute-button" class="btn btn-mute text-center" type="button" ng-click="toggleMic()"> 
+                        <span ng-class="muteBtnClass"></span>
                       </button>
-                    </div>
-                    <span class="dateTime">{{timeAgo(chatMessage)}}</span>
-                  </header>
-                  <p class="message-body" ng-bind-html="chatMessage.text |
-                  linky:'_blank' | highlight:searchQuery"></p>
-                </div>
+                      <button class="btn text-center btn-vid" type="button" ng-cloak ng-if="currRoomChatID" ng-hide="rooms[currRoomChatID].class_id == 'dm_class_id'" ng-click="toggleViewVideo()">
+                        <!--See Video-->
+                        <span class="glyphicon glyphicon-facetime-video"></span>
+                      </button>
+                    </span>
+                    <input maxlength="200" ng-cloak type="text" class="form-control input-message" id="chatInputBox" 
+                           ng-model="chatInput" placeholder="Type a message..."
+                           autocomplete="off" ng-keydown="keypress($event)">
+                  </div>
+                </form>
 
-                <div ng-if="chatMessage.user_id == 'system_id'">
-                  <p class="system-message">{{chatMessage.text}}</p>
+                <div ng-if="currTyping.length > 0" class="curr-typing-container">
+                  <span class="curr-typing-text grey-text"> <acc>{{currTyping[0]}}</acc> is typing ...</span>
                 </div>
-              </div>
-                
-            </div> 
-            <!-- END MESSAGE PANE -->
-
-            <!-- MESSAGE INPUT -->
-            <footer id="message-box" class="form-message-container">
-              <form class="form-message" ng-submit="sendChatMessage(chatInput)">
-                <div class="input-group">
-                  <span class="input-group-btn">
-                    <button id="mute-button" class="btn btn-mute text-center" type="button" ng-click="toggleMic()"> 
-                      <span ng-class="muteBtnClass"></span>
-                    </button>
-                    <button class="btn text-center btn-vid" type="button" ng-cloak ng-if="currRoomChatID" ng-hide="rooms[currRoomChatID].class_id == 'dm_class_id'" ng-click="toggleViewVideo()">
-                      <!--See Video-->
-                      <span class="glyphicon glyphicon-facetime-video"></span>
-                    </button>
-                  </span>
-                  <input maxlength="200" ng-cloak type="text" class="form-control input-message" id="chatInputBox" 
-                         ng-model="chatInput" placeholder="Type a message..."
-                         autocomplete="off" ng-keydown="keypress($event)">
-                </div>
-              </form>
-
-              <div ng-if="currTyping.length > 0" class="curr-typing-container">
-                <span class="curr-typing-text grey-text"> <acc>{{currTyping[0]}}</acc> is typing ...</span>
-              </div>
-            </footer> <!-- END MESSAGE INPUT -->
+              </footer> <!-- END MESSAGE INPUT -->
+            </div>
           </div>
         </main>   
 
@@ -574,6 +576,7 @@
   <!-- Angular scripts -->
   <script src="controllers/main_controller.js"></script>
   <script src="controllers/buddy_controller.js"></script>
+  <script src="controllers/chat_controller.js"></script>
 
   <!-- Other -->
   <script src="cookies.js"></script>
