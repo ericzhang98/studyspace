@@ -45,7 +45,6 @@ var roomInfoDatabase = firebaseRoot.child("RoomInfo");
 var roomMessagesDatabase = firebaseRoot.child("RoomMessages");
 var roomPinnedMessagesDatabase = firebaseRoot.child("RoomPinnedMessages");
 var userActivityDatabase = firebaseRoot.child("UserActivity");
-var botDatabase = firebaseRoot.child("Bots");
 
 var favicon = require("serve-favicon");
 app.use(favicon(__dirname + "/public/assets/images/favicon.ico"));
@@ -864,108 +863,7 @@ app.post("/update_privacy", function(req, res) {
   })
 });
 /*************************************************************************************/
-/**************************************** BOTS ***************************************/
 
-var BOT_IDS = ["gary_bot", "ord_bot"];
-var GARY_MSGS = ["That's a professionalism deduction.", "What happened to my bananas?",
-"Only handle it once.", "This isn't worth my time.", "What does 'DTF' mean?"];
-var ORD_MSGS = ["Keep it simple, students.", "Start early, start often.", 
-"If a simple boy from the midwest can do it, so can you.", "Think like a compiler."];
-var BOT_MSGS_IMMUTE = {'gary_bot' : GARY_MSGS, 'ord_bot' : ORD_MSGS};
-
-var garyMessages = [];
-var ordMessages = [];
-var botMessages = {'gary_bot' : garyMessages, 'ord_bot' : ordMessages};
-var roomBotListeners = {} // room_id + bot_id to list of listeners
-
-function getBotMessageText(bot_id, type = null) {
-
-  // we want a specific message
-  if (type == 'hello') {
-    return "Hi! My name is " + bot_id + " and I'm here to help.";
-  }
-  if (type == 'bye') {
-    return bot_id + " signing out. Happy learning!";
-  }
-
-  // get the message bank
-  var messageBank = botMessages[bot_id];
-  // if it's empty, repopulate it
-  if (messageBank.length == 0) {
-    messageBank = botMessages[bot_id] = BOT_MSGS_IMMUTE[bot_id].slice();
-  } 
-
-  // get a random message, remove it from the list, and return it
-  var index = Math.floor(Math.random() * messageBank.length);
-  var msg = messageBank[index];
-  messageBank.splice(index, 1);
-  return msg;
-}
-
-function sendBotMessage(room_id, bot_id, type = null) {
-  roomMessagesDatabase.child(room_id).push().set(new ChatMessage(bot_id, bot_id + "@email.com", 
-    getBotMessageText(bot_id, type), room_id, Date.now(), bot_id));
-}
-
-// adds a bot to a room
-app.get('/add_bot/:bot_id/:room_id', function(req, res) {
-  var bot_id = req.params.bot_id;
-  var room_id = req.params.room_id;
-
-  botDatabase.child(bot_id).child(room_id).once("value", function(snapshot) {
-    if (!snapshot.val()) {
-      // indicate that this bot is present in this room
-      botDatabase.child(bot_id).child(room_id).set(true);
-
-      // have the bot send its initial message
-      sendBotMessage(room_id, bot_id, 'hello');
-    }
-  });
-
-  res.end();
-})
-
-// removes a bot from a room
-app.get('/remove_bot/:bot_id/:room_id', function(req, res) {
-  var bot_id = req.params.bot_id;
-  var room_id = req.params.room_id;
-
-  botDatabase.child(bot_id).child(room_id).once("value", function(snapshot) {
-    if (snapshot.val()) {
-      // remove the bot
-      botDatabase.child(bot_id).child(room_id).set(false);
-
-      // send leave message
-      sendBotMessage(room_id, bot_id, 'bye');
-    }
-  })
-
-  res.end();
-})
-
-app.get('/speak/:room_id/:ramble', function (req, res) {
-  var room_id = req.params.room_id;
-  var ramble = parseInt(req.params.ramble);
-  for (i = 0; i < BOT_IDS.length; i ++) {
-    checkSendBotMessage(room_id, BOT_IDS[i], ramble);
-  }
-  res.end();
-})
-
-function checkSendBotMessage(room_id, bot_id, ramble = 0) {
-  setTimeout(function() {
-    botDatabase.child(bot_id).child(room_id).once("value", function(snapshot) {
-      if (snapshot.val()) {
-        sendBotMessage(room_id, bot_id);
-        if (ramble > 0) {
-          checkSendBotMessage(room_id, bot_id, ramble - 1);
-        }
-      }
-    })
-  }, ramble > 0 ? Math.random() * 1000 + 3000 : 0);
-}
-
-/*************************************************************************************/
 
 /* Model -----------------------------------------------------------------*/
 
@@ -1173,8 +1071,6 @@ function deleteRoom(room_id, class_id, firebase_push_id) {
   classRoomsDatabase.child(class_id).child(firebase_push_id).remove();
   //classRoomsDatabase.child(class_id).equalTo(room_id).ref.remove();
   roomMessagesDatabase.child(room_id).remove();
-  botDatabase.child('gary_bot').child(room_id).remove();
-  botDatabase.child('ord_bot').child(room_id).remove();
 }
 
 function tutorInRoom(room) {

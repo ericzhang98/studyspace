@@ -1022,42 +1022,6 @@ function($scope, $http, $timeout, $window) {
         //updateCurrTyping();
 
         safeApply();
-
-
-        for (var i = 0; i < bot_ids.length; i++) {
-
-          addBotToRoom(room_id, bot_ids[i]);
-        }
-      }
-    });
-  }
-
-  $scope.isBot = function(user_id) {
-    return bot_ids.indexOf(user_id) != -1;
-  }
-
-  function addBotToRoom(room_id, bot_id) {
-
-    botDatabase.child(bot_id).child(room_id).off();
-    botDatabase.child(bot_id).child(room_id).on("value", function(snapshot) {
-      if (snapshot) {
-
-        var hasBot = snapshot.val();
-        var index = $scope.rooms[room_id].users.indexOf(bot_id);
-
-        if (hasBot && index == -1) {
-          //console.log('adding bot with id ' + bot_id);
-          $scope.rooms[room_id].users.push(bot_id);
-        }
-
-        else if (!hasBot && index != -1) {
-          //console.log('removing bot with id ' + bot_id);
-          $scope.rooms[room_id].users.splice(index, 1);
-        }
-
-        // get room users
-        updateRoomUsers($scope.rooms[room_id]);
-        safeApply();
       }
     });
   }

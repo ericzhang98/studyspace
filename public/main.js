@@ -1,7 +1,7 @@
 /***** General variables **************************/
 var myID = getSignedCookie("user_id");
 var SONG_COMMANDS = ["/raindrop", "/destress", "/420"];
-var OTHER_COMMANDS = ["/gary", "/ord", "/stop", "/dank", "/scrub", "/nogary", "/noord", "/speak", "/ramble", "/easter"];
+var OTHER_COMMANDS = ["/stop", "/dank", "/scrub", "/easter"];
 var SONG_VOLUMES = {
 	"/raindrop" : 0.25,
 	"/destress" : 0.3,
@@ -13,7 +13,6 @@ var garyisms = ["That's a professionalism deduction.", "Don't touch the bananas,
 "Only handle it once.", "This isn't worth my time.", "What does 'DTF' mean?"];
 var ordisms = ["Keep it simple, students.", "Start early, start often.", 
 "If a simple boy from the midwest can do it, so can you.", "Think like a compiler."];
-var bot_ids = ["gary_bot", "ord_bot"];
 
 var currSongAudio = null;
 document.getElementById('join_room_audio').volume = 0.4;
@@ -107,43 +106,6 @@ function doCommand(command, currRoomChatID) {
 
 	else if (command == "/stop") {
 		stopSong();
-	}
-
-	else if (command == "/gary") {
-		var xhr = new XMLHttpRequest();
-    xhr.open('GET', "/add_bot/gary_bot/" + currRoomChatID, true); // responds with class_ids
-    xhr.send();
-	}
-
-	else if (command == "/nogary") {
-		var xhr = new XMLHttpRequest();
-    xhr.open('GET', "/remove_bot/gary_bot/" + currRoomChatID, true); // responds with class_ids
-    xhr.send();
-	}
-
-
-	else if (command == "/ord") {
-		var xhr = new XMLHttpRequest();
-    xhr.open('GET', "/add_bot/ord_bot/" + currRoomChatID, true); // responds with class_ids
-    xhr.send();
-	}
-
-	else if (command == "/noord") {
-		var xhr = new XMLHttpRequest();
-    xhr.open('GET', "/remove_bot/ord_bot/" + currRoomChatID, true); // responds with class_ids
-    xhr.send();
-	}
-
-	else if (command == "/speak") {
-		var xhr = new XMLHttpRequest();
-    xhr.open('GET', "/speak/" + currRoomChatID + '/0', true); // responds with class_ids
-    xhr.send();
-	}
-
-	else if (command == "/ramble") {
-		var xhr = new XMLHttpRequest();
-    xhr.open('GET', "/speak/" + currRoomChatID + '/4', true); // responds with class_ids
-    xhr.send();
 	}
 
 	else if (command == "/dank") {

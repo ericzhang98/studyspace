@@ -241,7 +241,7 @@
               </div>
               <div class="pinned-messages-content">
                 <div class="message" ng-repeat="chatMessage in chatPinnedMessageList">
-                  <div ng-if="chatMessage.user_id != 'system_id'" class="container-user-icon over-base-text {{isBot(chatMessage.user_id) ? 'bot-back' :chatMessage.user_id != myID ? 'acc-text' : 'prim-text'}}">
+                  <div ng-if="chatMessage.user_id != 'system_id'" class="container-user-icon over-base-text {{chatMessage.user_id != myID ? 'acc-text' : 'prim-text'}}">
                     <span>{{chatMessage.name.toUpperCase() | limitTo:1}}</span>
                   </div>
 
@@ -281,7 +281,7 @@
               <div class="message"
                 ng-repeat="chatMessage in chatMessageList"
                 ng-click="searchMode && messageClicked($event)">
-                <div ng-if="chatMessage.user_id != 'system_id'" class="container-user-icon over-base-text {{isBot(chatMessage.user_id) ? 'bot-back' :chatMessage.user_id != myID ? 'acc-back' : 'prim-back'}}">
+                <div ng-if="chatMessage.user_id != 'system_id'" class="container-user-icon over-base-text {{chatMessage.user_id != myID ? 'acc-back' : 'prim-back'}}">
                   <span>{{chatMessage.name.toUpperCase() | limitTo:1}}</span>
                 </div>
 
@@ -290,8 +290,8 @@
                     <div class="dropdown">
 
                       <!-- Dropdown for non-me users -->
-                      <a ng-if="!isBot(chatMessage.user_id) && chatMessage.user_id != myID" class="user-name dropdown-toggle acc-text" data-toggle="dropdown">{{chatMessage.name}} {{isTutor(chatMessage.user_id, currRoomChatID) ? "(tutor)" : ""}}</a>
-                      <ul ng-if="!isBot(chatMessage.user_id) && chatMessage.user_id != myID" class="dropdown-menu">
+                      <a ng-if="chatMessage.user_id != myID" class="user-name dropdown-toggle acc-text" data-toggle="dropdown">{{chatMessage.name}} {{isTutor(chatMessage.user_id, currRoomChatID) ? "(tutor)" : ""}}</a>
+                      <ul ng-if="chatMessage.user_id != myID" class="dropdown-menu">
                         <li><a ng-if="getRemoteStreamExists(chatMessage.user_id)" ng-click="toggleUserAudio(chatMessage.user_id)">{{getRemoteStreamAudioEnabled(chatMessage.user_id) ? 'Mute' : 'Unmute'}}</a></li>
                         
                         <li><a ng-click="toggleBlock(chatMessage.user_id)">{{isBlocked(chatMessage.user_id) ? 'Unblock' : 'Block'}}</a></li>
@@ -301,8 +301,6 @@
 
                       <!-- No dropdown if user is me -->
                       <a ng-if="chatMessage.user_id == myID" class="user-name prim-text">{{chatMessage.name}} {{isTutor(chatMessage.user_id, currRoomChatID) ? "(tutor)" : ""}}</a>
-
-                      <a ng-if="isBot(chatMessage.user_id)" class="user-name bot-text">{{chatMessage.name}}</a>
 
                       <button ng-if="rooms[currRoomChatID].host_id == 'mainhost' && !isPinned(chatMessage.key) && isTutor(myID, currRoomChatID)" class="btn btn-pin" ng-click="pinChatMessage(chatMessage.key, chatMessage.user_id, chatMessage.name, chatMessage.timeSent)">
                         <span class="glyphicon glyphicon-pushpin"></span>
@@ -367,7 +365,7 @@
                     <span ng-cloak>{{users[user_id].name.toUpperCase() | limitTo:1}}</span>
                   </div>
 
-                  <div ng-if="user_id != myID" class="container-user-icon-small {{volumes[user_id].loud ? 'loud-acc' : ''}} over-base-text {{isBot(user_id) ? 'bot-back' : getRemoteStreamAudioEnabled(user_id) ? 'acc-back' : 'base-back'}}">
+                  <div ng-if="user_id != myID" class="container-user-icon-small {{volumes[user_id].loud ? 'loud-acc' : ''}} over-base-text {{getRemoteStreamAudioEnabled(user_id) ? 'acc-back' : 'base-back'}}">
                     <span ng-cloak>{{users[user_id].name.toUpperCase() | limitTo:1}}</span>
                   </div>
                   
