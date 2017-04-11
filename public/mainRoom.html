@@ -272,9 +272,8 @@
             </div>
 
             <!-- MESSAGE PANE -->
-            <div ng-controller="ChatController">
               <div id="chat-message-pane" class="message-pane" scroll
-                scroll-event="scrollevent">
+                scroll-event="scrollevent" ng-controller="ChatController">
                 <div id="loading-messages" hidden> 
                   <div class="blob blob-0"></div><div class="blob blob-1"></div>
                   <div class="blob blob-2"></div><div class="blob blob-3"></div>
@@ -390,7 +389,6 @@
 
               </div>
 
-            </div>
           
 
 

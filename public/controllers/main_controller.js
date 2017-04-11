@@ -896,18 +896,6 @@ function($scope, $rootScope, $http, $timeout, $window) {
 
 }]);
 
-//helper directive for scrolling listener
-myApp.directive("scroll", ["$window", function ($window) {
-  return {
-    scope: {
-      scrollEvent: '&'
-    },
-    link : function(scope, element, attrs) {
-      $("#"+attrs.id).scroll(function($e) { scope.scrollEvent != null ?  scope.scrollEvent()($e) : null })
-    }
-  }
-}]);
-
 //highlight filter 
 myApp.filter('highlight', ["$sce", function($sce) {
   return function(text, phrase) {
