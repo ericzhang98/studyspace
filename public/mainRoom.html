@@ -156,42 +156,44 @@
 
 
           <!-- BUDDIES -->
-          <div class="container-menu-classes">
-            <button id="button-add-buddy" class="btn container-title" ng-click="openBuddyRequest()" >
-              <span class="title">Buddies</span>
-              <span class="glyphicon glyphicon-plus"></span>
-            </button>
-          </div>
+          <div ng-controller="BuddyController">
+            <div class="container-menu-classes">
+              <button id="button-add-buddy" class="btn container-title" ng-click="openBuddyRequest()" >
+                <span class="title">Buddies</span>
+                <span class="glyphicon glyphicon-plus"></span>
+              </button>
+            </div>
 
-          <div ng-repeat="buddy_requests in buddies_list">
-            <li style="border: none" class="list-group-item buddy-req-panel base-back acc-text">
-              <span ng-cloak class="room-name">
-                {{buddy_requests.sent_from_name}}
-              </span>
-              <div class="pull-right">
-                <button class="btn bud-req-button prim-back" ng-click="acceptBuddy(buddy_requests)">+</button>
-                <button class="btn bud-req-button acc-back" ng-click="rejectBuddyRequest(buddy_requests._id)">x</button>
-              </div>
-            </li>
-          </div>
+            <div ng-repeat="buddy_requests in buddies_list">
+              <li style="border: none" class="list-group-item buddy-req-panel base-back acc-text">
+                <span ng-cloak class="room-name">
+                  {{buddy_requests.sent_from_name}}
+                </span>
+                <div class="pull-right">
+                  <button class="btn bud-req-button prim-back" ng-click="acceptBuddy(buddy_requests)">+</button>
+                  <button class="btn bud-req-button acc-back" ng-click="rejectBuddyRequest(buddy_requests._id)">x</button>
+                </div>
+              </li>
+            </div>
 
-          <!-- CURRENT FRIENDS -->
-          <div>
-            <li class="list-group-item buddy-panel {{ messageNotifications[buddy.user_two_id] > 0 ? 'acc-text base-back bold-text' : 'over-base-text ' + (currRoomChatID == getDMID(buddy.user_two_id) ? 'prim-back' : 'base-back')}}" ng-repeat="buddy in added_buddies_list" ng-click="openDM(buddy.user_two_id, buddy.user_two_name)">
+            <!-- CURRENT FRIENDS -->
+            <div>
+              <li class="list-group-item buddy-panel {{ messageNotifications[buddy.user_two_id] > 0 ? 'acc-text base-back bold-text' : 'over-base-text ' + (currRoomChatID == getDMID(buddy.user_two_id) ? 'prim-back' : 'base-back')}}" ng-repeat="buddy in added_buddies_list" ng-click="openDM(buddy.user_two_id, buddy.user_two_name)">
 
-              <span class="{{buddies_status[buddy.user_two_id] ? (currRoomChatID == getDMID(buddy.user_two_id) ? 'white-text' : 'online-text') : 'invis-text'}}"
-                style="text-align: center; vertical-align: middle">◕</span>
-              <span ng-cloak class="room-name">
-                {{buddy.user_two_name}} 
-                <span ng-if="messageNotifications[buddy.user_two_id] > 0">| {{messageNotifications[buddy.user_two_id]}}</span>
-                <span ng-if="isDank() && buddies_status[buddy.user_two_id]" style="float:right;">༼つ◕_◕༽つ</span>
-                <span ng-if="isDank() && !buddies_status[buddy.user_two_id]" style="float:right;">¯\_(ツ)_/¯</span>
-              </span>
-            </li>
-          </div>
+                <span class="{{buddies_status[buddy.user_two_id] ? (currRoomChatID == getDMID(buddy.user_two_id) ? 'white-text' : 'online-text') : 'invis-text'}}"
+                  style="text-align: center; vertical-align: middle">◕</span>
+                <span ng-cloak class="room-name">
+                  {{buddy.user_two_name}} 
+                  <span ng-if="messageNotifications[buddy.user_two_id] > 0">| {{messageNotifications[buddy.user_two_id]}}</span>
+                  <span ng-if="isDank() && buddies_status[buddy.user_two_id]" style="float:right;">༼つ◕_◕༽つ</span>
+                  <span ng-if="isDank() && !buddies_status[buddy.user_two_id]" style="float:right;">¯\_(ツ)_/¯</span>
+                </span>
+              </li>
+            </div>
 
-          <div class="white-text" ng-if="!added_buddies_list || added_buddies_list.length == 0" ng-cloak> 
-            <span style="margin-left: 1.5rem; font-size: 1rem; color: #888888">You don't have any buddies... yet.</span>
+            <div class="white-text" ng-if="!added_buddies_list || added_buddies_list.length == 0" ng-cloak> 
+              <span style="margin-left: 1.5rem; font-size: 1rem; color: #888888">You don't have any buddies... yet.</span>
+            </div>
           </div>
 
               
@@ -571,6 +573,7 @@
 
   <!-- Angular scripts -->
   <script src="controllers/main_controller.js"></script>
+  <script src="controllers/buddy_controller.js"></script>
 
   <!-- Other -->
   <script src="cookies.js"></script>
