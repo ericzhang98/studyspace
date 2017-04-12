@@ -1,4 +1,4 @@
-myApp.controller("ChatController", ["$scope", "$rootScope", "$http", "$timeout", "$window",
+myApp.controller("RoomController", ["$scope", "$rootScope", "$http", "$timeout", "$window",
 function($scope, $rootScope, $http, $timeout, $window) {
 /*-------------------------------------------------------------------*/
   /****************************** CHAT ROOM ****************************/
@@ -22,13 +22,16 @@ function($scope, $rootScope, $http, $timeout, $window) {
   /*whiteboard*/
   var whiteboard = document.getElementById("whiteboard");
   var whiteboardContainer = document.getElementById("whiteboard-container");
+
   $scope.toggleWhiteboard = function() {
+    
     if ($scope.showWhiteboard) {
       $scope.showWhiteboard = false;
       console.log("hide");
       whiteboard.setAttribute("src", "whiteboard.html#" + $rootScope.currRoomCallID);
       whiteboardContainer.setAttribute("hidden", null);
     }
+
     else {
       $scope.showWhiteboard = true;
       whiteboard.setAttribute("src", "whiteboard.html#" + $rootScope.currRoomCallID);
@@ -296,9 +299,9 @@ function($scope, $rootScope, $http, $timeout, $window) {
 
   function updateCurrTyping() {
     for (var i = currTyping.length-1; i >= 0; i--) {
-      ////console.log($scope.rooms[$rootScope.currRoomChatID]);
+      ////console.log($rootScope.rooms[$rootScope.currRoomChatID]);
       /*
-      if (!$scope.rooms[$rootScope.currRoomChatID].users.includes(currTyping[i])) {
+      if (!$rootScope.rooms[$rootScope.currRoomChatID].users.includes(currTyping[i])) {
         currTyping.splice(i,1);
       }
       */
@@ -306,9 +309,9 @@ function($scope, $rootScope, $http, $timeout, $window) {
     var names = []
     for (var i = 0; i < currTyping.length; i++) {
       if (currTyping[i] != myID) {
-        //console.log($scope.users[currTyping[i]]); //if breaking, tell Eric (joinRoom after user info pull)
-        if ($scope.users[currTyping[i]]) {
-         names.push($scope.users[currTyping[i]].name);
+        //console.log($rootScope.users[currTyping[i]]); //if breaking, tell Eric (joinRoom after user info pull)
+        if ($rootScope.users[currTyping[i]]) {
+         names.push($rootScope.users[currTyping[i]].name);
         }
       }
     }
@@ -326,8 +329,8 @@ function($scope, $rootScope, $http, $timeout, $window) {
       // Create the message and pass it on to the server
       var newChatMessage = {text: chatInput, roomID: $rootScope.currRoomChatID, timeSent: Date.now()};
       //adjust newChatMessage with whether or not it's a DM
-      if ($scope.rooms[$rootScope.currRoomChatID].other_user_id) {
-        newChatMessage.other_user_id = $scope.rooms[$rootScope.currRoomChatID].other_user_id;
+      if ($rootScope.rooms[$rootScope.currRoomChatID].other_user_id) {
+        newChatMessage.other_user_id = $rootScope.rooms[$rootScope.currRoomChatID].other_user_id;
       }
       $http.post("/send_room_message", newChatMessage).then(scrollDown);
     }
@@ -561,12 +564,12 @@ function($scope, $rootScope, $http, $timeout, $window) {
 }]);
 
 myApp.directive("scroll", ["$window", function ($window) {
-   return {
-     scope: {
-       scrollEvent: '&'
-     },
-     link : function(scope, element, attrs) {
-       $("#"+attrs.id).scroll(function($e) { scope.scrollEvent != null ?  scope.scrollEvent()($e) : null })
-     }
-   }
- }]);
+  return {
+    scope: {
+      scrollEvent: '&'
+    },
+    link : function(scope, element, attrs) {
+      $("#"+attrs.id).scroll(function($e) { scope.scrollEvent != null ?  scope.scrollEvent()($e) : null })
+    }
+  }
+}]);

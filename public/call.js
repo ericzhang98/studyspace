@@ -305,8 +305,8 @@ function addRemoteStream(remoteStream, user_id) {
 
   // store the element in myRemoteStreams
   //myRemoteStreams[user_id] = media;
-  angular.element(document.getElementById('myBody')).scope().userStreamSources[user_id] = window.URL.createObjectURL(remoteStream);
-  angular.element(document.getElementById('myBody')).scope().$apply();
+  angular.element(document.getElementById('video-layer')).scope().userStreamSources[user_id] = window.URL.createObjectURL(remoteStream);
+  angular.element(document.getElementById('video-layer')).scope().$apply();
 
   // if I am the lecturer, I want everyone else muted by default
   if (isLecturer) {

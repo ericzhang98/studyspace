@@ -14,8 +14,24 @@ var USER_PING_PERIOD = 10*1000;
 // initializing rootScope variables
 // rootScope variables are used by multiple controllers
 myApp.run(function($rootScope) {
+
+  // 
   $rootScope.currRoomCallID = null;
   $rootScope.currRoomChatID = null;
+  $rootScope.classes = {}      // class_id : class, grabbed on initial load
+  $rootScope.rooms = {}        // room_id : room, listened to after grabbing classes
+  $rootScope.users = {}        // user_id : user, info added as u join rooms
+  $rootScope.my_class_ids = [];
+
+  // broadcast methods
+  // calls joinRoomChat in ChatController
+  $rootScope.joinRoomChat = function(room_id) {
+    $rootScope.$broadcast('joinRoomChat', {room_id : room_id});
+  }
+
+  $rootScope.toggleViewVideo = function() {
+    $rootScope.$broadcast('toggleViewVideo');
+  }
 
   // Safely apply UI changes
   $rootScope.safeApply = function(scope, func) {
@@ -71,23 +87,7 @@ function($scope, $rootScope, $http, $timeout, $window) {
     window.onbeforeunload = null;
     window.location.href = "/";
   }
-  
-  $scope.manageAccount = function() {
-    window.location.href = "/courses";
-  }
-
   /*********************************************************************/
-
-  $scope.toggleDropdown = function(user_id) {
-    $("#" + user_id + "_dropdown").click(function(e){
-      e.stopPropagation();
-    });
-
-    $("#" + user_id + "_dropdown").show();
-
-    /* Clicks within the dropdown won't make
-       it past the dropdown itself */
-  }
 
   /*-------------------------------------------------------------------*/
   /***************************** CLASSES BAR ***************************/
@@ -96,13 +96,8 @@ function($scope, $rootScope, $http, $timeout, $window) {
   /******************************* SETUP ******************************/
 
   // Scope variables
-  $scope.my_class_ids = [];
-  $scope.classes = {}      // class_id : class, grabbed on initial load
-  $scope.class_rooms = {}  // class_id : list of room_ids
-  $scope.rooms = {}        // room_id : room, listened to after grabbing classes
-  $scope.users = {}        // user_id : user, info added as u join rooms
-  $scope.muted_user_ids = [];
-  $scope.volumes = {"ayy" : "lmao"};      // user_id : int (volume coming from them);
+    $scope.class_rooms = {}  // class_id : list of room_ids
+    $scope.volumes = {};      // user_id : int (volume coming from them);
 
   // Initial call to pull data for user / classes / rooms
   getClasses();
@@ -116,13 +111,7 @@ function($scope, $rootScope, $http, $timeout, $window) {
   /*********************************************************************/
   /*************************** ROOM INTERACTION ************************/
 
-
-  // broadcast methods
-  $scope.joinRoomChat = function(room_id) {
-    $rootScope.$broadcast('joinRoomChat', {room_id : room_id});
-  }
-
-  $scope.createRoom = function(class_id) {
+  $scope.openCreateRoomModal = function(class_id) {
     //console.log('create room');
     creationClassID = class_id;
     $("#modal-create-room").fadeIn(100);
@@ -132,63 +121,6 @@ function($scope, $rootScope, $http, $timeout, $window) {
     }, 100);
   }
 
-  // Reads input from create-room-modal, creates room, and joins room
-  $scope.addRoom = function() {
-
-    // Grab modal values
-    var class_id = creationClassID;
-
-    // style choice: all room names be lower case only
-    var room_name = (document.getElementById('room_name').value).toLowerCase();
-    var is_lecture = document.getElementById('lecture-checkbox').checked;
-    var time_created = Date.now();
-
-    // if class_id is null do nothing
-    if (class_id == null) {
-      //console.log("no class selected");
-      // TODO: error message
-      return;
-    }
-
-    // if room_name is empty do nothing
-    if (room_name.length == 0) {
-      //console.log("room name must be between 1 and 28 characters");
-      // TODO: error message
-      return;
-    }
-
-    // Close the modal
-    closeModal("#modal-create-room", "#create-room");
-
-    // Send out addRoom request
-    //console.log("adding room with class_id: " + class_id + ", room_name: " + room_name);
-    var xhr = new XMLHttpRequest();
-    xhr.open('GET', "/add_room/" + class_id + "/" + 
-             room_name + "/" + is_lecture + "/" + time_created + "/" + $scope.myName, true);
-    xhr.send();
-
-    // Once room has been created
-    xhr.onreadystatechange = function(e) {
-      // room has been created
-      if (xhr.readyState == 4 && xhr.status == 200) {
-        var response = JSON.parse(xhr.responseText);
-
-        if (response.error) {
-          //console.log(response.error);
-          return;
-        }
-
-        if (response.room_id) {
-
-          // join the room
-          $scope.joinRoom(response.room_id, response.class_id);
-        }
-      }
-    }
-  }
-
-  // OnClick method that delegates to joinRoomCall and $scope.joinRoomChat
-  // room_name is passed in when we create the room (room info not yet pulled)
   $scope.joinRoom = function(room_id, class_id) {
 
     // if we're not already in this room's call
@@ -208,10 +140,25 @@ function($scope, $rootScope, $http, $timeout, $window) {
     }
 
     // join this room's chat
-    $scope.joinRoomChat(room_id);
+    $rootScope.joinRoomChat(room_id);
     //$rootScope.$broadcast('joinRoomChat', {room_id : room_id});
-
   };
+
+  $scope.leaveRoom = function() {
+    
+    // leave room case
+    if ($rootScope.rooms[$rootScope.currRoomChatID].class_id != 'dm_class_id') {
+
+      leaveRoom($rootScope.currRoomCallID);
+      $rootScope.currRoomCallID = null;
+      $rootScope.joinRoomChat(null); //leave chat room
+    }
+
+    // close dm case
+    else {
+      $rootScope.joinRoomChat($rootScope.currRoomCallID); // join or leave chat room
+    }
+  }
 
   // set listener that updates the volumes dict
   $scope.setVolumeListener = function(user_id, stream) {
@@ -240,18 +187,6 @@ function($scope, $rootScope, $http, $timeout, $window) {
       // long interval for updating the UI
       $scope.volumes[user_id] = soundMeter;
     });
-  }
-
-  $scope.leaveRoom = function() {
-
-    leaveRoom($rootScope.currRoomCallID);
-    $rootScope.currRoomCallID = null;
-
-    $scope.joinRoomChat(null); //leave chat room
-  }
-
-  $scope.leaveDM = function() {
-    $scope.joinRoomChat($rootScope.currRoomCallID); //join or leave chat room
   }
 
   $window.onbeforeunload = function() {
@@ -288,11 +223,11 @@ function($scope, $rootScope, $http, $timeout, $window) {
     $myGroup.find('.collapse.in').collapse('hide');
   });
 
+  // Expands sidebar panel for given class
   function adjustSidebarToggle(class_id) {
-    $scope.my_class_ids.forEach(function(my_class_id) {
+    $rootScope.my_class_ids.forEach(function(my_class_id) {
 
       if (my_class_id == class_id && $("#" + my_class_id).is(":hidden")) {
-        ////console.log("class with id " + my_class_id + " being set to visible");
         $('#' + my_class_id).collapse('toggle');
       }
     });
@@ -300,15 +235,6 @@ function($scope, $rootScope, $http, $timeout, $window) {
 
   // onclick method that will toggles the user audio of the given user_id
   $scope.toggleUserAudio = function(user_id) {
-  	// update muted_user_ids, which we use in the html to
-  	// determine whether to display 'mute' or 'unmute'
-    var index = $scope.muted_user_ids.indexOf(user_id);
-    if (index != -1) {
-    	$scope.muted_user_ids.splice(index, 1);
-    } 
-    else {
-    	$scope.muted_user_ids.push(user_id);
-    }
     toggleRemoteStreamAudioEnabled(user_id);
   };
 
@@ -319,14 +245,7 @@ function($scope, $rootScope, $http, $timeout, $window) {
 
   // - is this person muted?
   $scope.getRemoteStreamAudioEnabled = function(user_id) {
-    //if (myRemoteStreams[user_id]) {
-      //return !myRemoteStreams[user_id].muted;
-      return document.getElementById(user_id + "_video") && !document.getElementById(user_id + "_video").muted;
-    //} 
-  }
-  
-  $scope.classmateDropdown = function() {
-    $('.dropdown-toggle').dropdown('toggle');
+    return document.getElementById(user_id + "_video") && !document.getElementById(user_id + "_video").muted;
   }
   
   $('.item').click(function(e){
@@ -350,14 +269,14 @@ function($scope, $rootScope, $http, $timeout, $window) {
 
         // Set this scope variable (used in create room)
         if (response.class_ids) {
-          $scope.my_class_ids = response.class_ids;
+          $rootScope.my_class_ids = response.class_ids;
         }
 
-        $scope.my_class_ids.push('lounge_id');
+        $rootScope.my_class_ids.push('lounge_id');
 
         // Get more data
-        for (i = 0; i < $scope.my_class_ids.length; i++) {
-          getClass($scope.my_class_ids[i]);
+        for (i = 0; i < $rootScope.my_class_ids.length; i++) {
+          getClass($rootScope.my_class_ids[i]);
         }
       }
     }
@@ -381,7 +300,7 @@ function($scope, $rootScope, $http, $timeout, $window) {
         response.name = response.name.toLowerCase();
         response.rooms_with_tutors = [];
 
-        $scope.classes[class_id] = response;
+        $rootScope.classes[class_id] = response;
 
         // update UI
         $rootScope.safeApply($scope);
@@ -449,17 +368,17 @@ function($scope, $rootScope, $http, $timeout, $window) {
         }
 
         // update the room
-        $scope.rooms[room_id] = new Room(room_id, room.name, room.host_id, room.class_id, 
+        $rootScope.rooms[room_id] = new Room(room_id, room.name, room.host_id, room.class_id, 
                                          room.is_lecture, roomUniqueUsers, room.host_name ? room.host_name : "Unknown host");
 
         // are there tutors in here?
-        detectTutors($scope.rooms[room_id]);
+        detectTutors($rootScope.rooms[room_id]);
 
         // how many people are studying for this class now?
-        setNumUsers($scope.rooms[room_id].class_id);
+        setNumUsers($rootScope.rooms[room_id].class_id);
 
         // get room users
-        updateRoomUsers($scope.rooms[room_id]);
+        updateRoomUsers($rootScope.rooms[room_id]);
 
         // update currTyping ppl
         //updateCurrTyping();
@@ -473,15 +392,15 @@ function($scope, $rootScope, $http, $timeout, $window) {
   // Set the number of total users studying for a class at the moment
   function setNumUsers(class_id) {
     ////console.log("setting num users for " + class_id);
-    $scope.classes[class_id].num_users = 0;
+    $rootScope.classes[class_id].num_users = 0;
 
     for (i = 0; i < $scope.class_rooms[class_id].length; i++) {
-      var room = $scope.rooms[$scope.class_rooms[class_id][i]];
+      var room = $rootScope.rooms[$scope.class_rooms[class_id][i]];
 
       // if there are users in this room
       if (room && room.users) {
         // add them to the number of users in this class
-        $scope.classes[class_id].num_users += room.users.length;
+        $rootScope.classes[class_id].num_users += room.users.length;
       }
     }
   }
@@ -490,7 +409,7 @@ function($scope, $rootScope, $http, $timeout, $window) {
   // update rooms and classes accordingly
   function detectTutors(room) {
 
-    var tutor_ids = $scope.classes[room.class_id].tutor_ids;
+    var tutor_ids = $rootScope.classes[room.class_id].tutor_ids;
 
     // if this class has tutors
     if (tutor_ids && room.users) {
@@ -505,37 +424,31 @@ function($scope, $rootScope, $http, $timeout, $window) {
       }
 
       room.has_tutor = has_tutor;
-      var r_index = $scope.classes[room.class_id].rooms_with_tutors.indexOf(room.room_id);
+      var r_index = $rootScope.classes[room.class_id].rooms_with_tutors.indexOf(room.room_id);
 
       // if we weren't a tutor room before and we are now
       if (r_index == -1 && room.has_tutor) {
-        $scope.classes[room.class_id].rooms_with_tutors.push(room.room_id);
+        $rootScope.classes[room.class_id].rooms_with_tutors.push(room.room_id);
       }
 
       // if we used to be a tutor room and we aren't anymore
       else if (r_index != -1 && !room.has_tutor) {
-        $scope.classes[room.class_id].rooms_with_tutors.splice(r_index, 1);
+        $rootScope.classes[room.class_id].rooms_with_tutors.splice(r_index, 1);
       }
     }
   }
-
-  $scope.isTutor = function(user_id, room_chat_id) {
-    return $scope.classes[$scope.rooms[room_chat_id].class_id].tutor_ids &&
-    $scope.classes[$scope.rooms[room_chat_id].class_id].tutor_ids.indexOf(user_id) != -1;
-  }
-
 
   // getting the list of users in this room
   function updateRoomUsers(room, callback) {
     ////console.log("this is a room " + room);
     if (room) {
       ////console.log("getting new list of users for room: " + room.room_id);
-      ////console.log($scope.rooms);
+      ////console.log($rootScope.rooms);
       for (var i = 0; i < room.users.length; i++) {
-        if (!(room.users[i] in $scope.users)) {
+        if (!(room.users[i] in $rootScope.users)) {
           var id = room.users[i];
           $http.get('/get_user/' + room.users[i]).then(function(response) {
-            $scope.users[response.data.user_id] = response.data;
+            $rootScope.users[response.data.user_id] = response.data;
             //console.log("user info pulled: " + response.data.name + " " + response.data.user_id);
             if (callback){callback();}
           });
@@ -545,6 +458,11 @@ function($scope, $rootScope, $http, $timeout, $window) {
   }
 
   /*********************************************************************/
+
+  $scope.isTutor = function(user_id, room_chat_id) {
+    return $rootScope.classes[$rootScope.rooms[room_chat_id].class_id].tutor_ids &&
+    $rootScope.classes[$rootScope.rooms[room_chat_id].class_id].tutor_ids.indexOf(user_id) != -1;
+  }
 
   /*********************************************************************/
   /**************************** BLOCK SYSTEM ***************************/
@@ -624,41 +542,6 @@ function($scope, $rootScope, $http, $timeout, $window) {
     });
   }
 
-  /** VIDEO LUL *************************************/
-  $scope.viewVideo = false;
-  $scope.userStreamSources = {};
-
-  $scope.toggleViewVideo = function() {
-    $scope.viewVideo = !$scope.viewVideo;
-
-    // if we closed video, turn my video off
-    if (!$scope.viewVideo) {
-      setMyStreamVideoEnabled(false, false);
-    }
-
-    // if we opened video and we were showing before, turn my video off
-    if ($scope.viewVideo && showVideo) {
-      setMyStreamVideoEnabled(true);
-    }
-  }
-
-  $scope.setMyStreamVideoEnabled = function(enabled, direct) {
-    if (direct == undefined) {
-      direct = true;
-    }
-    setMyStreamVideoEnabled(enabled, direct);
-  }
-
-  $scope.getVideoEnabled = function(user_id) {
-    if (user_id == undefined) {
-      user_id = myID;
-    }
-    if (user_id == myID) {
-      return myStream && myStream.getVideoTracks()[0].enabled;
-    }
-    //return $scope.userStreams[user_id] && $scope.userStreams[user_id].getVideoTracks()[0].enabled;
-  }
-
   /******************ADD CLASS MODAL************************************/
 
   var allClassesNameToID = null;
@@ -669,10 +552,10 @@ function($scope, $rootScope, $http, $timeout, $window) {
     //deep copy so we won't copy over temp changes, also has an extra lounge_id
 
 
-    temp_class_ids = $scope.my_class_ids.slice();
+    temp_class_ids = $rootScope.my_class_ids.slice();
     temp_class_ids.splice(temp_class_ids.indexOf('lounge_id'), 1);
 
-    //console.log('LUL ' + $scope.my_class_ids);
+    //console.log('LUL ' + $rootScope.my_class_ids);
     //console.log('LUL ' + temp_class_ids);
 
     //grab all classes if they weren't pulled before
@@ -756,20 +639,20 @@ function($scope, $rootScope, $http, $timeout, $window) {
   function updateLocalClasses(updated_class_ids) {
     //console.log("UPDATING LOCAL CLASSES")
     updated_class_ids = updated_class_ids.concat(['lounge_id']);
-    //console.log('LUL2 ' + $scope.my_class_ids);
+    //console.log('LUL2 ' + $rootScope.my_class_ids);
     //console.log('LUL2 ' + updated_class_ids);
     var noChange = true;
     updated_class_ids.forEach(function(class_id) {
       // for classes I've added
-      if ($scope.my_class_ids.indexOf(class_id) == -1) {
+      if ($rootScope.my_class_ids.indexOf(class_id) == -1) {
         getClass(class_id);
         noChange = false;
       }
     });
 
-    noChange = noChange && $scope.my_class_ids.length == updated_class_ids.length; 
+    noChange = noChange && $rootScope.my_class_ids.length == updated_class_ids.length; 
 
-    $scope.my_class_ids = updated_class_ids;
+    $rootScope.my_class_ids = updated_class_ids;
     $rootScope.safeApply($scope);
 
     if (!noChange) {

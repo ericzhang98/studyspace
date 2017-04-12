@@ -1,73 +1,57 @@
-// create_room_controller.js will be a front-end javascript that runs on the create room modal
+myApp.controller("CreateRoomController", function($scope, $rootScope, $http) {
 
-// used for log messages
-var LOG = "create_room_controller: "
+  // Reads input from create-room-modal, creates room, and joins room
+  $scope.createRoom = function() {
 
-// defining the controller
-angular.module('createRoomApp', []).controller('CreateRoomCtrl', ['$scope', '$http', function($scope, $http) {
-  //console.log(LOG + "started");
+    // Grab modal values
+    var class_id = creationClassID;
 
-  $scope.submitAddRoom = function(){}
+    // style choice: all room names be lower case only
+    var room_name = (document.getElementById('room_name').value).toLowerCase();
+    var is_lecture = document.getElementById('lecture-checkbox').checked;
+    var time_created = Date.now();
 
-  // - verifyLogin looks for a user with specified info and
-  // - calls onResponseReceived when it gets a response
-  var verifyLogin = function(loginAttempt, onResponseReceived) {
-    //console.log(LOG + "verifyLogin");
-    $http.post('/accountlogin', loginAttempt).then(function onSuccess(response) {
-      onResponseReceived(response.data);
-    })
-  }
+    // if class_id is null do nothing
+    if (class_id == null) {
+      //console.log("no class selected");
+      // TODO: error message
+      return;
+    }
 
-  // - attempts to login
-  $scope.attemptLogin = function(email, password) {
-    //console.log(LOG + "attemptLogin");
-    var loginAttempt = {email: email, password: Sha1.hash(password)};
+    // if room_name is empty do nothing
+    if (room_name.length == 0) {
+      //console.log("room name must be between 1 and 28 characters");
+      // TODO: error message
+      return;
+    }
 
-    // valid login info
-    if (validLoginInfo(loginAttempt)) {
+    // Close the modal
+    closeModal("#modal-create-room", "#create-room");
 
-      // verify email / password
-      verifyLogin(loginAttempt, function(user) {
+    // Send out addRoom request
+    //console.log("adding room with class_id: " + class_id + ", room_name: " + room_name);
+    var xhr = new XMLHttpRequest();
+    xhr.open('GET', "/add_room/" + class_id + "/" + 
+             room_name + "/" + is_lecture + "/" + time_created + "/" + $scope.myName, true);
+    xhr.send();
 
-        // login returned a user
-        // check if user activated account or not
-        if (user != null) {
-          if (user.active) {
-            //console.log(LOG + "login succeeded");
-            document.location.href = "/";
-          }
-          else {
-            //console.log(LOG + "need to verify account, verify email");
-          }
+    // Once room has been created
+    xhr.onreadystatechange = function(e) {
+      // room has been created
+      if (xhr.readyState == 4 && xhr.status == 200) {
+        var response = JSON.parse(xhr.responseText);
+
+        if (response.error) {
+          //console.log(response.error);
+          return;
         }
 
-        // login failed 
-        else {
-          //console.log(LOG + "login failed, user info incorrect");
+        if (response.room_id) {
+
+          // join the room
+          $scope.joinRoom(response.room_id, response.class_id);
         }
-      });
-    } 
-
-    // invalid login info
-    else {
-      //console.log(LOG + "login failed, user info invalid");
+      }
     }
   }
-
-  // returns true if user / email / password fields are properly set
-  var validLoginInfo = function(user) {
-    if (user == null) {
-      return false;
-    }
-    if (user.email == null || user.password == null) {
-      return false;
-    }
-    if (user.email == "" || user.password == "") {
-      return false;
-    }
-    return true;
-  }
-
-}]);
-}
-/*----------------------------------------------------------------------------*/
+})

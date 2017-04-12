@@ -224,11 +224,11 @@ myApp.controller("BuddyController", function($scope, $rootScope, $http) {
     //console.log("entering dm room with id: " + dm_room_id);
 
     // set up dummy class/room
-    $scope.classes["dm_class_id"] = {
+    $rootScope.classes["dm_class_id"] = {
       "name" : ""
     }
 
-    $scope.rooms[dm_room_id] = {
+    $rootScope.rooms[dm_room_id] = {
       "name" : other_user_name,
       "class_id" : "dm_class_id",
       "other_user_id" : other_user_id
@@ -236,11 +236,10 @@ myApp.controller("BuddyController", function($scope, $rootScope, $http) {
 
     //get other user info
     $http.get('/get_user/' + other_user_id).then(function(response) {
-      $scope.users[response.data.user_id] = response.data;
+      $rootScope.users[response.data.user_id] = response.data;
       //console.log("user info pulled: " + response.data.name + " " + response.data.user_id);
       // join the chat needs to be on callback b/c of currTyping
-      //$scope.joinRoomChat(dm_room_id);
-      $rootScope.$broadcast('joinRoomChat', {room_id : dm_room_id});
+      $rootScope.joinRoomChat(dm_room_id);
     });
 
     $http.get("/clear_message_notifications/" + other_user_id);
