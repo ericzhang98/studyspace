@@ -272,8 +272,9 @@
             </div>
 
             <!-- MESSAGE PANE -->
+            <div ng-controller="ChatController" style="height:calc(100% - 5rem)">
               <div id="chat-message-pane" class="message-pane" scroll
-                scroll-event="scrollevent" ng-controller="ChatController">
+                scroll-event="scrollevent">
                 <div id="loading-messages" hidden> 
                   <div class="blob blob-0"></div><div class="blob blob-1"></div>
                   <div class="blob blob-2"></div><div class="blob blob-3"></div>

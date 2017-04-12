@@ -98,7 +98,7 @@ html, body {
 
 .message-pane {
   position: relative;
-  height: calc(100% - 5rem);
+  height: 100%;
   background-color: var(--base-two-color);
   overflow-x: hidden;
   border-style: hidden;

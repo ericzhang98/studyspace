@@ -559,3 +559,14 @@ function($scope, $rootScope, $http, $timeout, $window) {
   }
 
 }]);
+
+myApp.directive("scroll", ["$window", function ($window) {
+   return {
+     scope: {
+       scrollEvent: '&'
+     },
+     link : function(scope, element, attrs) {
+       $("#"+attrs.id).scroll(function($e) { scope.scrollEvent != null ?  scope.scrollEvent()($e) : null })
+     }
+   }
+ }]);
