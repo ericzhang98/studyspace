@@ -71,14 +71,20 @@ app.use(bodyParser.json());
 app.use(cookieParser("raindropdroptop")); //secret key
 /*-----------------------------------------------------------------------*/
 
-var MAIN_HOST = "mainhost";
-var ADMIN_KEY = "ABCD"
-var PUBLIC_DIR = __dirname + "/public/";
+//Globals
+//var MAIN_HOST = "mainhost";
+//var ADMIN_KEY = "ABCD"
+//var PUBLIC_DIR = __dirname + "/public/";
 var VIEW_DIR = __dirname + "/public/";
 var COOKIE_TIME = 7*24*60*60*1000; //one week
-var MAX_IDLE = 10*1000;
-var BUFFER_TIME = 20*1000;
+//var MAX_IDLE = 10*1000;
+//var BUFFER_TIME = 20*1000;
 var USER_IDLE = 30*1000;
+
+
+//Studyspace modules
+var test = require("./test.js");
+var roomManager = require("./room.js");
 
 /* HTTP requests ---------------------------------------------------------*/
 
@@ -335,6 +341,10 @@ app.get('/user_classes', function(req, res) {
 });
 
 /*************************************************************************************/
+
+
+
+
 /******************************** GET CLASSES & ROOMS ********************************/
 
 // return the class_ids of classes this user is enrolled in
@@ -390,10 +400,8 @@ app.get('/add_room/:class_id/:room_name/:is_lecture/:time_created/:host_name', f
 
   // error checking
   db.classes.findOne({class_id: class_id}, function (err, doc) {
-
     // if class with class_id exists
     if (doc) {
-
       // if host is a non-tutor attempting to host a lecture
       if (is_lecture && (!doc.tutor_ids || doc.tutor_ids.indexOf(host_id) == -1)) {
         res.send({error: "not_a_tutor"});
@@ -401,8 +409,8 @@ app.get('/add_room/:class_id/:room_name/:is_lecture/:time_created/:host_name', f
       }
 
       // add the room
-      addRoom(class_id, room_name, 
-              host_id, is_lecture, time_created, host_name, function(room_id){res.send(room_id);});
+      //addRoom(class_id, room_name, host_id, is_lecture, time_created, host_name, function(room_id){res.send(room_id);});
+      roomManager.addRoom(class_id, room_name, host_id, is_lecture, time_created, host_name, function(room_id){res.send(room_id);});
     }
 
     // class with class_id does not exist
@@ -419,7 +427,8 @@ app.get('/join_room/:room_id/', function(req, res) {
   var user_id = req.signedCookies.user_id;
   if (user_id) {
     var room_id = req.params.room_id;
-    joinRoom(user_id, room_id, function(roomInfo){res.send(roomInfo);});
+    //joinRoom(user_id, room_id, function(roomInfo){res.send(roomInfo);});
+    roomManager.joinRoom(user_id, room_id, function(roomInfo){res.send(roomInfo);});
   }
   else {
     res.send({error: "invalid_user_id"});
@@ -432,7 +441,8 @@ app.get('/leave_room/:room_id/', function(req, res) {
   if (user_id) {
     res.send({success: true}); //assume user leaves, fast for windowunload
     var room_id = req.params.room_id;
-    leaveRoom(user_id, room_id);
+    //leaveRoom(user_id, room_id);
+    roomManager.leaveRoom(user_id, room_id);
   }
   else {
     res.send({error: "invalid_user_id"});
@@ -883,6 +893,17 @@ function Class(class_id, class_name) {
   this.name = class_name; // "CSE 110 Gillespie"
 }
 
+function ChatMessage(name, email, text, roomID, timeSent, user_id) {
+  this.name = name;
+  this.email = email;
+  this.text = text;
+  this.roomID = roomID;
+  this.timeSent = timeSent;
+  this.user_id = user_id;
+}
+
+/*
+
 function Room(room_id, room_name, room_host_id, class_id, is_lecture, time_created, host_name) {
   this.room_id = room_id;
   this.name = room_name;
@@ -891,15 +912,6 @@ function Room(room_id, room_name, room_host_id, class_id, is_lecture, time_creat
   this.is_lecture = is_lecture;
   this.time_created = time_created;
   this.host_name = host_name;
-}
-
-function ChatMessage(name, email, text, roomID, timeSent, user_id) {
-  this.name = name;
-  this.email = email;
-  this.text = text;
-  this.roomID = roomID;
-  this.timeSent = timeSent;
-  this.user_id = user_id;
 }
 
 //TODO: ERIC - fix callback stuff so res gets sent back + make this cleaner
@@ -947,14 +959,6 @@ function joinRoom(user_id, room_id, callback) {
           }
           userActivityDatabase.child(user_id).child("lastRooms").push().set(room_id);
           userActivityDatabase.child(user_id).child("lastActive").set(Date.now());
-
-          /*db.users.findOne({user_id: user_id}, function (err, doc) {
-            if (doc) {
-              var newChatMessage = new ChatMessage("system", 
-                "system@email.com", doc.name.split(" ")[0] + " joined the room.", room_id, Date.now(), 'system_id');
-              roomMessagesDatabase.child(room_id).push().set(newChatMessage);
-            }
-          });*/
         }
         else {
           if (callback) {
@@ -1004,14 +1008,6 @@ function leaveRoom(user_id, room_id, callback) {
           }
         }
       });
-
-      /*db.users.findOne({user_id: user_id}, function (err, doc) {
-        if (doc) {
-          var newChatMessage = new ChatMessage("system", 
-            "system@email.com", doc.name.split(" ")[0] + " left the room.", room_id, Date.now(), 'system_id');
-          roomMessagesDatabase.child(room_id).push().set(newChatMessage);
-        }
-      });*/
     }
     else {
       console.log("FIREBASE: ERROR - room or user no longer exists");
@@ -1072,17 +1068,7 @@ function deleteRoom(room_id, class_id, firebase_push_id) {
   //classRoomsDatabase.child(class_id).equalTo(room_id).ref.remove();
   roomMessagesDatabase.child(room_id).remove();
 }
-
-function tutorInRoom(room) {
-  for (user_id in room.users) {
-    for (tutor_id in classes_dict[room.class_id].tutor_ids) {
-      if (user_id = tutor_id) {
-        return true;
-      }
-    }
-  }
-  return false;
-}
+*/
 
 
 /*------------------------------------------------------------------------*/
@@ -1168,7 +1154,7 @@ function processActivity(user_id, activityLog) {
       //console.log("USER ACTIVITY CHECKER: removing user " + user_id);
       var lastRooms = Object.keys(activityLog.lastRooms).map((k) => activityLog.lastRooms[k]);
       for (var i = 0;  i < lastRooms.length; i++) {
-        leaveRoom(user_id, lastRooms[i]);
+        roomManager.leaveRoom(user_id, lastRooms[i]);
       }
       userActivityDatabase.child(user_id).child("lastRooms").set(null);
     }
@@ -1194,20 +1180,6 @@ function checkSingleUserActivity(user_id) {
 
 
 /*------------------------------------------------------------------------*/
-
-/*---- SSL CHALLENGE ----*/
-//studyspace.me
-/*
-app.get("/.well-known/acme-challenge/FPQsAzH1lcooEHIeB4STVrH_NzwS1_Q0Yc17I3uiaI8", function(req, res) {
-  res.send("FPQsAzH1lcooEHIeB4STVrH_NzwS1_Q0Yc17I3uiaI8.WvFBmKbVDiPXkv3XZvi2IVS2S4FvtRxc1OiZTIPqJls");
-})
-
-//www.studyspace.me
-app.get("/.well-known/acme-challenge/RgAtJ60qe2Pbcfxii-OTGCTp8QirL1ur3TqZhP4BMWE", function(req, res) {
-  res.send("RgAtJ60qe2Pbcfxii-OTGCTp8QirL1ur3TqZhP4BMWE.WvFBmKbVDiPXkv3XZvi2IVS2S4FvtRxc1OiZTIPqJls");
-})
-*/
-
 
 
 
