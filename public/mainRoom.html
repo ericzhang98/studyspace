@@ -118,7 +118,7 @@
 
             <!-- Create Room Button -->
             <button id="btn-add-class" class="btn container-title"
-            ng-click="refreshAddClass()">
+            ng-click="refreshAddClassBC()">
             <span class="title">Classes</span>
             <div>
               <span class="glyphicon glyphicon-plus"></span>
@@ -425,7 +425,7 @@
         </div>
 
         <!-- Add Class Modal -->
-        <div id="modal-add-class" class="modal" role="dialog">
+        <div ng-controller="AddClassController" id="modal-add-class" class="modal" role="dialog">
           <div class="modal-dialog">
             <!-- Content -->
             <div id="add-class" class="modal-content modal-add-class-content hide">
@@ -573,6 +573,7 @@
   <script src="controllers/room_controller.js"></script>
   <script src="controllers/create_room_controller.js"></script>
   <script src="controllers/video_controller.js"></script>
+  <script src="controllers/add_class_controller.js"></script>
 
   <!-- Other -->
   <script src="cookies.js"></script>

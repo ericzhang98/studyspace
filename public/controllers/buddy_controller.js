@@ -239,7 +239,7 @@ myApp.controller("BuddyController", function($scope, $rootScope, $http) {
       $rootScope.users[response.data.user_id] = response.data;
       //console.log("user info pulled: " + response.data.name + " " + response.data.user_id);
       // join the chat needs to be on callback b/c of currTyping
-      $rootScope.joinRoomChat(dm_room_id);
+      $rootScope.joinRoomChatBC(dm_room_id);
     });
 
     $http.get("/clear_message_notifications/" + other_user_id);
