@@ -15,6 +15,10 @@ var roomPinnedMessagesDatabase = firebaseRoot.child("RoomPinnedMessages");
 var userActivityDatabase = firebaseRoot.child("UserActivity");
 
 
+var MAIN_HOST = "mainhost";
+var MAX_IDLE = 10*1000;
+var BUFFER_TIME = 20*1000;
+
 
 function Room(room_id, room_name, room_host_id, class_id, is_lecture, time_created, host_name) {
   this.room_id = room_id;

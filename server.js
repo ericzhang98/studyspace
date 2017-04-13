@@ -72,13 +72,13 @@ app.use(cookieParser("raindropdroptop")); //secret key
 /*-----------------------------------------------------------------------*/
 
 //Globals
-var MAIN_HOST = "mainhost";
-var ADMIN_KEY = "ABCD"
-var PUBLIC_DIR = __dirname + "/public/";
+//var MAIN_HOST = "mainhost";
+//var ADMIN_KEY = "ABCD"
+//var PUBLIC_DIR = __dirname + "/public/";
 var VIEW_DIR = __dirname + "/public/";
 var COOKIE_TIME = 7*24*60*60*1000; //one week
-var MAX_IDLE = 10*1000;
-var BUFFER_TIME = 20*1000;
+//var MAX_IDLE = 10*1000;
+//var BUFFER_TIME = 20*1000;
 var USER_IDLE = 30*1000;
 
 
@@ -1154,7 +1154,7 @@ function processActivity(user_id, activityLog) {
       //console.log("USER ACTIVITY CHECKER: removing user " + user_id);
       var lastRooms = Object.keys(activityLog.lastRooms).map((k) => activityLog.lastRooms[k]);
       for (var i = 0;  i < lastRooms.length; i++) {
-        leaveRoom(user_id, lastRooms[i]);
+        roomManager.leaveRoom(user_id, lastRooms[i]);
       }
       userActivityDatabase.child(user_id).child("lastRooms").set(null);
     }
