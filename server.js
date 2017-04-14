@@ -311,8 +311,6 @@ app.delete('/remove_buddy/:id', function(req, res){
 /*************************************************************************************/
 /******************************* TO BE REMOVED (MAYBE) *******************************/
 
-// forces the name property to be unique in user_classes collection
-//db.user_classes.createIndex({name: 1}, {unique:true});
 app.post('/user_classes', function(req, res) {
   //console.log(req.body);
   var get_user_id = req.signedCookies.user_id;
@@ -408,7 +406,6 @@ app.get('/add_room/:class_id/:room_name/:is_lecture/:time_created/:host_name', f
         return;
       }
 
-      // add the room
       //addRoom(class_id, room_name, host_id, is_lecture, time_created, host_name, function(room_id){res.send(room_id);});
       roomManager.addRoom(class_id, room_name, host_id, is_lecture, time_created, host_name, function(room_id){res.send(room_id);});
     }
@@ -416,7 +413,6 @@ app.get('/add_room/:class_id/:room_name/:is_lecture/:time_created/:host_name', f
     // class with class_id does not exist
     else {
       res.send({error: "invalid_class_id"});
-      return;
     }
   });
 });

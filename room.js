@@ -1,5 +1,8 @@
 var singletonRoomManager = function() {
 
+var mongojs = require('mongojs');
+var db = mongojs('mongodb://studyspace:raindropdroptop@ds033086.mlab.com:33086/studyspace', []);
+
 // - Firebase admin setup
 var firebaseAdmin = require("firebase-admin");
 var serviceAccount = require("./dontlookhere/porn/topsecret.json"); //shhhh
