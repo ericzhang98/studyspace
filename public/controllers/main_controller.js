@@ -1,27 +1,22 @@
 //Main App Controller
-var chatDatabase = null;
-var typingDatabase = null;
-var chatPinnedDatabase = null
-
 var songDatabase = null;
 var myApp = angular.module("mainApp", ["ngMaterial", "ngSanitize"]);
-
-var CONCAT_TIME = 60*1000; // 1 minute
-var currPing = null;
-var USER_PING_PERIOD = 10*1000;
-
 
 // initializing rootScope variables
 // rootScope variables are used by multiple controllers
 myApp.run(function($rootScope) {
 
-  // 
-  $rootScope.currRoomCallID = null;
+  $rootScope.myID = getSignedCookie("user_id");
+  $rootScope.myName = getSignedCookie("name");
+
+  //$rootScope.currRoomCallID = null;
   $rootScope.currRoomChatID = null;
   $rootScope.classes = {}      // class_id : class, grabbed on initial load
   $rootScope.rooms = {}        // room_id : room, listened to after grabbing classes
   $rootScope.users = {}        // user_id : user, info added as u join rooms
   $rootScope.my_class_ids = [];
+
+  $rootScope.caller = new Caller($rootScope.myID);
 
   // broadcast methods
   // called in BuddyController, goes to ChatController
@@ -64,30 +59,27 @@ myApp.run(function($rootScope) {
   }
 });
 
+// pull class data
+myApp.run(function($rootScope) {
 
-/* Main controller -------------------------------------*/
+});
+
+/**************************** MAIN CONTROLLER ****************************/
+// - Master controller for main room
+// - Contains methods that use / modify scope variables and aren't
+//   associated with a particular portion of the UI
+// - Contains
+/*************************************************************************/
+
 myApp.controller("MainController", ["$scope", "$rootScope", "$http", "$timeout", "$window",
 function($scope, $rootScope, $http, $timeout, $window) {
   //console.log("Hell yeah");
-
-  $scope.videoEnabled = true;
   // general vars
-  $scope.myID = getSignedCookie("user_id");
-
-  $scope.myName = getSignedCookie("name");
-
-
   /*************************** ACCOUNT MANAGEMENT *********************/
   $scope.logout = function() {
-    // leave current room
-    leaveRoomHard($rootScope.currRoomCallID);
 
-    /*
-    //send offline ping
-    var xhr = new XMLHttpRequest();
-    xhr.open("GET", "/offline", true);
-    xhr.send();
-    */
+    // leave current room
+    $scope.caller.leaveRoomCallHard();
 
     // erase cookies
     removeCookie("user_id");
@@ -107,17 +99,11 @@ function($scope, $rootScope, $http, $timeout, $window) {
   /******************************* SETUP ******************************/
 
   // Scope variables
-    $scope.class_rooms = {}  // class_id : list of room_ids
-    $scope.volumes = {};      // user_id : int (volume coming from them);
+  $scope.class_rooms = {}  // class_id : list of room_ids
+  $scope.volumes = {};      // user_id : int (volume coming from them);
 
   // Initial call to pull data for user / classes / rooms
   getClasses();
-
-  //setup activity ping
-  //the client can mess around with this, we need to handle kicking the
-  //client somehow if they stop pinging, it's fine if they can still
-  //listen in on data, but other users must always be aware of prescence
-  pingUserActivity(true);
 
   /*********************************************************************/
   /*************************** ROOM INTERACTION ************************/
@@ -133,41 +119,21 @@ function($scope, $rootScope, $http, $timeout, $window) {
   }
 
   $scope.joinRoom = function(room_id, class_id) {
-
-    // if we're not already in this room's call
-    if ($rootScope.currRoomCallID != room_id) {
-
-      // leave previous room
-      leaveRoom($rootScope.currRoomCallID);
-
-      // update currRoomCallID
-      $rootScope.currRoomCallID = room_id;
-
-      // join the call
-      joinRoomCall($rootScope.currRoomCallID);
-
-      // open up the sidebar panel with this new room
-      adjustSidebarToggle(class_id);
-    }
-
-    // join this room's chat
+    $rootScope.caller.joinRoomCall(room_id);
     $rootScope.joinRoomChatBC(room_id);
-    //$rootScope.$broadcast('joinRoomChat', {room_id : room_id});
   };
 
   $scope.leaveRoom = function() {
     
     // leave room case
     if ($rootScope.rooms[$rootScope.currRoomChatID].class_id != 'dm_class_id') {
-
-      leaveRoom($rootScope.currRoomCallID);
-      $rootScope.currRoomCallID = null;
+      $rootScope.caller.leaveRoomCall();
       $rootScope.joinRoomChatBC(null); //leave chat room
     }
 
     // close dm case
     else {
-      $rootScope.joinRoomChatBC($rootScope.currRoomCallID); // join or leave chat room
+      $rootScope.joinRoomChatBC($rootScope.caller.currRoomCallID); // join or leave chat room
     }
   }
 
@@ -214,20 +180,6 @@ function($scope, $rootScope, $http, $timeout, $window) {
     */
   };
 
-  function pingUserActivity(constant) {
-    var xhr = new XMLHttpRequest();
-    xhr.open("GET", "/ping", true);
-    xhr.onerror = function(){
-      //console.log(xhr.status);
-      showAlert("no-connection-alert", "longaf", false);
-    }
-    xhr.send();
-    //console.log("pinging"); 
-    if (constant) {
-      currPing = setTimeout(pingUserActivity, USER_PING_PERIOD, true);
-    }
-  }
-
   // Sidebar setup, makes sure that at most one class is open at a time
   var $myGroup = $('#classes');
   $myGroup.on('show.bs.collapse','.collapse', function() {
@@ -246,7 +198,7 @@ function($scope, $rootScope, $http, $timeout, $window) {
 
   // onclick method that will toggles the user audio of the given user_id
   $scope.toggleUserAudio = function(user_id) {
-    toggleRemoteStreamAudioEnabled(user_id);
+    $rootScope.caller.toggleRemoteStreamAudioEnabled(user_id);
   };
 
   $scope.getRemoteStreamExists = function(user_id) {
@@ -259,7 +211,7 @@ function($scope, $rootScope, $http, $timeout, $window) {
     return document.getElementById(user_id + "_video") && !document.getElementById(user_id + "_video").muted;
   }
   
-  $('.item').click(function(e){
+  $('.item').click(function(e) {
     e.stopPropagation();
     $('.dropdown-toggle').dropdown('toggle');
   });
@@ -403,7 +355,6 @@ function($scope, $rootScope, $http, $timeout, $window) {
     });
   }
 
-
   // Set the number of total users studying for a class at the moment
   function setNumUsers(class_id) {
     ////console.log("setting num users for " + class_id);
@@ -480,83 +431,6 @@ function($scope, $rootScope, $http, $timeout, $window) {
   }
 
   /*********************************************************************/
-  /**************************** BLOCK SYSTEM ***************************/
-
-  var blockedUsers = {};
-  
-  $scope.toggleBlock = function(user_id) {
-    if (!$scope.isBlocked(user_id)) {
-      $scope.blockUserWithId(user_id);
-    } else {
-      $scope.unblock(user_id);
-    }
-  }
-    
-  $scope.isBlocked = function(user_id) {
-    if (blockedUsers['blocked_user_list']) {
-      var bUsers = blockedUsers['blocked_user_list'];
-
-      if (bUsers.indexOf(user_id) != -1) {
-        return true;
-      }
-    }
-    return false;
-  }
-
-  var getIdFromName = function(name, onResponseReceived){
-    var email = {"email": String(name)};
-    //console.log(email);
-    $http.post('/get_Id_From_Name', email).then(function(response){
-      onResponseReceived(response.data);
-    });    
-  }
-
-  var refresh = function(){
-    blockedUsers = {};
-    $http.get('/get_blocked_users').then(function(response){
-      $scope.block_user_list = response.data;
-      if(!(response.data[0])){
-        return;
-      }
-      blockedUsers['user_id'] = response.data[0]['blocked_user_id'];
-      blockedUsers['blocked_user_list'] = [];
-      for (var i = 0; i < response.data.length; i++){
-        var obj = response.data[i];
-        blockedUsers['blocked_user_list'].push(obj['blocked_user_id']);
-
-        if (myCalls[obj['blocked_user_id']]) {
-          myCalls[obj['blocked_user_id']].close();
-        }
-      }
-    });
-  }
-  
-  var addBlock = function(blocked_user_id, onResponseReceived){
-    var data = {
-      "blocked_user_id": String(blocked_user_id),
-    }; 
-    $http.post('/add_blocked_user', data).then(function(response){
-      onResponseReceived(response.data);
-    });
-  };
-
-  refresh();
-  
-  $scope.blockUserWithId = function(user_id) {
-    //console.log("blocking: " + user_id);
-    addBlock(user_id, function(response) {
-      showAlert('block-alert', 'normal', false);
-      refresh();
-    });
-  }
-  
-  $scope.unblock = function(user_id){
-    //console.log("unblocking: " + user_id)
-    $http.delete('/remove_block/' + user_id).then(function(response){
-      refresh();
-    });
-  }
-  /*********************************************************************/
 
   //token generator
   function generateToken(num) {
@@ -577,7 +451,7 @@ function($scope, $rootScope, $http, $timeout, $window) {
   }
 
   $scope.whiteboardURL = function() {
-    return "whiteboard.html#" + $rootScope.currRoomCallID;
+    return "whiteboard.html#" + $rootScope.caller.currRoomCallID;
   };
 
   //youtube id from url
@@ -623,7 +497,7 @@ function($scope, $rootScope, $http, $timeout, $window) {
       $scope.muteBtnClass.pop();
       $scope.muteBtnClass.push('glyphicon-volume-up');        
     }
-    toggleMyStreamAudioEnabled();
+    $rootScope.caller.toggleMyStreamAudioEnabled();
   }
 
 }]);

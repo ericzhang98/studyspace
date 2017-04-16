@@ -1,8 +1,15 @@
+
+
 myApp.controller("RoomController", ["$scope", "$rootScope", "$http", "$timeout", "$window",
 function($scope, $rootScope, $http, $timeout, $window) {
 /*-------------------------------------------------------------------*/
   /****************************** CHAT ROOM ****************************/
   /*-------------------------------------------------------------------*/
+  var chatDatabase = null;
+  var typingDatabase = null;
+  var chatPinnedDatabase = null
+  var CONCAT_TIME = 60*1000; // 1 minute
+
 
   // list of message objects with: email, name, roomID, text, timeSent
   var chatMessageList = [];
@@ -28,13 +35,13 @@ function($scope, $rootScope, $http, $timeout, $window) {
     if ($scope.showWhiteboard) {
       $scope.showWhiteboard = false;
       console.log("hide");
-      whiteboard.setAttribute("src", "whiteboard.html#" + $rootScope.currRoomCallID);
+      whiteboard.setAttribute("src", "whiteboard.html#" + $rootScope.caller.currRoomCallID);
       whiteboardContainer.setAttribute("hidden", null);
     }
 
     else {
       $scope.showWhiteboard = true;
-      whiteboard.setAttribute("src", "whiteboard.html#" + $rootScope.currRoomCallID);
+      whiteboard.setAttribute("src", "whiteboard.html#" + $rootScope.caller.currRoomCallID);
       whiteboardContainer.removeAttribute("hidden");
     }
   }
@@ -70,10 +77,6 @@ function($scope, $rootScope, $http, $timeout, $window) {
       chatMessageList = [];
       $scope.chatPinnedMessageList = [];
       $scope.showPinnedMessages = false;
-
-      if ($scope.viewVideo) {
-        $scope.toggleViewVideo();
-      }
 
       lastKey = null;
       scrollLock = false;

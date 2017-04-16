@@ -1,3 +1,6 @@
+// DEPRECATED, REFER TO CALLER.JS
+
+
 /***** General variables **************************/
 var me = {user_id: "id2", block_list: ["block1"]};
 var currRoomUsers = [];
