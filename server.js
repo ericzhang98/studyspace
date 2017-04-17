@@ -76,7 +76,7 @@ app.use(cookieParser("raindropdroptop")); //secret key
 //var ADMIN_KEY = "ABCD"
 //var PUBLIC_DIR = __dirname + "/public/";
 var VIEW_DIR = __dirname + "/public/";
-var COOKIE_TIME = 7*24*60*60*1000; //one week
+//var COOKIE_TIME = 7*24*60*60*1000; //one week
 //var MAX_IDLE = 10*1000;
 //var BUFFER_TIME = 20*1000;
 var USER_IDLE = 30*1000;
@@ -85,6 +85,7 @@ var USER_IDLE = 30*1000;
 //Studyspace modules
 var test = require("./test.js");
 var roomManager = require("./room.js");
+var accountManager = require("./account.js");
 
 /* HTTP requests ---------------------------------------------------------*/
 
@@ -682,6 +683,8 @@ app.post("/accountsignup", function(req, res) {
   var school = req.body.school;
   var email = req.body.email;
   var password = req.body.password;
+  accountManager.signup(name, school, email, password, res);
+  /*
   console.log("Account signup: attempt with - " + email);
   db.users.findOne({email:email}, function (err, doc) {
     //if user doesn't exist yet (doc is null), insert it in
@@ -706,6 +709,7 @@ app.post("/accountsignup", function(req, res) {
       res.json({success: false});
     }
   });
+  */
 });
 
 /* GET data: {ID of account to verify, token} - verify account with token
@@ -713,6 +717,8 @@ app.post("/accountsignup", function(req, res) {
 app.get("/accountverify/:id/:token", function(req, res) {
   var id = req.params.id;
   var token = req.params.token;
+  accountManager.verify(id, token, res);
+  /*
   if (id.length == 24) {
     db.users.findOne({_id: mongojs.ObjectId(id)}, function(err, doc) {
       //check if user exists
@@ -748,6 +754,7 @@ app.get("/accountverify/:id/:token", function(req, res) {
     console.log("Account verification: error - impossible ID");
     sendVerifyError(res);
   }
+  */
 });
 
 // - returns user with given email / password
@@ -755,7 +762,8 @@ app.post('/accountlogin', function(req, res) {
 
   var email = req.body.email;
   var password = req.body.password;
-  //console.log("get user with email " + email + " and pass " + password);
+  accountManager.login(email, password, res);
+  /*
   db.users.findOne({email: email, password: password}, function (err, doc) {
     if (doc) {
       res.cookie("user_id", doc.user_id, {signed: true, maxAge: COOKIE_TIME});
@@ -764,6 +772,7 @@ app.post('/accountlogin', function(req, res) {
     }
     res.json(doc);
   });
+  */
 });
 
 
@@ -774,17 +783,21 @@ app.post('/accountlogin', function(req, res) {
 app.post('/enroll', function (req, res) {
   var user_id = req.signedCookies.user_id;
   var class_ids = req.body.class_ids;
-  //console.log("enrolling user with id " + user_id + " in " + class_ids);
+  accountManager.enroll(user_id, class_ids, res);
+  /*
   db.users.update({user_id: user_id},
                   {$set: {class_ids: class_ids}}, function (err, doc) {
     res.send({success: doc != null});
   });
+  */
 })
 
 /* POST data: {email of account to reset password} - send password reset link to email
  * Returns: {success} - whether or not password reset link was sent */
 app.post("/sendforgotpassword", function(req, res) {
   var email = req.body.email;
+  accountManager.sendForgotPassword(email, res);
+  /*
   db.users.findOne({email: email}, function(err, doc) {
     //check if user with email exists
     if (doc) {
@@ -806,6 +819,7 @@ app.post("/sendforgotpassword", function(req, res) {
       res.send({success:false});
     }
   });
+  */
 });
 
 /* GET data: {ID, resetToken} - reset password if resetToken matches
@@ -815,7 +829,9 @@ app.post("/resetpassword", function(req, res) {
   var user_id = req.signedCookies.user_id;
   var currPassword = req.body.currPass;
   var newPassword = req.body.newPass;
-  if(user_id) {
+  accountManager.resetPassword(user_id, currPassword, newPassword, res);
+  /*
+  if (user_id) {
     db.users.findOne({user_id: user_id}, function(err, doc) {
       //check if user exists
       if (doc) {
@@ -848,6 +864,7 @@ app.post("/resetpassword", function(req, res) {
     console.log("Account reset password: error - impossible ID");
     res.json({success:false});
   }
+  */
 });
 
 app.get("/get_privacy_settings", function(req, res) {
@@ -880,6 +897,7 @@ app.post("/update_privacy", function(req, res) {
 
 /* Model -----------------------------------------------------------------*/
 
+/*
 function User(email, password, name, school) {
   //this._id = whatever mongo gives us
   this.user_id = generateToken(20);
@@ -890,6 +908,7 @@ function User(email, password, name, school) {
   this.token = "dank"; //generateToken();
   this.active = true; //has verified email
 }
+*/
 
 function Class(class_id, class_name) {
   this.class_id = class_id;	// "ucsd_cse_110_1"
