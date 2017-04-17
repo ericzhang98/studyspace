@@ -445,6 +445,9 @@ app.get('/leave_room/:room_id/', function(req, res) {
   }
 });
 
+/*************************************************************************************/
+/**********************************ROOM ACTIONS***************************************/
+
 app.post("/pin_message/", function(req, res) {
   var room_id = req.body.room_id;
   var chat_message_key = req.body.chat_message_key;
@@ -529,6 +532,10 @@ app.get("/clear_message_notifications/:other_user_id", function(req, res) {
   res.end();
 });
 
+/*************************************************************************************/
+
+
+/***********************************HELPER STUFF****************************************/
 // get a user from a user_id (responds with just name and user_id)
 app.get('/get_user/:user_id/', function(req, res) {
   var user = req.params.user_id;
