@@ -1,13 +1,12 @@
 // controller for buddies
 myApp.controller("BuddyController", function($scope, $rootScope, $http) {
 
-
   // Grab initial notifictions and start a listener for updates
   startMessageNotifications();
 
   /**************************** BUDDY SYSTEM ***************************/
 
-  //Saurabh's local check if friends
+  // status method
   $scope.isFriendsWith = function(user_id) {
 
     // empty buddies null check
@@ -39,7 +38,7 @@ myApp.controller("BuddyController", function($scope, $rootScope, $http) {
 
   // gets a user's buddy requests, calls a callback on the data,
   // and returns the result of the callback
-  var getBuddyRequests = function(onResponseReceived){
+  function getBuddyRequests(onResponseReceived){
     $http.post('/get_my_buddy_requests').then(function(response){
       return onResponseReceived(response.data);
     });
@@ -47,7 +46,7 @@ myApp.controller("BuddyController", function($scope, $rootScope, $http) {
 
   // gets a user's list of buddies, calls a callback on the data,
   // and returns the result of the callback
-  var getBuddies = function(onResponseReceived){
+  function getBuddies(onResponseReceived){
     $http.post('/get_my_buddies').then(function(response){
       if (response.data[0]) {
         //console.log(response.data[0]);
@@ -58,7 +57,7 @@ myApp.controller("BuddyController", function($scope, $rootScope, $http) {
   
   // checks if the user exists, calls a callback on the data
   // and either returns null or the user object
-  var userExists = function(other_user_id, onResponseReceived){  
+  function userExists(other_user_id, onResponseReceived){  
     $http.post('/buddy_existing_user', {other_user_id: other_user_id}).then(function(response){
       return onResponseReceived(response.data);
     });
@@ -66,7 +65,7 @@ myApp.controller("BuddyController", function($scope, $rootScope, $http) {
 
   // checks if this buddy request already exists, calls a callback
   // on the data and either returns null or the request
-  var buddyRequestExists = function(friend_id, onResponseReceived){
+  function buddyRequestExists(friend_id, onResponseReceived){
     var data = {"user_id":"user_id placed here",
                 "friend_id":String(friend_id)};
     $http.post('/buddy_existing_request', data).then(function(response){
@@ -76,7 +75,7 @@ myApp.controller("BuddyController", function($scope, $rootScope, $http) {
 
   // checks if the two users are already friends, calls a callback
   // on the data containing the friendship object or null
-  var friendshipExists = function(friend_id, friend_name, onResponseReceived){
+  function friendshipExists(friend_id, friend_name, onResponseReceived){
     var data = {"user_id":"user_id inserted",
                 "friend_id":String(friend_id),
                 "friend_name":String(friend_name)};
@@ -86,7 +85,7 @@ myApp.controller("BuddyController", function($scope, $rootScope, $http) {
   }  
 
   // deletes a friend and then in the callback calls to update the buddy requests
-  var deleteBuddy = function(id, onResponseReceived){
+  function deleteBuddy(id, onResponseReceived){
     //console.log(id);
     $http.delete('/reject_buddy/' + id).then(function(response){
       getBuddyRequests(function(response){ 
@@ -97,7 +96,7 @@ myApp.controller("BuddyController", function($scope, $rootScope, $http) {
 
   // adds a friendship in the database and deletes the request, and calls 
   // a callback on the data
-  var acceptBuddy = function(data, onResponseReceived){
+  function acceptBuddy(data, onResponseReceived){
     //console.log(data);
     $http.post('/accept_buddy', data).then(function(response){
       return onResponseReceived(response.data);
@@ -224,11 +223,11 @@ myApp.controller("BuddyController", function($scope, $rootScope, $http) {
     //console.log("entering dm room with id: " + dm_room_id);
 
     // set up dummy class/room
-    $rootScope.classes["dm_class_id"] = {
+    $rootScope.cruHandler.classes["dm_class_id"] = {
       "name" : ""
     }
 
-    $rootScope.rooms[dm_room_id] = {
+    $rootScope.cruHandler.rooms[dm_room_id] = {
       "name" : other_user_name,
       "class_id" : "dm_class_id",
       "other_user_id" : other_user_id
@@ -236,7 +235,7 @@ myApp.controller("BuddyController", function($scope, $rootScope, $http) {
 
     //get other user info
     $http.get('/get_user/' + other_user_id).then(function(response) {
-      $rootScope.users[response.data.user_id] = response.data;
+      $rootScope.cruHandler.users[response.data.user_id] = response.data;
       //console.log("user info pulled: " + response.data.name + " " + response.data.user_id);
       // join the chat needs to be on callback b/c of currTyping
       $rootScope.joinRoomChatBC(dm_room_id);

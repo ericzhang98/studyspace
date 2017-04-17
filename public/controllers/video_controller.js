@@ -14,29 +14,21 @@ myApp.controller("VideoController", function($scope, $rootScope, $http) {
 
     // if we closed video, turn my video off
     if (!$scope.viewVideo) {
-      setMyStreamVideoEnabled(false, false);
+      $rootScope.caller.setMyStreamVideoEnabled(false, false);
     }
 
     // if we opened video and we were showing before, turn my video off
-    if ($scope.viewVideo && showVideo) {
-      setMyStreamVideoEnabled(true);
+    console.log("showVideo is " + $rootScope.caller.showVideo)
+    if ($scope.viewVideo && $rootScope.caller.showVideo) {
+      $rootScope.caller.setMyStreamVideoEnabled(true);
     }
   }
 
-  $scope.setMyStreamVideoEnabled = function(enabled, direct) {
-    if (direct == undefined) {
-      direct = true;
-    }
-    setMyStreamVideoEnabled(enabled, direct);
+  $scope.setMyStreamVideoEnabled = function(enabled, direct = true) {
+    $rootScope.caller.setMyStreamVideoEnabled(enabled, direct);
   }
 
-  $scope.getVideoEnabled = function(user_id) {
-    if (user_id == undefined) {
-      user_id = myID;
-    }
-    if (user_id == myID) {
-      return myStream && myStream.getVideoTracks()[0].enabled;
-    }
-    //return $rootScope.userstreams[user_id] && $rootScope.userstreams[user_id].getVideoTracks()[0].enabled;
+  $scope.getVideoEnabled = function() {
+    return $rootScope.caller.getVideoEnabled();
   }
 });

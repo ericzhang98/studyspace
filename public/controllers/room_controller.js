@@ -1,8 +1,15 @@
+
+
 myApp.controller("RoomController", ["$scope", "$rootScope", "$http", "$timeout", "$window",
 function($scope, $rootScope, $http, $timeout, $window) {
 /*-------------------------------------------------------------------*/
   /****************************** CHAT ROOM ****************************/
   /*-------------------------------------------------------------------*/
+  var chatDatabase = null;
+  var typingDatabase = null;
+  var chatPinnedDatabase = null
+  var CONCAT_TIME = 60*1000; // 1 minute
+
 
   // list of message objects with: email, name, roomID, text, timeSent
   var chatMessageList = [];
@@ -28,13 +35,13 @@ function($scope, $rootScope, $http, $timeout, $window) {
     if ($scope.showWhiteboard) {
       $scope.showWhiteboard = false;
       console.log("hide");
-      whiteboard.setAttribute("src", "whiteboard.html#" + $rootScope.currRoomCallID);
+      whiteboard.setAttribute("src", "whiteboard.html#" + $rootScope.caller.currRoomCallID);
       whiteboardContainer.setAttribute("hidden", null);
     }
 
     else {
       $scope.showWhiteboard = true;
-      whiteboard.setAttribute("src", "whiteboard.html#" + $rootScope.currRoomCallID);
+      whiteboard.setAttribute("src", "whiteboard.html#" + $rootScope.caller.currRoomCallID);
       whiteboardContainer.removeAttribute("hidden");
     }
   }
@@ -70,10 +77,6 @@ function($scope, $rootScope, $http, $timeout, $window) {
       chatMessageList = [];
       $scope.chatPinnedMessageList = [];
       $scope.showPinnedMessages = false;
-
-      if ($scope.viewVideo) {
-        $scope.toggleViewVideo();
-      }
 
       lastKey = null;
       scrollLock = false;
@@ -310,8 +313,8 @@ function($scope, $rootScope, $http, $timeout, $window) {
     for (var i = 0; i < currTyping.length; i++) {
       if (currTyping[i] != myID) {
         //console.log($rootScope.users[currTyping[i]]); //if breaking, tell Eric (joinRoom after user info pull)
-        if ($rootScope.users[currTyping[i]]) {
-         names.push($rootScope.users[currTyping[i]].name);
+        if ($rootScope.cruHandler.users[currTyping[i]]) {
+         names.push($rootScope.cruHandler.users[currTyping[i]].name);
         }
       }
     }
@@ -329,7 +332,7 @@ function($scope, $rootScope, $http, $timeout, $window) {
       // Create the message and pass it on to the server
       var newChatMessage = {text: chatInput, roomID: $rootScope.currRoomChatID, timeSent: Date.now()};
       //adjust newChatMessage with whether or not it's a DM
-      if ($rootScope.rooms[$rootScope.currRoomChatID].other_user_id) {
+      if ($rootScope.cruHandler.rooms[$rootScope.currRoomChatID].other_user_id) {
         newChatMessage.other_user_id = $rootScope.rooms[$rootScope.currRoomChatID].other_user_id;
       }
       $http.post("/send_room_message", newChatMessage).then(scrollDown);
@@ -560,6 +563,13 @@ function($scope, $rootScope, $http, $timeout, $window) {
     })
     return contains;
   }
+  
+  $window.onbeforeunload = function() {
+    //in order to leave DM on window close
+    var temp = new XMLHttpRequest();
+    temp.open("GET", "/typing/false/" + $rootScope.currRoomChatID, true);
+    temp.send();
+  };
 
 }]);
 

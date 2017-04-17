@@ -1,27 +1,19 @@
-//Main App Controller
-var chatDatabase = null;
-var typingDatabase = null;
-var chatPinnedDatabase = null
-
 var songDatabase = null;
 var myApp = angular.module("mainApp", ["ngMaterial", "ngSanitize"]);
-
-var CONCAT_TIME = 60*1000; // 1 minute
-var currPing = null;
-var USER_PING_PERIOD = 10*1000;
-
 
 // initializing rootScope variables
 // rootScope variables are used by multiple controllers
 myApp.run(function($rootScope) {
 
-  // 
-  $rootScope.currRoomCallID = null;
+  $rootScope.myID = getSignedCookie("user_id");
+  $rootScope.myName = getSignedCookie("name");
+
   $rootScope.currRoomChatID = null;
-  $rootScope.classes = {}      // class_id : class, grabbed on initial load
-  $rootScope.rooms = {}        // room_id : room, listened to after grabbing classes
-  $rootScope.users = {}        // user_id : user, info added as u join rooms
-  $rootScope.my_class_ids = [];
+
+  $rootScope.caller = new Caller($rootScope.myID);
+  $rootScope.caller.volumeListener.setOnLoudChangeFunc(function() {$rootScope.$broadcast('volumeListenerChange')});
+  $rootScope.cruHandler = new CRUHandler();
+  $rootScope.cruHandler.setOnChangeFunc(function() {$rootScope.$broadcast('cruChange')})
 
   // broadcast methods
   // called in BuddyController, goes to ChatController
@@ -64,30 +56,21 @@ myApp.run(function($rootScope) {
   }
 });
 
+/**************************** MAIN CONTROLLER ****************************/
+// - Master controller for main room
+// - Contains methods that use / modify scope variables and aren't
+//   associated with a particular portion of the UI
+// - Contains
+/*************************************************************************/
 
-/* Main controller -------------------------------------*/
 myApp.controller("MainController", ["$scope", "$rootScope", "$http", "$timeout", "$window",
 function($scope, $rootScope, $http, $timeout, $window) {
-  //console.log("Hell yeah");
-
-  $scope.videoEnabled = true;
   // general vars
-  $scope.myID = getSignedCookie("user_id");
-
-  $scope.myName = getSignedCookie("name");
-
-
   /*************************** ACCOUNT MANAGEMENT *********************/
   $scope.logout = function() {
-    // leave current room
-    leaveRoomHard($rootScope.currRoomCallID);
 
-    /*
-    //send offline ping
-    var xhr = new XMLHttpRequest();
-    xhr.open("GET", "/offline", true);
-    xhr.send();
-    */
+    // leave current room
+    $scope.caller.leaveRoomCallHard();
 
     // erase cookies
     removeCookie("user_id");
@@ -99,25 +82,22 @@ function($scope, $rootScope, $http, $timeout, $window) {
     window.location.href = "/";
   }
   /*********************************************************************/
+  /************************ BROADCAST LISTENERS ************************/
 
-  /*-------------------------------------------------------------------*/
-  /***************************** CLASSES BAR ***************************/
-  /*-------------------------------------------------------------------*/
+  // Respond to a volumeListener change
+  $scope.$on('volumeListenerChange', function(event, data) {
+    $scope.$apply();
+  })
 
-  /******************************* SETUP ******************************/
+  // Respond to a cruContainer change
+  $scope.$on('cruChange', function(event, data) {
+    $rootScope.safeApply($scope);
+  })
 
-  // Scope variables
-    $scope.class_rooms = {}  // class_id : list of room_ids
-    $scope.volumes = {};      // user_id : int (volume coming from them);
-
-  // Initial call to pull data for user / classes / rooms
-  getClasses();
-
-  //setup activity ping
-  //the client can mess around with this, we need to handle kicking the
-  //client somehow if they stop pinging, it's fine if they can still
-  //listen in on data, but other users must always be aware of prescence
-  pingUserActivity(true);
+  // Allows other controllers to call getClass
+  $scope.$on('getClass', function(event, data) {
+    $rootScope.cruHandler.getClass(data.class_id);
+  });
 
   /*********************************************************************/
   /*************************** ROOM INTERACTION ************************/
@@ -133,98 +113,21 @@ function($scope, $rootScope, $http, $timeout, $window) {
   }
 
   $scope.joinRoom = function(room_id, class_id) {
-
-    // if we're not already in this room's call
-    if ($rootScope.currRoomCallID != room_id) {
-
-      // leave previous room
-      leaveRoom($rootScope.currRoomCallID);
-
-      // update currRoomCallID
-      $rootScope.currRoomCallID = room_id;
-
-      // join the call
-      joinRoomCall($rootScope.currRoomCallID);
-
-      // open up the sidebar panel with this new room
-      adjustSidebarToggle(class_id);
-    }
-
-    // join this room's chat
+    $rootScope.caller.joinRoomCall(room_id);
     $rootScope.joinRoomChatBC(room_id);
-    //$rootScope.$broadcast('joinRoomChat', {room_id : room_id});
   };
 
   $scope.leaveRoom = function() {
     
     // leave room case
-    if ($rootScope.rooms[$rootScope.currRoomChatID].class_id != 'dm_class_id') {
-
-      leaveRoom($rootScope.currRoomCallID);
-      $rootScope.currRoomCallID = null;
+    if ($rootScope.cruHandler.rooms[$rootScope.currRoomChatID].class_id != 'dm_class_id') {
+      $rootScope.caller.leaveRoomCall();
       $rootScope.joinRoomChatBC(null); //leave chat room
     }
 
     // close dm case
     else {
-      $rootScope.joinRoomChatBC($rootScope.currRoomCallID); // join or leave chat room
-    }
-  }
-
-  // set listener that updates the volumes dict
-  $scope.setVolumeListener = function(user_id, stream) {
-    var soundMeter = new SoundMeter(window.audioContext);
-
-    //console.log('setting volume listener to ' + user_id);
-    soundMeter.connectToSource(stream, function(e) {
-      if (e) {
-        alert(e);
-        return;
-      }
-
-      // every 200 seconds, check whether the soundMeter has been loud
-      // update UI if this has changed
-      setInterval(function() {
-    
-        if (soundMeter.loudDetected != soundMeter.loud) {
-          ////console.log("changing volume to " + soundMeter.loudDetected);
-          soundMeter.loud = soundMeter.loudDetected;
-          $scope.$apply();
-        }
-
-        soundMeter.loudDetected = false;
-      }, 500);
-
-      // long interval for updating the UI
-      $scope.volumes[user_id] = soundMeter;
-    });
-  }
-
-  $window.onbeforeunload = function() {
-    //in order to leave DM on window close
-    var temp = new XMLHttpRequest();
-    temp.open("GET", "/typing/false/" + $rootScope.currRoomChatID, true);
-    temp.send();
-
-    /*
-    //send offline ping
-    var xhr = new XMLHttpRequest();
-    xhr.open("GET", "/offline", false);
-    xhr.send();
-    */
-  };
-
-  function pingUserActivity(constant) {
-    var xhr = new XMLHttpRequest();
-    xhr.open("GET", "/ping", true);
-    xhr.onerror = function(){
-      //console.log(xhr.status);
-      showAlert("no-connection-alert", "longaf", false);
-    }
-    xhr.send();
-    //console.log("pinging"); 
-    if (constant) {
-      currPing = setTimeout(pingUserActivity, USER_PING_PERIOD, true);
+      $rootScope.joinRoomChatBC($rootScope.caller.currRoomCallID); // join or leave chat room
     }
   }
 
@@ -236,7 +139,7 @@ function($scope, $rootScope, $http, $timeout, $window) {
 
   // Expands sidebar panel for given class
   function adjustSidebarToggle(class_id) {
-    $rootScope.my_class_ids.forEach(function(my_class_id) {
+    $rootScope.cruHandler.my_class_ids.forEach(function(my_class_id) {
 
       if (my_class_id == class_id && $("#" + my_class_id).is(":hidden")) {
         $('#' + my_class_id).collapse('toggle');
@@ -246,7 +149,7 @@ function($scope, $rootScope, $http, $timeout, $window) {
 
   // onclick method that will toggles the user audio of the given user_id
   $scope.toggleUserAudio = function(user_id) {
-    toggleRemoteStreamAudioEnabled(user_id);
+    $rootScope.caller.toggleRemoteStreamAudioEnabled(user_id);
   };
 
   $scope.getRemoteStreamExists = function(user_id) {
@@ -259,303 +162,13 @@ function($scope, $rootScope, $http, $timeout, $window) {
     return document.getElementById(user_id + "_video") && !document.getElementById(user_id + "_video").muted;
   }
   
-  $('.item').click(function(e){
+  $('.item').click(function(e) {
     e.stopPropagation();
     $('.dropdown-toggle').dropdown('toggle');
   });
   
   /*********************************************************************/
   /**************************** PULLING DATA ***************************/
-  // Listener that allows other controllers to call getClass
-  $scope.$on('getClass', function(event, data) {
-    getClass(data.class_id);
-  });
-
-  // - gets all class_ids for user
-  // - delegates to getClass
-  function getClasses() {
-    var xhr = new XMLHttpRequest();
-    xhr.open('GET', "/get_my_classes", true); // responds with class_ids
-    xhr.send();
-
-    xhr.onreadystatechange = function(e) {
-      if (xhr.readyState == 4 && xhr.status == 200) {
-        var response = JSON.parse(xhr.responseText);
-
-        // Set this scope variable (used in create room)
-        if (response.class_ids) {
-          $rootScope.my_class_ids = response.class_ids;
-        }
-
-        $rootScope.my_class_ids.push('lounge_id');
-
-        // Get more data
-        for (i = 0; i < $rootScope.my_class_ids.length; i++) {
-          getClass($rootScope.my_class_ids[i]);
-        }
-      }
-    }
-  }
-
-  // - gets class_name and class_rooms for specified class
-  // - adds the class to the UI
-  // - calls getRoom on all the rooms for specified class
-  function getClass(class_id) {
-
-    // get class info
-    var xhr = new XMLHttpRequest();
-    xhr.open('GET', "/get_class/" + class_id, true); // res with the class's name and room_ids
-    xhr.send();
-
-    xhr.onreadystatechange = function(e) {
-      if (xhr.readyState == 4 && xhr.status == 200) {
-
-        // store the class name
-        var response = JSON.parse(xhr.responseText);
-        response.name = response.name.toLowerCase();
-        response.rooms_with_tutors = [];
-
-        $rootScope.classes[class_id] = response;
-
-        // update UI
-        $rootScope.safeApply($scope);
-
-        // add listener for class rooms
-        classRoomsDatabase.child(class_id).on("value", function(snapshot) {
-          if (snapshot.val()) {
-            onClassRoomsChange(class_id, Object.values(snapshot.val()));
-          }
-        });
-      }
-    }
-  }
-
-  // - respond to change in a class's rooms
-  // - calls removeRoom/getRoom accordingly
-  function onClassRoomsChange(class_id, updated_rooms) {
-
-    // save a copy of the current rooms
-    var curr_rooms = $scope.class_rooms[class_id] ? $scope.class_rooms[class_id] : [];
-
-    // update our rooms
-    $scope.class_rooms[class_id] = updated_rooms;
-
-    // if there is a change, apply it
-    // needed for case that a room is deleted, but none are added
-    if (curr_rooms != updated_rooms) {
-      $rootScope.safeApply($scope);
-    }
-
-    // detach listeners for removed rooms
-    for (i = 0; i < curr_rooms.length; i++) {
-      // if this room is not in the new rooms, detach listener
-      if (updated_rooms.indexOf(curr_rooms[i]) == -1) {
-        roomsDatabase.child(curr_rooms[i]).off();
-      }
-    }
-
-    // get the new rooms
-    for (i = 0; i < updated_rooms.length; i++) {
-      // if we weren't already listening to this room, get it
-      if (curr_rooms.indexOf(updated_rooms[i]) == -1) {
-        getRoom(updated_rooms[i]);
-      }
-    }
-  }
-
-  // finds the room's data and adds it to the list of rooms
-  function getRoom(room_id) {
-
-    // add listener for room info
-    roomsDatabase.child(room_id).on("value", function(snapshot) {
-
-      var room = snapshot.val();
-
-      if (room) {
-
-        var roomUniqueUsers = [];
-        //rm duplicate users
-        if (room.users) {
-          roomUniqueUsers = Object.values(room.users);
-          roomUniqueUsers = roomUniqueUsers.filter(function(element, index, self) {
-            return index == self.indexOf(element);
-          });
-        }
-
-        // update the room
-        $rootScope.rooms[room_id] = new Room(room_id, room.name, room.host_id, room.class_id, 
-                                         room.is_lecture, roomUniqueUsers, room.host_name ? room.host_name : "Unknown host");
-
-        // are there tutors in here?
-        detectTutors($rootScope.rooms[room_id]);
-
-        // how many people are studying for this class now?
-        setNumUsers($rootScope.rooms[room_id].class_id);
-
-        // get room users
-        updateRoomUsers($rootScope.rooms[room_id]);
-
-        // update currTyping ppl
-        //updateCurrTyping();
-
-        $rootScope.safeApply($scope);
-      }
-    });
-  }
-
-
-  // Set the number of total users studying for a class at the moment
-  function setNumUsers(class_id) {
-    ////console.log("setting num users for " + class_id);
-    $rootScope.classes[class_id].num_users = 0;
-
-    for (i = 0; i < $scope.class_rooms[class_id].length; i++) {
-      var room = $rootScope.rooms[$scope.class_rooms[class_id][i]];
-
-      // if there are users in this room
-      if (room && room.users) {
-        // add them to the number of users in this class
-        $rootScope.classes[class_id].num_users += room.users.length;
-      }
-    }
-  }
-
-  // check if there is a tutor present in a room
-  // update rooms and classes accordingly
-  function detectTutors(room) {
-
-    var tutor_ids = $rootScope.classes[room.class_id].tutor_ids;
-
-    // if this class has tutors
-    if (tutor_ids && room.users) {
-
-      for (var i = 0; i < room.users.length; i++) {
-        var has_tutor = false;
-        // if there is a tutor in this room or a tutor hosting this room
-        if (tutor_ids.indexOf(room.users[i]) != -1) {
-          has_tutor = true;
-          break;
-        }
-      }
-
-      room.has_tutor = has_tutor;
-      var r_index = $rootScope.classes[room.class_id].rooms_with_tutors.indexOf(room.room_id);
-
-      // if we weren't a tutor room before and we are now
-      if (r_index == -1 && room.has_tutor) {
-        $rootScope.classes[room.class_id].rooms_with_tutors.push(room.room_id);
-      }
-
-      // if we used to be a tutor room and we aren't anymore
-      else if (r_index != -1 && !room.has_tutor) {
-        $rootScope.classes[room.class_id].rooms_with_tutors.splice(r_index, 1);
-      }
-    }
-  }
-
-  // getting the list of users in this room
-  function updateRoomUsers(room, callback) {
-    ////console.log("this is a room " + room);
-    if (room) {
-      ////console.log("getting new list of users for room: " + room.room_id);
-      ////console.log($rootScope.rooms);
-      for (var i = 0; i < room.users.length; i++) {
-        if (!(room.users[i] in $rootScope.users)) {
-          var id = room.users[i];
-          $http.get('/get_user/' + room.users[i]).then(function(response) {
-            $rootScope.users[response.data.user_id] = response.data;
-            //console.log("user info pulled: " + response.data.name + " " + response.data.user_id);
-            if (callback){callback();}
-          });
-        }
-      }
-    }
-  }
-
-  /*********************************************************************/
-
-  $scope.isTutor = function(user_id, room_chat_id) {
-    return $rootScope.classes[$rootScope.rooms[room_chat_id].class_id].tutor_ids &&
-    $rootScope.classes[$rootScope.rooms[room_chat_id].class_id].tutor_ids.indexOf(user_id) != -1;
-  }
-
-  /*********************************************************************/
-  /**************************** BLOCK SYSTEM ***************************/
-
-  var blockedUsers = {};
-  
-  $scope.toggleBlock = function(user_id) {
-    if (!$scope.isBlocked(user_id)) {
-      $scope.blockUserWithId(user_id);
-    } else {
-      $scope.unblock(user_id);
-    }
-  }
-    
-  $scope.isBlocked = function(user_id) {
-    if (blockedUsers['blocked_user_list']) {
-      var bUsers = blockedUsers['blocked_user_list'];
-
-      if (bUsers.indexOf(user_id) != -1) {
-        return true;
-      }
-    }
-    return false;
-  }
-
-  var getIdFromName = function(name, onResponseReceived){
-    var email = {"email": String(name)};
-    //console.log(email);
-    $http.post('/get_Id_From_Name', email).then(function(response){
-      onResponseReceived(response.data);
-    });    
-  }
-
-  var refresh = function(){
-    blockedUsers = {};
-    $http.get('/get_blocked_users').then(function(response){
-      $scope.block_user_list = response.data;
-      if(!(response.data[0])){
-        return;
-      }
-      blockedUsers['user_id'] = response.data[0]['blocked_user_id'];
-      blockedUsers['blocked_user_list'] = [];
-      for (var i = 0; i < response.data.length; i++){
-        var obj = response.data[i];
-        blockedUsers['blocked_user_list'].push(obj['blocked_user_id']);
-
-        if (myCalls[obj['blocked_user_id']]) {
-          myCalls[obj['blocked_user_id']].close();
-        }
-      }
-    });
-  }
-  
-  var addBlock = function(blocked_user_id, onResponseReceived){
-    var data = {
-      "blocked_user_id": String(blocked_user_id),
-    }; 
-    $http.post('/add_blocked_user', data).then(function(response){
-      onResponseReceived(response.data);
-    });
-  };
-
-  refresh();
-  
-  $scope.blockUserWithId = function(user_id) {
-    //console.log("blocking: " + user_id);
-    addBlock(user_id, function(response) {
-      showAlert('block-alert', 'normal', false);
-      refresh();
-    });
-  }
-  
-  $scope.unblock = function(user_id){
-    //console.log("unblocking: " + user_id)
-    $http.delete('/remove_block/' + user_id).then(function(response){
-      refresh();
-    });
-  }
   /*********************************************************************/
 
   //token generator
@@ -577,7 +190,7 @@ function($scope, $rootScope, $http, $timeout, $window) {
   }
 
   $scope.whiteboardURL = function() {
-    return "whiteboard.html#" + $rootScope.currRoomCallID;
+    return "whiteboard.html#" + $rootScope.caller.currRoomCallID;
   };
 
   //youtube id from url
@@ -623,7 +236,7 @@ function($scope, $rootScope, $http, $timeout, $window) {
       $scope.muteBtnClass.pop();
       $scope.muteBtnClass.push('glyphicon-volume-up');        
     }
-    toggleMyStreamAudioEnabled();
+    $rootScope.caller.toggleMyStreamAudioEnabled();
   }
 
 }]);

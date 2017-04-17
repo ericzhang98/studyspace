@@ -15,7 +15,7 @@ myApp.controller("AddClassController", function($scope, $rootScope, $http) {
     //deep copy so we won't copy over temp changes, also has an extra lounge_id
 
 
-    temp_class_ids = $rootScope.my_class_ids.slice();
+    temp_class_ids = $rootScope.cruHandler.my_class_ids.slice();
     temp_class_ids.splice(temp_class_ids.indexOf('lounge_id'), 1);
 
     //console.log('LUL ' + $rootScope.my_class_ids);
@@ -107,15 +107,15 @@ myApp.controller("AddClassController", function($scope, $rootScope, $http) {
     var noChange = true;
     updated_class_ids.forEach(function(class_id) {
       // for classes I've added
-      if ($rootScope.my_class_ids.indexOf(class_id) == -1) {
+      if ($rootScope.cruHandler.my_class_ids.indexOf(class_id) == -1) {
         $rootScope.getClassBC(class_id);
         noChange = false;
       }
     });
 
-    noChange = noChange && $rootScope.my_class_ids.length == updated_class_ids.length; 
+    noChange = noChange && $rootScope.cruHandler.my_class_ids.length == updated_class_ids.length; 
 
-    $rootScope.my_class_ids = updated_class_ids;
+    $rootScope.cruHandler.my_class_ids = updated_class_ids;
     $rootScope.safeApply($scope);
 
     if (!noChange) {
