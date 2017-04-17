@@ -9,12 +9,11 @@ myApp.run(function($rootScope) {
   $rootScope.myName = getSignedCookie("name");
 
   $rootScope.currRoomChatID = null;
-  $rootScope.classes = {}      // class_id : class, grabbed on initial load
-  $rootScope.rooms = {}        // room_id : room, listened to after grabbing classes
-  $rootScope.users = {}        // user_id : user, info added as u join rooms
-  $rootScope.my_class_ids = [];
 
   $rootScope.caller = new Caller($rootScope.myID);
+  $rootScope.caller.volumeListener.setOnLoudChangeFunc(function() {$rootScope.$broadcast('volumeListenerChange')});
+  $rootScope.cruHandler = new CRUHandler();
+  $rootScope.cruHandler.setOnChangeFunc(function() {$rootScope.$broadcast('cruChange')})
 
   // broadcast methods
   // called in BuddyController, goes to ChatController
@@ -57,11 +56,6 @@ myApp.run(function($rootScope) {
   }
 });
 
-// pull class data
-myApp.run(function($rootScope) {
-
-});
-
 /**************************** MAIN CONTROLLER ****************************/
 // - Master controller for main room
 // - Contains methods that use / modify scope variables and aren't
@@ -88,21 +82,22 @@ function($scope, $rootScope, $http, $timeout, $window) {
     window.location.href = "/";
   }
   /*********************************************************************/
+  /************************ BROADCAST LISTENERS ************************/
 
-  /*-------------------------------------------------------------------*/
-  /***************************** CLASSES BAR ***************************/
-  /*-------------------------------------------------------------------*/
+  // Respond to a volumeListener change
+  $scope.$on('volumeListenerChange', function(event, data) {
+    $scope.$apply();
+  })
 
-  /******************************* SETUP ******************************/
+  // Respond to a cruContainer change
+  $scope.$on('cruChange', function(event, data) {
+    $rootScope.safeApply($scope);
+  })
 
-  // Scope variables
-  $scope.class_rooms = {}  // class_id : list of room_ids
-  $scope.volumes = {};      // user_id : int (volume coming from them);
-
-  $rootScope.caller.volumeListener.addOnLoudChangeFunc(function() {$scope.$apply()});
-
-  // Initial call to pull data for user / classes / rooms
-  getClasses();
+  // Allows other controllers to call getClass
+  $scope.$on('getClass', function(event, data) {
+    $rootScope.cruHandler.getClass(data.class_id);
+  });
 
   /*********************************************************************/
   /*************************** ROOM INTERACTION ************************/
@@ -125,7 +120,7 @@ function($scope, $rootScope, $http, $timeout, $window) {
   $scope.leaveRoom = function() {
     
     // leave room case
-    if ($rootScope.rooms[$rootScope.currRoomChatID].class_id != 'dm_class_id') {
+    if ($rootScope.cruHandler.rooms[$rootScope.currRoomChatID].class_id != 'dm_class_id') {
       $rootScope.caller.leaveRoomCall();
       $rootScope.joinRoomChatBC(null); //leave chat room
     }
@@ -136,13 +131,6 @@ function($scope, $rootScope, $http, $timeout, $window) {
     }
   }
 
-  $window.onbeforeunload = function() {
-    //in order to leave DM on window close
-    var temp = new XMLHttpRequest();
-    temp.open("GET", "/typing/false/" + $rootScope.currRoomChatID, true);
-    temp.send();
-  };
-
   // Sidebar setup, makes sure that at most one class is open at a time
   var $myGroup = $('#classes');
   $myGroup.on('show.bs.collapse','.collapse', function() {
@@ -151,7 +139,7 @@ function($scope, $rootScope, $http, $timeout, $window) {
 
   // Expands sidebar panel for given class
   function adjustSidebarToggle(class_id) {
-    $rootScope.my_class_ids.forEach(function(my_class_id) {
+    $rootScope.cruHandler.my_class_ids.forEach(function(my_class_id) {
 
       if (my_class_id == class_id && $("#" + my_class_id).is(":hidden")) {
         $('#' + my_class_id).collapse('toggle');
@@ -181,218 +169,6 @@ function($scope, $rootScope, $http, $timeout, $window) {
   
   /*********************************************************************/
   /**************************** PULLING DATA ***************************/
-  // Listener that allows other controllers to call getClass
-  $scope.$on('getClass', function(event, data) {
-    getClass(data.class_id);
-  });
-
-  // - gets all class_ids for user
-  // - delegates to getClass
-  function getClasses() {
-    var xhr = new XMLHttpRequest();
-    xhr.open('GET', "/get_my_classes", true); // responds with class_ids
-    xhr.send();
-
-    xhr.onreadystatechange = function(e) {
-      if (xhr.readyState == 4 && xhr.status == 200) {
-        var response = JSON.parse(xhr.responseText);
-
-        // Set this scope variable (used in create room)
-        if (response.class_ids) {
-          $rootScope.my_class_ids = response.class_ids;
-        }
-
-        $rootScope.my_class_ids.push('lounge_id');
-
-        // Get more data
-        for (i = 0; i < $rootScope.my_class_ids.length; i++) {
-          getClass($rootScope.my_class_ids[i]);
-        }
-      }
-    }
-  }
-
-  // - gets class_name and class_rooms for specified class
-  // - adds the class to the UI
-  // - calls getRoom on all the rooms for specified class
-  function getClass(class_id) {
-
-    // get class info
-    var xhr = new XMLHttpRequest();
-    xhr.open('GET', "/get_class/" + class_id, true); // res with the class's name and room_ids
-    xhr.send();
-
-    xhr.onreadystatechange = function(e) {
-      if (xhr.readyState == 4 && xhr.status == 200) {
-
-        // store the class name
-        var response = JSON.parse(xhr.responseText);
-        response.name = response.name.toLowerCase();
-        response.rooms_with_tutors = [];
-
-        $rootScope.classes[class_id] = response;
-
-        // update UI
-        $rootScope.safeApply($scope);
-
-        // add listener for class rooms
-        classRoomsDatabase.child(class_id).on("value", function(snapshot) {
-          if (snapshot.val()) {
-            onClassRoomsChange(class_id, Object.values(snapshot.val()));
-          }
-        });
-      }
-    }
-  }
-
-  // - respond to change in a class's rooms
-  // - calls removeRoom/getRoom accordingly
-  function onClassRoomsChange(class_id, updated_rooms) {
-
-    // save a copy of the current rooms
-    var curr_rooms = $scope.class_rooms[class_id] ? $scope.class_rooms[class_id] : [];
-
-    // update our rooms
-    $scope.class_rooms[class_id] = updated_rooms;
-
-    // if there is a change, apply it
-    // needed for case that a room is deleted, but none are added
-    if (curr_rooms != updated_rooms) {
-      $rootScope.safeApply($scope);
-    }
-
-    // detach listeners for removed rooms
-    for (i = 0; i < curr_rooms.length; i++) {
-      // if this room is not in the new rooms, detach listener
-      if (updated_rooms.indexOf(curr_rooms[i]) == -1) {
-        roomsDatabase.child(curr_rooms[i]).off();
-      }
-    }
-
-    // get the new rooms
-    for (i = 0; i < updated_rooms.length; i++) {
-      // if we weren't already listening to this room, get it
-      if (curr_rooms.indexOf(updated_rooms[i]) == -1) {
-        getRoom(updated_rooms[i]);
-      }
-    }
-  }
-
-  // finds the room's data and adds it to the list of rooms
-  function getRoom(room_id) {
-
-    // add listener for room info
-    roomsDatabase.child(room_id).on("value", function(snapshot) {
-
-      var room = snapshot.val();
-
-      if (room) {
-
-        var roomUniqueUsers = [];
-        //rm duplicate users
-        if (room.users) {
-          roomUniqueUsers = Object.values(room.users);
-          roomUniqueUsers = roomUniqueUsers.filter(function(element, index, self) {
-            return index == self.indexOf(element);
-          });
-        }
-
-        // update the room
-        $rootScope.rooms[room_id] = new Room(room_id, room.name, room.host_id, room.class_id, 
-                                         room.is_lecture, roomUniqueUsers, room.host_name ? room.host_name : "Unknown host");
-
-        // are there tutors in here?
-        detectTutors($rootScope.rooms[room_id]);
-
-        // how many people are studying for this class now?
-        setNumUsers($rootScope.rooms[room_id].class_id);
-
-        // get room users
-        updateRoomUsers($rootScope.rooms[room_id]);
-
-        // update currTyping ppl
-        //updateCurrTyping();
-
-        $rootScope.safeApply($scope);
-      }
-    });
-  }
-
-  // Set the number of total users studying for a class at the moment
-  function setNumUsers(class_id) {
-    ////console.log("setting num users for " + class_id);
-    $rootScope.classes[class_id].num_users = 0;
-
-    for (i = 0; i < $scope.class_rooms[class_id].length; i++) {
-      var room = $rootScope.rooms[$scope.class_rooms[class_id][i]];
-
-      // if there are users in this room
-      if (room && room.users) {
-        // add them to the number of users in this class
-        $rootScope.classes[class_id].num_users += room.users.length;
-      }
-    }
-  }
-
-  // check if there is a tutor present in a room
-  // update rooms and classes accordingly
-  function detectTutors(room) {
-
-    var tutor_ids = $rootScope.classes[room.class_id].tutor_ids;
-
-    // if this class has tutors
-    if (tutor_ids && room.users) {
-
-      for (var i = 0; i < room.users.length; i++) {
-        var has_tutor = false;
-        // if there is a tutor in this room or a tutor hosting this room
-        if (tutor_ids.indexOf(room.users[i]) != -1) {
-          has_tutor = true;
-          break;
-        }
-      }
-
-      room.has_tutor = has_tutor;
-      var r_index = $rootScope.classes[room.class_id].rooms_with_tutors.indexOf(room.room_id);
-
-      // if we weren't a tutor room before and we are now
-      if (r_index == -1 && room.has_tutor) {
-        $rootScope.classes[room.class_id].rooms_with_tutors.push(room.room_id);
-      }
-
-      // if we used to be a tutor room and we aren't anymore
-      else if (r_index != -1 && !room.has_tutor) {
-        $rootScope.classes[room.class_id].rooms_with_tutors.splice(r_index, 1);
-      }
-    }
-  }
-
-  // getting the list of users in this room
-  function updateRoomUsers(room, callback) {
-    ////console.log("this is a room " + room);
-    if (room) {
-      ////console.log("getting new list of users for room: " + room.room_id);
-      ////console.log($rootScope.rooms);
-      for (var i = 0; i < room.users.length; i++) {
-        if (!(room.users[i] in $rootScope.users)) {
-          var id = room.users[i];
-          $http.get('/get_user/' + room.users[i]).then(function(response) {
-            $rootScope.users[response.data.user_id] = response.data;
-            //console.log("user info pulled: " + response.data.name + " " + response.data.user_id);
-            if (callback){callback();}
-          });
-        }
-      }
-    }
-  }
-
-  /*********************************************************************/
-
-  $scope.isTutor = function(user_id, room_chat_id) {
-    return $rootScope.classes[$rootScope.rooms[room_chat_id].class_id].tutor_ids &&
-    $rootScope.classes[$rootScope.rooms[room_chat_id].class_id].tutor_ids.indexOf(user_id) != -1;
-  }
-
   /*********************************************************************/
 
   //token generator

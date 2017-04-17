@@ -1,13 +1,18 @@
 /* Used for listenening to volumes and responding to changes*/
 /* Exists as singleton within Caller object */
 
-function volumeListener() {
+function VolumeListener() {
 
-	var thisVolumeListener = this;	// a reference to this VolumeListener object
-	var onLoudChangeFuncs = [];			// list of functions to execute when a soundMeter's loudness changes
+  /***** Public Variables ***************************/
+  this.volumes = {};                // dictionary from user_id to soundMeter
+  /**************************************************/
 
-	this.volumes = {};		// dictionary from user_id to soundMeter
+  /***** Private Variables **************************/
+	const thisVolumeListener = this;	// a reference to this VolumeListener object
+	var onLoudChangeFunc = null;			// function to execute when a soundMeter's loudness changes
+  /**************************************************/
 
+  /************************** Public Functions *************************/
 	// - adds a user_id : soundMeter entry to the volumes dict
   this.setVolumeListener = function(user_id, stream) {
     var soundMeter = new SoundMeter(window.audioContext);
@@ -30,10 +35,8 @@ function volumeListener() {
           //console.log("changing volume to " + soundMeter.loudDetected);
           soundMeter.loud = soundMeter.loudDetected;
 
-          // call all callbacks when a soundMeter's loudness changes
-          for (i = 0; i < onLoudChangeFuncs.length; i++) {
-          	onLoudChangeFuncs[i]();
-          }
+          // callback when a soundMeter's loudness changes
+          onLoudChangeFunc();
         }
 
         // reset loudDetected for the next interval
@@ -42,9 +45,10 @@ function volumeListener() {
     });
   }
 
-  // - adds a callback function to be executed 
+  // - sets a callback function to be executed 
   //   when a soundMeter's loudness changes
-  this.addOnLoudChangeFunc = function(func) {
-  	onLoudChangeFuncs.push(func);
+  this.setOnLoudChangeFunc = function(func) {
+  	onLoudChangeFunc = func;
   }
+  /*********************************************************************/
 }

@@ -6,12 +6,12 @@ function Caller(my_id) {
   /***** Public Variables ***************************/
   this.currRoomCallID = null; // the roomID of the room we are calling in
   this.showVideo = false;     // was I previously showing video?
-  this.volumeListener = new volumeListener(); // create a volume listener
+  this.volumeListener = new VolumeListener(); // create a volume listener
   /**************************************************/
 
-  /***** Private Variables ****************************/
-  const PEER_PING_PERIOD = 30000;
-  var thisCaller = this;    // a reference to this Caller object
+  /***** Private Variables **************************/
+  const thisCaller = this;        // a reference to this Caller object
+  const PEER_PING_PERIOD = 30000; // ping frequency
   var myID = my_id;         // the userID of the owner of this Caller object
   var myPeer = new Peer(myID, {host: "pacific-lake-64902.herokuapp.com", port: "",  path: '/peerjs'}); // peer object for media sharing
   var myStream = null;      // my media stream
@@ -19,8 +19,7 @@ function Caller(my_id) {
   var isLecturer = false;   // am I giving a lecture?
   /**************************************************/
 
-  /***** Miscellaneous Initialization ***************/
-
+  /***** Initialization *****************************/
   // unsure, Eric did this I think?
   myPeer._lastServerId = myID;
 
@@ -32,7 +31,6 @@ function Caller(my_id) {
   /**************************************************/
 
   /***** myPeer Listeners ***************************/
-
   // Respond to open (when myPeer object is created)
   myPeer.on('open', function() {
     setTimeout(pingPeerServer, 5000, true);
