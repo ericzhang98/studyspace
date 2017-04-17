@@ -33,6 +33,13 @@ var accountManager = function() {
   }
 
 
+  //send any error messages back to client
+  function sendVerifyError(res) {
+    res.json({error: "Verify email failed"}); //add anything needed to json
+  }
+
+
+
   this.signup = function(name, school, email, password, res) {
 
     console.log("Account signup: attempt with - " + email);
@@ -43,7 +50,7 @@ var accountManager = function() {
         db.users.insert(newUser, function(err, doc) {
           if (doc) {
             console.log("Account signup: ACCOUNT CREATED");
-            //sendVerifyEmail(newUser);
+            //sendVerifyEmail(newUser); NEED TO ADD MODULE STUFF
             res.cookie("user_id", doc.user_id, {signed: true, maxAge: COOKIE_TIME});
             res.cookie("email", doc.email, {signed: true, maxAge: COOKIE_TIME});
             res.cookie("name", doc.name, {signed: true, maxAge: COOKIE_TIME});
@@ -143,6 +150,7 @@ var accountManager = function() {
   }
 
 
+  //SHOULD RENAME TO CHANGE PASSWORD
   this.resetPassword = function(user_id, currPassword, newPassword, res) {
     if (user_id) {
       db.users.findOne({user_id: user_id}, function(err, doc) {
@@ -195,7 +203,38 @@ var accountManager = function() {
 
 
 
+  /* ADD A MAILER.JS MODULE
+  //sends a verification email to user
+  function sendVerifyEmail(user, callback) {
+  var receiver = user.email;
+  var id = user._id;
+  var token = user.token;
+  var emailText = "http://localhost:3000/accountverify/" + id + "/" + token;
+  var verifyEmailOptions = {
+  from: "studyspacehelper@gmail.com",
+  to: receiver, 
+  subject: "Account verification",
+  text: emailText,
+  html: "<a href='" + emailText + "'>" + emailText + "</a>"
+  };
+  mailTransporter.sendMail(verifyEmailOptions, callback);
+  }
 
+  function sendResetPassword(user, callback) {
+  var receiver = user.email;
+  var id = user._id;
+  var resetToken = user.resetToken;
+  var emailText = "http://localhost:3000/resetpassword/" + id + "/" + resetToken;
+  var resetPasswordEmailOptions = {
+  from: "studyspacehelper@gmail.com",
+  to: receiver,
+  subject: "Password reset",
+  text: emailText,
+  html: "<a href='" + emailText + "'>" + emailText + "</a>"
+  };
+  mailTransporter.sendMail(resetPasswordEmailOptions, callback);
+  }
+  */
 
 
 
