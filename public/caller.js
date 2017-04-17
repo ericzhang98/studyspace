@@ -1,28 +1,63 @@
+/* Used for sending and receiving media */
+/* Follows singleton design pattern */
+
 function Caller(my_id) {
 
-  var thisCaller = this;
-
-  const PEER_PING_PERIOD = 30000;
-  /***** General variables **************************/
-  //var me = {user_id: "id2", block_list: ["block1"]};
-  var myID = my_id;
-  var isLecturer = false;   // am I giving a lecture?
-  this.currRoomCallID = null;
+  /***** Public Variables ***************************/
+  this.currRoomCallID = null; // the roomID of the room we are calling in
+  this.showVideo = false;     // was I previously showing video?
   /**************************************************/
 
-  /***** Audio conferencing variables ***************/
-  var myPeer = new Peer(myID, 
-    {host: "pacific-lake-64902.herokuapp.com", port: "",  path: '/peerjs'});
+  /***** Private Variables ****************************/
+  const PEER_PING_PERIOD = 30000;
+  var thisCaller = this;    // a reference to this Caller object
+  var myID = my_id;         // the userID of the owner of this Caller object
+  var myPeer = new Peer(myID, {host: "pacific-lake-64902.herokuapp.com", port: "",  path: '/peerjs'}); // peer object for media sharing
+  var myStream = null;      // my media stream
+  var myCalls = {};         // dictionary from user_id to call
+  var isLecturer = false;   // am I giving a lecture?
+  /**************************************************/
+
+  /***** Miscellaneous Initialization ***************/
+
+  // unsure, Eric did this I think?
   myPeer._lastServerId = myID;
-  var myStream = null;
-  var myCalls = {};         // Dictionary from user_id to call
-  var myRemoteStreams = {}; // Dictionary from user.id to audio track
-  this.showVideo = false;    // Was I previously showing video?
+
+  // for browser robustness (I think)
   navigator.getUserMedia = navigator.getUserMedia || navigator.webkitGetUserMedia || navigator.mozGetUserMedia;
+  
+  // get my media
+  getMedia();
+  /**************************************************/
+
+  /***** myPeer Listeners ***************************/
+
+  // Respond to open (when myPeer object is created)
+  myPeer.on('open', function() {
+    setTimeout(pingPeerServer, 5000, true);
+  });
+
+  // Respond to incoming call
+  myPeer.on('call', function(call) {
+    // If the user isn't blocked, answer the call
+    //if (me.block_list.indexOf(call.peer) == -1) {
+    answerCall(call);
+    //}
+  });
+
+  myPeer.on("disconnected", function() {
+    //console.log("DISCONNECTED");
+  });
+
+  myPeer.on("error", function(err) {
+    //console.log(err);
+  });
+  /**************************************************/
+
 
   /*********************** CALLING AND ANSWERING ***********************/
 
-  // Grab user media (voice)
+  // - takes my media and puts into myStream
   function getMedia(callback) {
     navigator.getUserMedia({video: true, audio: true}, function(stream) {
       myStream = stream;
@@ -38,65 +73,8 @@ function Caller(my_id) {
     });
   }
 
-  /******************************* MISC ********************************/
-
-  // makes sure we leave the room
-  this.leaveRoomCallHard = function() {
-    //console.log(this.currRoomCallID);
-    if (this.currRoomCallID != null) {
-      var xhr = new XMLHttpRequest();
-      xhr.open('GET', "/leave_room/" + this.currRoomCallID, false);
-      xhr.send();
-    }
-  }
-
-  function setOnBeforeUnload() {
-    // when the window is about to close
-    window.onbeforeunload = function(event) {
-      // send request to server to tell them we left
-      thisCaller.leaveRoomCallHard();
-      //leaveRoomCall(this.currRoomCallID);
-    };
-  }
-  /*********************************************************************/
-
-  // Grab user media immediately
-  getMedia();
-
-  // Respond to open
-  myPeer.on('open', function() {
-    setTimeout(pingPeerServer, 5000, true);
-  });
-
-  // Respond to call
-  myPeer.on('call', function(call) {
-
-    // If the user isn't blocked, answer the call
-    //if (me.block_list.indexOf(call.peer) == -1) {
-    answerCall(call);
-    //}
-
-  });
-
-  myPeer.on("disconnected", function() {
-    //console.log("DISCONNECTED");
-  });
-
-  myPeer.on("error", function(err) {
-    //console.log(err);
-  });
-
-  //pings peer server, pass in true for constant 30 sec ping
-  function pingPeerServer(constant) {
-    myPeer.socket.send({type:"Ping"});
-    if (constant) {
-      setTimeout(pingPeerServer, PEER_PING_PERIOD, true);
-    }
-  }
-
   // - ensures myStream is set, delegates to startCallHelper()
   function startCall(other_user_id) {
-    //console.log("calling " + other_user_id);
 
     // do not send out calls to users that we've blocked
     /*if (me.block_list.indexOf(other_user_id) != -1) {
@@ -105,13 +83,11 @@ function Caller(my_id) {
 
     // myStream already set
     if (myStream != null) {
-      //console.log("myStream already set");
       startCallHelper(other_user_id);
     }   
 
     // myStream not yet set
     else {
-      //console.log("myStream not yet set");
       getMedia(startCallHelper(other_user_id));
     }
   }
@@ -124,16 +100,16 @@ function Caller(my_id) {
     if (call) {
       //console.log("sent call to user with id: " + call.peer)
 
-        // reference to the call so we can close it
-        myCalls[other_user_id] = (call);
+      // reference to the call so we can close it
+      myCalls[other_user_id] = (call);
 
       //console.log("outgoing stream id: " + myStream.id)
 
-        call.on('stream', function(remoteStream) {
-          //console.log("incoming stream id: " + remoteStream.id)
+      call.on('stream', function(remoteStream) {
+        //console.log("incoming stream id: " + remoteStream.id)
 
-          establishCall(remoteStream, call.peer);
-        });
+        establishCall(remoteStream, call.peer);
+      });
 
       call.on('close', function() {
         //console.log("call closed");
@@ -184,7 +160,7 @@ function Caller(my_id) {
     });
   }
 
-  // just calls addRemoteStream and plays the sound effect
+  // - just calls addRemoteStream and plays the sound effect
   function establishCall(remoteStream, peer_id) {
 
     // set up the listener for this peer
@@ -197,7 +173,7 @@ function Caller(my_id) {
     document.getElementById('join_room_audio').play();
   }
 
-  // just calls removeRemoteStream and plays the sound effect
+  // - just calls removeRemoteStream and plays the sound effect
   function destablishCall(peer_id) {
 
     // remove their stream
@@ -313,17 +289,6 @@ function Caller(my_id) {
 
   // - creates audio track and stores in myRemoteStreams
   function addRemoteStream(remoteStream, user_id) {
-
-    // create a new audio element and make it play automatically
-    /*var media = document.createElement('video');
-
-    media.autoplay = true;
-
-    // set the source
-    media.src = window.URL.createObjectURL(remoteStream); */
-
-    // store the element in myRemoteStreams
-    //myRemoteStreams[user_id] = media;
     angular.element(document.getElementById('video-layer')).scope().userStreamSources[user_id] = window.URL.createObjectURL(remoteStream);
     angular.element(document.getElementById('video-layer')).scope().$apply();
 
@@ -331,39 +296,11 @@ function Caller(my_id) {
     if (isLecturer) {
       this.toggleRemoteStreamAudioEnabled(user_id);
     }
-
-
-    // add audio stream to the page
-    //document.getElementById("myBody").insertBefore(audio, document.getElementById("myDiv"));
-    /*container = document.createElement('div');
-    container.className = "video-container";
-    container.id = user_id + "-video-container";
-    if (this.videoContainers.length == 0) {
-      document.getElementById("video-row").appendChild(container);
-    } 
-    else {
-      document.getElementById("video-row").insertBefore(container, this.videoContainers[this.videoContainers.length - 1].nextSibling);
-    }
-    this.videoContainers.push(container);
-    container.append(media);*/
-    //var name = document.createTextNode(angular.element(document.getElementById('myBody')).scope().users[user_id].name);
-    //container.append(name);
   }
 
   // - removes the audio track that streaming the remoteStream from call_id
   function removeRemoteStream(user_id) {
-
-    // remove the audio track from the page
-    //if (myRemoteStreams[user_id]) {
-      //document.getElementById("video-layer").removeChild(myRemoteStreams[user_id]);
-      //document.getElementById("video-row").removeChild(document.getElementById(user_id + "-video-container"));
-
-      // remove the remoteStream from myRemoteStreams
-      //delete myRemoteStreams[user_id];
-      delete angular.element(document.getElementById('video-layer')).scope().userStreamSources[user_id];
-
-      // document.getElementById("video-row").removeChild(document.getElementById(user_id + "-video-container"));
-    //}
+    delete angular.element(document.getElementById('video-layer')).scope().userStreamSources[user_id];
   }
 
   // - removes all {user_id: call} pairs in myCalls and closes calls
@@ -374,8 +311,9 @@ function Caller(my_id) {
     }
     myCalls = {};
   }
+
   /*********************************************************************/
-  /********************** MUTING / UNMUTING AUDIO **********************/
+  /*********************** ENABLE / DISABLE MEDIA **********************/
 
   // - toggle my own audio
   this.toggleMyStreamAudioEnabled = function() {
@@ -424,8 +362,41 @@ function Caller(my_id) {
     //}
   }
 
+  // - returns whether my video is enabled
   this.getVideoEnabled = function() {
     return myStream && myStream.getVideoTracks()[0].enabled;
+  }
+
+  /*********************************************************************/
+  /******************************* MISC ********************************/
+
+  // - makes sure we leave the room
+  this.leaveRoomCallHard = function() {
+    //console.log(this.currRoomCallID);
+    if (this.currRoomCallID != null) {
+      var xhr = new XMLHttpRequest();
+      xhr.open('GET', "/leave_room/" + this.currRoomCallID, false);
+      xhr.send();
+    }
+  }
+
+  // - sets window's "I'm about to close" function
+  // - used to make sure we leave rooms when we close browser
+  function setOnBeforeUnload() {
+    // when the window is about to close
+    window.onbeforeunload = function(event) {
+      // send request to server to tell them we left
+      thisCaller.leaveRoomCallHard();
+      //leaveRoomCall(this.currRoomCallID);
+    };
+  }
+
+  // - pings peer server, pass in true for constant 30 sec ping
+  function pingPeerServer(constant) {
+    myPeer.socket.send({type:"Ping"});
+    if (constant) {
+      setTimeout(pingPeerServer, PEER_PING_PERIOD, true);
+    }
   }
   /*********************************************************************/
 
