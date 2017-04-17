@@ -1,4 +1,3 @@
-//Main App Controller
 var songDatabase = null;
 var myApp = angular.module("mainApp", ["ngMaterial", "ngSanitize"]);
 
@@ -9,7 +8,6 @@ myApp.run(function($rootScope) {
   $rootScope.myID = getSignedCookie("user_id");
   $rootScope.myName = getSignedCookie("name");
 
-  //$rootScope.currRoomCallID = null;
   $rootScope.currRoomChatID = null;
   $rootScope.classes = {}      // class_id : class, grabbed on initial load
   $rootScope.rooms = {}        // room_id : room, listened to after grabbing classes
@@ -73,7 +71,6 @@ myApp.run(function($rootScope) {
 
 myApp.controller("MainController", ["$scope", "$rootScope", "$http", "$timeout", "$window",
 function($scope, $rootScope, $http, $timeout, $window) {
-  //console.log("Hell yeah");
   // general vars
   /*************************** ACCOUNT MANAGEMENT *********************/
   $scope.logout = function() {
@@ -101,6 +98,8 @@ function($scope, $rootScope, $http, $timeout, $window) {
   // Scope variables
   $scope.class_rooms = {}  // class_id : list of room_ids
   $scope.volumes = {};      // user_id : int (volume coming from them);
+
+  $rootScope.caller.volumeListener.addOnLoudChangeFunc(function() {$scope.$apply()});
 
   // Initial call to pull data for user / classes / rooms
   getClasses();
@@ -137,47 +136,11 @@ function($scope, $rootScope, $http, $timeout, $window) {
     }
   }
 
-  // set listener that updates the volumes dict
-  $scope.setVolumeListener = function(user_id, stream) {
-    var soundMeter = new SoundMeter(window.audioContext);
-
-    //console.log('setting volume listener to ' + user_id);
-    soundMeter.connectToSource(stream, function(e) {
-      if (e) {
-        alert(e);
-        return;
-      }
-
-      // every 200 seconds, check whether the soundMeter has been loud
-      // update UI if this has changed
-      setInterval(function() {
-    
-        if (soundMeter.loudDetected != soundMeter.loud) {
-          ////console.log("changing volume to " + soundMeter.loudDetected);
-          soundMeter.loud = soundMeter.loudDetected;
-          $scope.$apply();
-        }
-
-        soundMeter.loudDetected = false;
-      }, 500);
-
-      // long interval for updating the UI
-      $scope.volumes[user_id] = soundMeter;
-    });
-  }
-
   $window.onbeforeunload = function() {
     //in order to leave DM on window close
     var temp = new XMLHttpRequest();
     temp.open("GET", "/typing/false/" + $rootScope.currRoomChatID, true);
     temp.send();
-
-    /*
-    //send offline ping
-    var xhr = new XMLHttpRequest();
-    xhr.open("GET", "/offline", false);
-    xhr.send();
-    */
   };
 
   // Sidebar setup, makes sure that at most one class is open at a time

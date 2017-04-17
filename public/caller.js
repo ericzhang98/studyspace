@@ -1,11 +1,12 @@
 /* Used for sending and receiving media */
-/* Follows singleton design pattern */
+/* Exists as singleton within Angular app */
 
 function Caller(my_id) {
 
   /***** Public Variables ***************************/
   this.currRoomCallID = null; // the roomID of the room we are calling in
   this.showVideo = false;     // was I previously showing video?
+  this.volumeListener = new volumeListener(); // create a volume listener
   /**************************************************/
 
   /***** Private Variables ****************************/
@@ -63,7 +64,7 @@ function Caller(my_id) {
       myStream = stream;
       myStream.getVideoTracks()[0].enabled = false;
       addRemoteStream(myStream, myID);
-      angular.element(document.getElementById('myBody')).scope().setVolumeListener(myID, myStream);
+      thisCaller.volumeListener.setVolumeListener(myID, myStream);
       showAlert("media-connect-alert", 'short');
       if (callback) {
         callback();
@@ -164,7 +165,7 @@ function Caller(my_id) {
   function establishCall(remoteStream, peer_id) {
 
     // set up the listener for this peer
-    angular.element(document.getElementById('myBody')).scope().setVolumeListener(peer_id, remoteStream);
+    thisCaller.volumeListener.setVolumeListener(peer_id, remoteStream);
 
     // add their stream
     addRemoteStream(remoteStream, peer_id);
@@ -273,8 +274,6 @@ function Caller(my_id) {
       // leave our calls
       leaveCalls();
 
-      //angular.element(document.getElementById('myBody')).scope().userStreamSources = {};
-
       // send request to server to tell them we left
       var xhr = new XMLHttpRequest();
       xhr.open('GET', "/leave_room/" + this.currRoomCallID, true);
@@ -294,7 +293,7 @@ function Caller(my_id) {
 
     // if I am the lecturer, I want everyone else muted by default
     if (isLecturer) {
-      this.toggleRemoteStreamAudioEnabled(user_id);
+      thisCaller.toggleRemoteStreamAudioEnabled(user_id);
     }
   }
 
