@@ -69,16 +69,10 @@ if (deployment) {app.use(forceSsl);}
 app.use(express.static(__dirname + "/public"));
 app.use(bodyParser.json());
 app.use(cookieParser("raindropdroptop")); //secret key
-/*-----------------------------------------------------------------------*/
+
 
 //Globals
-//var MAIN_HOST = "mainhost";
-//var ADMIN_KEY = "ABCD"
-//var PUBLIC_DIR = __dirname + "/public/";
 var VIEW_DIR = __dirname + "/public/";
-//var COOKIE_TIME = 7*24*60*60*1000; //one week
-//var MAX_IDLE = 10*1000;
-//var BUFFER_TIME = 20*1000;
 var USER_IDLE = 30*1000;
 
 
@@ -87,6 +81,9 @@ var test = require("./test.js");
 var roomManager = require("./room.js");
 var accountManager = require("./account.js");
 var actionManager = require("./action.js");
+
+
+
 
 /* HTTP requests ---------------------------------------------------------*/
 
@@ -135,17 +132,252 @@ app.get('/audio/:song_code', function (req, res) {
 
 
 
-/* User settings ---------------*/
 
-app.post('/get_Id_From_Name', function(req, res) {
-  var emailFind = req.body.email;
-  console.log(emailFind);
 
-  db.users.findOne({email:req.body.email}, function(err, docs){
-    res.json(docs);
-  });	
+
+
+
+
+
+
+
+
+/* Studyspace API -------------------------------------------------------------------*/
+
+
+/********************************* SIGNUP AND LOGIN **********************************/
+
+/* POST data: {email, password} - login attempt
+ * Updates user's cookies with signed user_id, email, and name
+ * Returns: {user} - user info, null if attempt failed*/
+app.post('/accountlogin', function(req, res) {
+  var email = req.body.email;
+  var password = req.body.password;
+  accountManager.login(email, password, res);
 });
 
+/* POST data: {email, password} - account signup attempt
+ * Returns: {success} - whether or not it succeeded */
+app.post("/accountsignup", function(req, res) {
+  var name = req.body.name;
+  var school = req.body.school;
+  var email = req.body.email;
+  var password = req.body.password;
+  accountManager.signup(name, school, email, password, res);
+});
+
+/* GET data: {ID of account to verify, token} - verify account with token
+ * Returns: {success} - whether or not the account was verified */
+app.get("/accountverify/:id/:token", function(req, res) {
+  var id = req.params.id;
+  var token = req.params.token;
+  accountManager.verify(id, token, res);
+});
+
+/*************************************************************************************/
+
+/******************************** ACCOUNT MANAGEMENT *********************************/
+
+// sets the class_ids for this user to the class_ids array passed in
+app.post('/enroll', function (req, res) {
+  var user_id = req.signedCookies.user_id;
+  var class_ids = req.body.class_ids;
+  accountManager.enroll(user_id, class_ids, res);
+})
+
+/* POST data: {email of account to reset password} - send password reset link to email
+ * Returns: {success} - whether or not password reset link was sent */
+app.post("/sendforgotpassword", function(req, res) {
+  var email = req.body.email;
+  accountManager.sendForgotPassword(email, res);
+});
+
+//TODO: SHOULD RENAME TO CHANGE PASSWORD
+/* POST data: {currPass, newPass} - password change attempt
+ * Returns: {success} - whether or not password reset was succesful */
+app.post("/resetpassword", function(req, res) {
+  var user_id = req.signedCookies.user_id;
+  var currPassword = req.body.currPass;
+  var newPassword = req.body.newPass;
+  accountManager.resetPassword(user_id, currPassword, newPassword, res);
+});
+
+/*************************************************************************************/
+
+
+/*************************************** ROOMS ***************************************/
+
+app.get('/add_room/:class_id/:room_name/:is_lecture/:time_created/:host_name', function(req, res) {
+  var host_id = req.signedCookies.user_id;
+  if (!host_id) {
+    res.send({error: "invalid_user_id"});
+    return;
+  }
+  var class_id = req.params.class_id;
+  var room_name = req.params.room_name;
+  var is_lecture = req.params.is_lecture == "true";
+  var time_created = parseInt(req.params.time_created);
+  var host_name = req.params.host_name;
+  roomManager.addRoom(class_id, room_name, host_id, is_lecture, time_created, host_name, res);
+});
+
+// - adds user_id to room with id room_id
+// - returns list of user_id's in that room
+app.get('/join_room/:room_id/', function(req, res) {
+  var user_id = req.signedCookies.user_id;
+  if (!user_id) {
+    res.send({error: "invalid_user_id"});
+    return;
+  }
+  var room_id = req.params.room_id;
+  roomManager.joinRoom(user_id, room_id, function(roomInfo){res.send(roomInfo);});
+});
+
+// - removes user_id from room with id room_id
+app.get('/leave_room/:room_id/', function(req, res) {
+  var user_id = req.signedCookies.user_id;
+  if (!user_id) {
+    res.send({error: "invalid_user_id"});
+    return;
+  }
+  var room_id = req.params.room_id;
+  res.send({success: true}); //assume user leaves, fast for windowunload
+  roomManager.leaveRoom(user_id, room_id);
+});
+
+/*************************************************************************************/
+/**********************************ROOM ACTIONS***************************************/
+
+app.post("/pin_message/", function(req, res) {
+  var room_id = req.body.room_id;
+  var chat_message_key = req.body.chat_message_key;
+  var user_id = req.body.user_id;
+  var name = req.body.name;
+  var time_sent = req.body.time_sent;
+  var concat_text = req.body.concat_text;
+  actionManager.pinMessage(room_id, chat_message_key, user_id, name, time_sent, concat_text, res);
+})
+
+/* POST data: {chatMessage} - post chat message to firebase in respective room
+ * Returns: nothing */
+app.post("/send_room_message", function(req, res) {
+  var user_id = req.signedCookies.user_id;
+  var email = req.signedCookies.email;
+  var name = req.signedCookies.name;
+  var roomID = req.body.roomID;
+  var timeSent = req.body.timeSent;
+  var text = req.body.text;
+  var other_user_id = req.body.other_user_id;
+  if (user_id && email && name) {
+    actionManager.sendRoomMessage(roomID, timeSent, text, other_user_id, 
+      user_id, email, name, res);
+  }
+});
+
+app.get("/clear_message_notifications/:other_user_id", function(req, res) {
+  var user_id = req.signedCookies.user_id;
+  var other_user_id = req.params.other_user_id;
+  actionManager.clearMessageNotifications(user_id, other_user_id, res);
+});
+
+/*************************************************************************************/
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+/******************************* TO BE REMOVED (MAYBE) *******************************/
+
+app.post('/user_classes', function(req, res) {
+  //console.log(req.body);
+  var get_user_id = req.signedCookies.user_id;
+  db.user_classes.createIndex({name: 1, user_id: 1}, {unique:true}); //BUG: NEEDS FIX
+  db.user_classes.insert({name:req.body.name, user_id:get_user_id}, function(err, docs){
+    res.json(docs);
+  });	
+
+});
+
+app.delete('/user_classes/:id', function(req, res){
+
+  var id = req.params.id;
+  db.user_classes.remove({_id: mongojs.ObjectId(id)}, function(err, doc){
+    res.json(doc);
+  });
+});
+
+//NOTE:Need to get userID working so it only gets the classes of this user
+app.get('/user_classes', function(req, res) {
+
+  var get_user_id = req.signedCookies.user_id;
+  db.user_classes.find({user_id: get_user_id}, function(err, docs) {
+    res.json(docs);
+  });
+});
+
+/*************************************************************************************/
+
+
+
+
+/******************************** GET CLASSES & ROOMS ********************************/
+
+// return the class_ids of classes this user is enrolled in
+app.get('/get_my_classes/', function(req, res) {
+  var user_id = req.signedCookies.user_id;
+  if (user_id) {
+    db.users.findOne({user_id: user_id}, function (err, doc) {
+      if (doc) {
+        res.send({class_ids: doc.class_ids});
+      }
+      else {
+        res.send({class_ids: []});
+      }
+    });
+  }
+  else {
+    res.send({class_ids: []});
+  }
+});
+
+// return the class objects for all classes
+app.get('/get_all_classes', function (req, res) {
+  db.classes.find({}, function (err, doc) {
+    res.send(doc);
+  });
+});
+
+// return the class object with this id
+app.get('/get_class/:class_id', function(req, res) {
+  var class_id = req.params.class_id;
+
+  // look up name in mongoDB
+  db.classes.findOne({class_id: class_id}, function (err, doc) {
+    res.send(doc);
+  });
+});
+
+/*************************************************************************************/
+
+
+
+
+
+
+
+//TODO: Surgery
 /************************************** BLOCKING *************************************/
 
 app.get('/get_blocked_users', function(req, res) {
@@ -311,154 +543,24 @@ app.delete('/remove_buddy/:id', function(req, res){
 });
 
 /*************************************************************************************/
-/******************************* TO BE REMOVED (MAYBE) *******************************/
-
-app.post('/user_classes', function(req, res) {
-  //console.log(req.body);
-  var get_user_id = req.signedCookies.user_id;
-  db.user_classes.createIndex({name: 1, user_id: 1}, {unique:true}); //BUG: NEEDS FIX
-  db.user_classes.insert({name:req.body.name, user_id:get_user_id}, function(err, docs){
-    res.json(docs);
-  });	
-
-});
-
-app.delete('/user_classes/:id', function(req, res){
-
-  var id = req.params.id;
-  db.user_classes.remove({_id: mongojs.ObjectId(id)}, function(err, doc){
-    res.json(doc);
-  });
-});
-
-//NOTE:Need to get userID working so it only gets the classes of this user
-app.get('/user_classes', function(req, res) {
-
-  var get_user_id = req.signedCookies.user_id;
-  db.user_classes.find({user_id: get_user_id}, function(err, docs) {
-    res.json(docs);
-  });
-});
-
-/*************************************************************************************/
 
 
 
 
-/******************************** GET CLASSES & ROOMS ********************************/
 
-// return the class_ids of classes this user is enrolled in
-app.get('/get_my_classes/', function(req, res) {
-  var user_id = req.signedCookies.user_id;
-  if (user_id) {
-    db.users.findOne({user_id: user_id}, function (err, doc) {
-      if (doc) {
-        res.send({class_ids: doc.class_ids});
-      }
-      else {
-        res.send({class_ids: []});
-      }
-    });
-  }
-  else {
-    res.send({class_ids: []});
-  }
-});
 
-// return the class objects for all classes
-app.get('/get_all_classes', function (req, res) {
-  db.classes.find({}, function (err, doc) {
-    res.send(doc);
-  });
-});
 
-// return the class object with this id
-app.get('/get_class/:class_id', function(req, res) {
-  var class_id = req.params.class_id;
 
-  // look up name in mongoDB
-  db.classes.findOne({class_id: class_id}, function (err, doc) {
-    res.send(doc);
-  });
-});
 
-/*************************************************************************************/
-/*************************************** ROOMS ***************************************/
 
-app.get('/add_room/:class_id/:room_name/:is_lecture/:time_created/:host_name', function(req, res) {
-  var host_id = req.signedCookies.user_id;
-  if (!host_id) {
-    res.send({error: "invalid_user_id"});
-    return;
-  }
-  var class_id = req.params.class_id;
-  var room_name = req.params.room_name;
-  var is_lecture = req.params.is_lecture == "true";
-  var time_created = parseInt(req.params.time_created);
-  var host_name = req.params.host_name;
-  roomManager.addRoom(class_id, room_name, host_id, is_lecture, time_created, host_name, res);
-});
 
-// - adds user_id to room with id room_id
-// - returns list of user_id's in that room
-app.get('/join_room/:room_id/', function(req, res) {
-  var user_id = req.signedCookies.user_id;
-  if (!user_id) {
-    res.send({error: "invalid_user_id"});
-    return;
-  }
-  var room_id = req.params.room_id;
-  roomManager.joinRoom(user_id, room_id, function(roomInfo){res.send(roomInfo);});
-});
 
-// - removes user_id from room with id room_id
-app.get('/leave_room/:room_id/', function(req, res) {
-  var user_id = req.signedCookies.user_id;
-  if (!user_id) {
-    res.send({error: "invalid_user_id"});
-    return;
-  }
-  var room_id = req.params.room_id;
-  res.send({success: true}); //assume user leaves, fast for windowunload
-  roomManager.leaveRoom(user_id, room_id);
-});
 
-/*************************************************************************************/
-/**********************************ROOM ACTIONS***************************************/
 
-app.post("/pin_message/", function(req, res) {
-  var room_id = req.body.room_id;
-  var chat_message_key = req.body.chat_message_key;
-  var user_id = req.body.user_id;
-  var name = req.body.name;
-  var time_sent = req.body.time_sent;
-  var concat_text = req.body.concat_text;
-  actionManager.pinMessage(room_id, chat_message_key, user_id, name, time_sent, concat_text, res);
-})
 
-/* POST data: {chatMessage} - post chat message to firebase in respective room
- * Returns: nothing */
-app.post("/send_room_message", function(req, res) {
-  var user_id = req.signedCookies.user_id;
-  var email = req.signedCookies.email;
-  var name = req.signedCookies.name;
-  var roomID = req.body.roomID;
-  var timeSent = req.body.timeSent;
-  var text = req.body.text;
-  var other_user_id = req.body.other_user_id;
-  if (user_id && email && name) {
-    actionManager.sendRoomMessage(roomID, timeSent, text, other_user_id, 
-      user_id, email, name, res);
-  }
-});
 
-app.get("/clear_message_notifications/:other_user_id", function(req, res) {
-  var user_id = req.signedCookies.user_id;
-  var other_user_id = req.params.other_user_id;
-  actionManager.clearMessageNotifications(user_id, other_user_id, res);
-});
 
-/*************************************************************************************/
+
 
 
 /***********************************HELPER STUFF****************************************/
@@ -598,105 +700,10 @@ app.get("/youtube_search/:query", function(req, res) {
   }
 });
 
-/*************************************************************************************/
-/********************************* SIGNUP AND LOGIN **********************************/
 
-/* POST data: {email, password} - login attempt
- * Updates user's cookies with signed user_id, email, and name
- * Returns: {user} - user info, null if attempt failed*/
-app.post('/accountlogin', function(req, res) {
-  var email = req.body.email;
-  var password = req.body.password;
-  accountManager.login(email, password, res);
-});
+/* User activity methods --------------------------------------------------------*/
 
-/* POST data: {email, password} - account signup attempt
- * Returns: {success} - whether or not it succeeded */
-app.post("/accountsignup", function(req, res) {
-  var name = req.body.name;
-  var school = req.body.school;
-  var email = req.body.email;
-  var password = req.body.password;
-  accountManager.signup(name, school, email, password, res);
-});
-
-/* GET data: {ID of account to verify, token} - verify account with token
- * Returns: {success} - whether or not the account was verified */
-app.get("/accountverify/:id/:token", function(req, res) {
-  var id = req.params.id;
-  var token = req.params.token;
-  accountManager.verify(id, token, res);
-});
-
-/*************************************************************************************/
-/******************************** ACCOUNT MANAGEMENT *********************************/
-
-// sets the class_ids for this user to the class_ids array passed in
-app.post('/enroll', function (req, res) {
-  var user_id = req.signedCookies.user_id;
-  var class_ids = req.body.class_ids;
-  accountManager.enroll(user_id, class_ids, res);
-})
-
-/* POST data: {email of account to reset password} - send password reset link to email
- * Returns: {success} - whether or not password reset link was sent */
-app.post("/sendforgotpassword", function(req, res) {
-  var email = req.body.email;
-  accountManager.sendForgotPassword(email, res);
-});
-
-//SHOULD RENAME TO CHANGE PASSWORD
-/* POST data: {currPass, newPass} - password change attempt
- * Returns: {success} - whether or not password reset was succesful */
-app.post("/resetpassword", function(req, res) {
-  var user_id = req.signedCookies.user_id;
-  var currPassword = req.body.currPass;
-  var newPassword = req.body.newPass;
-  accountManager.resetPassword(user_id, currPassword, newPassword, res);
-});
-
-//REMOVE ANON STUFF
-app.get("/get_privacy_settings", function(req, res) {
-  var user_id = req.signedCookies.user_id;
-  if (user_id) {
-    db.users.findOne({user_id: user_id}, function (err, doc) {
-      if (doc) {
-        res.send({anon_status: doc.anon});
-      }
-    });
-  }
-});
-
-app.post("/update_privacy", function(req, res) {
-  var user_id = req.signedCookies.user_id;
-  var anon = req.body.anon;
-  db.users.findAndModify({query: {user_id: user_id}, update: {$set: {anon: anon}}, new: true}, function(err, doc) {
-    if(doc) {
-      console.log("anon status updated to" + anon);
-      res.json({success:true});
-    }
-    else {
-      console.log("weird error");
-      res.json({success:false});
-    }
-  })
-});
-/*************************************************************************************/
-
-
-/* Model -----------------------------------------------------------------*/
-
-function Class(class_id, class_name) {
-  this.class_id = class_id;	// "ucsd_cse_110_1"
-  this.name = class_name; // "CSE 110 Gillespie"
-}
-
-
-/*------------------------------------------------------------------------*/
-
-
-/* Helper methods --------------------------------------------------------*/
-
+// continuous checker for all users to process activity
 function userActivityChecker() {
   userActivityDatabase.once("value").then(function(snapshot) {
     //console.log("USER ACTIVITY CHECKER: checking activity of all users");
@@ -710,6 +717,7 @@ function userActivityChecker() {
   setTimeout(userActivityChecker, USER_IDLE);
 }
 
+// updates a user's activity log of lastRooms and online
 function processActivity(user_id, activityLog) {
   if (activityLog) {
     //if the user is in a room and hasn't pinged within the last minute, rm them from room

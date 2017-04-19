@@ -2,16 +2,15 @@ Object.values = Object.values || function(o){return Object.keys(o).map(function(
 
 angular
    .module('MyApp', ['ngMaterial'])
-   .controller('updateController', autoCompleteController);
+   .controller('updateController', updateController);
 
-function autoCompleteController ($scope, $http) {
+function updateController($scope, $http) {
     // Global Variables
     $scope.userClasses = []; // list of class_ids of classes user is enrolled in
     var allClassesNameToID = {}; // name: class_id dictionary for all available classes
 
     // Send requests to populate the two fields above
     getAllClasses();
-    getPrivacySettings();
 
     // list of states to be displayed
     $scope.querySearch = querySearch;
@@ -101,26 +100,6 @@ function autoCompleteController ($scope, $http) {
         }
     }
 
-    function getPrivacySettings() {
-      var xhr = new XMLHttpRequest();
-      xhr.open('GET', "/get_privacy_settings", true);
-      xhr.send();
-
-      xhr.onreadystatechange = function(e) {
-        if (xhr.readyState == 4 && xhr.status == 200) {
-          var response = JSON.parse(xhr.responseText);
-          if (response.anon_status != null) {
-            if(response.anon_status) {
-              $("#anon-checkbox").prop("checked", true);
-            }
-            else {
-              $("#anon-checkbox").prop("checked", false);
-            }
-          }
-        }
-      }
-    }
-
     // populates userClasses list with ids of all classes they are enrolled in
     // calls displayClasses afterward to reflect changes
     function getUserClasses() {
@@ -164,19 +143,6 @@ function autoCompleteController ($scope, $http) {
     function saveChanges() {
         processPassword();
         processClasses();
-        processPrivacy();
-    }
-
-    function processPrivacy() {
-        var anon = $("#anon-checkbox").prop("checked");
-        $http.post('/update_privacy', {anon: anon}).then(function(res) {
-            if(res.data.success) {
-                //console.log("Anonymous status updated")
-            }
-            else {
-                //console.log("Anonymous status not changed, error")
-            }
-        });
     }
 
     function processPassword() {

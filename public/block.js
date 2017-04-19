@@ -19,14 +19,6 @@ function isBlocked(user_id) {
   return false;
 }
 
-function getIdFromName(name, onResponseReceived){
-  var email = {"email": String(name)};
-  //console.log(email);
-  $http.post('/get_Id_From_Name', email).then(function(response){
-    onResponseReceived(response.data);
-  });    
-}
-
 function refresh(){
   blockedUsers = {};
   $http.get('/get_blocked_users').then(function(response){
