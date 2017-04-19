@@ -390,60 +390,36 @@ app.get('/add_room/:class_id/:room_name/:is_lecture/:time_created/:host_name', f
     res.send({error: "invalid_user_id"});
     return;
   }
-
   var class_id = req.params.class_id;
   var room_name = req.params.room_name;
   var is_lecture = req.params.is_lecture == "true";
   var time_created = parseInt(req.params.time_created);
   var host_name = req.params.host_name;
-
-  // error checking
-  db.classes.findOne({class_id: class_id}, function (err, doc) {
-    // if class with class_id exists
-    if (doc) {
-      // if host is a non-tutor attempting to host a lecture
-      if (is_lecture && (!doc.tutor_ids || doc.tutor_ids.indexOf(host_id) == -1)) {
-        res.send({error: "not_a_tutor"});
-        return;
-      }
-
-      //addRoom(class_id, room_name, host_id, is_lecture, time_created, host_name, function(room_id){res.send(room_id);});
-      roomManager.addRoom(class_id, room_name, host_id, is_lecture, time_created, host_name, function(room_id){res.send(room_id);});
-    }
-
-    // class with class_id does not exist
-    else {
-      res.send({error: "invalid_class_id"});
-    }
-  });
+  roomManager.addRoom(class_id, room_name, host_id, is_lecture, time_created, host_name, res);
 });
 
 // - adds user_id to room with id room_id
 // - returns list of user_id's in that room
 app.get('/join_room/:room_id/', function(req, res) {
   var user_id = req.signedCookies.user_id;
-  if (user_id) {
-    var room_id = req.params.room_id;
-    //joinRoom(user_id, room_id, function(roomInfo){res.send(roomInfo);});
-    roomManager.joinRoom(user_id, room_id, function(roomInfo){res.send(roomInfo);});
-  }
-  else {
+  if (!user_id) {
     res.send({error: "invalid_user_id"});
+    return;
   }
+  var room_id = req.params.room_id;
+  roomManager.joinRoom(user_id, room_id, function(roomInfo){res.send(roomInfo);});
 });
 
 // - removes user_id from room with id room_id
 app.get('/leave_room/:room_id/', function(req, res) {
   var user_id = req.signedCookies.user_id;
-  if (user_id) {
-    res.send({success: true}); //assume user leaves, fast for windowunload
-    var room_id = req.params.room_id;
-    //leaveRoom(user_id, room_id);
-    roomManager.leaveRoom(user_id, room_id);
-  }
-  else {
+  if (!user_id) {
     res.send({error: "invalid_user_id"});
+    return;
   }
+  var room_id = req.params.room_id;
+  res.send({success: true}); //assume user leaves, fast for windowunload
+  roomManager.leaveRoom(user_id, room_id);
 });
 
 /*************************************************************************************/

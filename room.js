@@ -33,11 +33,9 @@ var singletonRoomManager = function() {
     this.host_name = host_name;
   }
 
-
   //TODO: ERIC - fix callback stuff so res gets sent back + make this cleaner
-  this.addRoom = function(class_id, room_name, room_host_id, is_lecture, time_created, host_name, callback) {
+  function createRoom(class_id, room_name, room_host_id, is_lecture, time_created, host_name, callback) {
     var room_id = class_id + "_" + generateToken();
-    //console.log("FIREBASE: Attempting to add room with id " + room_id);
     var newRoom = new Room(room_id, room_name, room_host_id, class_id, is_lecture, time_created, host_name);
 
     //push new room id into class list of rooms
@@ -60,10 +58,30 @@ var singletonRoomManager = function() {
         }
       }
     });
-  }
+  };
+  this.createRoom = createRoom;
+
+  this.addRoom = function(class_id, room_name, host_id, is_lecture, time_created, host_name, res) {
+    // error checking
+    db.classes.findOne({class_id: class_id}, function (err, doc) {
+      // if class with class_id exists
+      if (doc) {
+        // if host is a non-tutor attempting to host a lecture
+        if (is_lecture && (!doc.tutor_ids || doc.tutor_ids.indexOf(host_id) == -1)) {
+          res.send({error: "not_a_tutor"});
+          return;
+        }
+        createRoom(class_id, room_name, host_id, is_lecture, time_created, host_name, function(room_id){res.send(room_id);});
+      }
+
+      // class with class_id does not exist
+      else {
+        res.send({error: "invalid_class_id"});
+      }
+    });
+  };
 
   this.joinRoom = function(user_id, room_id, callback) {
-    //console.log("FIREBASE: Attempting to add user " + user_id + " to room " + room_id);
     roomInfoDatabase.child(room_id).once("value").then(function(snapshot) {
       var room = snapshot.val();
       if (room) {
@@ -96,10 +114,9 @@ var singletonRoomManager = function() {
         }
       }
     });
-  }
+  };
 
   this.leaveRoom = function(user_id, room_id, callback) {
-    //console.log("FIREBASE: Attempting to remove user " + user_id + " from room " + room_id);
     if (callback) {
       callback({success: true}); //assume user succesfully leaves the room
     }
@@ -137,7 +154,7 @@ var singletonRoomManager = function() {
 
     //rm the typing lol
     firebaseRoot.child("RoomTyping").child(room_id).child(user_id).remove();
-  }
+  };
 
   function bufferTimer(room_id) {
     roomInfoDatabase.child(room_id).once("value").then(function(snapshot) {
@@ -155,7 +172,6 @@ var singletonRoomManager = function() {
   }
 
   function checkToDelete(room_id) {
-    //console.log("FIREBASE: checkToDelete - Checking delete conditions for " + room_id);
     //query room data to check delete conditions
     roomInfoDatabase.child(room_id).once("value").then(function(snapshot) {
       var room = snapshot.val();
