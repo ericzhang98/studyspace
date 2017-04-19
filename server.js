@@ -86,6 +86,7 @@ var USER_IDLE = 30*1000;
 var test = require("./test.js");
 var roomManager = require("./room.js");
 var accountManager = require("./account.js");
+var actionManager = require("./action.js");
 
 /* HTTP requests ---------------------------------------------------------*/
 
@@ -432,81 +433,29 @@ app.post("/pin_message/", function(req, res) {
   var name = req.body.name;
   var time_sent = req.body.time_sent;
   var concat_text = req.body.concat_text;
-  roomPinnedMessagesDatabase.child(room_id).transaction(function(pinnedMessages) {
-    if (pinnedMessages) {
-
-      already_pinned = false;
-
-      pinnedMessages.forEach(function(message) {
-        if (message.key == chat_message_key) {
-          already_pinned = true;
-        }
-      })
-
-      if (!already_pinned) {
-        console.log("pinning message with concat_text " + concat_text);
-        pinnedMessages.push({
-          "key": chat_message_key, 
-          "user_id": user_id, 
-          "name": name,
-          "timeSent": parseInt(time_sent),
-          "text": concat_text});
-      }
-    }
-
-    else {
-      pinnedMessages = [{
-          "key": chat_message_key, 
-          "user_id": user_id, 
-          "name": name,
-          "timeSent": parseInt(time_sent),
-          "text": concat_text}];
-    }
-    return pinnedMessages;
-  });
-  //roomMessagesDatabase.child(room_id).child(chat_message_key).child("pinned").set("true");
-  res.end();
+  actionManager.pinMessage(room_id, chat_message_key, user_id, name, time_sent, concat_text, res);
 })
 
 /* POST data: {chatMessage} - post chat message to firebase in respective room
  * Returns: nothing */
 app.post("/send_room_message", function(req, res) {
+  var user_id = req.signedCookies.user_id;
+  var email = req.signedCookies.email;
+  var name = req.signedCookies.name;
   var roomID = req.body.roomID;
   var timeSent = req.body.timeSent;
   var text = req.body.text;
   var other_user_id = req.body.other_user_id;
-
-  //roomMessagesDatabase.child(roomID).push().set(req.body);
-  if (req.signedCookies.user_id && req.signedCookies.email && req.signedCookies.name) {
-    var newChatMessage = new ChatMessage(req.signedCookies.name, 
-      req.signedCookies.email, text, roomID, timeSent, req.signedCookies.user_id);
-    roomMessagesDatabase.child(roomID).push().set(newChatMessage);
-    //if other_user_id is set, it's a DM so increment notification for other user
-    if (other_user_id) {
-      firebaseRoot.child("Notifications").child(other_user_id).child("MessageNotifications")
-        .child(req.signedCookies.user_id).transaction(function(notification) {
-          //if notification is null or 0
-          if (!notification) {
-            notification = 1;
-          }
-          else {
-            notification = notification + 1;
-          }
-        return notification;
-      });
-    }
+  if (user_id && email && name) {
+    actionManager.sendRoomMessage(roomID, timeSent, text, other_user_id, 
+      user_id, email, name, res);
   }
-
-  res.end(); //close the http request
 });
 
 app.get("/clear_message_notifications/:other_user_id", function(req, res) {
+  var user_id = req.signedCookies.user_id;
   var other_user_id = req.params.other_user_id;
-  if (other_user_id) {
-    firebaseRoot.child("Notifications").child(req.signedCookies.user_id).child("MessageNotifications")
-      .child(other_user_id).set(0);
-  }
-  res.end();
+  actionManager.clearMessageNotifications(user_id, other_user_id, res);
 });
 
 /*************************************************************************************/
@@ -740,15 +689,6 @@ app.post("/update_privacy", function(req, res) {
 function Class(class_id, class_name) {
   this.class_id = class_id;	// "ucsd_cse_110_1"
   this.name = class_name; // "CSE 110 Gillespie"
-}
-
-function ChatMessage(name, email, text, roomID, timeSent, user_id) {
-  this.name = name;
-  this.email = email;
-  this.text = text;
-  this.roomID = roomID;
-  this.timeSent = timeSent;
-  this.user_id = user_id;
 }
 
 
