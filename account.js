@@ -5,6 +5,7 @@ var accountManager = function() {
   var db = mongojs('mongodb://studyspace:raindropdroptop@ds033086.mlab.com:33086/studyspace', []);
 
   var COOKIE_TIME = 7*24*60*60*1000; //one week
+
   function User(email, password, name, school) {
     //this._id = whatever mongo gives us
     this.user_id = generateToken(20);
@@ -15,6 +16,7 @@ var accountManager = function() {
     this.token = "dank"; //generateToken();
     this.active = true; //has verified email
   }
+
   function generateToken(num) {
     var token = "";
     var possible = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
@@ -31,7 +33,6 @@ var accountManager = function() {
     }
     return token;
   }
-
 
   //send any error messages back to client
   function sendVerifyError(res) {
@@ -200,6 +201,16 @@ var accountManager = function() {
     });
   }
 
+  this.getMyClasses = function(user_id, res) {
+    db.users.findOne({user_id: user_id}, function (err, doc) {
+      if (doc) {
+        res.send({class_ids: doc.class_ids});
+      }
+      else {
+        res.send({class_ids: []});
+      }
+    });
+  }
 
 
 

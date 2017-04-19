@@ -81,6 +81,7 @@ var test = require("./test.js");
 var roomManager = require("./room.js");
 var accountManager = require("./account.js");
 var actionManager = require("./action.js");
+var classManager = require("./class.js");
 
 
 
@@ -178,13 +179,6 @@ app.get("/accountverify/:id/:token", function(req, res) {
 
 /******************************** ACCOUNT MANAGEMENT *********************************/
 
-// sets the class_ids for this user to the class_ids array passed in
-app.post('/enroll', function (req, res) {
-  var user_id = req.signedCookies.user_id;
-  var class_ids = req.body.class_ids;
-  accountManager.enroll(user_id, class_ids, res);
-})
-
 /* POST data: {email of account to reset password} - send password reset link to email
  * Returns: {success} - whether or not password reset link was sent */
 app.post("/sendforgotpassword", function(req, res) {
@@ -200,6 +194,23 @@ app.post("/resetpassword", function(req, res) {
   var currPassword = req.body.currPass;
   var newPassword = req.body.newPass;
   accountManager.resetPassword(user_id, currPassword, newPassword, res);
+});
+
+// sets the class_ids for this user to the class_ids array passed in
+app.post('/enroll', function (req, res) {
+  var user_id = req.signedCookies.user_id;
+  var class_ids = req.body.class_ids;
+  accountManager.enroll(user_id, class_ids, res);
+})
+
+// return the class_ids of classes this user is enrolled in
+app.get('/get_my_classes/', function(req, res) {
+  var user_id = req.signedCookies.user_id;
+  if (!user_id) {
+    res.send({error: "invalid_user_id"});
+    return;
+  }
+  accountManager.getMyClasses(user_id, res);
 });
 
 /*************************************************************************************/
@@ -298,75 +309,20 @@ app.get("/clear_message_notifications/:other_user_id", function(req, res) {
 
 
 
-/******************************* TO BE REMOVED (MAYBE) *******************************/
-
-app.post('/user_classes', function(req, res) {
-  //console.log(req.body);
-  var get_user_id = req.signedCookies.user_id;
-  db.user_classes.createIndex({name: 1, user_id: 1}, {unique:true}); //BUG: NEEDS FIX
-  db.user_classes.insert({name:req.body.name, user_id:get_user_id}, function(err, docs){
-    res.json(docs);
-  });	
-
-});
-
-app.delete('/user_classes/:id', function(req, res){
-
-  var id = req.params.id;
-  db.user_classes.remove({_id: mongojs.ObjectId(id)}, function(err, doc){
-    res.json(doc);
-  });
-});
-
-//NOTE:Need to get userID working so it only gets the classes of this user
-app.get('/user_classes', function(req, res) {
-
-  var get_user_id = req.signedCookies.user_id;
-  db.user_classes.find({user_id: get_user_id}, function(err, docs) {
-    res.json(docs);
-  });
-});
-
-/*************************************************************************************/
-
 
 
 
 /******************************** GET CLASSES & ROOMS ********************************/
 
-// return the class_ids of classes this user is enrolled in
-app.get('/get_my_classes/', function(req, res) {
-  var user_id = req.signedCookies.user_id;
-  if (user_id) {
-    db.users.findOne({user_id: user_id}, function (err, doc) {
-      if (doc) {
-        res.send({class_ids: doc.class_ids});
-      }
-      else {
-        res.send({class_ids: []});
-      }
-    });
-  }
-  else {
-    res.send({class_ids: []});
-  }
-});
-
 // return the class objects for all classes
 app.get('/get_all_classes', function (req, res) {
-  db.classes.find({}, function (err, doc) {
-    res.send(doc);
-  });
+  classManager.getAllClasses(res);
 });
 
 // return the class object with this id
 app.get('/get_class/:class_id', function(req, res) {
   var class_id = req.params.class_id;
-
-  // look up name in mongoDB
-  db.classes.findOne({class_id: class_id}, function (err, doc) {
-    res.send(doc);
-  });
+  classManager.getClassInfo(class_id, res);
 });
 
 /*************************************************************************************/
