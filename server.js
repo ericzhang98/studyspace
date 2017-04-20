@@ -352,37 +352,7 @@ app.get('/get_class/:class_id', function(req, res) {
 
 
 //TODO: Surgery
-/************************************** BLOCKING *************************************/
-
-app.get('/get_blocked_users', function(req, res) {
-
-  db.blocked_users.find({user_id:req.signedCookies.user_id}, function(req, docs){
-    //console.log(docs);
-    res.json(docs);
-  });
-});
-
-app.post('/add_blocked_user', function(req, res) {
-  var blocked_id = req.body.blocked_user_id;
-  db.blocked_users.createIndex({user_id: 1, blocked_user_id: 1}, {unique:true});
-  db.blocked_users.insert({user_id: req.signedCookies.user_id, blocked_user_id:blocked_id}, function(req, docs){
-    //console.log(docs);
-    res.json(docs);
-  });
-});
-
-app.delete('/remove_block/:id', function(req, res){
-  var id = req.signedCookies.user_id;
-  var toblock_id = req.params.id;
-  console.log("removing id: " + id);
-  db.blocked_users.remove({user_id: id, blocked_user_id: toblock_id}, function(err, doc){
-    res.json(doc);
-  });
-});
-/*************************************************************************************/
 /************************************** BUDDIES **************************************/
-
-// 
 app.post('/buddy_existing_user', function(req, res) {
 
   //check if the user is themself
