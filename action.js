@@ -25,7 +25,7 @@ var singletonActionManager = function() {
   }
 
 
-  this.sendRoomMessage = function(roomID, timeSent, text, other_user_id, user_id, email, name, res) {
+  this.sendRoomMessage = function(roomID, timeSent, text, other_user_id, user_id, email, name, callback) {
     var newChatMessage = new ChatMessage(name, email, text, roomID, timeSent, user_id);
     roomMessagesDatabase.child(roomID).push().set(newChatMessage);
     //if other_user_id is set, it's a DM so increment notification for other user
@@ -42,11 +42,11 @@ var singletonActionManager = function() {
         return notification;
       });
     }
-  res.end(); //close the http request
+   callback(); 
   };
 
 
-  this.pinMessage = function(room_id, chat_message_key, user_id, name, time_sent, concat_text, res) {
+  this.pinMessage = function(room_id, chat_message_key, user_id, name, time_sent, concat_text, callback) {
     roomPinnedMessagesDatabase.child(room_id).transaction(function(pinnedMessages) {
       if (pinnedMessages) {
         var already_pinned = false;
@@ -75,15 +75,15 @@ var singletonActionManager = function() {
       }
       return pinnedMessages;
     });
-    res.end();
+    callback();
   };
 
-  this.clearMessageNotifications = function(user_id, other_user_id, res) {
+  this.clearMessageNotifications = function(user_id, other_user_id, callback) {
     if (other_user_id) {
       firebaseRoot.child("Notifications").child(user_id).child("MessageNotifications")
         .child(other_user_id).set(0);
     }
-    res.end();
+    callback();
   };
 
 };

@@ -73,6 +73,7 @@ app.use(cookieParser("raindropdroptop")); //secret key
 
 //Globals
 var VIEW_DIR = __dirname + "/public/";
+var COOKIE_TIME = 7*24*60*60*1000; //one week
 var USER_IDLE = 30*1000;
 
 
@@ -154,7 +155,12 @@ app.get('/audio/:song_code', function (req, res) {
 app.post('/accountlogin', function(req, res) {
   var email = req.body.email;
   var password = req.body.password;
-  accountManager.login(email, password, res);
+  accountManager.login(email, password, function(data, err) {
+    res.cookie("user_id", data.doc.user_id, {signed: true, maxAge: COOKIE_TIME});
+    res.cookie("email", data.doc.email, {signed: true, maxAge: COOKIE_TIME});
+    res.cookie("name", data.doc.name, {signed: true, maxAge: COOKIE_TIME});
+    res.send(data.doc);
+  });
 });
 
 /* POST data: {email, password} - account signup attempt
@@ -164,7 +170,14 @@ app.post("/accountsignup", function(req, res) {
   var school = req.body.school;
   var email = req.body.email;
   var password = req.body.password;
-  accountManager.signup(name, school, email, password, res);
+  accountManager.signup(name, school, email, password, function(data, err) {
+    if (data.doc) {
+      res.cookie("user_id", data.doc.user_id, {signed: true, maxAge: COOKIE_TIME});
+      res.cookie("email", data.doc.email, {signed: true, maxAge: COOKIE_TIME});
+      res.cookie("name", data.doc.name, {signed: true, maxAge: COOKIE_TIME});
+    }
+    res.send(data);
+  });
 });
 
 /* GET data: {ID of account to verify, token} - verify account with token
@@ -172,7 +185,15 @@ app.post("/accountsignup", function(req, res) {
 app.get("/accountverify/:id/:token", function(req, res) {
   var id = req.params.id;
   var token = req.params.token;
-  accountManager.verify(id, token, res);
+  accountManager.verify(id, token, function(data, err) {  
+    //should just be one res
+    if (err) {
+      res.send(err);
+    }
+    else {
+      res.send(data);
+    }
+  });
 });
 
 /*************************************************************************************/
@@ -200,7 +221,9 @@ app.post("/resetpassword", function(req, res) {
 app.post('/enroll', function (req, res) {
   var user_id = req.signedCookies.user_id;
   var class_ids = req.body.class_ids;
-  accountManager.enroll(user_id, class_ids, res);
+  accountManager.enroll(user_id, class_ids, function(data, err) {
+    res.send(data);
+  });
 })
 
 // return the class_ids of classes this user is enrolled in
@@ -210,7 +233,9 @@ app.get('/get_my_classes/', function(req, res) {
     res.send({error: "invalid_user_id"});
     return;
   }
-  accountManager.getMyClasses(user_id, res);
+  accountManager.getMyClasses(user_id, function(data, err) {
+    res.send(data);
+  });
 });
 
 /*************************************************************************************/
@@ -229,7 +254,10 @@ app.get('/add_room/:class_id/:room_name/:is_lecture/:time_created/:host_name', f
   var is_lecture = req.params.is_lecture == "true";
   var time_created = parseInt(req.params.time_created);
   var host_name = req.params.host_name;
-  roomManager.addRoom(class_id, room_name, host_id, is_lecture, time_created, host_name, res);
+  roomManager.addRoom(class_id, room_name, host_id, is_lecture, time_created, host_name, 
+    function(data, err) {
+      res.send(data);
+  });
 });
 
 // - adds user_id to room with id room_id
@@ -241,7 +269,9 @@ app.get('/join_room/:room_id/', function(req, res) {
     return;
   }
   var room_id = req.params.room_id;
-  roomManager.joinRoom(user_id, room_id, function(roomInfo){res.send(roomInfo);});
+  roomManager.joinRoom(user_id, room_id, function(data, err){
+    res.send(data);
+  });
 });
 
 // - removes user_id from room with id room_id
@@ -257,6 +287,7 @@ app.get('/leave_room/:room_id/', function(req, res) {
 });
 
 /*************************************************************************************/
+
 /**********************************ROOM ACTIONS***************************************/
 
 app.post("/pin_message/", function(req, res) {
@@ -266,7 +297,9 @@ app.post("/pin_message/", function(req, res) {
   var name = req.body.name;
   var time_sent = req.body.time_sent;
   var concat_text = req.body.concat_text;
-  actionManager.pinMessage(room_id, chat_message_key, user_id, name, time_sent, concat_text, res);
+  actionManager.pinMessage(room_id, chat_message_key, user_id, name, time_sent, concat_text, function() {
+    res.end();
+  });
 })
 
 /* POST data: {chatMessage} - post chat message to firebase in respective room
@@ -281,36 +314,21 @@ app.post("/send_room_message", function(req, res) {
   var other_user_id = req.body.other_user_id;
   if (user_id && email && name) {
     actionManager.sendRoomMessage(roomID, timeSent, text, other_user_id, 
-      user_id, email, name, res);
+      user_id, email, name, function() {
+        res.end();
+      });
   }
 });
 
 app.get("/clear_message_notifications/:other_user_id", function(req, res) {
   var user_id = req.signedCookies.user_id;
   var other_user_id = req.params.other_user_id;
-  actionManager.clearMessageNotifications(user_id, other_user_id, res);
+  actionManager.clearMessageNotifications(user_id, other_user_id, function() {
+    res.end()
+  });
 });
 
 /*************************************************************************************/
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 /******************************** GET CLASSES & ROOMS ********************************/
 

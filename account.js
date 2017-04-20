@@ -34,15 +34,8 @@ var accountManager = function() {
     return token;
   }
 
-  //send any error messages back to client
-  function sendVerifyError(res) {
-    res.json({error: "Verify email failed"}); //add anything needed to json
-  }
 
-
-
-  this.signup = function(name, school, email, password, res) {
-
+  this.signup = function(name, school, email, password, callback) {
     console.log("Account signup: attempt with - " + email);
     db.users.findOne({email:email}, function (err, doc) {
       //if user doesn't exist yet (doc is null), insert it in
@@ -52,41 +45,44 @@ var accountManager = function() {
           if (doc) {
             console.log("Account signup: ACCOUNT CREATED");
             //sendVerifyEmail(newUser); NEED TO ADD MODULE STUFF
-            res.cookie("user_id", doc.user_id, {signed: true, maxAge: COOKIE_TIME});
-            res.cookie("email", doc.email, {signed: true, maxAge: COOKIE_TIME});
-            res.cookie("name", doc.name, {signed: true, maxAge: COOKIE_TIME});
-            res.json({success: true});
+            //res.cookie("user_id", doc.user_id, {signed: true, maxAge: COOKIE_TIME});
+            //res.cookie("email", doc.email, {signed: true, maxAge: COOKIE_TIME});
+            //res.cookie("name", doc.name, {signed: true, maxAge: COOKIE_TIME});
+            //res.json({success: true});
+            callback({success: true, doc: doc});
           }
           else {
             console.log("Account signup: SOMETHING WEIRD HAPPENED");
-            res.json({success: true});
+            //res.json({success: true});
+            callback({success: false});
           } });
       }
       else {
         console.log("Account signup: error - account already exists");
-        res.json({success: false});
+        //res.json({success: false});
+        callback({success: false});
       }
     });
-
   }
 
 
-  this.login = function(email, password, res) {
+  this.login = function(email, password, callback) {
     db.users.findOne({email: email, password: password}, function (err, doc) {
       if (doc) {
         console.log("LOGIN: " + email);
-        res.cookie("user_id", doc.user_id, {signed: true, maxAge: COOKIE_TIME});
-        res.cookie("email", doc.email, {signed: true, maxAge: COOKIE_TIME});
-        res.cookie("name", doc.name, {signed: true, maxAge: COOKIE_TIME});
+        //res.cookie("user_id", doc.user_id, {signed: true, maxAge: COOKIE_TIME});
+        //res.cookie("email", doc.email, {signed: true, maxAge: COOKIE_TIME});
+        //res.cookie("name", doc.name, {signed: true, maxAge: COOKIE_TIME});
       }
-      res.json(doc);
+      //res.json(doc);
+      callback({doc: doc});
     });
   }
 
 
 
 
-  this.verify = function(id, token, res) {
+  this.verify = function(id, token, callback) {
     if (id.length == 24) {
       db.users.findOne({_id: mongojs.ObjectId(id)}, function(err, doc) {
         //check if user exists
@@ -97,30 +93,35 @@ var accountManager = function() {
               update: {$set: {active: true}}, new: true}, function(err, doc) {
                 if (doc) {
                   console.log("Account verification: ACCOUNT VERIFIED");
-                  res.json({success:true});
+                  //res.json({success:true});
+                  callback({success: true});
                 }
                 else {
                   console.log("WEIRD ASS ERROR - ACCOUNT EXISTS, BUT CAN'T MODIFY");
-                  sendVerifyError(res);
+                  //res.json({error: "Verify email failed"}); //add anything needed to json
+                  callback({success: false}, {error: "Verify email failed"});
                 }
               });
           }
           //either some guy tryna hack or some typo happened
           else {
             console.log("Account verification: error - wrong token");
-            sendVerifyError(res);
+            //res.json({error: "Verify email failed"}); //add anything needed to json
+            callback({success: false}, {error: "Verify email failed"});
           }
         }
         //either some guy tryna hack or some typo happened
         else {
           console.log("Account verification: error - non-existent account");
-          sendVerifyError(res);
+          //res.json({error: "Verify email failed"}); //add anything needed to json
+          callback({success: false}, {error: "Verify email failed"});
         }
       });
     }
     else {
       console.log("Account verification: error - impossible ID");
-      sendVerifyError(res);
+      //res.json({error: "Verify email failed"}); //add anything needed to json
+      callback({success: false}, {error: "Verify email failed"});
     }
   }
 
@@ -194,20 +195,23 @@ var accountManager = function() {
 
 
 
-  this.enroll = function(user_id, class_ids, res) {
+  this.enroll = function(user_id, class_ids, callback) {
     db.users.update({user_id: user_id},
                     {$set: {class_ids: class_ids}}, function (err, doc) {
-      res.send({success: doc != null});
+      //res.send({success: doc != null});
+      callback({success: doc != null});
     });
   }
 
-  this.getMyClasses = function(user_id, res) {
+  this.getMyClasses = function(user_id, callback) {
     db.users.findOne({user_id: user_id}, function (err, doc) {
       if (doc) {
-        res.send({class_ids: doc.class_ids});
+        //res.send({class_ids: doc.class_ids});
+        callback({class_ids: doc.class_ids});
       }
       else {
-        res.send({class_ids: []});
+        //res.send({class_ids: []});
+        callback({class_ids: []});
       }
     });
   }

@@ -61,22 +61,34 @@ var singletonRoomManager = function() {
   };
   this.createRoom = createRoom;
 
-  this.addRoom = function(class_id, room_name, host_id, is_lecture, time_created, host_name, res) {
+  this.addRoom = function(class_id, room_name, host_id, is_lecture, time_created, host_name, callback) {
     // error checking
     db.classes.findOne({class_id: class_id}, function (err, doc) {
       // if class with class_id exists
       if (doc) {
         // if host is a non-tutor attempting to host a lecture
         if (is_lecture && (!doc.tutor_ids || doc.tutor_ids.indexOf(host_id) == -1)) {
-          res.send({error: "not_a_tutor"});
+          //res.send({error: "not_a_tutor"});
+          if (callback) {
+            callback({error: "not_a_tutor"});
+          }
           return;
         }
-        createRoom(class_id, room_name, host_id, is_lecture, time_created, host_name, function(room_id){res.send(room_id);});
+        createRoom(class_id, room_name, host_id, is_lecture, time_created, host_name, 
+          function(room_id){
+            //res.send(room_id);
+            if (callback) {
+              callback(room_id);
+            }
+          });
       }
 
       // class with class_id does not exist
       else {
-        res.send({error: "invalid_class_id"});
+        //res.send({error: "invalid_class_id"});
+        if (callback) {
+          callback({error: "invalid_class_id"});
+        }
       }
     });
   };

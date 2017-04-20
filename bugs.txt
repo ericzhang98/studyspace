@@ -1,0 +1,1 @@
+left sidebar doesn't apply sometimes (adding a class/joining a room)
