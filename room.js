@@ -47,9 +47,9 @@ var singletonRoomManager = function() {
       if (!err) {
         console.log("FIREBASE: addRoom - Room " + room_id  + " inserted into RoomInfo database");
         roomInfoDatabase.child(room_id).update({firebase_push_id: classRoomRef.key}) 
-      if (callback) {
-        callback(newRoom);
-      }
+        if (callback) {
+          callback(newRoom);
+        }
       }
       else {
         console.log("FIREBASE: ERROR - failed to add room " + room_id + " to RoomInfo database");
@@ -59,7 +59,6 @@ var singletonRoomManager = function() {
       }
     });
   };
-  this.createRoom = createRoom;
 
   this.addRoom = function(class_id, room_name, host_id, is_lecture, time_created, host_name, callback) {
     // error checking

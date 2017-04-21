@@ -83,6 +83,7 @@ var roomManager = require("./room.js");
 var accountManager = require("./account.js");
 var actionManager = require("./action.js");
 var classManager = require("./class.js");
+var errorManager = require("./error.js");
 
 
 
@@ -155,11 +156,16 @@ app.get('/audio/:song_code', function (req, res) {
 app.post('/accountlogin', function(req, res) {
   var email = req.body.email;
   var password = req.body.password;
-  accountManager.login(email, password, function(data, err) {
-    res.cookie("user_id", data.doc.user_id, {signed: true, maxAge: COOKIE_TIME});
-    res.cookie("email", data.doc.email, {signed: true, maxAge: COOKIE_TIME});
-    res.cookie("name", data.doc.name, {signed: true, maxAge: COOKIE_TIME});
-    res.send(data.doc);
+  accountManager.login(email, password, function(err, data) {
+    if (!err) {
+      res.cookie("user_id", data.user_id, {signed: true, maxAge: COOKIE_TIME});
+      res.cookie("email", data.email, {signed: true, maxAge: COOKIE_TIME});
+      res.cookie("name", data.name, {signed: true, maxAge: COOKIE_TIME});
+      res.send({user: data});
+    }
+    else {
+      res.send({error: err});
+    }
   });
 });
 
@@ -170,13 +176,16 @@ app.post("/accountsignup", function(req, res) {
   var school = req.body.school;
   var email = req.body.email;
   var password = req.body.password;
-  accountManager.signup(name, school, email, password, function(data, err) {
-    if (data.doc) {
-      res.cookie("user_id", data.doc.user_id, {signed: true, maxAge: COOKIE_TIME});
-      res.cookie("email", data.doc.email, {signed: true, maxAge: COOKIE_TIME});
-      res.cookie("name", data.doc.name, {signed: true, maxAge: COOKIE_TIME});
+  accountManager.signup(name, school, email, password, function(err, data) {
+    if (!err) {
+      res.cookie("user_id", data.user_id, {signed: true, maxAge: COOKIE_TIME});
+      res.cookie("email", data.email, {signed: true, maxAge: COOKIE_TIME});
+      res.cookie("name", data.name, {signed: true, maxAge: COOKIE_TIME});
+      res.send({success: true});
     }
-    res.send(data);
+    else {
+      res.send({success: false});
+    }
   });
 });
 
@@ -185,13 +194,12 @@ app.post("/accountsignup", function(req, res) {
 app.get("/accountverify/:id/:token", function(req, res) {
   var id = req.params.id;
   var token = req.params.token;
-  accountManager.verify(id, token, function(data, err) {  
-    //should just be one res
-    if (err) {
-      res.send(err);
+  accountManager.verify(id, token, function(err, data) {  
+    if (!err) {
+      res.send({success: true});
     }
     else {
-      res.send(data);
+      res.send({success: false});
     }
   });
 });
@@ -204,7 +212,9 @@ app.get("/accountverify/:id/:token", function(req, res) {
  * Returns: {success} - whether or not password reset link was sent */
 app.post("/sendforgotpassword", function(req, res) {
   var email = req.body.email;
-  accountManager.sendForgotPassword(email, res);
+  accountManager.sendForgotPassword(email, function(err, data) {
+    res.send(data);
+  });
 });
 
 //TODO: SHOULD RENAME TO CHANGE PASSWORD
@@ -214,14 +224,16 @@ app.post("/resetpassword", function(req, res) {
   var user_id = req.signedCookies.user_id;
   var currPassword = req.body.currPass;
   var newPassword = req.body.newPass;
-  accountManager.resetPassword(user_id, currPassword, newPassword, res);
+  accountManager.resetPassword(user_id, currPassword, newPassword, function(err, data) {
+    res.send(data);
+  });
 });
 
 // sets the class_ids for this user to the class_ids array passed in
 app.post('/enroll', function (req, res) {
   var user_id = req.signedCookies.user_id;
   var class_ids = req.body.class_ids;
-  accountManager.enroll(user_id, class_ids, function(data, err) {
+  accountManager.enroll(user_id, class_ids, function(err, data) {
     res.send(data);
   });
 })
@@ -233,7 +245,7 @@ app.get('/get_my_classes/', function(req, res) {
     res.send({error: "invalid_user_id"});
     return;
   }
-  accountManager.getMyClasses(user_id, function(data, err) {
+  accountManager.getMyClasses(user_id, function(err, data) {
     res.send(data);
   });
 });
@@ -255,7 +267,7 @@ app.get('/add_room/:class_id/:room_name/:is_lecture/:time_created/:host_name', f
   var time_created = parseInt(req.params.time_created);
   var host_name = req.params.host_name;
   roomManager.addRoom(class_id, room_name, host_id, is_lecture, time_created, host_name, 
-    function(data, err) {
+    function(data) {
       res.send(data);
   });
 });
@@ -269,7 +281,7 @@ app.get('/join_room/:room_id/', function(req, res) {
     return;
   }
   var room_id = req.params.room_id;
-  roomManager.joinRoom(user_id, room_id, function(data, err){
+  roomManager.joinRoom(user_id, room_id, function(data){
     res.send(data);
   });
 });

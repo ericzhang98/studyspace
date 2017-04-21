@@ -45,22 +45,16 @@ var accountManager = function() {
           if (doc) {
             console.log("Account signup: ACCOUNT CREATED");
             //sendVerifyEmail(newUser); NEED TO ADD MODULE STUFF
-            //res.cookie("user_id", doc.user_id, {signed: true, maxAge: COOKIE_TIME});
-            //res.cookie("email", doc.email, {signed: true, maxAge: COOKIE_TIME});
-            //res.cookie("name", doc.name, {signed: true, maxAge: COOKIE_TIME});
-            //res.json({success: true});
-            callback({success: true, doc: doc});
+            callback(null, {user_id: doc.user_id, email: doc.email, name: doc.name});
           }
           else {
             console.log("Account signup: SOMETHING WEIRD HAPPENED");
-            //res.json({success: true});
-            callback({success: false});
+            callback("error", null);
           } });
       }
       else {
         console.log("Account signup: error - account already exists");
-        //res.json({success: false});
-        callback({success: false});
+        callback("error", null);
       }
     });
   }
@@ -70,12 +64,11 @@ var accountManager = function() {
     db.users.findOne({email: email, password: password}, function (err, doc) {
       if (doc) {
         console.log("LOGIN: " + email);
-        //res.cookie("user_id", doc.user_id, {signed: true, maxAge: COOKIE_TIME});
-        //res.cookie("email", doc.email, {signed: true, maxAge: COOKIE_TIME});
-        //res.cookie("name", doc.name, {signed: true, maxAge: COOKIE_TIME});
+        callback(null, {user_id: doc.user_id, email: doc.email, name: doc.name});
       }
-      //res.json(doc);
-      callback({doc: doc});
+      else {
+        callback("error", null);
+      }
     });
   }
 
@@ -93,40 +86,35 @@ var accountManager = function() {
               update: {$set: {active: true}}, new: true}, function(err, doc) {
                 if (doc) {
                   console.log("Account verification: ACCOUNT VERIFIED");
-                  //res.json({success:true});
-                  callback({success: true});
+                  callback(null, {success: true});
                 }
                 else {
                   console.log("WEIRD ASS ERROR - ACCOUNT EXISTS, BUT CAN'T MODIFY");
-                  //res.json({error: "Verify email failed"}); //add anything needed to json
-                  callback({success: false}, {error: "Verify email failed"});
+                  callback("error", null);
                 }
               });
           }
           //either some guy tryna hack or some typo happened
           else {
             console.log("Account verification: error - wrong token");
-            //res.json({error: "Verify email failed"}); //add anything needed to json
-            callback({success: false}, {error: "Verify email failed"});
+            callback("error", null);
           }
         }
         //either some guy tryna hack or some typo happened
         else {
           console.log("Account verification: error - non-existent account");
-          //res.json({error: "Verify email failed"}); //add anything needed to json
-          callback({success: false}, {error: "Verify email failed"});
+          callback("error", null);
         }
       });
     }
     else {
       console.log("Account verification: error - impossible ID");
-      //res.json({error: "Verify email failed"}); //add anything needed to json
-      callback({success: false}, {error: "Verify email failed"});
+      callback("error", null);
     }
   }
 
 
-  this.sendForgotPassword = function(email, res) {
+  this.sendForgotPassword = function(email, callback) {
 
     db.users.findOne({email: email}, function(err, doc) {
       //check if user with email exists
@@ -136,24 +124,24 @@ var accountManager = function() {
             if (doc) {
               console.log("Account forgot password: sending reset link");
               sendForgotPassword(doc);
-              res.send({success:true});
+              callback(null, {success: true});
             }
             else {
               console.log("WEIRD ASS ERROR - ACCOUNT EXISTS, BUT CAN'T MODIFY");
-              res.send({success:false});
+              callback(null, {success: false});
             }
           });
       }
       else {
         console.log("Account forgot password: error - account with email doesn't eixsts");
-        res.send({success:false});
+        callback(null, {success: false});
       }
     });
   }
 
 
   //SHOULD RENAME TO CHANGE PASSWORD
-  this.resetPassword = function(user_id, currPassword, newPassword, res) {
+  this.resetPassword = function(user_id, currPassword, newPassword, callback) {
     if (user_id) {
       db.users.findOne({user_id: user_id}, function(err, doc) {
         //check if user exists
@@ -164,42 +152,40 @@ var accountManager = function() {
               update: {$set: {password: newPassword}}, new: true}, function(err, doc) {
                 if (doc) {
                   console.log("Account reset password: password reset");
-                  res.json({success:true});
+                  callback(null, {success: true});
                 }
                 else {
                   console.log("WEIRD ASS ERROR - ACCOUNT EXISTS, BUT CAN'T MODIFY");
-                  res.json({success:false});
+                  callback(null, {success: false});
                 }
               });
           }
           else {
             console.log("Account reset password: error - incorrect current password or non-matching new/confirm password");
-            res.json({success:false});
+            callback(null, {success: false});
           }
         }
         else {
           console.log("Account reset password: error - non-existent account");
-          res.json({success:false});
+          callback(null, {success: false});
         }
       });
     }
     else {
       console.log("Account reset password: error - impossible ID");
-      res.json({success:false});
+      callback(null, {success: false});
     }
   }
-
-
-
-
-
-
 
   this.enroll = function(user_id, class_ids, callback) {
     db.users.update({user_id: user_id},
                     {$set: {class_ids: class_ids}}, function (err, doc) {
-      //res.send({success: doc != null});
-      callback({success: doc != null});
+      if (doc) {
+        callback(null, {success: true});
+      }
+      else {
+        callback(null, {success: false});
+      }
     });
   }
 
@@ -207,11 +193,11 @@ var accountManager = function() {
     db.users.findOne({user_id: user_id}, function (err, doc) {
       if (doc) {
         //res.send({class_ids: doc.class_ids});
-        callback({class_ids: doc.class_ids});
+        callback(null, {class_ids: doc.class_ids});
       }
       else {
         //res.send({class_ids: []});
-        callback({class_ids: []});
+        callback(null, {class_ids: []});
       }
     });
   }
