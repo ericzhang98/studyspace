@@ -267,7 +267,7 @@ app.get('/add_room/:class_id/:room_name/:is_lecture/:time_created/:host_name', f
   var time_created = parseInt(req.params.time_created);
   var host_name = req.params.host_name;
   roomManager.addRoom(class_id, room_name, host_id, is_lecture, time_created, host_name, 
-    function(data) {
+    function(err, data) {
       res.send(data);
   });
 });
@@ -281,8 +281,13 @@ app.get('/join_room/:room_id/', function(req, res) {
     return;
   }
   var room_id = req.params.room_id;
-  roomManager.joinRoom(user_id, room_id, function(data){
-    res.send(data);
+  roomManager.joinRoom(user_id, room_id, function(err, data){
+    if (!err) {
+      res.send(data);
+    }
+    else {
+      res.send(err);
+    }
   });
 });
 
@@ -294,8 +299,9 @@ app.get('/leave_room/:room_id/', function(req, res) {
     return;
   }
   var room_id = req.params.room_id;
-  res.send({success: true}); //assume user leaves, fast for windowunload
-  roomManager.leaveRoom(user_id, room_id);
+  roomManager.leaveRoom(user_id, room_id function(err, data) {
+    res.send({success: true})
+  });
 });
 
 /*************************************************************************************/

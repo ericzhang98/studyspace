@@ -48,13 +48,13 @@ var singletonRoomManager = function() {
         console.log("FIREBASE: addRoom - Room " + room_id  + " inserted into RoomInfo database");
         roomInfoDatabase.child(room_id).update({firebase_push_id: classRoomRef.key}) 
         if (callback) {
-          callback(newRoom);
+          callback(null, newRoom);
         }
       }
       else {
         console.log("FIREBASE: ERROR - failed to add room " + room_id + " to RoomInfo database");
         if (callback) {
-          callback({error: "failed_to_add_room"});
+          callback({error: "failed_to_add_room"}, null);
         }
       }
     });
@@ -67,17 +67,15 @@ var singletonRoomManager = function() {
       if (doc) {
         // if host is a non-tutor attempting to host a lecture
         if (is_lecture && (!doc.tutor_ids || doc.tutor_ids.indexOf(host_id) == -1)) {
-          //res.send({error: "not_a_tutor"});
           if (callback) {
-            callback({error: "not_a_tutor"});
+            callback({error: "not_a_tutor"}, null);
           }
           return;
         }
         createRoom(class_id, room_name, host_id, is_lecture, time_created, host_name, 
           function(room_id){
-            //res.send(room_id);
             if (callback) {
-              callback(room_id);
+              callback(null, room_id);
             }
           });
       }
@@ -86,7 +84,7 @@ var singletonRoomManager = function() {
       else {
         //res.send({error: "invalid_class_id"});
         if (callback) {
-          callback({error: "invalid_class_id"});
+          callback({error: "invalid_class_id"}, null);
         }
       }
     });
@@ -103,7 +101,7 @@ var singletonRoomManager = function() {
               roomInfoDatabase.child(room_id).once("value").then(function(snapshot) {
                 var updatedRoom = snapshot.val();
                 if (callback) {
-                  callback(updatedRoom);
+                  callback(null, updatedRoom);
                 }
               });
             }
@@ -113,7 +111,7 @@ var singletonRoomManager = function() {
           else {
             if (callback) {
               console.log("FIREBASE: ERROR - User wasn't added for some reason");
-              callback(null);
+              callback("error", null);
             }
           }
         });
