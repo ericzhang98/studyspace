@@ -16,4 +16,4 @@ var singletonClassManager = function() {
   }
 }
 
-module.exports = new singletonClassManager();
+module.exports = singletonClassManager;

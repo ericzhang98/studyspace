@@ -1,19 +1,4 @@
-var singletonActionManager = function() {
-
-
-  // - Firebase admin setup
-  var firebaseAdmin = require("firebase-admin");
-  var serviceAccount = require("./dontlookhere/porn/topsecret.json"); //shhhh
-  var firebase = firebaseAdmin.initializeApp({
-    credential: firebaseAdmin.credential.cert(serviceAccount),
-      databaseURL: "https://studyspace-490cd.firebaseio.com/"
-  }, "lol2");
-  var firebaseRoot = firebase.database().ref();
-  var classRoomsDatabase = firebaseRoot.child("ClassRooms");
-  var roomInfoDatabase = firebaseRoot.child("RoomInfo");
-  var roomMessagesDatabase = firebaseRoot.child("RoomMessages");
-  var roomPinnedMessagesDatabase = firebaseRoot.child("RoomPinnedMessages");
-  var userActivityDatabase = firebaseRoot.child("UserActivity");
+var singletonActionManager = function(cm) {
 
   function ChatMessage(name, email, text, roomID, timeSent, user_id) {
     this.name = name;
@@ -24,10 +9,9 @@ var singletonActionManager = function() {
     this.user_id = user_id;
   }
 
-
   this.sendRoomMessage = function(roomID, timeSent, text, other_user_id, user_id, email, name, callback) {
     var newChatMessage = new ChatMessage(name, email, text, roomID, timeSent, user_id);
-    roomMessagesDatabase.child(roomID).push().set(newChatMessage);
+    cm.roomMessagesDatabase.child(roomID).push().set(newChatMessage);
     //if other_user_id is set, it's a DM so increment notification for other user
     if (other_user_id) {
       firebaseRoot.child("Notifications").child(other_user_id).child("MessageNotifications")
@@ -45,9 +29,8 @@ var singletonActionManager = function() {
    callback(); 
   };
 
-
   this.pinMessage = function(room_id, chat_message_key, user_id, name, time_sent, concat_text, callback) {
-    roomPinnedMessagesDatabase.child(room_id).transaction(function(pinnedMessages) {
+    cm.roomPinnedMessagesDatabase.child(room_id).transaction(function(pinnedMessages) {
       if (pinnedMessages) {
         var already_pinned = false;
         pinnedMessages.forEach(function(message) {
@@ -89,4 +72,4 @@ var singletonActionManager = function() {
 };
 
 
-module.exports = new singletonActionManager();
+module.exports = singletonActionManager;

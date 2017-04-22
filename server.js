@@ -33,18 +33,20 @@ var mailTransporter = nodemailer.createTransport({
 });
 
 // - Firebase admin setup
+// DELETE THIS SHIT ASAP (ONCE THERE'S NO MORE DATABASE CODE IN SERVER.JS)
 var firebaseAdmin = require("firebase-admin");
 var serviceAccount = require("./dontlookhere/porn/topsecret.json"); //shhhh
 var firebase = firebaseAdmin.initializeApp({
   credential: firebaseAdmin.credential.cert(serviceAccount),
   databaseURL: "https://studyspace-490cd.firebaseio.com/"
-});
+}, "god fucking damnit");
 var firebaseRoot = firebase.database().ref();
 var classRoomsDatabase = firebaseRoot.child("ClassRooms");
 var roomInfoDatabase = firebaseRoot.child("RoomInfo");
 var roomMessagesDatabase = firebaseRoot.child("RoomMessages");
 var roomPinnedMessagesDatabase = firebaseRoot.child("RoomPinnedMessages");
 var userActivityDatabase = firebaseRoot.child("UserActivity");
+var classDLDatabase = firebaseRoot.child("ClassDownLists");
 
 var favicon = require("serve-favicon");
 app.use(favicon(__dirname + "/public/assets/images/favicon.ico"));
@@ -77,16 +79,24 @@ var COOKIE_TIME = 7*24*60*60*1000; //one week
 var USER_IDLE = 30*1000;
 
 
-//Studyspace modules
-var test = require("./test.js");
-var roomManager = require("./room.js");
-var accountManager = require("./account.js");
-var actionManager = require("./action.js");
-var classManager = require("./class.js");
-var errorManager = require("./error.js");
 
+// Studyspace module constructors
+const ConstantManager = require("./constants.js");
+const RoomManager = require("./room.js");
+const AccountManager = require("./account.js");
+const ActionManager = require("./action.js");
+const ClassManager = require("./class.js");
+const ErrorManager = require("./error.js");
+const ClassDLManager = require("./classDL.js");
 
-
+// Studyspace module instances
+var constantManager = new ConstantManager();
+var roomManager = new RoomManager(constantManager);
+var accountManager = new AccountManager(constantManager);
+var actionManager = new ActionManager(constantManager);
+var classManager = new ClassManager(constantManager);
+var errorManager = new ErrorManager(constantManager);
+var classDLManager = new ClassDLManager(constantManager);
 
 /* HTTP requests ---------------------------------------------------------*/
 
@@ -299,7 +309,7 @@ app.get('/leave_room/:room_id/', function(req, res) {
     return;
   }
   var room_id = req.params.room_id;
-  roomManager.leaveRoom(user_id, room_id function(err, data) {
+  roomManager.leaveRoom(user_id, room_id, function(err, data) {
     res.send({success: true})
   });
 });
@@ -342,7 +352,7 @@ app.get("/clear_message_notifications/:other_user_id", function(req, res) {
   var user_id = req.signedCookies.user_id;
   var other_user_id = req.params.other_user_id;
   actionManager.clearMessageNotifications(user_id, other_user_id, function() {
-    res.end()
+    res.end();
   });
 });
 
@@ -351,7 +361,7 @@ app.get("/clear_message_notifications/:other_user_id", function(req, res) {
 /******************************** GET CLASSES & ROOMS ********************************/
 
 // return the class objects for all classes
-app.get('/get_all_classes', function (req, res) {
+app.get('/get_all_classes', function(req, res) {
   classManager.getAllClasses(res);
 });
 
@@ -363,9 +373,18 @@ app.get('/get_class/:class_id', function(req, res) {
 
 /*************************************************************************************/
 
+/********************************** CLASS DOWN LIST **********************************/
+
+app.get('/join_down_list/:class_id', function(req, res) {
+  var user_id = req.signedCookies.user_id;
+  var class_id = req.params.class_id;
+  classDLManager.addUserToDL(user_id, class_id, function() {
+    res.end();
+  });
+});
 
 
-
+/*************************************************************************************/
 
 
 

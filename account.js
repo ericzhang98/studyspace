@@ -1,5 +1,4 @@
-var accountManager = function() {
-
+var accountManager = function(cm) {
 
   var mongojs = require('mongojs');
   var db = mongojs('mongodb://studyspace:raindropdroptop@ds033086.mlab.com:33086/studyspace', []);
@@ -241,4 +240,4 @@ var accountManager = function() {
 
 };
 
-module.exports = new accountManager();
+module.exports = accountManager;

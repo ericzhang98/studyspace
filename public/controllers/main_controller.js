@@ -11,7 +11,9 @@ myApp.run(function($rootScope) {
   $rootScope.caller = new Caller($rootScope.myID);
   $rootScope.caller.volumeListener.setOnLoudChangeFunc(function() {$rootScope.$broadcast('volumeListenerChange')});
   $rootScope.cruHandler = new CRUHandler();
-  $rootScope.cruHandler.setOnChangeFunc(function() {$rootScope.$broadcast('cruChange')})
+  $rootScope.cruHandler.setOnChangeFunc(function() {$rootScope.$broadcast('cruChange')});
+  $rootScope.downHandler = new DownHandler();
+  $rootScope.downHandler.joinDownList("AAS_10");
 
   // broadcast methods
   // called in BuddyController, goes to ChatController
