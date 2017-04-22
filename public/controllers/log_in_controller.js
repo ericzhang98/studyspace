@@ -6,16 +6,7 @@ var LOG = "log_in_controller: "
 
 // defining the controller
 angular.module('loginApp', []).controller('loginController', ['$scope', '$http', function($scope, $http) {
-  //console.log(LOG + "started");
 
-  // - verifyLogin looks for a user with specified info and
-  // - calls onResponseReceived when it gets and response
-  var verifyLogin = function(loginAttempt, onResponseReceived) {
-    //console.log(LOG + "verifyLogin");
-    $http.post('/accountlogin', loginAttempt).then(function onSuccess(response) {
-      onResponseReceived(response.data);
-    })
-  }
 
   // - attempts to login
   $scope.attemptLogin = function(email, password) {
@@ -26,22 +17,15 @@ angular.module('loginApp', []).controller('loginController', ['$scope', '$http',
     if (validLoginInfo(loginAttempt)) {
 
       // verify email / password
-      verifyLogin(loginAttempt, function(user) {
+      $http.post("/accountlogin", loginAttempt).then(function(res) {
+        var user = res.data.user
 
         // login returned a user
         // check if user activated account or not
-        if (user != null) {
-          if (user.active) { 
-            //console.log(LOG + "login succeeded");
-            $scope.emailMessage = "";
-            $scope.passwordMessage = "";
-            window.location.href = "/";
-          }
-          else {
-            //console.log(LOG + "need to verify account, verify email");
-            $scope.emailMessage = "(Invalid email or password)";
-            $scope.passwordMessage = "(Invalid email or password)";
-          }
+        if (user) {
+          $scope.emailMessage = "";
+          $scope.passwordMessage = "";
+          window.location.href = "/";
         }
 
         // login failed 
@@ -66,24 +50,19 @@ angular.module('loginApp', []).controller('loginController', ['$scope', '$http',
     if (user == null) {
       return false;
     }
-
     if (user.email == null) {
       return false;
     } 
-
     if (user.email == "") {
       $scope.emailMessage = "(Field Required)";
       return false;
     }
-
     if (user.password == null ) {
       return false;
     }
-
     if (user.password == "" ) {
       return false;
     }
-
     return true;
   }
 

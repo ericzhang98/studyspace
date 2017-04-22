@@ -292,9 +292,6 @@
                       <a ng-if="chatMessage.user_id != myID" class="user-name dropdown-toggle acc-text" data-toggle="dropdown">{{chatMessage.name}} {{cruHandler.isTutor(chatMessage.user_id, currRoomChatID) ? "(tutor)" : ""}}</a>
                       <ul ng-if="chatMessage.user_id != myID" class="dropdown-menu">
                         <li><a ng-if="getRemoteStreamExists(chatMessage.user_id)" ng-click="toggleUserAudio(chatMessage.user_id)">{{getRemoteStreamAudioEnabled(chatMessage.user_id) ? 'Mute' : 'Unmute'}}</a></li>
-                        
-                        <li><a ng-click="toggleBlock(chatMessage.user_id)">{{isBlocked(chatMessage.user_id) ? 'Unblock' : 'Block'}}</a></li>
-                        
                         <li><a ng-click="toggleIsFriend(chatMessage.user_id)">{{isFriendsWith(chatMessage.user_id) != -1 ? 'Unfriend' : 'Friend'}}</a></li>
                       </ul>
 
@@ -373,7 +370,6 @@
 
                   <ul ng-if="user_id != myID" class="dropdown-menu">
                     <li><a ng-click="toggleUserAudio(user_id)">{{getRemoteStreamAudioEnabled(user_id) ? 'Mute' : 'Unmute'}}</a></li>
-                    <li><a>Block</a></li>
                     <li><a ng-click="toggleIsFriend(user_id)">{{isFriendsWith(user_id) != -1 ? 'Unfriend' : 'Friend'}}</a></li>
                   </ul>
                   
