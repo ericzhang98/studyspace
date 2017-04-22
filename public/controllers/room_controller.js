@@ -333,7 +333,7 @@ function($scope, $rootScope, $http, $timeout, $window) {
       var newChatMessage = {text: chatInput, roomID: $rootScope.currRoomChatID, timeSent: Date.now()};
       //adjust newChatMessage with whether or not it's a DM
       if ($rootScope.cruHandler.rooms[$rootScope.currRoomChatID].other_user_id) {
-        newChatMessage.other_user_id = $rootScope.rooms[$rootScope.currRoomChatID].other_user_id;
+        newChatMessage.other_user_id = $rootScope.cruHandler.rooms[$rootScope.currRoomChatID].other_user_id;
       }
       $http.post("/send_room_message", newChatMessage).then(scrollDown);
     }

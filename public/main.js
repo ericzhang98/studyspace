@@ -24,7 +24,10 @@ var is_day = getCookie('is_day') == 'true';
 setTheme(tn ? parseInt(tn) : 1);
 setMode(is_day);
 /**************************************************/
-
+// Sidebar setup, makes sure that at most one class is open at a time
+$('#classes').on('show.bs.collapse','.collapse', function() {
+	$('#classes').find('.collapse.in').collapse('hide');
+});
 /******************************** MODEL ******************************/
 
 function Room(room_id, room_name, room_host_id, class_id, is_lecture, users, host_name) {

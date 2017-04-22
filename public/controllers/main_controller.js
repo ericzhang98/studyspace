@@ -7,9 +7,7 @@ myApp.run(function($rootScope) {
 
   $rootScope.myID = getSignedCookie("user_id");
   $rootScope.myName = getSignedCookie("name");
-
   $rootScope.currRoomChatID = null;
-
   $rootScope.caller = new Caller($rootScope.myID);
   $rootScope.caller.volumeListener.setOnLoudChangeFunc(function() {$rootScope.$broadcast('volumeListenerChange')});
   $rootScope.cruHandler = new CRUHandler();
@@ -60,7 +58,6 @@ myApp.run(function($rootScope) {
 // - Master controller for main room
 // - Contains methods that use / modify scope variables and aren't
 //   associated with a particular portion of the UI
-// - Contains
 /*************************************************************************/
 
 myApp.controller("MainController", ["$scope", "$rootScope", "$http", "$timeout", "$window",
@@ -130,12 +127,6 @@ function($scope, $rootScope, $http, $timeout, $window) {
       $rootScope.joinRoomChatBC($rootScope.caller.currRoomCallID); // join or leave chat room
     }
   }
-
-  // Sidebar setup, makes sure that at most one class is open at a time
-  var $myGroup = $('#classes');
-  $myGroup.on('show.bs.collapse','.collapse', function() {
-    $myGroup.find('.collapse.in').collapse('hide');
-  });
 
   // Expands sidebar panel for given class
   function adjustSidebarToggle(class_id) {

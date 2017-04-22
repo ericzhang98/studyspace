@@ -1,7 +1,7 @@
 /* Used for sending and receiving media */
 /* Exists as singleton within Angular app */
 
-function Caller(my_id) {
+function Caller(myID) {
 
   /***** Public Variables ***************************/
   this.currRoomCallID = null; // the roomID of the room we are calling in
@@ -12,7 +12,7 @@ function Caller(my_id) {
   /***** Private Variables **************************/
   const thisCaller = this;        // a reference to this Caller object
   const PEER_PING_PERIOD = 30000; // ping frequency
-  var myID = my_id;         // the userID of the owner of this Caller object
+
   var myPeer = new Peer(myID, {host: "pacific-lake-64902.herokuapp.com", port: "",  path: '/peerjs'}); // peer object for media sharing
   var myStream = null;      // my media stream
   var myCalls = {};         // dictionary from user_id to call
