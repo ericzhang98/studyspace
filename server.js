@@ -375,10 +375,12 @@ app.get('/get_class/:class_id', function(req, res) {
 
 /********************************** CLASS DOWN LIST **********************************/
 
-app.get('/join_down_list/:class_id', function(req, res) {
+// toggle a user's true / false value within a down list
+// sets to true by default
+app.get('/toggle_down_list/:class_id', function(req, res) {
   var user_id = req.signedCookies.user_id;
   var class_id = req.params.class_id;
-  classDLManager.addUserToDL(user_id, class_id, function() {
+  classDLManager.toggleUserDL(user_id, class_id, function() {
     res.end();
   });
 });

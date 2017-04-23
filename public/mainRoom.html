@@ -138,6 +138,9 @@
                   <button class="btn btn-add-room" ng-click="openCreateRoomModal(class_id)">
                     <span class="glyphicon glyphicon-plus"></span>
                   </button>
+                  <button class="btn btn-add-room" ng-click="toggleDownList(class_id)" style="margin-right: 18px; font-weight:{{downHandler.downLists[class_id].indexOf(myID) == -1 ? '' : 'bold'}}">
+                    <span>I'm Down {{downHandler.downLists[class_id].length}}</span>
+                  </button>
                 </div>
                 <div id="{{class_id}}" class="panel-collapse collapse">
                   <ul class="list-group">
@@ -572,6 +575,7 @@
   <script src="controllers/add_class_controller.js"></script>
 
   <!-- Other -->
+  <script src="Logger.js"></script>
   <script src="cookies.js"></script>
   <script src="theme.js"></script>
   <script src="main.js"></script>

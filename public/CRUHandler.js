@@ -99,7 +99,7 @@ function CRUHandler() {
         cruHandler.classes[class_id] = response;
 
         // update UI
-        onChangeFunc();
+        onChangeFunc({change_type: "getClass", class_id : class_id});
 
         // add listener for class rooms
         classRoomsDatabase.child(class_id).on("value", function(snapshot) {
