@@ -13,6 +13,15 @@ if (process.argv[2] == "heroku") {
 var express = require('express');
 var app = express();
 
+/*********************************** SOCKET SETUP ************************************/
+var server = require('http').Server(app);
+var io = require('socket.io')(server);
+
+io.on('connection', function (socket) {});
+
+server.listen(3000);
+/*************************************************************************************/
+
 // - Mongodb is the database that we will be using for persistent data
 // - mongojs is a module that has some useful functions
 var mongojs = require('mongojs');
@@ -96,17 +105,8 @@ var accountManager = new AccountManager(constantManager);
 var actionManager = new ActionManager(constantManager);
 var classManager = new ClassManager(constantManager);
 var errorManager = new ErrorManager(constantManager);
-var classDLManager = new ClassDLManager(constantManager);
-
-/*********************************** SOCKET SETUP ************************************/
-
-var server = require('http').Server(app);
-var io = require('socket.io')(server);
-
-io.on('connection', function (socket) {});
-
-server.listen(3000);
-/*************************************************************************************/
+var classDLManager = new ClassDLManager(constantManager, io, roomManager.addRoom);
+classDLManager.monitorClassDL("CSE_110");
 
 /* HTTP requests ---------------------------------------------------------*/
 
@@ -326,7 +326,7 @@ app.get('/leave_room/:room_id/', function(req, res) {
 
 /*************************************************************************************/
 
-/**********************************ROOM ACTIONS***************************************/
+/************************************ ROOM ACTIONS ***********************************/
 
 app.post("/pin_message/", function(req, res) {
   var room_id = req.body.room_id;
@@ -394,13 +394,6 @@ app.get('/toggle_down_list/:class_id', function(req, res) {
     res.send({isDown: isDown});
   });
 });
-
-setInterval(function() {
-  console.log("emitting...")
-  io.emit("CSE_110_down_list", {room_id: "CSE_110_MAIN"});
-}, 5000);
-
-
 
 /*************************************************************************************/
 

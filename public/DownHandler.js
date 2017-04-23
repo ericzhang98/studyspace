@@ -16,7 +16,14 @@ function DownHandler(myID, onDownChange, onDownThreshold) {
     xhr.onreadystatechange = function(e) {
       if (xhr.readyState == 4 && xhr.status == 200) {
       	var response = JSON.parse(xhr.responseText);
-      	if (response.isDown) {}
+      	if (response.isDown) {
+    			// if I'm down for a class, add a listener to the socket
+    			addSocketListener(class_id);
+      	}
+  			else {
+  				// if I'm not, make sure I'm no longer listening for it
+  				socket.off(class_id + '_down_list');
+  			}
       }
     }
 	}
@@ -27,14 +34,19 @@ function DownHandler(myID, onDownChange, onDownThreshold) {
 		logger.msg("listening on " + class_id + '_down_list');
 
   	socket.on(class_id + '_down_list', function(data) {
+
+  		// onDownThreshold function = joining a room.
   		onDownThreshold({room_id : data.room_id, class_id : class_id});
+
+  		// stop listening to this class
+  		socket.off(class_id + '_down_list');
   	})
 	}
 
 	// - Sets up listener for a class's down list
 	this.pullDownList = function(class_id) {
 
-		classDLDatabase.child(class_id).on("value", function(DLSnapshot) {
+		classDLDatabase.child(class_id).child("userIDs").on("value", function(DLSnapshot) {
 
 			logger.msg("pulling down list for " + class_id);
 
@@ -45,13 +57,7 @@ function DownHandler(myID, onDownChange, onDownThreshold) {
       if (DLSnapshot) {
       	DLSnapshot.forEach(function(entry) {
       		if (entry.val()) {
-
       			thisDH.downLists[class_id].push(entry.key);
-
-      			// if I'm down for a class, add a listener to the socket
-      			if (entry.key == myID) {
-      				addSocketListener(class_id);
-      			}
       		}
       	})
     	}
