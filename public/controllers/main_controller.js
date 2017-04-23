@@ -10,7 +10,10 @@ myApp.run(function($rootScope) {
   $rootScope.currRoomChatID = null;
   $rootScope.caller = new Caller($rootScope.myID);
   $rootScope.caller.volumeListener.setOnLoudChangeFunc(function() {$rootScope.$broadcast('volumeListenerChange')});
-  $rootScope.downHandler = new DownHandler(function() {$rootScope.$broadcast('downListChange')});
+  $rootScope.downHandler = new DownHandler(
+    $rootScope.myID,
+    function() {$rootScope.$broadcast('downListChange')},
+    function(data) {$rootScope.$broadcast('downListRoom', data)});
   $rootScope.cruHandler = new CRUHandler();
   $rootScope.cruHandler.setOnChangeFunc(function(data) {$rootScope.$broadcast('cruChange', data)});
 
@@ -90,6 +93,11 @@ function($scope, $rootScope, $http, $timeout, $window) {
   // Respond to a down list change
   $scope.$on('downListChange', function(event, data) {
     $scope.$apply();
+  })
+
+  // Respond to a down list room
+  $scope.$on('downListRoom', function(event, data) {
+    $scope.joinRoom(data.room_id, data.class_id);
   })
 
   // Respond to a cruContainer change

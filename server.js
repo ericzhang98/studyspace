@@ -98,6 +98,16 @@ var classManager = new ClassManager(constantManager);
 var errorManager = new ErrorManager(constantManager);
 var classDLManager = new ClassDLManager(constantManager);
 
+/*********************************** SOCKET SETUP ************************************/
+
+var server = require('http').Server(app);
+var io = require('socket.io')(server);
+
+io.on('connection', function (socket) {});
+
+server.listen(3000);
+/*************************************************************************************/
+
 /* HTTP requests ---------------------------------------------------------*/
 
 /************************************ SERVING CONTENT *************************************/
@@ -380,10 +390,16 @@ app.get('/get_class/:class_id', function(req, res) {
 app.get('/toggle_down_list/:class_id', function(req, res) {
   var user_id = req.signedCookies.user_id;
   var class_id = req.params.class_id;
-  classDLManager.toggleUserDL(user_id, class_id, function() {
-    res.end();
+  classDLManager.toggleUserDL(user_id, class_id, function(isDown) {
+    res.send({isDown: isDown});
   });
 });
+
+setInterval(function() {
+  console.log("emitting...")
+  io.emit("CSE_110_down_list", {room_id: "CSE_110_MAIN"});
+}, 5000);
+
 
 
 /*************************************************************************************/
@@ -736,7 +752,6 @@ function checkSingleUserActivity(user_id) {
 /*------------------------------------------------------------------------*/
 
 
-
-app.listen(process.env.PORT || 3000);
+//app.listen(process.env.PORT || 3000);
 userActivityChecker();
 console.log("Server running!");

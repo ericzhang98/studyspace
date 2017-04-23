@@ -16,6 +16,7 @@ var ConstantManager = function() {
 	this.roomPinnedMessagesDatabase = firebaseRoot.child("RoomPinnedMessages");
 	this.userActivityDatabase = firebaseRoot.child("UserActivity");
 	this.classDLDatabase = firebaseRoot.child("ClassDownLists");
+	this.roomTypingDatabase = firebaseRoot.child("RoomTyping");
 }
 
 module.exports = ConstantManager;

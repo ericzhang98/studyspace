@@ -146,7 +146,7 @@ var singletonRoomManager = function(cm) {
     });
 
     //rm the typing lol
-    firebaseRoot.child("RoomTyping").child(room_id).child(user_id).remove();
+    cm.roomTypingDatabase.child(room_id).child(user_id).remove();
   };
 
   function bufferTimer(room_id) {
