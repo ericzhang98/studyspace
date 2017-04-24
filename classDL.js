@@ -12,48 +12,32 @@ var singletonClassDLManager = function(cm, io, addRoom) {
     cm.classDLDatabase.child(class_id).child("userIDs").child(user_id).once("value", function(snapshot) {
       var isDown = snapshot ? !snapshot.val() : true;
       cm.classDLDatabase.child(class_id).child("userIDs").child(user_id).set(isDown ? true : null);
+      cm.classDLDatabase.child(class_id).child("lastJoinTime").set(Date.now());
       callback(isDown);
     });
   }
 
   // - sets up a recursive monitor of a class
   // - responsible for opening DL rooms
-  this.monitorClassDL = function(class_id, prevNumDown = 0) {
-  	cm.classDLDatabase.child(class_id).once("value", function (snapshot) {
+  this.monitorClassDL = function(class_id) {
+  	cm.classDLDatabase.child(class_id).once("value", function(snapshot) {
   		if (snapshot) {
-
-
-  			var numChecks; // the number of checks since the last person joined the DL
 	  		var numDown = snapshot.child("userIDs").val() ? snapshot.child("userIDs").numChildren() : 0;
-
-	  		// if not enough people are down or someone new just joined, reset check count
-	  		if (numDown < 2 || numDown > prevNumDown) {
-	  			numChecks = 1;
-	  		}
-
-	  		else {
-	  			numChecks = snapshot.child("numChecks").val() ? snapshot.child("numChecks").val() + 1 : 1;
-	  		}
-
-	  		console.log("numChecks: " + numChecks);
+	  		var lastJoinTime = snapshot.child("lastJoinTime").val() ? snapshot.child("lastJoinTime").val() : -1;
 	  		console.log("numDown: " + numDown);
+	  		console.log("lastJoinTime: " + lastJoinTime);
 
-	  		if (!attemptOpenDL(numChecks, numDown, class_id)) {
-
-	  			// if we didn't make a room, update numChecks
-	  			// set to 0 if nobody is down, or if someone recently joined
-	  			cm.classDLDatabase.child(class_id).child("numChecks").set(numChecks);
-	  		}
+	  		attemptOpenDL(lastJoinTime, numDown, class_id);
   		}
-  		setTimeout(function() {thisDLM.monitorClassDL(class_id, numDown)}, MONITOR_PERIOD);
-  	})
+  		setTimeout(function() {thisDLM.monitorClassDL(class_id)}, MONITOR_PERIOD);
+  	});
   }
 
   // - calculates whether a DL room should be opened and calls openDLRoom if so
   // - returns boolean representing whether a room was created or not
-  function attemptOpenDL(numChecks, numDown, class_id) {
+  function attemptOpenDL(lastJoinTime, numDown, class_id) {
 
-  	if (numDown > 1 && (numDown > 5 || numChecks * MONITOR_PERIOD + (numDown - 2) * ND_FACTOR >= BASE_WAIT)) {
+  	if (numDown > 1 && (numDown > 5 || Date.now() - lastJoinTime + (numDown - 2) * ND_FACTOR >= BASE_WAIT)) {
   		openDLRoom(class_id);
   		return true;
   	}
