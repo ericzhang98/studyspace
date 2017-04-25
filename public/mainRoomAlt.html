@@ -1,0 +1,593 @@
+<!--
+ _____     ______     __   __     __  __
+/\  __-.  /\  __ \   /\ "-.\ \   /\ \/ /
+\ \ \/\ \ \ \  __ \  \ \ \-.  \  \ \  _"-.
+ \ \____-  \ \_\ \_\  \ \_\\"\_\  \ \_\ \_\
+  \/____/   \/_/\/_/   \/_/ \/_/   \/_/\/_/
+
+-->
+
+<!DOCTYPE html>
+<html ng-app="mainApp" ngStrictDi>
+  <head>
+
+    <!-- JQuery -->
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>  
+
+    <!-- Angular CSS before bootstrap for low priority -->
+    <link rel="stylesheet" href="https://ajax.googleapis.com/ajax/libs/angular_material/1.1.0/angular-material.min.css">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>
+
+    <!-- Angular js -->
+    <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.6.1/angular.min.js"></script>
+    <!-- Needed only for add classes l0l -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/angular-material/1.1.3/angular-material.js"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.4.8/angular-animate.min.js"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.4.8/angular-aria.min.js"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.4.8/angular-messages.min.js"></script>
+    <!-- HTML sanitizer + linkify -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/angular-sanitize/1.6.2/angular-sanitize.min.js"></script>
+
+
+    <!-- For mobile scaling -->
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <!-- Stylesheets -->
+    <link rel="stylesheet" type="text/css" href="general.css">
+    <link rel="stylesheet" type="text/css" href="mainRoom.css">
+    <link rel="stylesheet" type="text/css" href="animations.css">
+
+    <!-- Additional Typefaces -->
+    <link href="https://fonts.googleapis.com/css?family=Montserrat:400,500,600,700" rel="stylesheet">
+
+    <!-- Javascript files (just for modal)-->
+    <script type="text/javascript" src="toggleMenu.js"></script>
+
+    <!-- Title -->
+    <title>Studyspace</title>
+  </head>
+
+  <body id="myBody" ng-controller="MainController">
+    <div id="overlay">
+
+      <div ng-controller="VideoController" ng-cloak ng-hide="!viewVideo || !caller.currRoomCallID" id="video-layer">
+        <!-- Close -->
+        <span class="glyphicon glyphicon-remove" aria-hidden="true" ng-click="toggleViewVideo()"></span>
+
+        <!-- Rooms -->
+        <div ng-if="!cruHandler.rooms[caller.currRoomCallID].is_lecture" ng-repeat="user_id in cruHandler.rooms[caller.currRoomCallID].users">
+          <div ng-if="user_id == myID" class="video-container">
+            <video id="{{user_id}}_video" class="prim-border" autoplay muted ng-src="{{userStreamSources[user_id]}}" ng-click="setMyStreamVideoEnabled(!getVideoEnabled())"></video>
+            <p class="video-name">You (click to toggle)</p>
+          </div>
+
+          <div ng-if="user_id != myID" class="video-container">
+            <video id="{{user_id}}_video" class="acc-border" autoplay ng-src="{{userStreamSources[user_id]}}"></video>
+            <p class="video-name">{{cruHandler.users[user_id].name}}</p>
+          </div>
+        </div>
+        <!-- Casts -->
+        <div ng-if="cruHandler.rooms[caller.currRoomCallID].is_lecture">
+          <div ng-if="cruHandler.rooms[caller.currRoomCallID].host_id == myID" class="video-container">
+            <video id="{{cruHandler.rooms[caller.currRoomCallID].host_id}}_video" class="prim-border" autoplay muted ng-src="{{userStreamSources[cruHandler.rooms[caller.currRoomCallID].host_id]}}" ng-click="setMyStreamVideoEnabled(!getVideoEnabled())"></video>
+            <p class="video-name">You</p>
+          </div>
+
+          <div ng-if="cruHandler.rooms[caller.currRoomCallID].host_id != myID" class="video-container">
+            <video id="{{cruHandler.rooms[caller.currRoomCallID].host_id}}_video" class="acc-border" autoplay ng-src="{{userStreamSources[cruHandler.rooms[caller.currRoomCallID].host_id]}}"></video>
+            <p class="video-name">{{cruHandler.users[cruHandler.rooms[caller.currRoomCallID].host_id].name}}</p>
+          </div>
+        </div>
+      </div>
+
+
+      <div id="loading-overall" class="loading-overall" hidden> 
+        <div class="blob blob-0"></div><div class="blob blob-1"></div>
+        <div class="blob blob-2"></div><div class="blob blob-3"></div>
+        <div class="blob blob-4"></div><div class="blob blob-5"></div>
+      </div>
+
+      <div id="layer1">
+        <!-- Classes Sidebar -->
+        <aside id="classes-sidebar" class="sidebar sidebar-left" role="complementary">
+
+          <div class="menu-user">
+            <!-- User Quick Info -->
+            <div id="user-info" class="container-info-user">
+              <div onclick="changeTheme()" class="container-user-icon over-base-text prim-back" 
+                   style='-moz-user-select: -moz-none; -khtml-user-select: none;-webkit-user-select: none;'>
+                <span ng-cloak>{{myName.toUpperCase() | limitTo:1}}</span>
+              </div>
+              
+              <span class="user-name prim-text" ng-cloak>{{myName.split(" ")[0] + " " + myName.split(" ")[1][0]}}</span>
+              <button class="btn btn-sm btn-low-key" style="position:absolute; right:16px" onclick="setMode()"> </button>
+            </div>
+
+            <!-- Log Out -->
+            <button id="log-out" class="btn btn-low-pri btn-block"
+              ng-click="logout()">Log Out</button>
+            <!-- User Preference -->
+            <a id="preferences" class="btn btn-low-pri btn-block"
+              href="/courses">Account</a>
+
+          </div>
+
+        
+
+
+          <!-- BUDDIES -->
+          <div ng-controller="BuddyController">
+            <div class="container-menu-classes">
+              <button id="button-add-buddy" class="btn container-title" ng-click="openBuddyRequest()" >
+                <span class="title">Buddies</span>
+                <span class="glyphicon glyphicon-plus"></span>
+              </button>
+            </div>
+
+            <div ng-repeat="buddy_requests in buddies_list">
+              <li style="border: none" class="list-group-item buddy-req-panel base-back acc-text">
+                <span ng-cloak class="room-name">
+                  {{buddy_requests.sent_from_name}}
+                </span>
+                <div class="pull-right">
+                  <button class="btn bud-req-button prim-back" ng-click="acceptBuddy(buddy_requests)">+</button>
+                  <button class="btn bud-req-button acc-back" ng-click="rejectBuddyRequest(buddy_requests._id)">x</button>
+                </div>
+              </li>
+            </div>
+
+            <!-- CURRENT FRIENDS -->
+            <div>
+              <li class="list-group-item buddy-panel {{ messageNotifications[buddy.user_two_id] > 0 ? 'acc-text base-back bold-text' : 'over-base-text ' + (currRoomChatID == getDMID(buddy.user_two_id) ? 'prim-back' : 'base-back')}}" ng-repeat="buddy in added_buddies_list" ng-click="openDM(buddy.user_two_id, buddy.user_two_name)">
+
+                <span class="{{buddies_status[buddy.user_two_id] ? (currRoomChatID == getDMID(buddy.user_two_id) ? 'white-text' : 'online-text') : 'invis-text'}}"
+                  style="text-align: center; vertical-align: middle">◕</span>
+                <span ng-cloak class="room-name">
+                  {{buddy.user_two_name}} 
+                  <span ng-if="messageNotifications[buddy.user_two_id] > 0">| {{messageNotifications[buddy.user_two_id]}}</span>
+                  <span ng-if="isDank() && buddies_status[buddy.user_two_id]" style="float:right;">༼つ◕_◕༽つ</span>
+                  <span ng-if="isDank() && !buddies_status[buddy.user_two_id]" style="float:right;">¯\_(ツ)_/¯</span>
+                </span>
+              </li>
+            </div>
+
+            <div class="white-text" ng-if="!added_buddies_list || added_buddies_list.length == 0" ng-cloak> 
+              <span style="margin-left: 1.5rem; font-size: 1rem; color: #888888">You don't have any buddies... yet.</span>
+            </div>
+          </div>
+
+              
+        </aside> <!-- END LEFT SIDEBAR -->
+
+        <!-- Main Content -->
+        <main ng-controller="RoomController" id="main" class="chat-room" role="main">
+          <div class="main-content-hidden-alt" ng-hide="currRoomChatID">
+            <p class="class-main-header">Your Courses</p>
+            <div class="class-section">
+              <p class="class-header">cse 110</p> 
+              <p class="class-sub-header">Open Rooms</p>
+              <div class="rooms-container">
+                <button class="room-box">Midterm 1 Review</button>
+                <button class="room-box">Midterm 2 Review</button>
+                <button class="room-box">John's OH</button>
+                <button class="room-box">Midterm 3 Review</button>
+                <button class="add-room-box">Add Room</button>
+                <button class="add-room-box">Find a Group</button>
+              </div>
+              <!--<button class="btn-dts">Find a Group</button>-->
+            </div>
+
+            <div class="class-section">
+              <p class="class-header">math 183</p>
+              <p class="class-sub-header">Open Rooms</p>
+              <div class="rooms-container">
+                <button class="room-box">Lisa's OH</button>
+                <button class="room-box">Homework Help</button>
+                <button class="add-room-box">Add Room</button>
+                <button class="add-room-box">Find a Group</button>
+              </div>
+              <!--<button class="btn-dts">Find a Group</button>-->
+            </div>
+
+            <div class="class-section">
+              <p class="class-header">ethn 2</p>
+              <p class="class-sub-header-off">No rooms open</p>
+              <div class="rooms-container">
+                <button class="add-room-box">Add Room</button>
+                <button class="add-room-box">Find a Group</button>
+              </div>
+              <!--<button class="btn-dts">Find a Group</button>-->
+            </div>
+            
+            <div class="class-section">
+              <p class="class-header">cse 101</p>
+              <p class="class-sub-header-off">No rooms open</p>
+              <div class="rooms-container">
+                <button class="add-room-box">Add Room</button>
+                <button class="add-room-box">Find a Group</button>
+              </div>
+              <!--<button class="btn-dts">Find a Group</button>-->
+            </div>
+          </div>
+          <div class="main-content" ng-hide="!currRoomChatID">
+            <!-- ROOM NAVBAR -->
+            <nav id="class-navigation" class="navbar navbar-room white-text {{rooms[currRoomChatID].is_lecture ? 'acc-back' : 'prim-dark-back'}}">
+              <div class="container-fluid">
+                <div class="navbar-header">
+                  <span ng-cloak class="navbar-brand" >{{cruHandler.getClassNameOfRoom(currRoomChatID) != "" ? 
+                    cruHandler.getClassNameOfRoom(currRoomChatID) + " | ":""}}{{cruHandler.getNameOfRoom(currRoomChatID)}}{{cruHandler.rooms[currRoomChatID].is_lecture ? ' (cast by ' + cruHandler.rooms[currRoomChatID].host_name + ')' : ''}}</span>
+              </div>
+                <ul class="nav navbar-nav navbar-right">
+                  <li>
+                    <a>{{currSongTitle}}</a>
+                  </li>
+                  <li ng-if="rooms[currRoomChatID].class_id != 'dm_class_id'" class="nav-link link-pin" ng-click="toggleWhiteboard()">
+                    <span class="glyphicon glyphicon-pencil"></span>
+                  </li>
+
+                  <li ng-if="rooms[currRoomChatID].host_id == 'mainhost'" class="nav-link link-pin" ng-click="togglePinnedMessages()">
+                    <span class="glyphicon glyphicon-pushpin"></span>
+                  </li>
+
+                  <li class="nav-link" ng-click="leaveRoom()">
+                    <a>{{cruHandler.rooms[currRoomChatID].class_id != 'dm_class_id' ? 'Leave' : 'Close'}}</a>
+                  </li>
+                </ul>
+              </div>
+            </nav>
+
+            <!-- Pinboard -->
+            <div ng-if="showPinnedMessages" class="pinned-messages-container">
+              <div class="pinned-messages-header">Pinboard <span class="glyphicon glyphicon-remove" aria-hidden="true" ng-click="togglePinnedMessages()" position="relative"></span></div>
+              <div class="message white-back" ng-if="chatPinnedMessageList.length == 0">
+                <p> There are no pinned messages.</p>
+              </div>
+              <div class="pinned-messages-content">
+                <div class="message" ng-repeat="chatMessage in chatPinnedMessageList">
+                  <div ng-if="chatMessage.user_id != 'system_id'" class="container-user-icon over-base-text {{chatMessage.user_id != myID ? 'acc-text' : 'prim-text'}}">
+                    <span>{{chatMessage.name.toUpperCase() | limitTo:1}}</span>
+                  </div>
+
+                  <div class="message-content">
+                    <header class="message-header">
+                      <div class="dropdown">
+                        <a class="user-name acc-text">{{chatMessage.name}} {{cruHandler.isTutor(chatMessage.user_id, currRoomChatID) ? "(tutor)" : ""}}</a>
+                      </div>
+                      <span class="black-text" style="font-size: 1.2rem">{{timeAgo(chatMessage)}}</span>
+                    </header>
+                    <p class="pinned-message-body" ng-bind-html="chatMessage.text |
+                      linky:'_blank'"></p>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Whiteboard -->
+            <div class="whiteboard-container" id="whiteboard-container" hidden>
+              <div class="whiteboard-header">Whiteboard
+                <span class="glyphicon glyphicon-remove" aria-hidden="true"
+                  ng-click="toggleWhiteboard()" position="relative"></span>
+              </div>
+              <iframe class="whiteboard-content" id="whiteboard">
+              </iframe>
+            </div>
+
+            <!-- MESSAGE PANE -->
+            <div id="chat-message-pane" class="message-pane" scroll
+              scroll-event="scrollevent">
+              <div id="loading-messages" hidden> 
+                <div class="blob blob-0"></div><div class="blob blob-1"></div>
+                <div class="blob blob-2"></div><div class="blob blob-3"></div>
+                <div class="blob blob-4"></div><div class="blob blob-5"></div>
+              </div>
+
+              <div class="message"
+                ng-repeat="chatMessage in chatMessageList"
+                ng-click="searchMode && messageClicked($event)">
+                <div ng-if="chatMessage.user_id != 'system_id'" class="container-user-icon over-base-text {{chatMessage.user_id != myID ? 'acc-back' : 'prim-back'}}">
+                  <span>{{chatMessage.name.toUpperCase() | limitTo:1}}</span>
+                </div>
+
+                <div ng-if="chatMessage.user_id != 'system_id'" class="message-content">
+                  <header class="message-header">
+                    <div class="dropdown">
+
+                      <!-- Dropdown for non-me users -->
+                      <a ng-if="chatMessage.user_id != myID" class="user-name dropdown-toggle acc-text" data-toggle="dropdown">{{chatMessage.name}} {{cruHandler.isTutor(chatMessage.user_id, currRoomChatID) ? "(tutor)" : ""}}</a>
+                      <ul ng-if="chatMessage.user_id != myID" class="dropdown-menu">
+                        <li><a ng-if="getRemoteStreamExists(chatMessage.user_id)" ng-click="toggleUserAudio(chatMessage.user_id)">{{getRemoteStreamAudioEnabled(chatMessage.user_id) ? 'Mute' : 'Unmute'}}</a></li>
+                        <li><a ng-click="toggleIsFriend(chatMessage.user_id)">{{isFriendsWith(chatMessage.user_id) != -1 ? 'Unfriend' : 'Friend'}}</a></li>
+                      </ul>
+
+                      <!-- No dropdown if user is me -->
+                      <a ng-if="chatMessage.user_id == myID" class="user-name prim-text">{{chatMessage.name}} {{cruHandler.isTutor(chatMessage.user_id, currRoomChatID) ? "(tutor)" : ""}}</a>
+
+                      <button ng-if="cruHandler.rooms[currRoomChatID].host_id == 'mainhost' && !isPinned(chatMessage.key) && cruHandler.isTutor(myID, currRoomChatID)" class="btn btn-pin" ng-click="pinChatMessage(chatMessage.key, chatMessage.user_id, chatMessage.name, chatMessage.timeSent)">
+                        <span class="glyphicon glyphicon-pushpin"></span>
+                      </button>
+                    </div>
+                    <span class="dateTime">{{timeAgo(chatMessage)}}</span>
+                  </header>
+                  <p class="message-body" ng-bind-html="chatMessage.text |
+                  linky:'_blank' | highlight:searchQuery"></p>
+                </div>
+
+                <div ng-if="chatMessage.user_id == 'system_id'">
+                  <p class="system-message">{{chatMessage.text}}</p>
+                </div>
+              </div>
+                
+            </div> 
+            <!-- END MESSAGE PANE -->
+
+            <!-- MESSAGE INPUT -->
+            <footer id="message-box" class="form-message-container">
+              <form class="form-message" ng-submit="sendChatMessage(chatInput)">
+                <div class="input-group">
+                  <span class="input-group-btn">
+                    <button id="mute-button" class="btn btn-mute text-center" type="button" ng-click="toggleMic()"> 
+                      <span ng-class="muteBtnClass"></span>
+                    </button>
+                    <button class="btn text-center btn-vid" type="button" ng-cloak ng-if="currRoomChatID" ng-hide="rooms[currRoomChatID].class_id == 'dm_class_id'" ng-click="toggleViewVideoBC()">
+                      <!--See Video-->
+                      <span class="glyphicon glyphicon-facetime-video"></span>
+                    </button>
+                  </span>
+                  <input maxlength="200" ng-cloak type="text" class="form-control input-message" id="chatInputBox" 
+                         ng-model="chatInput" placeholder="Type a message..."
+                         autocomplete="off" ng-keydown="keypress($event)">
+                </div>
+              </form>
+
+              <div ng-if="currTyping.length > 0" class="curr-typing-container">
+                <span class="curr-typing-text grey-text"> <acc>{{currTyping[0]}}</acc> is typing ...</span>
+              </div>
+            </footer> <!-- END MESSAGE INPUT -->
+          </div>
+        </main>   
+
+        <!-- In-Room Sidebar -->
+        <aside id="classmates-sidebar" class="sidebar sidebar-right" role="complementary">
+
+          <h4 ng-cloak ng-if="currRoomChatID ? cruHandler.rooms[currRoomChatID].is_lecture : false" ng-hide="cruHandler.rooms[currRoomChatID].class_id == 'dm_class_id'" class="studymates over-base-text" style="margin-top:2rem"><acc>{{cruHandler.getNameOfRoom(currRoomChatID)}}</acc></h4>
+
+          <h4 ng-cloak ng-if="currRoomChatID ? !cruHandler.rooms[currRoomChatID].is_lecture : false" ng-hide="cruHandler.rooms[currRoomChatID].class_id == 'dm_class_id'" class="studymates" style="margin-top:2rem"><prim>{{cruHandler.getNameOfRoom(currRoomChatID)}}</prim></h4>
+
+            <div class="studymates entry over-base-text dropdown-toggle" ng-repeat="user_id in cruHandler.rooms[currRoomChatID].users" ng-cloak>
+
+              <div class="dropdown">
+
+                <div class="item">
+                  
+                  
+
+                  <div ng-if="user_id == myID" class="container-user-icon-small {{caller.volumeListener.volumes[user_id].loud ? 'loud-prim' : ''}} over-base-text prim-back">
+                    <span ng-cloak>{{cruHandler.users[user_id].name.toUpperCase() | limitTo:1}}</span>
+                  </div>
+
+                  <div ng-if="user_id != myID" class="container-user-icon-small {{caller.volumeListener.volumes[user_id].loud ? 'loud-acc' : ''}} over-base-text {{getRemoteStreamAudioEnabled(user_id) ? 'acc-back' : 'base-back'}}">
+                    <span ng-cloak>{{cruHandler.users[user_id].name.toUpperCase() | limitTo:1}}</span>
+                  </div>
+                  
+                  <!-- Dropdown for non-me users -->
+                  <a ng-if="user_id != myID" class="names dropdown-toggle" data-toggle="dropdown">{{cruHandler.users[user_id].name}} {{cruHandler.isTutor(user_id, currRoomChatID) ? "(tutor)" : ""}}</a>
+
+                  <ul ng-if="user_id != myID" class="dropdown-menu">
+                    <li><a ng-click="toggleUserAudio(user_id)">{{getRemoteStreamAudioEnabled(user_id) ? 'Mute' : 'Unmute'}}</a></li>
+                    <li><a ng-click="toggleIsFriend(user_id)">{{isFriendsWith(user_id) != -1 ? 'Unfriend' : 'Friend'}}</a></li>
+                  </ul>
+                  
+                  <!-- No dropdown if user is me -->
+                  <a ng-if="user_id == myID" class="names">{{cruHandler.users[user_id].name}} {{cruHandler.isTutor(user_id, currRoomChatID) ? "(tutor)" : ""}}</a>
+
+                </div>
+                </a>
+
+              </div>
+
+          
+
+
+        </aside><!-- End Classmates Sidebar -->
+        
+        <!-- Create Room Modal -->
+        <div ng-controller="CreateRoomController" id="modal-create-room" class="modal modal-create-room-container" role="dialog">
+          <div class="modal-dialog">
+
+            <!-- Content -->
+            <div id="create-room" class="modal-content modal-create-room-content hide">
+              <header class="modal-header text-center"> 
+                <button id="close-create-room" class="btn close" data-dismiss="modal" aria-label="Close">
+                  <span class="glyphicon glyphicon-remove" aria-hidden="true"></span>
+                </button>
+                <h1 class="title prim-dark-text">Name your space</h1>
+              </header>
+              <div class="main form-container">
+
+                <!-- Class selection -->
+                <form role="form" accept-charset="UTF-8" autocomplete="off">
+                  <div class="form-group">
+                    <!--<label for="room_name">Room Name</label>-->
+                    <input type="text" class="form-control" maxlength="28" placeholder="e.g. Midterm Review" id="room_name">
+                  </div>
+                  <div class="checkbox">
+                    <label style="font-size: 1.2rem"><input id="lecture-checkbox" type="checkbox" value="">Cast (only the host can be heard)</label>
+                  </div>
+                  <div class="btn-container text-center">
+                    <button type="submit" class="btn btn-primary btn-block btn-submit-form btn-hi-pri" ng-click="createRoom()">Create</button>
+                  </div>
+                </form>
+
+              </div>
+            </div>
+
+          </div>
+        </div>
+
+        <!-- Add Class Modal -->
+        <div ng-controller="AddClassController" id="modal-add-class" class="modal" role="dialog">
+          <div class="modal-dialog">
+            <!-- Content -->
+            <div id="add-class" class="modal-content modal-add-class-content hide">
+              <header class="modal-header text-center"> 
+                <button id="close-add-class" class="btn close" data-dismiss="modal" aria-label="Close">
+                  <span class="glyphicon glyphicon-remove" aria-hidden="true"></span>
+                </button>
+                <h1 class="title">Add a class</h1>
+              </header>
+              <div class="main form-container">
+
+                <!-- Auto complete -->
+                <div>
+                  <md-content id="class-dropdown" class="md-padding">
+                    <form>
+                      <md-autocomplete
+                         md-search-text="searchText"
+                         md-items="item in querySearch(searchText)"
+                         md-item-text="item"
+                         md-min-length="0"
+                         md-selected-item="selectedItem"
+                         md-selected-item-change="processSelection()"
+                         md-autoselect="true"
+                         placeholder="Enter a Class Code (e.g. 'CSE110')">
+                        <md-item-template>
+                          <span md-highlight-text="searchText" md-highlight-flags="^i">{{item}}</span>
+                        </md-item-template>
+                      </md-autocomplete>
+                    </form>
+                  </md-content>
+                </div>
+              </div>
+
+              <!-- Current courses -->
+              <div class="classes-container">
+                <h4 class="title" style="margin-bottom: 20px;">Current classes</h4>
+                <span class="classes" ng-repeat="class in tempClasses">
+                  <button class="btn btn-cancel"
+                    ng-click="removeClass(class.class_id)">
+                    {{class.class_name}}
+                    <!--<span class="glyphicon glyphicon-remove" aria-hidden="true"></span>-->
+                  </button>
+                </span>
+                <p style="font-size: 1rem; margin-top: 15px;" ng-if="tempClasses.length == 0">You don't have any classes. Must be nice.</p>
+                <p style="font-size: 1rem; margin-top: 15px;" ng-if="tempClasses && tempClasses.length != 0">(click to remove)</p>
+                <br>
+                <button class="btn btn-hi-pri save-btn" style="margin-top: 30px; width: 30%" ng-click="saveChanges()" style="margin-bottom: 20px">Save</button>
+              </div>
+
+            </div>
+          </div>
+        </div>
+
+
+        <!-- Audio -->
+        <audio id="join_room_audio" src="/audio/join_room_sfx"></audio>
+        <audio id="leave_room_audio" src="/audio/leave_room_sfx"></audio>
+        <audio id="pop_audio" src="/audio/pop_sfx"></audio>
+
+        <iframe width="0" height="0" id="iframePlayer"></iframe>
+
+      </div>
+      <div id="media-connect-alert" class="alert fade in text-center" hidden>
+        <a class="close" data-dismiss="alert">×</a>
+        <span>Media connected</span>
+      </div>
+      <div id="lecture-alert" class="alert fade in text-center" hidden>
+        <a class="close" data-dismiss="alert">×</a>
+        <span>In casts, only the host can be heard.</span>
+      </div>
+      <div id="course-change-alert" class="alert fade in text-center" hidden>
+        <a class="close" data-dismiss="alert">×</a>
+        <span>Course changes were successfully applied.</span>
+      </div>
+      <div id="no-permissions-alert" class="alert fade in text-center" hidden>
+        <a class="close" data-dismiss="alert">×</a>
+        <span>Your mic permissions have not been set.<span>
+      </div>
+      <div id="buddy-request-alert" class="alert fade in text-center" hidden>
+        <a class="close" data-dismiss="alert">×</a>
+        <span>Buddy request sent.<span>
+      </div>
+      <div id="block-alert" class="alert fade in text-center" hidden>
+        <a class="close" data-dismiss="alert">×</a>
+        <span>User blocked. Now they can't hear you, and you can't hear them.<span>
+      </div>
+      <div id="video-alert" class="alert fade in text-center" hidden>
+        <a class="close" data-dismiss="alert">×</a>
+        <span>If you can't see yourself, no one else can either.<span>
+      </div>
+      <div id="no-connection-alert" class="alert fade in text-center" hidden>
+        <a class="close" data-dismiss="alert">×</a>
+        <span>Oops! Can't connect to server. Please check your internet
+          connection and try refreshing the page.<span>
+      </div>
+    </div>
+
+    <!--Buddy Request Modal-->
+    <div ng-controller="BuddyController" id="modal-buddy-request" class="modal create-room-container" role="dialog">
+      <div class="modal-dialog">
+
+        <!-- Content -->
+        <div id="buddy-request" class="modal-content modal-buddy-request-content hide">
+          <header class="modal-header text-center"> 
+            <button id="close-buddy-request" class="btn close" data-dismiss="modal" aria-label="Close">
+              <span class="glyphicon glyphicon-remove" aria-hidden="true"></span>
+            </button>
+            <h1 class="title prim-dark-text">Add a buddy</h1>
+          </header>
+          <div class="main form-container">
+
+            <!-- Class selection -->
+            <form role="form" accept-charset="UTF-8" autocomplete="off">
+              <div class="form-group">
+                <input type="text" class="form-control" maxlength="28"
+                placeholder="email@ucsd.edu" ng-model="other_user_email">
+              </div>
+              
+              <div class="btn-container text-center" style="margin-top: 2rem">
+                <button type="submit" class="btn btn-primary btn-block
+                  btn-submit-form btn-hi-pri"
+                  ng-click="sendRequestWithEmail(other_user_email)">Send Request</button>
+              </div>
+            </form>
+
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+
+  </body>
+
+  <!-- Peer -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/peerjs/0.3.14/peer.js"></script>
+
+  <!-- Firebase -->
+  <script src="https://www.gstatic.com/firebasejs/3.6.7/firebase.js"></script>
+  <script src="firebase_setup.js"></script>
+
+  <!-- Angular scripts -->
+  <script src="controllers/main_controller.js"></script>
+  <script src="controllers/buddy_controller.js"></script>
+  <script src="controllers/room_controller.js"></script>
+  <script src="controllers/create_room_controller.js"></script>
+  <script src="controllers/video_controller.js"></script>
+  <script src="controllers/add_class_controller.js"></script>
+
+  <!-- Other -->
+  <script src="/socket.io/socket.io.js"></script>
+  <script src="Logger.js"></script>
+  <script src="cookies.js"></script>
+  <script src="theme.js"></script>
+  <script src="main.js"></script>
+  <script src="ping.js"></script>
+  <script src="Caller.js"></script>
+  <script src="VolumeListener.js"></script>
+  <script src="soundmeter.js"></script>
+  <script src="CRUHandler.js"></script>
+  <script src="DownHandler.js"></script>
+
+
+</html>
