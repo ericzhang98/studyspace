@@ -66,6 +66,95 @@ html, body {
   cursor: default;
 }
 
+.main-content-hidden-alt {
+  height: 100%;
+  z-index: 2;
+  padding-top: 2.5rem;
+  padding-bottom: 2.5rem;
+  background-color: var(--base-two-color);
+  overflow: auto;
+}
+
+.class-main-header {
+  font-size: 2.5rem;
+  font-weight: 500;
+  color: var(--over-base-color);
+  text-align: center;   
+}
+
+.class-section {
+  width: inherit;
+  margin-left: 5rem;
+  margin-right: 5rem;
+}
+
+.class-header {
+  font-size: 3.2rem;
+  color: var(--primary-dark-color);
+  padding-top: 1.2rem;
+  vertical-align: middle;
+}
+
+.btn-dts {
+  font-size: 1.2rem;
+  border-radius: .5rem;
+  border: solid 0.2rem var(--primary-dark-color);
+  color: var(--primary-dark-color);
+  background-color: var(--over-base-color);
+  padding-top: .6rem;
+  padding-bottom: .6rem;
+  margin-left: 3rem;
+  margin-top: 1rem;
+  width: 15%;
+  outline: 0 !important;
+}
+
+.class-sub-header, .class-sub-header-off {
+  font-size: 1.25rem;
+  margin-left: 3rem;
+  padding-bottom: .25rem;
+  vertical-align: middle;
+}
+
+.class-sub-header {
+  color: var(--over-base-color);
+}
+
+.class-sub-header-off {
+  font-style: italic;
+  color: #999999;
+}
+
+.rooms-container {
+  margin-left: 3rem;
+  height: 8rem;
+}
+
+.room-box, .add-room-box {
+  vertical-align: middle;
+  height: 8rem;
+  width: 10rem;
+  border-radius: .5rem;
+  margin-right: 1.5rem;
+  outline: 0 !important;
+}
+
+.room-box:hover, .add-room-box:hover, .btn-dts:hover {
+  -webkit-transform: scale(1.1,1.1);
+}
+
+.room-box {
+  color: var(--over-base-color);
+  background-color: var(--primary-dark-color);
+  border: solid 0.2rem var(--over-base-color);
+}
+
+.add-room-box {
+  color: var(--primary-dark-color);
+  background-color: var(--over-base-color);
+  border: solid 0.2rem var(--primary-dark-color);
+}
+
 .navbar-room {
   margin-bottom: 0;
   border: none;

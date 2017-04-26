@@ -1,27 +1,11 @@
-var singletonRoomManager = function() {
+var singletonRoomManager = function(cm) {
 
   var mongojs = require('mongojs');
   var db = mongojs('mongodb://studyspace:raindropdroptop@ds033086.mlab.com:33086/studyspace', []);
 
-  // - Firebase admin setup
-  var firebaseAdmin = require("firebase-admin");
-  var serviceAccount = require("./dontlookhere/porn/topsecret.json"); //shhhh
-  var firebase = firebaseAdmin.initializeApp({
-    credential: firebaseAdmin.credential.cert(serviceAccount),
-      databaseURL: "https://studyspace-490cd.firebaseio.com/"
-  }, "lol");
-  var firebaseRoot = firebase.database().ref();
-  var classRoomsDatabase = firebaseRoot.child("ClassRooms");
-  var roomInfoDatabase = firebaseRoot.child("RoomInfo");
-  var roomMessagesDatabase = firebaseRoot.child("RoomMessages");
-  var roomPinnedMessagesDatabase = firebaseRoot.child("RoomPinnedMessages");
-  var userActivityDatabase = firebaseRoot.child("UserActivity");
-
-
   var MAIN_HOST = "mainhost";
   var MAX_IDLE = 10*1000;
   var BUFFER_TIME = 20*1000;
-
 
   function Room(room_id, room_name, room_host_id, class_id, is_lecture, time_created, host_name) {
     this.room_id = room_id;
@@ -39,23 +23,19 @@ var singletonRoomManager = function() {
     var newRoom = new Room(room_id, room_name, room_host_id, class_id, is_lecture, time_created, host_name);
 
     //push new room id into class list of rooms
-    var classRoomRef = classRoomsDatabase.child(class_id).push();
+    var classRoomRef = cm.classRoomsDatabase.child(class_id).push();
     classRoomRef.set(room_id);
 
     //push new room info into room info database under room id
-    roomInfoDatabase.child(room_id).set(newRoom, function(err) {
+    cm.roomInfoDatabase.child(room_id).set(newRoom, function(err) {
       if (!err) {
         console.log("FIREBASE: addRoom - Room " + room_id  + " inserted into RoomInfo database");
-        roomInfoDatabase.child(room_id).update({firebase_push_id: classRoomRef.key}) 
-        if (callback) {
-          callback(null, newRoom);
-        }
+        cm.roomInfoDatabase.child(room_id).update({firebase_push_id: classRoomRef.key}) 
+        callback(null, newRoom);
       }
       else {
         console.log("FIREBASE: ERROR - failed to add room " + room_id + " to RoomInfo database");
-        if (callback) {
-          callback({error: "failed_to_add_room"}, null);
-        }
+        callback({error: "failed_to_add_room"}, null);
       }
     });
   };
@@ -73,9 +53,9 @@ var singletonRoomManager = function() {
           return;
         }
         createRoom(class_id, room_name, host_id, is_lecture, time_created, host_name, 
-          function(room_id){
+          function(error, newRoom){
             if (callback) {
-              callback(null, room_id);
+              callback(null, newRoom);
             }
           });
       }
@@ -91,22 +71,22 @@ var singletonRoomManager = function() {
   };
 
   this.joinRoom = function(user_id, room_id, callback) {
-    roomInfoDatabase.child(room_id).once("value").then(function(snapshot) {
+    cm.roomInfoDatabase.child(room_id).once("value").then(function(snapshot) {
       var room = snapshot.val();
       if (room) {
-        roomInfoDatabase.child(room_id).child("users").push().set(user_id, function(err) {
+        cm.roomInfoDatabase.child(room_id).child("users").push().set(user_id, function(err) {
           if (!err) {
             console.log("FIREBASE: joinRoom - Added user " + user_id + " to room " + room_id);
             if (callback) { //have to grab all of room info for callback TODO: change this?
-              roomInfoDatabase.child(room_id).once("value").then(function(snapshot) {
+              cm.roomInfoDatabase.child(room_id).once("value").then(function(snapshot) {
                 var updatedRoom = snapshot.val();
                 if (callback) {
                   callback(null, updatedRoom);
                 }
               });
             }
-            userActivityDatabase.child(user_id).child("lastRooms").push().set(room_id);
-            userActivityDatabase.child(user_id).child("lastActive").set(Date.now());
+            cm.userActivityDatabase.child(user_id).child("lastRooms").push().set(room_id);
+            cm.userActivityDatabase.child(user_id).child("lastActive").set(Date.now());
           }
           else {
             if (callback) {
@@ -131,7 +111,7 @@ var singletonRoomManager = function() {
     }
     console.log("FIREBASE: leaveRoom - Removed user " + user_id + " from room " + room_id);
     //grab the room's users list and rm the user from it
-    roomInfoDatabase.child(room_id).child("users").once("value").then(function(snapshot) {
+    cm.roomInfoDatabase.child(room_id).child("users").once("value").then(function(snapshot) {
       if (snapshot.val()) {
         var users = [];
         var removed = false; //temp jank xD
@@ -162,11 +142,11 @@ var singletonRoomManager = function() {
     });
 
     //rm the typing lol
-    firebaseRoot.child("RoomTyping").child(room_id).child(user_id).remove();
+    cm.roomTypingDatabase.child(room_id).child(user_id).remove();
   };
 
   function bufferTimer(room_id) {
-    roomInfoDatabase.child(room_id).once("value").then(function(snapshot) {
+    cm.roomInfoDatabase.child(room_id).once("value").then(function(snapshot) {
       var room = snapshot.val();
       if (room) {
         var timeDiff = Date.now() - room.time_created;
@@ -182,7 +162,7 @@ var singletonRoomManager = function() {
 
   function checkToDelete(room_id) {
     //query room data to check delete conditions
-    roomInfoDatabase.child(room_id).once("value").then(function(snapshot) {
+    cm.roomInfoDatabase.child(room_id).once("value").then(function(snapshot) {
       var room = snapshot.val();
       if (room) {
         if (!room.users) { //no users left
@@ -209,9 +189,9 @@ var singletonRoomManager = function() {
   function deleteRoom(room_id, class_id, firebase_push_id) {
     //remove room from roominfo, remove id from classroom list, remove room
     //messages database
-    roomInfoDatabase.child(room_id).remove();
-    classRoomsDatabase.child(class_id).child(firebase_push_id).remove();
-    roomMessagesDatabase.child(room_id).remove();
+    cm.roomInfoDatabase.child(room_id).remove();
+    cm.classRoomsDatabase.child(class_id).child(firebase_push_id).remove();
+    cm.roomMessagesDatabase.child(room_id).remove();
   }
 
 
@@ -235,4 +215,4 @@ var singletonRoomManager = function() {
 
 };
 
-module.exports = new singletonRoomManager();
+module.exports = singletonRoomManager;

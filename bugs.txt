@@ -1,1 +1,2 @@
 left sidebar doesn't apply sometimes (adding a class/joining a room)
+Rooms not always properly deleted (I think when you just close window and don't manually leave room)

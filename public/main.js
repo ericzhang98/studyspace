@@ -1,4 +1,5 @@
 /***** General variables **************************/
+var logger = new Logger(true);
 var myID = getSignedCookie("user_id");
 var SONG_COMMANDS = ["/raindrop", "/destress", "/420"];
 var OTHER_COMMANDS = ["/stop", "/dank", "/scrub", "/easter"];

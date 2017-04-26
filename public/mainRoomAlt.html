@@ -113,50 +113,7 @@
 
           </div>
 
-          <!-- Classes -->
-          <div id="classes-menu" class="container-menu-classes">
-
-            <!-- Create Room Button -->
-            <button id="btn-add-class" class="btn container-title"
-            ng-click="refreshAddClassBC()">
-            <span class="title">Classes</span>
-            <div>
-              <span class="glyphicon glyphicon-plus"></span>
-            </div>
-          </button>
-
-            <!-- Classes/Rooms Dropdown -->
-            <div id="classes" class="panel-group menu-classes">
-
-              <div ng-repeat="class_id in cruHandler.my_class_ids track by $index" ng-if="class_id != 'dm_class_id'" id="#{{class_id}}" class="panel" href="#{{class_id}}">
-                <div class="panel-heading">
-                  <h4 class="panel-title {{class_id == cruHandler.rooms[caller.currRoomCallID].class_id ? (cruHandler.rooms[caller.currRoomCallID].is_lecture ? 'white-text acc-back' : 'white-text prim-dark-back') : 'color-def-panel-title'}}" data-toggle="collapse" data-target="#{{class_id}}" data-parent="#classes">
-                    <span ng-cloak class="class-title">
-                      {{cruHandler.classes[class_id].name}}
-                    </span>
-                  </h4>
-                  <button class="btn btn-add-room" ng-click="openCreateRoomModal(class_id)">
-                    <span class="glyphicon glyphicon-plus"></span>
-                  </button>
-                  <button class="btn btn-add-room" ng-click="toggleDownList(class_id)" style="margin-right: 18px; font-weight:{{downHandler.downLists[class_id].indexOf(myID) == -1 ? '' : 'bold'}}">
-                    <span>I'm Down {{downHandler.downLists[class_id].length}}</span>
-                  </button>
-                </div>
-                <div id="{{class_id}}" class="panel-collapse collapse">
-                  <ul class="list-group">
-                    <li class="list-group-item base-back {{room_id == caller.currRoomCallID ? (cruHandler.rooms[room_id].is_lecture ? 'acc-text' : 'prim-text') : 'over-base-text'}}" ng-repeat="room_id in cruHandler.class_rooms[class_id]" ng-click="joinRoom(room_id, class_id)">
-                      <span ng-cloak class="room-name">
-                        {{cruHandler.rooms[room_id].name}}
-                      </span>
-                      <span>{{cruHandler.rooms[room_id].users.length}}{{cruHandler.rooms[room_id].has_tutor? "*":""}}</span>
-                    </li>
-                  </ul>
-
-                </div>
-              </div>
-
-            </div> <!-- END PANEL-GROUP -->
-          </div>
+        
 
 
           <!-- BUDDIES -->
@@ -182,9 +139,9 @@
 
             <!-- CURRENT FRIENDS -->
             <div>
-              <li class="list-group-item buddy-panel {{ messageNotifications[buddy.user_two_id] > 0 ? 'acc-text base-back bold-text' : 'over-base-text ' + (chatter.currRoomChatID == getDMID(buddy.user_two_id) ? 'prim-back' : 'base-back')}}" ng-repeat="buddy in added_buddies_list" ng-click="openDM(buddy.user_two_id, buddy.user_two_name)">
+              <li class="list-group-item buddy-panel {{ messageNotifications[buddy.user_two_id] > 0 ? 'acc-text base-back bold-text' : 'over-base-text ' + (currRoomChatID == getDMID(buddy.user_two_id) ? 'prim-back' : 'base-back')}}" ng-repeat="buddy in added_buddies_list" ng-click="openDM(buddy.user_two_id, buddy.user_two_name)">
 
-                <span class="{{buddies_status[buddy.user_two_id] ? (chatter.currRoomChatID == getDMID(buddy.user_two_id) ? 'white-text' : 'online-text') : 'invis-text'}}"
+                <span class="{{buddies_status[buddy.user_two_id] ? (currRoomChatID == getDMID(buddy.user_two_id) ? 'white-text' : 'online-text') : 'invis-text'}}"
                   style="text-align: center; vertical-align: middle">◕</span>
                 <span ng-cloak class="room-name">
                   {{buddy.user_two_name}} 
@@ -205,37 +162,106 @@
 
         <!-- Main Content -->
         <main ng-controller="RoomController" id="main" class="chat-room" role="main">
-          <div class="main-content-hidden" ng-hide="chatter.currRoomChatID">
-            <p class="brand">studyspace</p>
+          <div class="main-content-hidden-alt" ng-hide="currRoomChatID">
+            <p class="class-main-header">Your Courses</p>
+            <div class="class-section">
+              <p class="class-header">cse 110</p> 
+              <p class="class-sub-header">Open Rooms</p>
+              <div class="rooms-container">
+                <button class="room-box">Midterm 1 Review</button>
+                <button class="room-box">Midterm 2 Review</button>
+                <button class="room-box">John's OH</button>
+                <button class="room-box">Midterm 3 Review</button>
+                <button class="add-room-box">Add Room</button>
+                <button class="add-room-box">Find a Group</button>
+              </div>
+              <!--<button class="btn-dts">Find a Group</button>-->
+            </div>
+
+            <div class="class-section">
+              <p class="class-header">math 183</p>
+              <p class="class-sub-header">Open Rooms</p>
+              <div class="rooms-container">
+                <button class="room-box">Lisa's OH</button>
+                <button class="room-box">Homework Help</button>
+                <button class="add-room-box">Add Room</button>
+                <button class="add-room-box">Find a Group</button>
+              </div>
+              <!--<button class="btn-dts">Find a Group</button>-->
+            </div>
+
+            <div class="class-section">
+              <p class="class-header">ethn 2</p>
+              <p class="class-sub-header-off">No rooms open</p>
+              <div class="rooms-container">
+                <button class="add-room-box">Add Room</button>
+                <button class="add-room-box">Find a Group</button>
+              </div>
+              <!--<button class="btn-dts">Find a Group</button>-->
+            </div>
+            
+            <div class="class-section">
+              <p class="class-header">cse 101</p>
+              <p class="class-sub-header-off">No rooms open</p>
+              <div class="rooms-container">
+                <button class="add-room-box">Add Room</button>
+                <button class="add-room-box">Find a Group</button>
+              </div>
+              <!--<button class="btn-dts">Find a Group</button>-->
+            </div>
           </div>
-          <div class="main-content" ng-hide="!chatter.currRoomChatID">
+          <div class="main-content" ng-hide="!currRoomChatID">
             <!-- ROOM NAVBAR -->
-            <nav id="class-navigation" class="navbar navbar-room white-text {{rooms[chatter.currRoomChatID].is_lecture ? 'acc-back' : 'prim-dark-back'}}">
+            <nav id="class-navigation" class="navbar navbar-room white-text {{rooms[currRoomChatID].is_lecture ? 'acc-back' : 'prim-dark-back'}}">
               <div class="container-fluid">
                 <div class="navbar-header">
-                  <span ng-cloak class="navbar-brand" >{{cruHandler.getClassNameOfRoom(chatter.currRoomChatID) != "" ? 
-                    cruHandler.getClassNameOfRoom(chatter.currRoomChatID) + " | ":""}}{{cruHandler.getNameOfRoom(chatter.currRoomChatID)}}{{cruHandler.rooms[chatter.currRoomChatID].is_lecture ? ' (cast by ' + cruHandler.rooms[chatter.currRoomChatID].host_name + ')' : ''}}</span>
+                  <span ng-cloak class="navbar-brand" >{{cruHandler.getClassNameOfRoom(currRoomChatID) != "" ? 
+                    cruHandler.getClassNameOfRoom(currRoomChatID) + " | ":""}}{{cruHandler.getNameOfRoom(currRoomChatID)}}{{cruHandler.rooms[currRoomChatID].is_lecture ? ' (cast by ' + cruHandler.rooms[currRoomChatID].host_name + ')' : ''}}</span>
               </div>
                 <ul class="nav navbar-nav navbar-right">
                   <li>
                     <a>{{currSongTitle}}</a>
                   </li>
-                  <li ng-if="rooms[chatter.currRoomChatID].class_id != 'dm_class_id'" class="nav-link link-pin" ng-click="toggleWhiteboard()">
+                  <li ng-if="rooms[currRoomChatID].class_id != 'dm_class_id'" class="nav-link link-pin" ng-click="toggleWhiteboard()">
                     <span class="glyphicon glyphicon-pencil"></span>
                   </li>
 
-                  <li ng-if="rooms[chatter.currRoomChatID].host_id == 'mainhost'" class="nav-link link-pin" ng-click="togglePinnedMessages()">
+                  <li ng-if="rooms[currRoomChatID].host_id == 'mainhost'" class="nav-link link-pin" ng-click="togglePinnedMessages()">
                     <span class="glyphicon glyphicon-pushpin"></span>
                   </li>
 
                   <li class="nav-link" ng-click="leaveRoom()">
-                    <a>{{cruHandler.rooms[chatter.currRoomChatID].class_id != 'dm_class_id' ? 'Leave' : 'Close'}}</a>
+                    <a>{{cruHandler.rooms[currRoomChatID].class_id != 'dm_class_id' ? 'Leave' : 'Close'}}</a>
                   </li>
                 </ul>
               </div>
             </nav>
 
-            <!-- RIP Pinboard -->
+            <!-- Pinboard -->
+            <div ng-if="showPinnedMessages" class="pinned-messages-container">
+              <div class="pinned-messages-header">Pinboard <span class="glyphicon glyphicon-remove" aria-hidden="true" ng-click="togglePinnedMessages()" position="relative"></span></div>
+              <div class="message white-back" ng-if="chatPinnedMessageList.length == 0">
+                <p> There are no pinned messages.</p>
+              </div>
+              <div class="pinned-messages-content">
+                <div class="message" ng-repeat="chatMessage in chatPinnedMessageList">
+                  <div ng-if="chatMessage.user_id != 'system_id'" class="container-user-icon over-base-text {{chatMessage.user_id != myID ? 'acc-text' : 'prim-text'}}">
+                    <span>{{chatMessage.name.toUpperCase() | limitTo:1}}</span>
+                  </div>
+
+                  <div class="message-content">
+                    <header class="message-header">
+                      <div class="dropdown">
+                        <a class="user-name acc-text">{{chatMessage.name}} {{cruHandler.isTutor(chatMessage.user_id, currRoomChatID) ? "(tutor)" : ""}}</a>
+                      </div>
+                      <span class="black-text" style="font-size: 1.2rem">{{timeAgo(chatMessage)}}</span>
+                    </header>
+                    <p class="pinned-message-body" ng-bind-html="chatMessage.text |
+                      linky:'_blank'"></p>
+                  </div>
+                </div>
+              </div>
+            </div>
 
             <!-- Whiteboard -->
             <div class="whiteboard-container" id="whiteboard-container" hidden>
@@ -257,8 +283,8 @@
               </div>
 
               <div class="message"
-                ng-repeat="chatMessage in chatter.chatMessageList"
-                ng-click="chatter.searchMode && messageClicked($event)">
+                ng-repeat="chatMessage in chatMessageList"
+                ng-click="searchMode && messageClicked($event)">
                 <div ng-if="chatMessage.user_id != 'system_id'" class="container-user-icon over-base-text {{chatMessage.user_id != myID ? 'acc-back' : 'prim-back'}}">
                   <span>{{chatMessage.name.toUpperCase() | limitTo:1}}</span>
                 </div>
@@ -266,20 +292,25 @@
                 <div ng-if="chatMessage.user_id != 'system_id'" class="message-content">
                   <header class="message-header">
                     <div class="dropdown">
+
                       <!-- Dropdown for non-me users -->
-                      <a ng-if="chatMessage.user_id != myID" class="user-name dropdown-toggle acc-text" data-toggle="dropdown">{{chatMessage.name}} {{cruHandler.isTutor(chatMessage.user_id, chatter.currRoomChatID) ? "(tutor)" : ""}}</a>
+                      <a ng-if="chatMessage.user_id != myID" class="user-name dropdown-toggle acc-text" data-toggle="dropdown">{{chatMessage.name}} {{cruHandler.isTutor(chatMessage.user_id, currRoomChatID) ? "(tutor)" : ""}}</a>
                       <ul ng-if="chatMessage.user_id != myID" class="dropdown-menu">
                         <li><a ng-if="getRemoteStreamExists(chatMessage.user_id)" ng-click="toggleUserAudio(chatMessage.user_id)">{{getRemoteStreamAudioEnabled(chatMessage.user_id) ? 'Mute' : 'Unmute'}}</a></li>
                         <li><a ng-click="toggleIsFriend(chatMessage.user_id)">{{isFriendsWith(chatMessage.user_id) != -1 ? 'Unfriend' : 'Friend'}}</a></li>
                       </ul>
 
                       <!-- No dropdown if user is me -->
-                      <a ng-if="chatMessage.user_id == myID" class="user-name prim-text">{{chatMessage.name}} {{cruHandler.isTutor(chatMessage.user_id, chatter.currRoomChatID) ? "(tutor)" : ""}}</a>
+                      <a ng-if="chatMessage.user_id == myID" class="user-name prim-text">{{chatMessage.name}} {{cruHandler.isTutor(chatMessage.user_id, currRoomChatID) ? "(tutor)" : ""}}</a>
+
+                      <button ng-if="cruHandler.rooms[currRoomChatID].host_id == 'mainhost' && !isPinned(chatMessage.key) && cruHandler.isTutor(myID, currRoomChatID)" class="btn btn-pin" ng-click="pinChatMessage(chatMessage.key, chatMessage.user_id, chatMessage.name, chatMessage.timeSent)">
+                        <span class="glyphicon glyphicon-pushpin"></span>
+                      </button>
                     </div>
                     <span class="dateTime">{{timeAgo(chatMessage)}}</span>
                   </header>
                   <p class="message-body" ng-bind-html="chatMessage.text |
-                  linky:'_blank' | highlight:chatter.searchQuery"></p>
+                  linky:'_blank' | highlight:searchQuery"></p>
                 </div>
 
                 <div ng-if="chatMessage.user_id == 'system_id'">
@@ -298,7 +329,7 @@
                     <button id="mute-button" class="btn btn-mute text-center" type="button" ng-click="toggleMic()"> 
                       <span ng-class="muteBtnClass"></span>
                     </button>
-                    <button class="btn text-center btn-vid" type="button" ng-cloak ng-if="chatter.currRoomChatID" ng-hide="rooms[chatter.currRoomChatID].class_id == 'dm_class_id'" ng-click="toggleViewVideoBC()">
+                    <button class="btn text-center btn-vid" type="button" ng-cloak ng-if="currRoomChatID" ng-hide="rooms[currRoomChatID].class_id == 'dm_class_id'" ng-click="toggleViewVideoBC()">
                       <!--See Video-->
                       <span class="glyphicon glyphicon-facetime-video"></span>
                     </button>
@@ -309,8 +340,8 @@
                 </div>
               </form>
 
-              <div ng-if="chatter.currTyping.length > 0" class="curr-typing-container">
-                <span class="curr-typing-text grey-text"> <acc>{{chatter.currTyping[0]}}</acc> is typing ...</span>
+              <div ng-if="currTyping.length > 0" class="curr-typing-container">
+                <span class="curr-typing-text grey-text"> <acc>{{currTyping[0]}}</acc> is typing ...</span>
               </div>
             </footer> <!-- END MESSAGE INPUT -->
           </div>
@@ -319,11 +350,11 @@
         <!-- In-Room Sidebar -->
         <aside id="classmates-sidebar" class="sidebar sidebar-right" role="complementary">
 
-          <h4 ng-cloak ng-if="chatter.currRoomChatID ? cruHandler.rooms[chatter.currRoomChatID].is_lecture : false" ng-hide="cruHandler.rooms[chatter.currRoomChatID].class_id == 'dm_class_id'" class="studymates over-base-text" style="margin-top:2rem"><acc>{{cruHandler.getNameOfRoom(chatter.currRoomChatID)}}</acc></h4>
+          <h4 ng-cloak ng-if="currRoomChatID ? cruHandler.rooms[currRoomChatID].is_lecture : false" ng-hide="cruHandler.rooms[currRoomChatID].class_id == 'dm_class_id'" class="studymates over-base-text" style="margin-top:2rem"><acc>{{cruHandler.getNameOfRoom(currRoomChatID)}}</acc></h4>
 
-          <h4 ng-cloak ng-if="chatter.currRoomChatID ? !cruHandler.rooms[chatter.currRoomChatID].is_lecture : false" ng-hide="cruHandler.rooms[chatter.currRoomChatID].class_id == 'dm_class_id'" class="studymates" style="margin-top:2rem"><prim>{{cruHandler.getNameOfRoom(chatter.currRoomChatID)}}</prim></h4>
+          <h4 ng-cloak ng-if="currRoomChatID ? !cruHandler.rooms[currRoomChatID].is_lecture : false" ng-hide="cruHandler.rooms[currRoomChatID].class_id == 'dm_class_id'" class="studymates" style="margin-top:2rem"><prim>{{cruHandler.getNameOfRoom(currRoomChatID)}}</prim></h4>
 
-            <div class="studymates entry over-base-text dropdown-toggle" ng-repeat="user_id in cruHandler.rooms[chatter.currRoomChatID].users" ng-cloak>
+            <div class="studymates entry over-base-text dropdown-toggle" ng-repeat="user_id in cruHandler.rooms[currRoomChatID].users" ng-cloak>
 
               <div class="dropdown">
 
@@ -340,7 +371,7 @@
                   </div>
                   
                   <!-- Dropdown for non-me users -->
-                  <a ng-if="user_id != myID" class="names dropdown-toggle" data-toggle="dropdown">{{cruHandler.users[user_id].name}} {{cruHandler.isTutor(user_id, chatter.currRoomChatID) ? "(tutor)" : ""}}</a>
+                  <a ng-if="user_id != myID" class="names dropdown-toggle" data-toggle="dropdown">{{cruHandler.users[user_id].name}} {{cruHandler.isTutor(user_id, currRoomChatID) ? "(tutor)" : ""}}</a>
 
                   <ul ng-if="user_id != myID" class="dropdown-menu">
                     <li><a ng-click="toggleUserAudio(user_id)">{{getRemoteStreamAudioEnabled(user_id) ? 'Mute' : 'Unmute'}}</a></li>
@@ -348,7 +379,7 @@
                   </ul>
                   
                   <!-- No dropdown if user is me -->
-                  <a ng-if="user_id == myID" class="names">{{cruHandler.users[user_id].name}} {{cruHandler.isTutor(user_id, chatter.currRoomChatID) ? "(tutor)" : ""}}</a>
+                  <a ng-if="user_id == myID" class="names">{{cruHandler.users[user_id].name}} {{cruHandler.isTutor(user_id, currRoomChatID) ? "(tutor)" : ""}}</a>
 
                 </div>
                 </a>
@@ -555,8 +586,6 @@
   <script src="Caller.js"></script>
   <script src="VolumeListener.js"></script>
   <script src="soundmeter.js"></script>
-  <script src="whiteboarder.js"></script>
-  <script src="Chatter.js"></script>
   <script src="CRUHandler.js"></script>
   <script src="DownHandler.js"></script>
 

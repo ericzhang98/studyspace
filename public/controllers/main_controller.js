@@ -10,8 +10,12 @@ myApp.run(function($rootScope) {
   $rootScope.currRoomChatID = null;
   $rootScope.caller = new Caller($rootScope.myID);
   $rootScope.caller.volumeListener.setOnLoudChangeFunc(function() {$rootScope.$broadcast('volumeListenerChange')});
+  $rootScope.downHandler = new DownHandler(
+    $rootScope.myID,
+    function() {$rootScope.$broadcast('downListChange')},
+    function(data) {$rootScope.$broadcast('downListRoom', data)});
   $rootScope.cruHandler = new CRUHandler();
-  $rootScope.cruHandler.setOnChangeFunc(function() {$rootScope.$broadcast('cruChange')})
+  $rootScope.cruHandler.setOnChangeFunc(function(data) {$rootScope.$broadcast('cruChange', data)});
 
   // broadcast methods
   // called in BuddyController, goes to ChatController
@@ -86,9 +90,28 @@ function($scope, $rootScope, $http, $timeout, $window) {
     $scope.$apply();
   })
 
+  // Respond to a down list change
+  $scope.$on('downListChange', function(event, data) {
+    $scope.$apply();
+  })
+
+  // Respond to a down list room
+  $scope.$on('downListRoom', function(event, data) {
+    $scope.joinRoom(data.room_id, data.class_id);
+  })
+
   // Respond to a cruContainer change
   $scope.$on('cruChange', function(event, data) {
+
+    // update UI
     $rootScope.safeApply($scope);
+
+    if (data) {
+      // pull down list for new class
+      if (data.change_type == 'getClass') {
+        $rootScope.downHandler.pullDownList(data.class_id);
+      }
+    }
   })
 
   // Allows other controllers to call getClass
@@ -126,6 +149,10 @@ function($scope, $rootScope, $http, $timeout, $window) {
     else {
       $rootScope.joinRoomChatBC($rootScope.caller.currRoomCallID); // join or leave chat room
     }
+  }
+
+  $scope.toggleDownList = function(class_id) {
+    $rootScope.downHandler.toggleDownList(class_id);
   }
 
   // Expands sidebar panel for given class

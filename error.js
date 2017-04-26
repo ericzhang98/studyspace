@@ -20,4 +20,4 @@ var singletonErrorManager = function() {
 
 }
 
-module.exports = new singletonErrorManager();
+module.exports = singletonErrorManager;
