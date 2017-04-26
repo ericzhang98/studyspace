@@ -299,7 +299,7 @@ app.get('/leave_room/:room_id/', function(req, res) {
     return;
   }
   var room_id = req.params.room_id;
-  roomManager.leaveRoom(user_id, room_id function(err, data) {
+  roomManager.leaveRoom(user_id, room_id, function(err, data) {
     res.send({success: true})
   });
 });

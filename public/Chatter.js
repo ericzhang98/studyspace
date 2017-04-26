@@ -5,98 +5,119 @@ function Chatter(myID, cruHandler) {
 
   this.currRoomChatID = null;
   this.chatMessageList = [];
+  this.currTyping = [];
+  this.isTyping = false;
   this.searchQuery = null;
   this.searchMode = true;
+  this.scrollLock = false;
+
+  this.clearInput = null;
+  this.scrollDown = null;
+  this.apply = null;
 
   const CONCAT_TIME = 60*1000; // 1 minute
   var thisChatter = this;
   var chatDatabase = null;
+  var typingDatabase = null;
 
   // list of message objects with: email, name, roomID, text, timeSent
   var div = document.getElementById("chat-message-pane");
   var chatInputBox = document.getElementById("chatInputBox");
   var loadingMessagesAnimation = document.getElementById("loading-messages");
   var lastKey = null;
-  var scrollLock = false;
   var loadingOverallAnimation = document.getElementById("loading-overall");
-  
-  /************************* JOINING A CHATROOM ************************/
 
-  // Join a room's chat
-  this.joinRoomChat = function(room_id) {
 
-    if (this.currRoomChatID != room_id) {
-
-      this.currRoomChatID = room_id;
-
+  this.joinRoomChat = function(currRoomChatID) {
+    //leave old room if we were in one
+    if (this.currRoomChatID) {
       // turn off any pre-existing listeners
       if (chatDatabase != null) {
         chatDatabase.off();
       }
-      // empty our message list in logic and UI and reset control vars
-      this.chatMessageList = [];
-
-      lastKey = null;
-      scrollLock = false;
-      updateChatView();
-      this.chatInput = "";
-   		this.searchQuery = null;
-      this.searchMode = false;
-
-      // set up and start new listener if room_id isn't null
-      if (room_id) {
-        chatDatabase = databaseRef.child("RoomMessages").child(this.currRoomChatID);
-        startChatMessages();
+      // empty typing list
+      if (typingDatabase != null) {
+        typingDatabase.off();
       }
+      this.isTyping = false;
+      var typingXHR = new XMLHttpRequest();
+      typingXHR.open("GET", "/typing/false/" + this.currRoomChatID);
+      typingXHR.send();
+    }
+
+    //join new room
+    this.currRoomChatID = currRoomChatID;
+
+    // empty our message list in logic and UI and reset control vars
+    this.chatMessageList = [];
+    lastKey = null;
+    this.scrollLock = false;
+    this.chatInput = "";
+    this.currTyping = [];
+    this.searchQuery = null;
+    this.searchMode = false;
+    updateChatView();
+
+    // set up and start new listener if room_id isn't null
+    if (this.currRoomChatID) {
+      chatDatabase = databaseRef.child("RoomMessages").child(this.currRoomChatID);
+      startChatMessages();
+    }
+    if (this.currRoomChatID) {
+      typingDatabase = databaseRef.child("RoomTyping").child(this.currRoomChatID);
+      startCurrTyping();
+      //], 50); //in case it's a dm, need to wait for other user info?
     }
   }
-  /*********************************************************************/
-  /*************************** SENDING CHATS ***************************/
 
-  // Send chat when send button is pressed
+  
   this.sendChatMessage = function(chatInput) {
-    if (chatInput) {
+    if (SECRET_COMMANDS.indexOf(chatInput) != -1) {
+      commander.easterCommand(chatInput, function(data){uploadMessage(data)});
+    }
+    else if (chatInput.indexOf("/play") == 0) {
+      commander.playCommand(chatInput);
+      this.clearInput();
+      this.focusInput();
+    }
+    //search command
+    else if (chatInput.indexOf("#") == 0) {
+      commander.searchCommand(chatInput);
+    }
+    else {
       uploadMessage(chatInput);
     }
-  };
-
-  // Upload message to the database
-  function uploadMessage(chatInput) {
-
-    // If we're in a valid room
-    if (this.currRoomChatID) {
-
-      //console.log("Sending chat with: " + chatInput);
-
-      // Create the message and pass it on to the server
-      var newChatMessage = {text: chatInput, roomID: this.currRoomChatID, timeSent: Date.now()};
-
-      //adjust newChatMessage with whether or not it's a DM
-      if (cruHandler.rooms[this.currRoomChatID].other_user_id) {
-        newChatMessage.other_user_id = cruHandler.rooms[this.currRoomChatID].other_user_id;
-      }
-
-      $http.post("/send_room_message", newChatMessage).then(scrollDown);
-    }
-
-    // Reset the local chat UI/logic
-    this.chatInput = "";
-    chatInputBox.focus();
   }
 
-  /************************** DISPLAYING CHATS *************************/
+  this.processTyping = function(chatInput) {
+    if (chatInput) {
+      if (!this.isTyping) {
+        var typingXHR = new XMLHttpRequest();
+        typingXHR.open("GET", "/typing/true/" + this.currRoomChatID);
+        typingXHR.send();
+        this.isTyping = true;
+      }
+    }
+    else {
+      if (this.isTyping) {
+        var typingXHR = new XMLHttpRequest();
+        typingXHR.open("GET", "/typing/true/" + this.currRoomChatID);
+        typingXHR.send();
+        this.isTyping = false;
+      }
+    }
+  }
 
-  // Set up listener for chat messages
+
+
+
+
+
+
+
+
   function startChatMessages() {
     loadingOverallAnimation.removeAttribute("hidden");
-    chatPinnedDatabase.on("child_added", function(snapshot) {
-      var snapshotValue = snapshot.val();
-      //console.log("pin message: " + snapshotValue.text);
-      if (this.chatPinnedMessageList.indexOf(snapshotValue) == -1) {
-        this.chatPinnedMessageList.push(snapshotValue);
-      }
-      updateChatView();
-    })
 
     chatDatabase.limitToLast(50).on("child_added", function(snapshot) {
       var snapshotValue = snapshot.val();
@@ -106,13 +127,8 @@ function Chatter(myID, cruHandler) {
         lastKey = snapshot.key;
       }
 
-      this.chatMessageList.push(snapshotValue);
-
-      attemptAutoScroll();
-      // scroller
-      // typer
-      // songer
-      /*var shouldScroll = false;
+      thisChatter.chatMessageList.push(snapshotValue);
+      var shouldScroll = false;
       //only auto-scroll if near bottom
       if (div.scrollTop + 200 >= (div.scrollHeight - div.clientHeight)) {
         shouldScroll = true;
@@ -120,36 +136,33 @@ function Chatter(myID, cruHandler) {
       updateChatView();
       if (shouldScroll) {
         //setTimeout(scrollDown, 10); //scroll again upon ui update in 10ms
-        scrollDown(); //scroll down immediately to ensure continuous position
+        thisChatter.scrollDown(); //scroll down immediately to ensure continuous position
       }
-      loadingOverallAnimation.setAttribute("hidden", null);*/
+      loadingOverallAnimation.setAttribute("hidden", null);
     });
 
     //slight jank, but it's cool
-    /*setTimeout(function() {
+    setTimeout(function() {
       loadingOverallAnimation.setAttribute("hidden", null);
-    }, 500);*/
+    }, 500);
   }
 
-  // Update the chat view display
   function updateChatView() {
     concatenateMessages();
-    $rootScope.safeApply($scope);
+    thisChatter.apply();
   }
 
-  // Combine messages sent by the same user within
-  // CONCAT_TIME seconds of one another;
   function concatenateMessages() {
-    for (var i = 0; i + 1 < this.chatMessageList.length;) {
-      currMessage = this.chatMessageList[i];
-      nextMessage = this.chatMessageList[i+1];
+    for (var i = 0; i + 1 < thisChatter.chatMessageList.length;) {
+      currMessage = thisChatter.chatMessageList[i];
+      nextMessage = thisChatter.chatMessageList[i+1];
       // if two messages were sent by the same user within CONCAT_TIME
       if (currMessage.email == nextMessage.email &&
           nextMessage.timeSent < currMessage.timeSent + CONCAT_TIME) {
         // concatenate the messages
         currMessage.text += "\n" + nextMessage.text;
         // remove the second message
-        this.chatMessageList.splice(i+1, 1);
+        thisChatter.chatMessageList.splice(i+1, 1);
       }
       else {
         i++;
@@ -157,6 +170,89 @@ function Chatter(myID, cruHandler) {
     }
   }
 
+
+
+
+
+
+
+
+
+  
+
+  function uploadMessage(chatInput) {
+    console.log("SENDING CHAT MESSAGE");
+    // If we're in a valid room
+    if (thisChatter.currRoomChatID) {
+          console.log("SENT CHAT MESSAGE");
+      // Create the message and pass it on to the server
+      var newChatMessage = {text: chatInput, roomID: thisChatter.currRoomChatID, timeSent: Date.now()};
+      //adjust newChatMessage with whether or not it's a DM
+      if (cruHandler.rooms[thisChatter.currRoomChatID].other_user_id) {
+        newChatMessage.other_user_id = cruHandler.rooms[thisChatter.currRoomChatID].other_user_id;
+      }
+      var messageXHR = new XMLHttpRequest();
+      messageXHR.open("POST", "/send_room_message/");
+      messageXHR.onreadystatechange = function(e) {
+        if (messageXHR.readyState == 4 && messageXHR.status == 200) {
+          thisChatter.scrollDown();
+        }
+      }
+      messageXHR.setRequestHeader("Content-Type", "application/json");
+      messageXHR.send(JSON.stringify(newChatMessage));
+    }
+
+    // Reset the local chat UI/logic
+    thisChatter.clearInput();
+    thisChatter.focusInput();
+  }
+
+
+
+
+
+
+
+
+
+
+
+
+
+  // Listen to RoomTyping
+  function startCurrTyping() {
+    typingDatabase.on("value", function(snapshot) {
+      var val = snapshot.val();
+      if (val) {
+        thisChatter.currTyping = Object.keys(val);
+        updateCurrTyping();
+      }
+      else {
+        thisChatter.currTyping = [];
+      }
+      thisChatter.apply();
+    });
+  }
+
+  function updateCurrTyping() {
+    var names = []
+    for (var i = 0; i < thisChatter.currTyping.length; i++) {
+      if (thisChatter.currTyping[i] != myID) {
+        if (cruHandler.users[thisChatter.currTyping[i]]) {
+         names.push(cruHandler.users[thisChatter.currTyping[i]].name);
+        }
+      }
+    }
+    thisChatter.currTyping = names;
+  }
+
+
+
+  this.seeMoreMessages = function(num, callback) {
+    seeMoreMessages(num, callback);
+  }
+
+  //see more
   // View more messages -- queries last number of msgs from Firebase and
   // updates chat view, then scrolls to correct place to maintain position
   function seeMoreMessages(messagesToAdd, callback) {
@@ -164,8 +260,8 @@ function Chatter(myID, cruHandler) {
     if (lastKey && lastKey != "DONE") {
       //show loading UI element
       loadingMessagesAnimation.removeAttribute("hidden");
-      scrollLock = true; //prevent any more seeMoreMessages calls until current finishes
-      var messagesSoFar = this.chatMessageList.length;
+      thisChatter.scrollLock = true; //prevent any more seeMoreMessages calls until current finishes
+      var messagesSoFar = thisChatter.chatMessageList.length;
       //query db for past number of messages
       chatDatabase.limitToLast(messagesToAdd+1).orderByKey().endAt(lastKey)
         .once("value", function(snapshot) {
@@ -182,7 +278,7 @@ function Chatter(myID, cruHandler) {
           moreMessagesArray.pop(); //remove extra messsage b/c lastKey inclusive
 
           if (moreMessagesArray.length > 0) {
-            this.chatMessageList = moreMessagesArray.concat(this.chatMessageList); //combine with og msgs
+            thisChatter.chatMessageList = moreMessagesArray.concat(thisChatter.chatMessageList); //combine with og msgs
           }
           else {
             lastKey = "DONE"; //otherwise don't pull anymore
@@ -200,7 +296,7 @@ function Chatter(myID, cruHandler) {
           ////console.log("curr height: " + currHeight);
           ////console.log("Scroll down by: " + (currHeight - previousHeight));
           div.scrollTop = previousPosition + (div.scrollHeight - previousHeight);
-          scrollLock = false;
+          thisChatter.scrollLock = false;
           //hide loading UI element
           //});
           //}, 20);
@@ -215,9 +311,9 @@ function Chatter(myID, cruHandler) {
     }
   }
 
-  // Scroll chat view to bottom 
-  function scrollDown() {
-    div.scrollTop = div.scrollHeight - div.clientHeight;
-  }
+
+
+
 
 }
+
