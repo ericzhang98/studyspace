@@ -24,7 +24,6 @@ function($scope, $rootScope, $http, $timeout, $window) {
   $scope.searchMode = true;
 
   $scope.chatter = new Chatter($rootScope.myID, $rootScope.cruHandler);
-  $scope.whiteboarder = new whiteboarder();
   $scope.chatter.apply = function() {
     $rootScope.safeApply($scope);
   }
@@ -37,6 +36,8 @@ function($scope, $rootScope, $http, $timeout, $window) {
   $scope.chatter.focusInput = function() {
     chatInputBox.focus();
   }
+
+  $scope.whiteboarder = new whiteboarder();
 
   console.log("READY");
 
@@ -146,6 +147,9 @@ function($scope, $rootScope, $http, $timeout, $window) {
   };
 
   $scope.messageClicked = function(event) {
+    console.log("MSG CLICKED");
+    var messageDiv = event.currentTarget;
+    $scope.chatter.messageClicked(messageDiv);
     /*
     if ($scope.searchMode) {
       //return to normal with div selection

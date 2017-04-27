@@ -623,6 +623,7 @@ app.get("/typing/:is_typing/:room_id", function(req, res) {
 app.post("/broadcast_song/", function(req, res) {
   res.end();
   if (req.signedCookies.user_id) {
+    console.log(req.body);
     var room_id = req.body.room_id;
     var url = req.body.url;
     if (url == null) {

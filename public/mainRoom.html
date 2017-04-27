@@ -257,7 +257,8 @@
               </div>
 
               <div class="message"
-                ng-repeat="chatMessage in chatter.chatMessageList"
+                ng-repeat="chatMessage in (chatter.searchMode ?
+                chatter.searchMessageList : chatter.chatMessageList)"
                 ng-click="chatter.searchMode && messageClicked($event)">
                 <div ng-if="chatMessage.user_id != 'system_id'" class="container-user-icon over-base-text {{chatMessage.user_id != myID ? 'acc-back' : 'prim-back'}}">
                   <span>{{chatMessage.name.toUpperCase() | limitTo:1}}</span>
@@ -557,6 +558,7 @@
   <script src="soundmeter.js"></script>
   <script src="whiteboarder.js"></script>
   <script src="Chatter.js"></script>
+  <script src="commander.js"></script>
   <script src="CRUHandler.js"></script>
   <script src="DownHandler.js"></script>
 

@@ -9,7 +9,9 @@ function Chatter(myID, cruHandler) {
   this.isTyping = false;
   this.searchQuery = null;
   this.searchMode = true;
+  this.searchMessageList = [];
   this.scrollLock = false;
+  var lastKey = null;
 
   this.clearInput = null;
   this.scrollDown = null;
@@ -19,12 +21,12 @@ function Chatter(myID, cruHandler) {
   var thisChatter = this;
   var chatDatabase = null;
   var typingDatabase = null;
+  var commander = null;
 
   // list of message objects with: email, name, roomID, text, timeSent
   var div = document.getElementById("chat-message-pane");
   var chatInputBox = document.getElementById("chatInputBox");
   var loadingMessagesAnimation = document.getElementById("loading-messages");
-  var lastKey = null;
   var loadingOverallAnimation = document.getElementById("loading-overall");
 
 
@@ -56,6 +58,7 @@ function Chatter(myID, cruHandler) {
     this.currTyping = [];
     this.searchQuery = null;
     this.searchMode = false;
+    this.searchMessageList = [];
     updateChatView();
 
     // set up and start new listener if room_id isn't null
@@ -68,22 +71,35 @@ function Chatter(myID, cruHandler) {
       startCurrTyping();
       //], 50); //in case it's a dm, need to wait for other user info?
     }
+
+    //set up commander
+    commander = new Commander(this.currRoomChatID);
   }
 
-  
   this.sendChatMessage = function(chatInput) {
+    //easter eggs
     if (SECRET_COMMANDS.indexOf(chatInput) != -1) {
       commander.easterCommand(chatInput, function(data){uploadMessage(data)});
+      this.clearInput();
+      this.focusInput();
     }
+    //play command
     else if (chatInput.indexOf("/play") == 0) {
       commander.playCommand(chatInput);
       this.clearInput();
       this.focusInput();
     }
-    //search command
-    else if (chatInput.indexOf("#") == 0) {
-      commander.searchCommand(chatInput);
+    //stop command
+    else if (chatInput.indexOf("/stop") == 0) {
+      commander.stopCommand();
+      this.clearinput();
+      this.focusInput();
     }
+    //search
+    else if (chatInput.indexOf("#") == 0) {
+      search(chatInput);
+    }
+    //regular chat
     else {
       uploadMessage(chatInput);
     }
@@ -108,6 +124,21 @@ function Chatter(myID, cruHandler) {
     }
   }
 
+  this.messageClicked = function(messageDiv) {
+    if (this.searchMode) {
+      //return to normal with div selection
+      loadingOverallAnimation.removeAttribute("hidden");
+      //maximum jank to let animation start
+      setTimeout(function(){
+        thisChatter.searchMode = false;
+        thisChatter.searchQuery = null;
+        thisChatter.scrollLock = false;
+        thisChatter.apply();
+        loadingOverallAnimation.setAttribute("hidden", null);
+        div.scrollTop = messageDiv.offsetTop;
+      }, 10);
+    }
+  }
 
 
 
@@ -291,14 +322,11 @@ function Chatter(myID, cruHandler) {
           ////console.log("prev pos: " + (previousPosition));
           updateChatView();
           //setTimeout(function(){
-          //$timeout(function(){
           var currHeight = div.scrollHeight;
           ////console.log("curr height: " + currHeight);
           ////console.log("Scroll down by: " + (currHeight - previousHeight));
           div.scrollTop = previousPosition + (div.scrollHeight - previousHeight);
           thisChatter.scrollLock = false;
-          //hide loading UI element
-          //});
           //}, 20);
           
         }
@@ -312,6 +340,43 @@ function Chatter(myID, cruHandler) {
   }
 
 
+  function search(chatInput) {
+    var query = chatInput.substring(1);
+    //search mode
+    if (query.length > 0) {
+      loadingOverallAnimation.removeAttribute("hidden");
+      thisChatter.searchMode = true;
+      thisChatter.searchQuery = query;
+      seeMoreMessages(1000, function(){
+        var searchResults = [];
+        for(var i = thisChatter.chatMessageList.length-1; i >= 0; i--) {
+          if (thisChatter.chatMessageList[i].text.toLowerCase().includes(query.toLowerCase()) 
+            || thisChatter.chatMessageList[i].name.toLowerCase().includes(query.toLowerCase())) {
+            searchResults.unshift(thisChatter.chatMessageList[i]);
+          }
+        }
+      thisChatter.searchMessageList = searchResults;
+      thisChatter.scrollLock = true;
+      thisChatter.apply();
+      loadingOverallAnimation.setAttribute("hidden", null);
+      thisChatter.scrollDown();
+      });
+    }
+    //nosearch mode
+    else {
+      loadingOverallAnimation.removeAttribute("hidden");
+      //maximum jank to let animation start
+      setTimeout(function(){
+        thisChatter.searchMode = false;
+        thisChatter.searchQuery = null;
+        thisChatter.scrollLock = false;
+        thisChatter.apply();
+        loadingOverallAnimation.setAttribute("hidden", null);
+        thisChatter.scrollDown();
+      }, 10);
+    }
+    thisChatter.clearInput();
+  }
 
 
 
