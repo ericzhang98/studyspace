@@ -218,7 +218,7 @@
               </div>
                 <ul class="nav navbar-nav navbar-right">
                   <li>
-                    <a>{{currSongTitle}}</a>
+                    <a>{{trapper.currSongTitle}}</a>
                   </li>
                   <li ng-if="rooms[chatter.currRoomChatID].class_id != 'dm_class_id'" class="nav-link link-pin" ng-click="toggleWhiteboard()">
                     <span class="glyphicon glyphicon-pencil"></span>
@@ -228,7 +228,7 @@
                     <span class="glyphicon glyphicon-pushpin"></span>
                   </li>
 
-                  <li class="nav-link" ng-click="leaveRoom()">
+                  <li class="nav-link" ng-click="leaveRoom(chatter.currRoomChatID)">
                     <a>{{cruHandler.rooms[chatter.currRoomChatID].class_id != 'dm_class_id' ? 'Leave' : 'Close'}}</a>
                   </li>
                 </ul>
@@ -559,6 +559,7 @@
   <script src="whiteboarder.js"></script>
   <script src="Chatter.js"></script>
   <script src="commander.js"></script>
+  <script src="trapper.js"></script>
   <script src="CRUHandler.js"></script>
   <script src="DownHandler.js"></script>
 

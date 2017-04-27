@@ -137,14 +137,12 @@ function($scope, $rootScope, $http, $timeout, $window) {
     $rootScope.joinRoomChatBC(room_id);
   };
 
-  $scope.leaveRoom = function() {
-    
+  $scope.leaveRoom = function(room_id) {
     // leave room case
-    if ($rootScope.cruHandler.rooms[$rootScope.currRoomChatID].class_id != 'dm_class_id') {
+    if ($rootScope.cruHandler.rooms[room_id].class_id != 'dm_class_id') {
       $rootScope.caller.leaveRoomCall();
       $rootScope.joinRoomChatBC(null); //leave chat room
     }
-
     // close dm case
     else {
       $rootScope.joinRoomChatBC($rootScope.caller.currRoomCallID); // join or leave chat room

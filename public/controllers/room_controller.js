@@ -37,6 +37,11 @@ function($scope, $rootScope, $http, $timeout, $window) {
     chatInputBox.focus();
   }
 
+  $scope.trapper = new trapper();
+  $scope.trapper.apply = function() {
+    $rootScope.safeApply($scope);
+  }
+
   $scope.whiteboarder = new whiteboarder();
 
   console.log("READY");
@@ -52,6 +57,7 @@ function($scope, $rootScope, $http, $timeout, $window) {
   // Join a room's chat
   $scope.joinRoomChat = function(room_id) {
     $scope.chatter.joinRoomChat(room_id);
+    $scope.trapper.joinParty(room_id);
     $scope.whiteboarder.hideWhiteboard();
 
     /*
