@@ -167,6 +167,7 @@ function CRUHandler() {
         cruHandler.rooms[room_id] = new Room(room_id, room.name, room.host_id, room.class_id, 
                                          room.is_lecture, roomUniqueUsers, room.host_name ? room.host_name : "Unknown host");
 
+
         // are there tutors in here?
         detectTutors(cruHandler, cruHandler.rooms[room_id]);
 

@@ -29,38 +29,6 @@ var singletonActionManager = function(cm) {
    callback(); 
   };
 
-  this.pinMessage = function(room_id, chat_message_key, user_id, name, time_sent, concat_text, callback) {
-    cm.roomPinnedMessagesDatabase.child(room_id).transaction(function(pinnedMessages) {
-      if (pinnedMessages) {
-        var already_pinned = false;
-        pinnedMessages.forEach(function(message) {
-          if (message.key == chat_message_key) {
-            already_pinned = true;
-          }
-        })
-        if (!already_pinned) {
-          console.log("pinning message with concat_text " + concat_text);
-          pinnedMessages.push({
-            "key": chat_message_key, 
-            "user_id": user_id, 
-            "name": name,
-            "timeSent": parseInt(time_sent),
-            "text": concat_text});
-        }
-      }
-      else {
-        pinnedMessages = [{
-            "key": chat_message_key, 
-            "user_id": user_id, 
-            "name": name,
-            "timeSent": parseInt(time_sent),
-            "text": concat_text}];
-      }
-      return pinnedMessages;
-    });
-    callback();
-  };
-
   this.clearMessageNotifications = function(user_id, other_user_id, callback) {
     if (other_user_id) {
       cm.notificationsDatabase.child(user_id).child("MessageNotifications")

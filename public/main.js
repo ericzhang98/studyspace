@@ -2,7 +2,7 @@
 var logger = new Logger(true);
 var myID = getSignedCookie("user_id");
 var SONG_COMMANDS = ["/raindrop", "/destress", "/420"];
-var OTHER_COMMANDS = ["/stop", "/dank", "/scrub", "/easter"];
+var OTHER_COMMANDS = ["/dank", "/scrub", "/easter"];
 var SONG_VOLUMES = {
 	"/raindrop" : 0.25,
 	"/destress" : 0.3,

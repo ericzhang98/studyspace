@@ -328,18 +328,6 @@ app.get('/leave_room/:room_id/', function(req, res) {
 
 /************************************ ROOM ACTIONS ***********************************/
 
-app.post("/pin_message/", function(req, res) {
-  var room_id = req.body.room_id;
-  var chat_message_key = req.body.chat_message_key;
-  var user_id = req.body.user_id;
-  var name = req.body.name;
-  var time_sent = req.body.time_sent;
-  var concat_text = req.body.concat_text;
-  actionManager.pinMessage(room_id, chat_message_key, user_id, name, time_sent, concat_text, function() {
-    res.end();
-  });
-})
-
 /* POST data: {chatMessage} - post chat message to firebase in respective room
  * Returns: nothing */
 app.post("/send_room_message", function(req, res) {
@@ -361,8 +349,6 @@ app.post("/send_room_message", function(req, res) {
 app.get("/clear_message_notifications/:other_user_id", function(req, res) {
   var user_id = req.signedCookies.user_id;
   var other_user_id = req.params.other_user_id;
-  console.log(user_id);
-  console.log(req.params);
   actionManager.clearMessageNotifications(user_id, other_user_id, function() {
     res.end();
   });
@@ -625,7 +611,6 @@ app.get("/typing/:is_typing/:room_id", function(req, res) {
 app.post("/broadcast_song/", function(req, res) {
   res.end();
   if (req.signedCookies.user_id) {
-    console.log(req.body);
     var room_id = req.body.room_id;
     var url = req.body.url;
     if (url == null) {

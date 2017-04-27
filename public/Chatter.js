@@ -92,7 +92,7 @@ function Chatter(myID, cruHandler) {
     //stop command
     else if (chatInput.indexOf("/stop") == 0) {
       commander.stopCommand();
-      this.clearinput();
+      this.clearInput();
       this.focusInput();
     }
     //search
