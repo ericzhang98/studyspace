@@ -14,8 +14,8 @@ var singletonActionManager = function(cm) {
     cm.roomMessagesDatabase.child(roomID).push().set(newChatMessage);
     //if other_user_id is set, it's a DM so increment notification for other user
     if (other_user_id) {
-      firebaseRoot.child("Notifications").child(other_user_id).child("MessageNotifications")
-        .child(req.signedCookies.user_id).transaction(function(notification) {
+      cm.notificationsDatabase.child(other_user_id).child("MessageNotifications")
+        .child(user_id).transaction(function(notification) {
           //if notification is null or 0
           if (!notification) {
             notification = 1;
@@ -63,7 +63,7 @@ var singletonActionManager = function(cm) {
 
   this.clearMessageNotifications = function(user_id, other_user_id, callback) {
     if (other_user_id) {
-      firebaseRoot.child("Notifications").child(user_id).child("MessageNotifications")
+      cm.notificationsDatabase.child(user_id).child("MessageNotifications")
         .child(other_user_id).set(0);
     }
     callback();

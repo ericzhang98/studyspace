@@ -361,6 +361,8 @@ app.post("/send_room_message", function(req, res) {
 app.get("/clear_message_notifications/:other_user_id", function(req, res) {
   var user_id = req.signedCookies.user_id;
   var other_user_id = req.params.other_user_id;
+  console.log(user_id);
+  console.log(req.params);
   actionManager.clearMessageNotifications(user_id, other_user_id, function() {
     res.end();
   });
