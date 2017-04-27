@@ -149,6 +149,15 @@ app.get('/audio/:song_code', function (req, res) {
   res.sendFile('/audio/' + song_code);
 });
 
+app.get("/invite/:room_id", function(req, res) {
+  var room_id = req.params.room_id;
+  //temp acc
+  res.cookie("user_id", "6ebpspW6IEIh4ikWO6Vp", {signed: true, maxAge: COOKIE_TIME});
+  res.cookie("email", "test@test.com", {signed: true, maxAge: COOKIE_TIME});
+  res.cookie("name", "test", {signed: true, maxAge: COOKIE_TIME});
+  res.sendFile(VIEW_DIR + "mainRoom.html");
+});
+
 /*************************************************************************************/
 
 
@@ -288,7 +297,12 @@ app.get('/add_room/:class_id/:room_name/:is_lecture/:time_created/:host_name', f
   var host_name = req.params.host_name;
   roomManager.addRoom(class_id, room_name, host_id, is_lecture, time_created, host_name, 
     function(err, data) {
-      res.send(data);
+      if (!err) {
+        res.send(data);
+      }
+      else {
+        res.send(err);
+      }
   });
 });
 

@@ -42,7 +42,6 @@ myApp.controller("CreateRoomController", function($scope, $rootScope, $http) {
         var response = JSON.parse(xhr.responseText);
 
         if (response.error) {
-          //console.log(response.error);
           return;
         }
 
