@@ -204,10 +204,10 @@ function Caller(myID) {
 
         var response = JSON.parse(xhr.responseText);
 
-        // room no longer exists
         //console.log(response);
-        if (response.room_id == null) {
-          //console.log("room does not exist");
+        // room no longer exists
+        if (!response.room_id) {
+          console.log("room does not exist");
           return;
         }
 

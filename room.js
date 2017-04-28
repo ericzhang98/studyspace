@@ -91,7 +91,7 @@ var singletonRoomManager = function(cm) {
           else {
             if (callback) {
               console.log("FIREBASE: ERROR - User wasn't added for some reason");
-              callback("error", null);
+              callback({error: "error"}, null);
             }
           }
         });
@@ -99,7 +99,7 @@ var singletonRoomManager = function(cm) {
       else {
         console.log("FIREBASE: ERROR - Room doesn't exist anymore, user failed to join");
         if (callback) {
-          callback(null);
+          callback({error: "error"}, null);
         }
       }
     });

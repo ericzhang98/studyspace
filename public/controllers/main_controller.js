@@ -97,7 +97,7 @@ function($scope, $rootScope, $http, $timeout, $window) {
 
   // Respond to a down list room
   $scope.$on('downListRoom', function(event, data) {
-    $scope.joinRoom(data.room_id, data.class_id);
+    $scope.joinRoom(data.room_id);
   })
 
   // Respond to a cruContainer change
@@ -132,7 +132,7 @@ function($scope, $rootScope, $http, $timeout, $window) {
     }, 100);
   }
 
-  $scope.joinRoom = function(room_id, class_id) {
+  $scope.joinRoom = function(room_id) {
     $rootScope.caller.joinRoomCall(room_id);
     $rootScope.joinRoomChatBC(room_id);
   };
@@ -255,13 +255,18 @@ function($scope, $rootScope, $http, $timeout, $window) {
     $rootScope.caller.toggleMyStreamAudioEnabled();
   }
 
-}]);
 
-//highlight filter 
-myApp.filter('highlight', ["$sce", function($sce) {
-  return function(text, phrase) {
-    if (phrase) text = text.replace(new RegExp('('+phrase+')', 'gi'),
-      '<span class="highlighted">$1</span>')
-      return $sce.trustAsHtml(text)
-  }
+
+  //temp invite stuff
+  $(document).ready(function() {
+    var url = new URL(window.location);
+    var invite_code = url.pathname.split("/invite/")[1];
+    console.log(invite_code);
+    if (invite_code) {
+      if (invite_code == "test") {
+        $scope.joinRoom("CSE_110_MAIN");
+      }
+    }
+  });
+
 }]);

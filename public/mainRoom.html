@@ -141,7 +141,7 @@
                 </div>
                 <div id="{{class_id}}" class="panel-collapse collapse">
                   <ul class="list-group">
-                    <li class="list-group-item base-back {{room_id == caller.currRoomCallID ? (cruHandler.rooms[room_id].is_lecture ? 'acc-text' : 'prim-text') : 'over-base-text'}}" ng-repeat="room_id in cruHandler.class_rooms[class_id]" ng-click="joinRoom(room_id, class_id)">
+                    <li class="list-group-item base-back {{room_id == caller.currRoomCallID ? (cruHandler.rooms[room_id].is_lecture ? 'acc-text' : 'prim-text') : 'over-base-text'}}" ng-repeat="room_id in cruHandler.class_rooms[class_id]" ng-click="joinRoom(room_id)">
                       <span ng-cloak class="room-name">
                         {{cruHandler.rooms[room_id].name}}
                       </span>

@@ -151,10 +151,12 @@ app.get('/audio/:song_code', function (req, res) {
 
 app.get("/invite/:room_id", function(req, res) {
   var room_id = req.params.room_id;
-  //temp acc
-  res.cookie("user_id", "6ebpspW6IEIh4ikWO6Vp", {signed: true, maxAge: COOKIE_TIME});
-  res.cookie("email", "test@test.com", {signed: true, maxAge: COOKIE_TIME});
-  res.cookie("name", "test", {signed: true, maxAge: COOKIE_TIME});
+  //temp acc if user isn't logged in
+  if (!req.signedCookies.user_id) {
+    res.cookie("user_id", "6ebpspW6IEIh4ikWO6Vp", {signed: true, maxAge: COOKIE_TIME});
+    res.cookie("email", "test@test.com", {signed: true, maxAge: COOKIE_TIME});
+    res.cookie("name", "test", {signed: true, maxAge: COOKIE_TIME});
+  }
   res.sendFile(VIEW_DIR + "mainRoom.html");
 });
 
@@ -310,6 +312,7 @@ app.get('/add_room/:class_id/:room_name/:is_lecture/:time_created/:host_name', f
 // - returns list of user_id's in that room
 app.get('/join_room/:room_id/', function(req, res) {
   var user_id = req.signedCookies.user_id;
+  console.log(user_id + " joining " + req.params.room_id);
   if (!user_id) {
     res.send({error: "invalid_user_id"});
     return;

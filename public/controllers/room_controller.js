@@ -144,6 +144,7 @@ function($scope, $rootScope, $http, $timeout, $window) {
 
 }]);
 
+//scroll event listener
 myApp.directive("scroll", ["$window", function ($window) {
   return {
     scope: {
@@ -152,5 +153,14 @@ myApp.directive("scroll", ["$window", function ($window) {
     link : function(scope, element, attrs) {
       $("#"+attrs.id).scroll(function($e) { scope.scrollEvent != null ?  scope.scrollEvent()($e) : null })
     }
+  }
+}]);
+
+//highlight filter 
+myApp.filter('highlight', ["$sce", function($sce) {
+  return function(text, phrase) {
+    if (phrase) text = text.replace(new RegExp('('+phrase+')', 'gi'),
+      '<span class="highlighted">$1</span>')
+      return $sce.trustAsHtml(text)
   }
 }]);
