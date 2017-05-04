@@ -39,8 +39,14 @@ function CRUHandler() {
 
   // - returns whether a user is a tutor in a given room
   this.isTutor = function(user_id, room_chat_id) {
-    return this.classes[this.rooms[room_chat_id].class_id].tutor_ids &&
-    this.classes[this.rooms[room_chat_id].class_id].tutor_ids.indexOf(user_id) != -1;
+    //assume ppl aren't tutors until we grab class info
+    if (this.rooms[room_chat_id]) {
+      return this.classes[this.rooms[room_chat_id].class_id].tutor_ids &&
+      this.classes[this.rooms[room_chat_id].class_id].tutor_ids.indexOf(user_id) != -1;
+    }
+    else {
+      return false;
+    }
   }
 
   // - sets a callback function to be executed 

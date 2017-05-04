@@ -264,7 +264,9 @@ function($scope, $rootScope, $http, $timeout, $window) {
     console.log(invite_code);
     if (invite_code) {
       if (invite_code == "test") {
-        $scope.joinRoom("CSE_110_MAIN");
+        setTimeout(function() {
+          $scope.joinRoom("CSE_110_MAIN");
+        }, 100);
       }
     }
   });
