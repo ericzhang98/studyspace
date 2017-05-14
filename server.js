@@ -752,7 +752,7 @@ function checkSingleUserActivity(user_id) {
 
 //ssl challenge
 
-app.get(".well-known/acme-challenge/Neob8fVy3kZHlxz8jh8eBjpn5OobYbY4h_7TjddTyMI", function(req,res) {
+app.get("/.well-known/acme-challenge/Neob8fVy3kZHlxz8jh8eBjpn5OobYbY4h_7TjddTyMI", function(req,res) {
 
   res.send("Neob8fVy3kZHlxz8jh8eBjpn5OobYbY4h_7TjddTyMI.WvFBmKbVDiPXkv3XZvi2IVS2S4FvtRxc1OiZTIPqJls");
 });
