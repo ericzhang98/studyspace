@@ -19,7 +19,7 @@ var io = require('socket.io')(server);
 
 io.on('connection', function (socket) {});
 
-server.listen(3000);
+server.listen(process.env.PORT || 3000);
 /*************************************************************************************/
 
 // - Mongodb is the database that we will be using for persistent data
