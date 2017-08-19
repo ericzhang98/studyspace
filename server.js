@@ -753,11 +753,3 @@ function checkSingleUserActivity(user_id) {
 //app.listen(process.env.PORT || 3000);
 userActivityChecker();
 console.log("Server running!");
-
-app.get("/.well-known/acme-challenge/NxWEtI_PgEDDTFVVZWJP_oQBQWtlV9yR6csPZ1XQfe8", function(req, res) {
-  res.send("NxWEtI_PgEDDTFVVZWJP_oQBQWtlV9yR6csPZ1XQfe8.WvFBmKbVDiPXkv3XZvi2IVS2S4FvtRxc1OiZTIPqJls");
-});
-
-app.get("/.well-known/acme-challenge/8spn_rHKrwgyPB3nEALykm2zZZ4v1-V3xfHa8GKRCzo", function(req, res) {
-  res.send("8spn_rHKrwgyPB3nEALykm2zZZ4v1-V3xfHa8GKRCzo.WvFBmKbVDiPXkv3XZvi2IVS2S4FvtRxc1OiZTIPqJls");
-});
