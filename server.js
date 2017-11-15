@@ -1300,6 +1300,11 @@ function checkSingleUserActivity(user_id) {
 /*------------------------------------------------------------------------*/
 
 /*---- SSL CHALLENGE ----*/
+//studyspace.me
+app.get("/.well-known/acme-challenge/gH4PQY5Hc9ltzKRatrdjG2vKD5BeDPwY3z7mnTJgmjY"), function(req, res) {
+  res.send("gH4PQY5Hc9ltzKRatrdjG2vKD5BeDPwY3z7mnTJgmjY.WvFBmKbVDiPXkv3XZvi2IVS2S4FvtRxc1OiZTIPqJls");
+})
+
 //www.studyspace.me
 app.get("/.well-known/acme-challenge/PZUi1QS7fBv8LcahJtDonuL9cba4YABa1jcpxKOWmXI", function(req, res) {
   res.send("PZUi1QS7fBv8LcahJtDonuL9cba4YABa1jcpxKOWmXI.WvFBmKbVDiPXkv3XZvi2IVS2S4FvtRxc1OiZTIPqJls");
