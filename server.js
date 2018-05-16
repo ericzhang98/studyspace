@@ -1301,9 +1301,11 @@ function checkSingleUserActivity(user_id) {
 
 /*---- SSL CHALLENGE ----*/
 //www.studyspace.me
+/*
 app.get("/.well-known/acme-challenge/0lBx9kryiYr1HqbvZqWjiIjYVKL370QuDaVdoAGXjBE", function(req, res) {
   res.send("0lBx9kryiYr1HqbvZqWjiIjYVKL370QuDaVdoAGXjBE.WvFBmKbVDiPXkv3XZvi2IVS2S4FvtRxc1OiZTIPqJls");
 })
+*/
 
 
 
