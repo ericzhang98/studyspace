@@ -8,4 +8,6 @@ It’s not easy to learn alone. In university, it is too often the case that stu
 
 Enter StudySpace: a website that connects students with peers and instructors instantly via voice-chat to expedite and enhance the learning process. With StudySpace, classmates can collaborate in course-specific channels to tackle challenging topics and prepare for exams. Struggling through a subject on your own is a problem of the past; It’s time to love the way you learn.
 
+Watch our [Youtube Video](https://youtu.be/JOMxcJhTfeo)
+
 Check it out at: [studyspace.me](https://www.studyspace.me)
